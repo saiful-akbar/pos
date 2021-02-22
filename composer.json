@@ -1,0 +1,11 @@
+{
+    "name": "saiful-akbar/pos",
+    "description": "Aplikasi point of sales",
+    "authors": [
+        {
+            "name": "Saiful Akbar",
+            "email": "saifulakbar.app@gmail.com"
+        }
+    ],
+    "require": {}
+}
