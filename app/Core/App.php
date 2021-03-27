@@ -18,11 +18,9 @@ class App
     // Cek apakah ada query string ctrl
     if (isset($_GET["ctrl"]) && !empty($_GET["ctrl"])) {
 
-      /**
-       * Mencegah url berbahaya
-       * membersihkan dari spasi di awal dan akhir
-       * membuat karakter pertama menjadi kapital
-       */
+      // Mencegah url berbahaya
+      // membersihkan dari spasi di awal dan akhir
+      // membuat karakter pertama menjadi kapital
       $controller = filter_var(trim(ucwords($_GET["ctrl"])), FILTER_SANITIZE_URL);
       $controller .= "Controller";
 
@@ -40,10 +38,8 @@ class App
     // cek apakah ada query sting mthd
     if (isset($_GET["mthd"]) && !empty($_GET["mthd"])) {
 
-      /**
-       * Mencegah url berbahaya
-       * membersihkan dari spasi di awal dan akhir
-       */
+      // Mencegah url berbahaya
+      // membersihkan dari spasi di awal dan akhir
       $method = filter_var(trim($_GET["mthd"]), FILTER_SANITIZE_URL);
 
       // cek apakah method ada atau tidak
