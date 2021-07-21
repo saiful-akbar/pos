@@ -3,18 +3,18 @@
 /**
  * Fungsi base url
  */
-function baseUrl($path = null)
+function baseUrl($query = null)
 {
 	$url = "http://localhost:8080/apps/php-mvc";
 
-	if ($path != null) {
-		$url .= substr(trim($path), 0, 1) == "/" ? trim($path) : "/".trim($path);
+	if ($query != null) {
+		$url .= htmlspecialchars(trim($query));
 	}
 
-  	return $url;
+	return $url;
 }
 
 
 spl_autoload_register(function ($class) {
-  require __DIR__ . "/Core/{$class}.php";
+	require __DIR__ . "/Core/{$class}.php";
 });
