@@ -2,18 +2,16 @@
 
 /**
  * Fungsi base url
- * 
- * @param null $path
- * 
- * @return String
  */
 function baseUrl($path = null)
 {
-  if ($path != null) {
-    $url = substr(trim($path), 0, 1) == "/" ? trim($path) : "/" . trim($path);
-    return $url;
-  }
-  return "localhost:8000/";
+	$url = "http://localhost:8080/apps/php-mvc";
+
+	if ($path != null) {
+		$url .= substr(trim($path), 0, 1) == "/" ? trim($path) : "/".trim($path);
+	}
+
+  	return $url;
 }
 
 

@@ -15,13 +15,13 @@ class App
    */
   public function routing()
   {
-    // Cek apakah ada query string ctrl
-    if (isset($_GET["ctrl"]) && !empty($_GET["ctrl"])) {
+    // Cek apakah ada query string controller
+    if (isset($_GET["controller"]) && !empty($_GET["controller"])) {
 
       // Mencegah url berbahaya
       // membersihkan dari spasi di awal dan akhir
       // membuat karakter pertama menjadi kapital
-      $controller = filter_var(trim(ucwords($_GET["ctrl"])), FILTER_SANITIZE_URL);
+      $controller = filter_var(trim(ucwords($_GET["controller"])), FILTER_SANITIZE_URL);
       $controller .= "Controller";
 
       // cek apakah file ada atau tidak
@@ -35,12 +35,12 @@ class App
     require "app/Controllers/{$this->controller}.php";
     $this->controller = new $this->controller;
 
-    // cek apakah ada query sting mthd
-    if (isset($_GET["mthd"]) && !empty($_GET["mthd"])) {
+    // cek apakah ada query sting method
+    if (isset($_GET["method"]) && !empty($_GET["method"])) {
 
       // Mencegah url berbahaya
       // membersihkan dari spasi di awal dan akhir
-      $method = filter_var(trim($_GET["mthd"]), FILTER_SANITIZE_URL);
+      $method = filter_var(trim($_GET["method"]), FILTER_SANITIZE_URL);
 
       // cek apakah method ada atau tidak
       if (method_exists($this->controller, $method)) {
