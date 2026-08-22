@@ -313,6 +313,8 @@ Minimal mendukung:
 - Cash
 - QRIS
 - Transfer
+- Debit
+- Credit
 
 #### FR-SALE-007 — Cash Payment
 
