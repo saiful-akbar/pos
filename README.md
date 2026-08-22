@@ -671,6 +671,38 @@ Movement:
 type = purchase_return
 ```
 
+### 1.7.15. Cash Management
+
+Sistem memiliki pencatatan kas sederhana.
+
+Cash In
+
+Contoh:
+
+```
+Modal awal
+Tambahan kas
+Cash Out
+```
+
+Contoh:
+
+```
+Pengeluaran operasional
+Pembelian kebutuhan warung
+Biaya lain
+```
+
+Setiap transaksi menyimpan:
+
+```
+type
+amount
+description
+user_id
+transaction_date
+```
+
 ## 1.8. Database
 
 ### 1.8.1. Core Database Tables
