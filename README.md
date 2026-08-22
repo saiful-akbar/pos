@@ -790,14 +790,14 @@ Phase 1
 ├── User
 └── Basic Settings
 
-        ↓
+      ↓
 
 Phase 2
 ├── Category
 ├── Unit
 └── Product
 
-        ↓
+      ↓
 
 Phase 3
 ├── Sales
@@ -805,21 +805,21 @@ Phase 3
 ├── Payment
 └── Stock Movement
 
-        ↓
+      ↓
 
 Phase 4
 ├── Purchase
 ├── Purchase Details
 └── Supplier
 
-        ↓
+      ↓
 
 Phase 5
 ├── Stock Opname
 ├── Stock Adjustment
 └── Stock Card
 
-        ↓
+      ↓
 
 Phase 6
 ├── Dashboard
@@ -827,7 +827,7 @@ Phase 6
 ├── Inventory Report
 └── Profit Report
 
-        ↓
+      ↓
 
 Phase 7
 ├── Customer
@@ -835,7 +835,7 @@ Phase 7
 ├── Purchase Return
 └── Cash Management
 
-        ↓
+      ↓
 
 Phase 8
 ├── Receipt Printing
