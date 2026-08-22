@@ -725,9 +725,10 @@ purchases
 purchase_details
 
 stock_movements
-
 stock_opnames
 stock_opname_details
+
+cash_transactions
 
 settings
 ```
@@ -735,7 +736,47 @@ settings
 Total:
 
 ```
-15 Table
+16 Table
+```
+
+### 1.8.2. Struktur relasinya
+
+```
+                         ┌─────────────┐
+                         │   users     │
+                         └──────┬──────┘
+                                │
+                 ┌──────────────┼───────────────┐
+                 │              │               │
+                 ▼              ▼               ▼
+              sales        purchases      stock_movements
+                 │              │               │
+          ┌──────┴──────┐       │               │
+          │             │       ▼               │
+          ▼             ▼  purchase_details     │
+    sale_details     payments      │             │
+          │                        │             │
+          └──────────┬─────────────┘             │
+                     │                           │
+                     ▼                           │
+                 products ◄──────────────────────┘
+                     │
+              ┌──────┴──────┐
+              ▼             ▼
+         categories       units
+
+
+        stock_opnames
+              │
+              ▼
+     stock_opname_details
+              │
+              ▼
+          products
+
+
+        customers ──────► sales
+        suppliers ───────► purchases
 ```
 
 ## 1.9. Development Priority
