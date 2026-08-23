@@ -859,3 +859,70 @@ Ada beberapa prinsip yang sebaiknya dianggap sebagai technical/business rules, b
 - Invoice number harus unique dan concurrency-safe.
 - Current stock digunakan untuk pembacaan cepat, stock movement digunakan sebagai audit trail.
 - MVP mengutamakan kecepatan operasional kasir daripada kompleksitas fitur.
+
+## 1.11. Daftar Fitur Utama
+
+```
+| No | Modul           | Fitur                   | Deskripsi Singkat                                                     |
+| -: | --------------- | ----------------------- | --------------------------------------------------------------------- |
+|  1 | Authentication  | Login                   | Login menggunakan username dan password                               |
+|  2 | Authentication  | Logout                  | Keluar dari aplikasi dengan aman                                      |
+|  3 | User Management | Kelola User             | Menambah, mengubah, mengaktifkan/nonaktifkan user                     |
+|  4 | User Management | Role & Access           | Mengatur hak akses berdasarkan role Admin/Kasir                       |
+|  5 | Dashboard       | Dashboard               | Menampilkan ringkasan penjualan, transaksi, stok rendah, dan laba     |
+|  6 | Product         | Daftar Produk           | Menampilkan seluruh produk beserta harga dan stok                     |
+|  7 | Product         | Tambah Produk           | Membuat produk baru                                                   |
+|  8 | Product         | Edit Produk             | Mengubah informasi produk seperti harga dan nama                      |
+|  9 | Product         | Aktif/Nonaktif Produk   | Menonaktifkan produk tanpa menghapus histori transaksi                |
+| 10 | Product         | Pencarian Produk        | Mencari produk berdasarkan nama, kode, atau barcode                   |
+| 11 | Category        | Kelola Kategori         | Mengelola kategori seperti sembako, minuman, snack, dll               |
+| 12 | Unit            | Kelola Satuan           | Mengelola PCS, KG, LITER, DUS, BOTOL, dll                             |
+| 13 | POS             | Transaksi Penjualan     | Membuat transaksi penjualan baru                                      |
+| 14 | POS             | Product Cart            | Menambahkan/menghapus produk dari keranjang                           |
+| 15 | POS             | Update Quantity         | Mengubah jumlah produk yang dibeli                                    |
+| 16 | POS             | Perhitungan Total       | Menghitung subtotal, diskon, dan grand total                          |
+| 17 | POS             | Payment                 | Mencatat pembayaran Cash, QRIS, atau Transfer                         |
+| 18 | POS             | Kembalian               | Menghitung uang kembalian untuk pembayaran cash                       |
+| 19 | POS             | Invoice Number          | Membuat nomor invoice secara otomatis dan unique                      |
+| 20 | POS             | Receipt                 | Menampilkan/mencetak struk transaksi                                  |
+| 21 | POS             | Void Transaction        | Membatalkan transaksi dengan mengembalikan stok                       |
+| 22 | Sales           | Sales History           | Melihat histori seluruh transaksi penjualan                           |
+| 23 | Sales           | Detail Penjualan        | Melihat detail produk, qty, harga, pembayaran, dan total              |
+| 24 | Inventory       | Current Stock           | Melihat jumlah stok terkini setiap produk                             |
+| 25 | Inventory       | Stock Movement          | Melihat histori setiap perubahan stok                                 |
+| 26 | Inventory       | Low Stock Alert         | Menandai produk yang stoknya berada di bawah minimum                  |
+| 27 | Inventory       | Out of Stock            | Menampilkan produk yang stoknya habis                                 |
+| 28 | Inventory       | Stock Adjustment        | Menyesuaikan stok secara manual dengan alasan tertentu                |
+| 29 | Inventory       | Stock Card              | Melihat histori masuk/keluar dan saldo stok produk                    |
+| 30 | Purchase        | Pembelian Barang        | Mencatat pembelian barang dari supplier                               |
+| 31 | Purchase        | Detail Pembelian        | Mencatat produk, qty, harga beli, dan subtotal                        |
+| 32 | Purchase        | Purchase History        | Melihat histori pembelian barang                                      |
+| 33 | Supplier        | Kelola Supplier         | Menambah dan mengelola data supplier                                  |
+| 34 | Stock Opname    | Buat Stock Opname       | Membuat proses pengecekan stok fisik                                  |
+| 35 | Stock Opname    | Input Stok Fisik        | Memasukkan jumlah stok aktual hasil perhitungan fisik                 |
+| 36 | Stock Opname    | Stock Difference        | Menghitung selisih stok sistem dengan stok fisik                      |
+| 37 | Stock Opname    | Complete Opname         | Menyesuaikan stok sistem berdasarkan hasil opname                     |
+| 38 | Customer        | Data Customer           | Menyimpan data customer secara sederhana                              |
+| 39 | Sales Return    | Retur Penjualan         | Mencatat barang yang dikembalikan customer dan menambah stok          |
+| 40 | Purchase Return | Retur Pembelian         | Mencatat barang yang dikembalikan kepada supplier dan mengurangi stok |
+| 41 | Cash Management | Cash In                 | Mencatat pemasukan kas selain penjualan                               |
+| 42 | Cash Management | Cash Out                | Mencatat pengeluaran operasional warung                               |
+| 43 | Cash Management | Cash History            | Melihat histori pemasukan dan pengeluaran kas                         |
+| 44 | Report          | Sales Report            | Laporan penjualan berdasarkan periode                                 |
+| 45 | Report          | Product Sales Report    | Menampilkan produk yang terjual dan jumlahnya                         |
+| 46 | Report          | Inventory Report        | Menampilkan kondisi stok seluruh produk                               |
+| 47 | Report          | Stock Movement Report   | Menampilkan histori pergerakan stok                                   |
+| 48 | Report          | Purchase Report         | Menampilkan histori dan total pembelian                               |
+| 49 | Report          | Profit Report           | Menampilkan estimasi gross profit berdasarkan penjualan dan cost      |
+| 50 | Settings        | Store Settings          | Mengatur nama, alamat, telepon, dan informasi warung                  |
+| 51 | Settings        | Receipt Settings        | Mengatur header/footer pada struk                                     |
+| 52 | Product         | Barcode Scanner         | Mencari produk menggunakan barcode scanner                            |
+| 53 | Product         | Import Product          | Mengimpor produk secara massal melalui CSV/Excel                      |
+| 54 | Product         | Export Product          | Mengekspor data produk                                                |
+| 55 | POS             | Discount                | Memberikan diskon nominal atau persentase                             |
+| 56 | POS             | Reprint Receipt         | Mencetak ulang struk transaksi sebelumnya                             |
+| 57 | Report          | Top Selling Product     | Menampilkan produk yang paling banyak terjual                         |
+| 58 | Report          | Daily Summary           | Ringkasan omzet, transaksi, pembayaran, dan laba harian               |
+| 69 | System          | Audit Log               | Mencatat aktivitas penting user dalam sistem                          |
+| 60 | System          | Database Backup         | Membuat backup database secara berkala                                |
+```
