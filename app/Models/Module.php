@@ -6,7 +6,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Module extends Model
@@ -63,7 +65,6 @@ class Module extends Model
     protected $fillable = [
         'header_id',
         'name',
-        'description',
         'icon',
         'path',
         'route',
@@ -77,5 +78,25 @@ class Module extends Model
         return $this->belongsToMany(RoleModule::class, 'role_module', 'module_id', 'role_id')
             ->using(RoleModule::class)
             ->withPivot('create', 'read', 'update', 'delete');
+    }
+
+    /**
+     * Get all of the details for the Module
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function details(): HasMany
+    {
+        return $this->hasMany(Module::class, 'header_id', 'id');
+    }
+
+    /**
+     * Get the header that owns the Module
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function header(): BelongsTo
+    {
+        return $this->belongsTo(Module::class, 'header_id', 'id');
     }
 }

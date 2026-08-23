@@ -19,7 +19,6 @@ return new class() extends Migration
             $table->ulid('id')->primary();
             $table->ulid('header_id')->nullable();
             $table->string('name', 100);
-            $table->string('description')->nullable();
             $table->string('icon', 10)->nullable();
             $table->string('path', 100);
             $table->string('route', 100);

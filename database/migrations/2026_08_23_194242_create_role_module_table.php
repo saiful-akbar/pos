@@ -20,7 +20,7 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('role_modules', function (Blueprint $table) {
+        Schema::create('role_module', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
             $table->foreignUlid('role_id')
