@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\View\Components\Layouts;
 
+use App\Domain\Module\Entities\ModuleEntity;
+use App\Domain\Setting\Entities\SettingEntity;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -11,11 +13,26 @@ use Illuminate\View\Component;
 class Topnav extends Component
 {
     /**
+     * Daftar akses module.
+     *
+     * @var ModuleEntity[]
+     */
+    public array $modules;
+
+    /**
+     * Data pengaturan.
+     *
+     * @var SettingEntity|null
+     */
+    public ?SettingEntity $setting;
+
+    /**
      * Create a new component instance.
      */
     public function __construct()
     {
-        //
+        $this->modules = modules();
+        $this->setting = setting();
     }
 
     /**

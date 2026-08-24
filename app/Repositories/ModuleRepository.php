@@ -52,9 +52,9 @@ class ModuleRepository extends Repository implements ModuleRepositoryInterface
                     $join->on('pivot.module_id', '=', 'modules.id')
                         ->where('pivot.role_id', '=', $roleId)
                         ->where('pivot.read', '=', 1)
-                        ->whereNotNull('pivot.deleted_at');
+                        ->whereNull('pivot.deleted_at');
                 })
-                ->whereNotNull('header_id')
+                ->whereNotNull('modules.header_id')
                 ->orderBy('modules.name', 'asc')
                 ->get();
 

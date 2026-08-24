@@ -23,7 +23,10 @@
 
 <body>
     <x-preloader></x-preloader>
-    <x-layouts.sidenav></x-layouts.sidenav>
+    <x-layouts.sidenav-toolbar></x-layouts.sidenav-toolbar>
+    <x-layouts.sidenav-small></x-layouts.sidenav-small>
+    <x-layouts.sidenav-medium></x-layouts.sidenav-medium>
+    <x-layouts.sidenav-base></x-layouts.sidenav-base>
     <x-layouts.topnav></x-layouts.topnav>
 
     <main class="main px-lg-6">
@@ -31,6 +34,10 @@
             {{ $slot }}
         </div>
     </main>
+
+    <form action="{{ route('logout') }}" method="post" class="d-none" name="logout" id="logout">
+        @csrf @method('delete')
+    </form>
 
     <script src="{{ asset('assets/js/vendor.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/theme.bundle.js') }}"></script>
@@ -40,6 +47,11 @@
     <script>
         $(document).ready(function() {
             $('#preloader').fadeOut();
+        });
+
+        $('.logout').click(function (e) { 
+            e.preventDefault();
+            $('form[name=logout]').submit();
         });
     </script>
 

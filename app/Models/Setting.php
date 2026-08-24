@@ -64,6 +64,7 @@ class Setting extends Model
         'app_version',
         'store_name',
         'store_logo',
-        'banner',
+        'store_address',
+        'background_image',
     ];
 }

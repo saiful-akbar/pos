@@ -1,29 +1,27 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\View\Components\Layouts;
 
-use App\Domain\Module\Entities\ModuleEntity;
+use App\Domain\Setting\Entities\SettingEntity;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Sidenav extends Component
+class SidenavToolbar extends Component
 {
     /**
-     * Daftar akses module.
+     * Data pengaturan.
      *
-     * @var ModuleEntity[]
+     * @var SettingEntity|null
      */
-    public array $modules;
+    public ?SettingEntity $setting;
 
     /**
      * Create a new component instance.
      */
     public function __construct()
     {
-        $this->modules = modules();
+        $this->setting = setting();
     }
 
     /**
@@ -31,6 +29,6 @@ class Sidenav extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.layouts.sidenav');
+        return view('components.layouts.sidenav-toolbar');
     }
 }

@@ -20,7 +20,7 @@
     </x-slot:style>
 
     <div class="row justify-content-center align-items-center vh-100">
-        <div class="col-12 col-md-6 col-lg-4 p-lg-11 p-7">
+        <div class="col-12 col-md-6 col-lg-5 col-xl-4 p-lg-11 p-7">
             <h1 class="fs-1">{{ config('app.name') }}</h1>
             <p class="lead text-body-secondary">Kelola penjualan dan inventori toko Anda dalam satu sistem.</p>
 
@@ -29,12 +29,12 @@
 
                 <div class="mb-5">
                     <div class="input-group @error('username')is-invalid @enderror">
-                        <span class="input-group-text bi-person-circle"></span>
+                        <span class="input-group-text material-symbols-outlined fs-4">person</span>
 
                         <div class="form-floating">
                             <input type="text" id="username" name="username"
                                 class="form-control @error('username')is-invalid @enderror" placeholder="Username"
-                                value="{{ old('username') }}" required>
+                                value="{{ old('username') }}" required autofocus>
 
                             <label for="username">Username</label>
                         </div>
@@ -49,7 +49,7 @@
 
                 <div class="mb-5">
                     <div class="input-group">
-                        <span class="input-group-text bi bi-unlock2"></span>
+                        <span class="input-group-text material-symbols-outlined fs-4">lock</span>
 
                         <div class="form-floating @error('password')is-invalid @enderror">
                             <input type="password" id="password" name="password"
@@ -82,7 +82,7 @@
             </form>
         </div>
 
-        <div id="cover" class="col-md-6 col-lg-8 d-none d-md-flex"></div>
+        <div id="cover" class="col-md-6 col-lg-7 col-xl-8 d-none d-md-flex"></div>
     </div>
 
     <x-slot:script>

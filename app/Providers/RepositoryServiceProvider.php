@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Application\Module\UseCases\GetModulesByRoleId;
+use App\Application\Setting\UseCases\FindSetting;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
+use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Repositories\ModuleRepository;
+use App\Repositories\SettingRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -17,6 +20,11 @@ class RepositoryServiceProvider extends ServiceProvider
     private array $repositories = [
         ModuleRepositoryInterface::class => [
             GetModulesByRoleId::class => ModuleRepository::class,
+        ],
+
+        // Setting
+        SettingRepositoryInterface::class => [
+            FindSetting::class => SettingRepository::class,
         ],
     ];
 

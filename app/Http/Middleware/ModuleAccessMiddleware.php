@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -11,15 +13,15 @@ class ModuleAccessMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  Closure(Request): (Response)  $next
+     * @param Closure(Request): (Response) $next
      */
-    public function handle(Request $request, Closure $next, string $moduleRoute, string $access): Response
+    public function handle(Request $request, Closure $next, string $route, string $access): Response
     {
         $modules = modules();
 
         foreach ($modules as $module) {
             foreach ($module->details as $menu) {
-                if ($menu->route === $moduleRoute) {
+                if ($menu->route === $route) {
                     if ($menu->{$access}) {
                         return $next($request);
                     }

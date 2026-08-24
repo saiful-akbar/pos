@@ -1,11 +1,10 @@
+@import "@fontsource-variable/inter";
+@import "material-symbols";
+@import "./vendor/datatables.css";
 @import "./vendor/libs.bundle.css";
 @import "./vendor/theme.bundle.css";
-@import "./vendor/datatables.css";
-@import "@fontsource-variable/inter";
-@import "bootstrap-icons/font/bootstrap-icons.css";
 
 body {
-  font-family: "Inter", sans-serif;
   overflow-x: hidden;
 }
 

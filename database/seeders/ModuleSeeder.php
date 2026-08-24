@@ -20,6 +20,7 @@ class ModuleSeeder extends Seeder
         foreach ($this->data() as $data) {
             $module = Module::query()->create([
                 'name' => $data['name'],
+                'icon' => $data['icon'],
                 'path' => $data['path'],
                 'route' => $data['route'],
             ]);
@@ -59,12 +60,13 @@ class ModuleSeeder extends Seeder
         return [
             [
                 'name' => 'Data Master',
+                'icon' => 'data_table',
                 'path' => '/master',
                 'route' => 'master',
                 'details' => [
                     [
                         'name' => 'User',
-                        'path' => '/master/users',
+                        'path' => 'master/users',
                         'route' => 'master.users',
                         'roles' => ['Admin'],
                     ],
@@ -75,32 +77,32 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin'],
                     ],
                     [
-                        'name' => 'Kategori Produk',
-                        'path' => '/master/categories',
+                        'name' => 'Produk Kategori',
+                        'path' => 'master/categories',
                         'route' => 'master.categories',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Unit Produk',
-                        'path' => '/master/units',
+                        'name' => 'Produk Unit',
+                        'path' => 'master/units',
                         'route' => 'master.units',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
                         'name' => 'Produk',
-                        'path' => '/master/products',
+                        'path' => 'master/products',
                         'route' => 'master.products',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
                         'name' => 'Pelanggan',
-                        'path' => '/master/customers',
+                        'path' => 'master/customers',
                         'route' => 'master.customers',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
                         'name' => 'Pemasok',
-                        'path' => '/master/suppliers',
+                        'path' => 'master/suppliers',
                         'route' => 'master.suppliers',
                         'roles' => ['Admin', 'Kasir'],
                     ],
