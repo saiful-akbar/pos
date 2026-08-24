@@ -24,26 +24,29 @@ return new class() extends Migration
             $table->ulid('id')->primary();
 
             $table->foreignUlid('role_id')
-                ->constrained('roles', 'id', 'role_id_foreign')
+                ->constrained('roles', 'id')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
             $table->foreignUlid('module_id')
-                ->constrained('modules', 'id', 'module_id_foreign')
+                ->constrained('modules', 'id')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
             $table->boolean('create');
             $table->boolean('read');
             $table->boolean('update');
+            $table->boolean('remove');
             $table->boolean('delete');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('create', 'create_index');
-            $table->index('read', 'read_index');
-            $table->index('update', 'update_index');
-            $table->index('delete', 'delete_index');
+            $table->index('create');
+            $table->index('read');
+            $table->index('update');
+            $table->index('delete');
+
+            $table->unique(['role_id', 'module_id'], 'role_module_pivot_unique');
         });
     }
 

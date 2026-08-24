@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Module;
@@ -38,6 +40,7 @@ class ModuleSeeder extends Seeder
                             'read' => true,
                             'create' => $role->name === 'Admin',
                             'update' => $role->name === 'Admin',
+                            'remove' => $role->name === 'Admin',
                             'delete' => $role->name === 'Admin',
                             'created_at' => $now,
                             'updated_at' => $now,
@@ -50,8 +53,6 @@ class ModuleSeeder extends Seeder
 
     /**
      * Data
-     *
-     * @return array
      */
     private function data(): array
     {
@@ -103,8 +104,8 @@ class ModuleSeeder extends Seeder
                         'route' => 'master.suppliers',
                         'roles' => ['Admin', 'Kasir'],
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

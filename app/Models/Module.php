@@ -75,15 +75,13 @@ class Module extends Model
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(RoleModule::class, 'role_module', 'module_id', 'role_id')
+        return $this->belongsToMany(Role::class, 'role_module', 'module_id', 'role_id')
             ->using(RoleModule::class)
             ->withPivot('create', 'read', 'update', 'delete');
     }
 
     /**
      * Get all of the details for the Module
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function details(): HasMany
     {
@@ -92,8 +90,6 @@ class Module extends Model
 
     /**
      * Get the header that owns the Module
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function header(): BelongsTo
     {

@@ -71,7 +71,7 @@ class Role extends Model
      */
     public function modules(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'role_module', 'role_id', 'module_id', 'id', 'id')
+        return $this->belongsToMany(Module::class, 'role_module', 'role_id', 'module_id')
             ->using(RoleModule::class)
             ->withPivot('create', 'read', 'update', 'delete');
     }

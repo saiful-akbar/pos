@@ -1,15 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="inventory dan pos system." />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="base-url" content="{{ url('/') }}" />
+
     <title>{{ $title }} - {{ config('app.name') }}</title>
+
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo.svg') }}" type="image/x-icon" />
+
+    <script src="{{ asset('assets/js/settings.js') }}"></script>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @isset($style)
+        {{ $style }}
+    @endisset
 </head>
 
 <body>
-    {{ $slot }}
+    <x-preloader></x-preloader>
+    <x-layouts.sidenav></x-layouts.sidenav>
+    <x-layouts.topnav></x-layouts.topnav>
+
+    <main class="main px-lg-6">
+        <div class="container-lg">
+            {{ $slot }}
+        </div>
+    </main>
+
+    <script src="{{ asset('assets/js/vendor.bundle.js') }}"></script>
+    <script src="{{ asset('assets/js/theme.bundle.js') }}"></script>
+    <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/datatables/datatables.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#preloader').fadeOut();
+        });
+    </script>
+
+    @isset($script)
+        {{ $script }}
+    @endisset
 </body>
 
 </html>
