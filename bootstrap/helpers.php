@@ -36,6 +36,24 @@ if (! function_exists('parse_int')) {
     }
 }
 
+if (!function_exists('parse_bool')) {
+
+    /**
+     * Merubah string atau int menjadi boolean
+     *
+     * @param integer|string|boolean $value
+     * @return boolean
+     */
+    function parse_bool(int|string|bool $value): bool
+    {
+        if ($value === 1 || $value === '1' || $value === 'true' || $value === true) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
 if (! function_exists('modules')) {
 
     /**
@@ -55,12 +73,10 @@ if (! function_exists('modules')) {
     }
 }
 
-if (!function_exists('setting')) {
+if (! function_exists('setting')) {
 
     /**
      * Mengambil data pengaturan.
-     *
-     * @return SettingEntity|null
      */
     function setting(): ?SettingEntity
     {
@@ -74,7 +90,7 @@ if (!function_exists('setting')) {
     }
 }
 
-if (!function_exists('user')) {
+if (! function_exists('user')) {
 
     /**
      * User login
@@ -85,14 +101,10 @@ if (!function_exists('user')) {
     }
 }
 
-if (!function_exists('storage_asset')) {
+if (! function_exists('storage_asset')) {
 
     /**
      * Storage assets.
-     *
-     * @param string $path
-     * @param boolean|null $secure
-     * @return string
      */
     function storage_asset(string $path, ?bool $secure = null): string
     {
@@ -102,16 +114,14 @@ if (!function_exists('storage_asset')) {
     }
 }
 
-if (!function_exists('user_photo')) {
+if (! function_exists('user_photo')) {
 
     /**
      * User photo.
-     *
-     * @return string
      */
     function user_photo(): string
     {
-        if (is_null(user()->photo)) {
+        if (user()->photo === null) {
             return asset('assets/images/user.webp');
         }
 
@@ -122,7 +132,7 @@ if (!function_exists('user_photo')) {
 /**
  * memetiksa path url aktif atau tidak
  */
-if (!function_exists('active_path')) {
+if (! function_exists('active_path')) {
     function active_path(string $path, bool $strict = false): bool
     {
         $path = ltrim($path, '/');

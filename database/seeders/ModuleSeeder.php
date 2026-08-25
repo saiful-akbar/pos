@@ -65,15 +65,15 @@ class ModuleSeeder extends Seeder
                 'route' => 'master',
                 'details' => [
                     [
-                        'name' => 'User',
-                        'path' => 'master/users',
-                        'route' => 'master.users',
-                        'roles' => ['Admin'],
-                    ],
-                    [
                         'name' => 'Role',
                         'path' => '/master/roles',
                         'route' => 'master.roles',
+                        'roles' => ['Admin'],
+                    ],
+                    [
+                        'name' => 'User',
+                        'path' => 'master/users',
+                        'route' => 'master.users',
                         'roles' => ['Admin'],
                     ],
                     [

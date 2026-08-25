@@ -16,8 +16,6 @@ class FindSetting
 
     /**
      * Execute method.
-     *
-     * @return SettingEntity|null
      */
     public function execute(): ?SettingEntity
     {

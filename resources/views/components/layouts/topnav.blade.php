@@ -152,8 +152,11 @@
 {{-- Topnav (toolbar) --}}
 <nav class="navbar topnav-toolbar d-none d-xl-flex px-xl-6" id="topnavToolbar">
     <div class="container flex-column align-items-stretch">
-        <div class="row">
-            <div class="col"></div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col">
+                <h6 class="h6" id="clock"></h6>
+            </div>
+
             <div class="col-auto d-flex">
                 <div class="dropdown my-n2">
                     <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#"
@@ -170,9 +173,6 @@
                         <li><a class="dropdown-item logout" href="#">Keluar</a></li>
                     </ul>
                 </div>
-
-                {{-- Divider --}}
-                <div class="vr align-self-center bg-dark mx-2"></div>
             </div>
         </div>
     </div>
@@ -184,11 +184,44 @@
         const topnavToolbar = document.querySelector('#topnavToolbar');
 
         if (navigationPosition === 'topnav') {
-            topnavToolbar.classList.remove('d-xl-flex');
             topnavToolbar.classList.add('d-none');
         } else {
-            topnavToolbar.classList.remove('d-none');
             topnavToolbar.classList.add('d-xl-flex');
         }
+
+        function updateClock() {
+            const now = new Date();
+            const day = now.getDate();
+            const month = now.getMonth();
+            const year = now.getFullYear();
+
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+
+            const months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "apr",
+                "Mei",
+                "Jun",
+                "Jul",
+                "Agu",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Des",
+            ];
+
+            hours = hours < 10 ? `0${hours}` : hours;
+            minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+            document.querySelector('#clock').textContent = `${day} ${months[month]} ${year}, ${hours}:${minutes}`;
+        }
+
+        updateClock();
+
+        setInterval(updateClock, 1000);
     })();
 </script>

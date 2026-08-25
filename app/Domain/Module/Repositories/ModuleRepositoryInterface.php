@@ -14,4 +14,11 @@ interface ModuleRepositoryInterface
      * @return ModuleEntity[]
      */
     public function getByRoleId(string $roleId): array;
+
+    /**
+     * Mengambil semua daftar module
+     *
+     * @return ModuleEntity[]
+     */
+    public function getAll(): array;
 }

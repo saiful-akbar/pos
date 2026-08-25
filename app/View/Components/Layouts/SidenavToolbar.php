@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\View\Components\Layouts;
 
 use App\Domain\Setting\Entities\SettingEntity;
@@ -11,8 +13,6 @@ class SidenavToolbar extends Component
 {
     /**
      * Data pengaturan.
-     *
-     * @var SettingEntity|null
      */
     public ?SettingEntity $setting;
 

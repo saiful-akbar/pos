@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Setting\Entities;
 
 use App\Base\Entity;
@@ -22,8 +24,6 @@ class SettingEntity extends Entity
 
     /**
      * Koversi data object ke array.
-     *
-     * @return array
      */
     #[Override]
     public function toArray(): array

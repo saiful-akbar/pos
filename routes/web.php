@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,18 @@ Route::middleware('auth')->group(function (): void {
         ->group(function (): void {
             Route::get('/', 'index');
         });
+
+    Route::name('master')->prefix('/master')->group(function (): void {
+        Route::controller(RoleController::class)
+            ->middleware('throttle:global')
+            ->name('.roles')
+            ->prefix('/roles')
+            ->group(function (): void {
+                Route::get('/', 'index');
+                Route::get('/create', 'create')->name('.create');
+                Route::post('/', 'store')->name('.store');
+            });
+    });
 });
 
 Route::redirect('/', '/dashboard');

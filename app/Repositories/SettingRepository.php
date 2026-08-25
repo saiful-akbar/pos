@@ -21,10 +21,27 @@ class SettingRepository extends Repository implements SettingRepositoryInterface
     }
 
     /**
+     * Mengambil data setting.
+     */
+    #[Override]
+    public function find(): ?SettingEntity
+    {
+        try {
+            $result = $this->model->query()->first();
+
+            return $result === null ? null : $this->mapModelToSettingEntity($result);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke SettingEntity
-     *
-     * @param Setting $model
-     * @return SettingEntity
      */
     private function mapModelToSettingEntity(Setting $model): SettingEntity
     {
@@ -37,27 +54,5 @@ class SettingRepository extends Repository implements SettingRepositoryInterface
             storeLogo: $model->store_logo,
             backgroundImage: $model->background_image,
         );
-    }
-
-    /**
-     * Mengambil data setting.
-     *
-     * @return SettingEntity|null
-     */
-    #[Override]
-    public function find(): ?SettingEntity
-    {
-        try {
-            $result = $this->model->query()->first();
-
-            return is_null($result) ? null : $this->mapModelToSettingEntity($result);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
     }
 }

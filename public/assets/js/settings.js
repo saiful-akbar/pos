@@ -6,10 +6,8 @@
 
     if (navigationPosition === "topnav") {
       topnavToolbar.classList.remove("d-xl-flex");
-      topnavToolbar.classList.add("d-none");
     } else {
       topnavToolbar.classList.add("d-xl-flex");
-      topnavToolbar.classList.remove("d-none");
     }
   };
 

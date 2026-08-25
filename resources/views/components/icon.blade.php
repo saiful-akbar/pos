@@ -1,0 +1,1 @@
+<span {{ $attributes->class(['material-symbols-outlined']) }}>{{ $slot }}</span>

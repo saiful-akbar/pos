@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <nav class="navbar-nav nav-pills h-100">
                 <div class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Home">
-                    <a class="nav-link" href="{{ route('dashboard') }}" target="_blank">
+                    <a class="nav-link" href="{{ route('dashboard') }}">
                         <span class="material-symbols-outlined">home</span>
                     </a>
                 </div>

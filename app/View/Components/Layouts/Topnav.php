@@ -18,8 +18,6 @@ class Topnav extends Component
 
     /**
      * Data pengaturan.
-     *
-     * @var SettingEntity|null
      */
     public ?SettingEntity $setting;
 

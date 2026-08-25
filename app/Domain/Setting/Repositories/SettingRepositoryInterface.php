@@ -10,8 +10,6 @@ interface SettingRepositoryInterface
 {
     /**
      * Mengambil data setting.
-     *
-     * @return SettingEntity|null
      */
     public function find(): ?SettingEntity;
 }

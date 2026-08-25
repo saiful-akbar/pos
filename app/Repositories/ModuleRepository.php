@@ -10,6 +10,7 @@ use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Module\ValueObjects\DetailModuleValue;
 use App\Models\Module;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Override;
 
 class ModuleRepository extends Repository implements ModuleRepositoryInterface
@@ -55,13 +56,69 @@ class ModuleRepository extends Repository implements ModuleRepositoryInterface
                         ->whereNull('pivot.deleted_at');
                 })
                 ->whereNotNull('modules.header_id')
-                ->orderBy('modules.name', 'asc')
                 ->get();
 
             $modules = $this->model->query()
                 ->whereNull('header_id')
                 ->whereIn('id', $details->pluck('header_id')->unique())
-                ->orderBy('name', 'asc')
+                ->get();
+
+            $result = [];
+
+            foreach ($modules as $module) {
+                $resultDetails = [];
+
+                foreach ($details as $detail) {
+                    if ($detail->header_id === $module->id) {
+                        $resultDetails[] = $this->mapModelToDetailModuleValue($detail);
+                    }
+                }
+
+                $result[] = $this->mapModelToModuleEntity($module, $resultDetails);
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil semua daftar module.
+     *
+     * @return ModuleEntity[]
+     */
+    #[Override]
+    public function getALl(): array
+    {
+        try {
+            $columns = [
+                'id',
+                'header_id',
+                'name',
+                'icon',
+                'path',
+                'route',
+                DB::raw('0 as `create`'),
+                DB::raw('0 as `read`'),
+                DB::raw('0 as `update`'),
+                DB::raw('0 as `remove`'),
+                DB::raw('0 as `delete`'),
+            ];
+
+            $details = $this->model->query()
+                ->select($columns)
+                ->whereNotNull('modules.header_id')
+                ->get();
+
+            $modules = $this->model->query()
+                ->whereNull('header_id')
+                ->whereIn('id', $details->pluck('header_id')->unique())
                 ->get();
 
             $result = [];

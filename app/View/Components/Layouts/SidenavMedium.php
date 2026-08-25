@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\View\Components\Layouts;
 
 use App\Domain\Module\Entities\ModuleEntity;
@@ -19,8 +21,6 @@ class SidenavMedium extends Component
 
     /**
      * Data pengaturan.
-     *
-     * @var SettingEntity|null
      */
     public ?SettingEntity $setting;
 
