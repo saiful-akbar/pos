@@ -184,9 +184,7 @@
         const topnavToolbar = document.querySelector('#topnavToolbar');
 
         if (navigationPosition === 'topnav') {
-            topnavToolbar.classList.add('d-none');
-        } else {
-            topnavToolbar.classList.add('d-xl-flex');
+            topnavToolbar.classList.remove('d-xl-flex');
         }
 
         function updateClock() {

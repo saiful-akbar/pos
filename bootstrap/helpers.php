@@ -36,13 +36,10 @@ if (! function_exists('parse_int')) {
     }
 }
 
-if (!function_exists('parse_bool')) {
+if (! function_exists('parse_bool')) {
 
     /**
      * Merubah string atau int menjadi boolean
-     *
-     * @param integer|string|boolean $value
-     * @return boolean
      */
     function parse_bool(int|string|bool $value): bool
     {
@@ -66,7 +63,10 @@ if (! function_exists('modules')) {
         static $modules = null;
 
         if ($modules === null) {
-            $modules = app(GetModulesByRoleId::class)->execute(Auth::user()->role_id);
+            $modules = app(GetModulesByRoleId::class)->execute(
+                roleId: Auth::user()->role_id,
+                isRead: true,
+            );
         }
 
         return $modules;
@@ -129,14 +129,26 @@ if (! function_exists('user_photo')) {
     }
 }
 
-/**
- * memetiksa path url aktif atau tidak
- */
 if (! function_exists('active_path')) {
+
+    /**
+     * memetiksa path url aktif atau tidak
+     */
     function active_path(string $path, bool $strict = false): bool
     {
         $path = ltrim($path, '/');
 
         return Request::is($strict ? $path : "$path*");
+    }
+}
+
+if (! function_exists('pos_connection')) {
+
+    /**
+     * pos database connection
+     */
+    function pos_connection(): string
+    {
+        return 'pos';
     }
 }

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Application\Role\DTOs\CreateRoleDTO;
+use App\Application\Role\DTOs\UpdateRoleDTO;
 use App\Base\Repository;
 use App\Domain\Role\Entities\RoleEntity;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Override;
 
 class RoleRepository extends Repository implements RoleRepositoryInterface
@@ -24,8 +26,6 @@ class RoleRepository extends Repository implements RoleRepositoryInterface
 
     /**
      * Mengambil semua daftar role dalam bentuk query builder.
-     *
-     * @return Builder
      */
     #[Override]
     public function getAllQuery(): Builder
@@ -44,13 +44,12 @@ class RoleRepository extends Repository implements RoleRepositoryInterface
 
     /**
      * Membuat (menyimpan) data role baru.
-     *
-     * @param CreateRoleDTO $dto
-     * @return RoleEntity
      */
     #[Override]
     public function create(CreateRoleDTO $dto): RoleEntity
     {
+        DB::beginTransaction();
+
         try {
             $now = now();
             $role = $this->model->query()->create($dto->toArray());
@@ -67,7 +66,51 @@ class RoleRepository extends Repository implements RoleRepositoryInterface
                 ]);
             }
 
+            DB::commit();
+
             return $this->mapModelTpRoleEntity($role);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data role berdasrkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?RoleEntity
+    {
+        try {
+            $role = $this->model->find($id);
+
+            return $role === null ? null : $this->mapModelTpRoleEntity($role);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Update role.
+     */
+    #[Override]
+    public function update(UpdateRoleDTO $dto): void
+    {
+        try {
+            $this->model->query()
+                ->where('id', '=', $dto->id)
+                ->update($dto->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -80,9 +123,6 @@ class RoleRepository extends Repository implements RoleRepositoryInterface
 
     /**
      * Mapping model ke class RoleEntity.
-     *
-     * @param Role $model
-     * @return RoleEntity
      */
     private function mapModelTpRoleEntity(Role $model): RoleEntity
     {

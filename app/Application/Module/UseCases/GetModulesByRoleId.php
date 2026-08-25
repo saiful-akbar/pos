@@ -21,8 +21,11 @@ class GetModulesByRoleId
      *
      * @return ModuleEntity[]
      */
-    public function execute(string $roleId): array
+    public function execute(string $roleId, bool $isRead = false): array
     {
-        return $this->repository->getByRoleId($roleId);
+        return $this->repository->getByRoleId(
+            roleId: $roleId,
+            isRead: $isRead,
+        );
     }
 }

@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Application\Module\UseCases\GetAllModules;
+use App\Application\Module\UseCases\GetAllModulesByRoleId;
 use App\Application\Module\UseCases\GetModulesByRoleId;
+use App\Application\Module\UseCases\UpdateModuleAccess;
 use App\Application\Role\UseCases\CreateRole;
+use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetAllRolesTable;
+use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Setting\UseCases\FindSetting;
+use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
@@ -23,20 +28,29 @@ class RepositoryServiceProvider extends ServiceProvider
      * Repository bindings
      */
     private array $repositories = [
+        SettingRepositoryInterface::class => [
+            FindSetting::class => SettingRepository::class,
+        ],
+
+        // Module
         ModuleRepositoryInterface::class => [
             GetModulesByRoleId::class => ModuleRepository::class,
             GetAllModules::class => ModuleRepository::class,
+            GetAllModulesByRoleId::class => ModuleRepository::class,
+            UpdateModuleAccess::class => ModuleRepository::class,
         ],
 
-        // Setting
-        SettingRepositoryInterface::class => [
-            FindSetting::class => SettingRepository::class,
+        // Module access (role_module)
+        ModuleAccessRepositoryInterface::class => [
+            UpdateModuleAccess::class => ModuleRepository::class,
         ],
 
         // Role
         RoleRepositoryInterface::class => [
             GetAllRolesTable::class => RoleRepository::class,
             CreateRole::class => RoleRepository::class,
+            FindRoleById::class => RoleRepository::class,
+            UpdateRole::class => RoleRepository::class,
         ],
     ];
 

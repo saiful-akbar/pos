@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\GetAllModules;
+use App\Application\Module\UseCases\GetAllModulesByRoleId;
 use App\Application\Role\DTOs\CreateRoleDTO;
 use App\Application\Role\UseCases\CreateRole;
+use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Http\Requests\Roles\CreateRoleRequest;
+use App\Http\Requests\Roles\UpdateRoleRequest;
+use App\Repositories\ModuleRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,9 +44,6 @@ class RoleController extends Controller
 
     /**
      * Membuat role baru
-     *
-     * @param CreateRoleRequest $request
-     * @return RedirectResponse
      */
     public function store(CreateRoleRequest $request): RedirectResponse
     {
@@ -54,7 +55,7 @@ class RoleController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'role_name' => 'Pilih minimal 1 akses modul.'
+                    'role_name' => 'Pilih minimal 1 akses modul.',
                 ]);
         }
 
@@ -68,7 +69,38 @@ class RoleController extends Controller
 
         return redirect()->route('master.roles.create')->with('alert', [
             'status' => 'success',
-            'message' => 'Role baru berhasil ditambahkan.'
+            'message' => 'Role baru berhasil ditambahkan.',
+        ]);
+    }
+
+    /**
+     * Menampilkan halaman edit.
+     */
+    public function edit(string $id): View
+    {
+        app(ModuleRepository::class)->getAllByRoleId($id);
+
+        $role = app(FindRoleById::class)->execute(id: $id);
+
+        if ($role === null) {
+            abort(404);
+        }
+
+        $modules = app(GetAllModulesByRoleId::class)->execute(roleId: $id);
+
+        return view('pages.roles.edit', compact('role', 'modules'));
+    }
+
+    /**
+     * Update data role dan module akses.
+     */
+    public function update(UpdateRoleRequest $request, string $id): RedirectResponse
+    {
+        dd($request->all());
+
+        return to_route('master.roles.edit', ['id' => $id])->with('alert', [
+            'status' => 'success',
+            'message' => 'Role berhasil diperbarui.',
         ]);
     }
 }

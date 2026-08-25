@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Application\Module\DTOs\ModuleAccessDTO;
 use App\Base\Repository;
 use App\Domain\Module\Entities\ModuleEntity;
+use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Module\ValueObjects\DetailModuleValue;
 use App\Models\Module;
@@ -13,7 +15,7 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Override;
 
-class ModuleRepository extends Repository implements ModuleRepositoryInterface
+class ModuleRepository extends Repository implements ModuleAccessRepositoryInterface, ModuleRepositoryInterface
 {
     /**
      * Create a new class instance.
@@ -29,7 +31,7 @@ class ModuleRepository extends Repository implements ModuleRepositoryInterface
      * @return ModuleEntity[]
      */
     #[Override]
-    public function getByRoleId(string $roleId): array
+    public function getByRoleId(string $roleId, bool $isRead = false): array
     {
         try {
             $columns = [
@@ -49,11 +51,14 @@ class ModuleRepository extends Repository implements ModuleRepositoryInterface
             $details = $this->model->query()
                 ->from('modules as modules')
                 ->select($columns)
-                ->join('role_module as pivot', function (JoinClause $join) use ($roleId): void {
+                ->join('role_module as pivot', function (JoinClause $join) use ($roleId, $isRead): void {
                     $join->on('pivot.module_id', '=', 'modules.id')
                         ->where('pivot.role_id', '=', $roleId)
-                        ->where('pivot.read', '=', 1)
                         ->whereNull('pivot.deleted_at');
+
+                    if ($isRead) {
+                        $join->where('pivot.read', '=', 1);
+                    }
                 })
                 ->whereNotNull('modules.header_id')
                 ->get();
@@ -94,7 +99,7 @@ class ModuleRepository extends Repository implements ModuleRepositoryInterface
      * @return ModuleEntity[]
      */
     #[Override]
-    public function getALl(): array
+    public function getAll(): array
     {
         try {
             $columns = [
@@ -136,6 +141,151 @@ class ModuleRepository extends Repository implements ModuleRepositoryInterface
             }
 
             return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil semua daftar module berdasarkan role id.
+     *
+     * @return ModuleEntity[]
+     */
+    #[Override]
+    public function getAllByRoleId(string $roleId): array
+    {
+        try {
+            // Daftar kolom untuk module detail
+            // dengan akses custom yang masih false.
+            $columns = [
+                'id',
+                'name',
+                'header_id',
+                'icon',
+                'path',
+                'route',
+                'created_at',
+                'updated_at',
+                'deleted_at',
+                DB::raw('0 as `create`'),
+                DB::raw('0 as `read`'),
+                DB::raw('0 as `update`'),
+                DB::raw('0 as `remove`'),
+                DB::raw('0 as `delete`'),
+            ];
+
+            // Ambil semua daftar module detail (yang memiliki header_id)
+            $moduleDetails = $this->model->query()
+                ->select($columns)
+                ->whereNotNull('header_id')
+                ->get();
+
+            // Ambil semua module header (yang tidak memiliki header_id)
+            $moduleHeaders = $this->model->query()
+                ->whereNull('header_id')
+                ->get();
+
+            // Ambil akses module (pivot) berdasarkan role_id.
+            $pivots = DB::table('role_module')
+                ->where('role_id', '=', $roleId)
+                ->get();
+
+            $result = [];
+
+            foreach ($moduleHeaders as $moduleHeader) {
+                $resultDetails = [];
+
+                foreach ($moduleDetails as $moduleDetail) {
+                    foreach ($pivots as $pivot) {
+
+                        // Periksa jika role sudah memiliki akses berdasarkan module detail
+                        // ubah akses custom yang sebelumnya false menjadi sesuai dengan
+                        // akses yang dimiliki role tersebut.
+                        if ($pivot->module_id === $moduleDetail->id) {
+                            $moduleDetail->create = $pivot->create;
+                            $moduleDetail->read = $pivot->read;
+                            $moduleDetail->update = $pivot->update;
+                            $moduleDetail->remove = $pivot->remove;
+                            $moduleDetail->delete = $pivot->delete;
+                        }
+                    }
+
+                    // Metakan module detail berdasarkan module headernya
+                    if ($moduleHeader->id === $moduleDetail->header_id) {
+                        $resultDetails[] = $this->mapModelToDetailModuleValue($moduleDetail);
+                    }
+                }
+
+                $result[] = $this->mapModelToModuleEntity($moduleHeader, $resultDetails);
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Insert data akses module (role_module)
+     */
+    public function createAccess(ModuleAccessDTO $dto): void
+    {
+        try {
+            DB::connection(pos_connection())
+                ->table('role_module')
+                ->insert($dto->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Update data module access (role_module)
+     */
+    public function updateAccess(ModuleAccessDTO $dto): void
+    {
+        try {
+            DB::connection(pos_connection())
+                ->table('role_module')
+                ->where('role_id', '=', $dto->roleId)
+                ->where('module_id', '=', $dto->moduleId)
+                ->update($dto->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Update data module access (role_module)
+     */
+    public function deleteAccess(string $roleId, string $moduleId): void
+    {
+        try {
+            DB::connection(pos_connection())
+                ->table('role_module')
+                ->where('role_id', '=', $roleId)
+                ->where('module_id', '=', $moduleId)
+                ->delete();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

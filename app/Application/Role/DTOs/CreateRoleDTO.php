@@ -20,8 +20,6 @@ class CreateRoleDTO extends DTO
 
     /**
      * Konversi data object ke array.
-     *
-     * @return array
      */
     #[Override]
     public function toArray(): array

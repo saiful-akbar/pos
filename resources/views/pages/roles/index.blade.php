@@ -24,6 +24,8 @@
 
     <x-slot:script>
         <script>
+            const baseUrl = $('meta[name=base-url]').attr('content');
+
             const table = app.dataTable('#roleTable', {
                 serverside: true,
                 ajax: "{{ route('master.roles') }}",
@@ -51,6 +53,21 @@
                         data: 'updated_at',
                         searchable: false,
                         render: (data) => app.timestampForHuman(data)
+                    },
+                    {
+                        title: 'Aksi',
+                        data: 'id',
+                        className: 'text-center',
+                        searchable: false,
+                        orderlable: false,
+                        render: (data) => {
+                            return `
+                                <a role="button" class="btn btn-sm btn-light" href="${baseUrl}/master/roles/${data}/edit">
+                                    <span class="material-symbols-outlined me-1">edit</span>
+                                    <span>Edit</span>
+                                </a>
+                            `;
+                        }
                     },
                 ]
             });

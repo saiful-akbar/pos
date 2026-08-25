@@ -13,7 +13,7 @@ interface ModuleRepositoryInterface
      *
      * @return ModuleEntity[]
      */
-    public function getByRoleId(string $roleId): array;
+    public function getByRoleId(string $roleId, bool $isRead = false): array;
 
     /**
      * Mengambil semua daftar module
@@ -21,4 +21,11 @@ interface ModuleRepositoryInterface
      * @return ModuleEntity[]
      */
     public function getAll(): array;
+
+    /**
+     * Mengambil semua daftar module berdasarkan role id.
+     *
+     * @return ModuleEntity[]
+     */
+    public function getAllByRoleId(string $roleId): array;
 }

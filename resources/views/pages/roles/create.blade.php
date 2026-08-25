@@ -60,7 +60,7 @@
         @foreach ($modules as $module)
             <div class="row mt-7">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="card shadow-sm">
                         <div class="card-header">
                             <div class="row align-items-center">
                                 @isset($module->icon)

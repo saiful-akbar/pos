@@ -33,8 +33,8 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->boolean('create');
             $table->boolean('read');
+            $table->boolean('create');
             $table->boolean('update');
             $table->boolean('remove');
             $table->boolean('delete');

@@ -16,9 +16,6 @@ class CreateRole
 
     /**
      * Execute method.
-     *
-     * @param CreateRoleDTO $dto
-     * @return void
      */
     public function execute(CreateRoleDTO $dto): void
     {
