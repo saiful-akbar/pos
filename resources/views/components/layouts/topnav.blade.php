@@ -1,5 +1,5 @@
 {{-- Topnav (base) --}}
-<nav class="navbar navbar-expand-xl topnav-base">
+<nav class="navbar navbar-expand-xl topnav-base bg-body shadow-sm">
     <div class="container-lg">
         <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="index-2.html">
             @isset($setting->store_logo)
@@ -25,6 +25,7 @@
 
                     <span class="d-none d-xl-block">{{ user()->full_name }}</span>
                 </a>
+
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="{{ route('setting') }}">Pengaturan</a></li>
                     <li><hr class="dropdown-divider" /></li>
@@ -43,7 +44,7 @@
             <nav class="navbar-nav nav-pills mx-auto mt-4 mt-xl-0">
                 <div class="nav-item">
                     <a class="nav-link {{ active_path('/dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}" role="button">
-                        Dashboards
+                        Dashboard
                     </a>
                 </div>
 
@@ -69,33 +70,14 @@
 
             {{-- Nav --}}
             <nav class="navbar-nav nav-pills">
-                <div class="dropdown my-n2 d-none d-xl-flex">
-                    <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                            <img class="avatar-img" src="{{ user_photo() }}" alt="{{ user()->full_name }}" />
-                        </span>
-                        <span class="d-none d-xl-block ms-xl-2">{{ user()->full_name }}</span>
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('setting') }}">Pengaturan</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item logout" href="#">Keluar</a></li>
-                    </ul>
-                </div>
-
-                {{-- Divider --}}
-                <div class="vr align-self-center bg-dark mx-2 d-none d-xl-flex"></div>
-
                 <div class="nav-item dropdown">
                     <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
                         <span class="material-symbols-outlined">settings</span>
                         <span class="d-xl-none ms-3">Settings</span>
                     </a>
 
-                    <div class="dropdown-menu ">
-                        <h6 class="dropdown-header">Color mode</h6>
+                    <div class="dropdown-menu border">
+                        <h6 class="dropdown-header">Tema</h6>
                         <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button">
                             <span class="material-symbols-outlined me-2">light_mode</span>
                             <span>Terang</span>
@@ -111,34 +93,53 @@
 
                         {{-- Navigation position --}}
                         <hr class="dropdown-divider" />
-                        <h6 class="dropdown-header">Navigation position</h6>
+                        <h6 class="dropdown-header">Posisi Navigasi</h6>
                         <a class="dropdown-item d-flex" data-bs-navigation-position-value="sidenav" href="#" role="button">
                             <span class="material-symbols-outlined me-2">keyboard_tab_rtl</span>
-                            <span>Sidenav</span>
+                            <span>Samping</span>
                         </a>
                         <a class="dropdown-item d-flex" data-bs-navigation-position-value="topnav" href="#" role="button">
                             <span class="material-symbols-outlined me-2">vertical_align_top</span>
-                            <span>Topnav</span>
+                            <span>Atas</span>
                         </a>
 
                         {{-- Sidenav sizing --}}
                         <div class="sidenav-sizing">
                             <hr class="dropdown-divider" />
-                            <h6 class="dropdown-header">Sidenav sizing</h6>
+                            <h6 class="dropdown-header">Ukuran Navigasi</h6>
                             <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="base" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">density_large</span>
-                                <span>Base</span>
+                                <span>Bawaan</span>
                             </a>
                             <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="md" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">density_medium</span>
-                                <span>Medi</span>um
+                                <span>Sedang</span>
                             </a>
                             <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="sm" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">density_small</span>
-                                <span>Small</span>
+                                <span>Kecil</span>
                             </a>
                         </div>
                     </div>
+                </div>
+                
+                {{-- Divider --}}
+                <div class="vr align-self-center bg-dark mx-2 d-none d-xl-flex"></div>
+                
+                <div class="dropdown my-n2 d-none d-xl-flex">
+                    <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
+                            <img class="avatar-img" src="{{ user_photo() }}" alt="{{ user()->full_name }}" />
+                        </span>
+                        <span class="d-none d-xl-block ms-xl-2">{{ user()->full_name }}</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ route('setting') }}">Pengaturan</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item logout" href="#">Keluar</a></li>
+                    </ul>
                 </div>
             </nav>
 
@@ -149,7 +150,7 @@
 </nav>
 
 {{-- Topnav (toolbar) --}}
-<nav class="navbar topnav-toolbar d-none d-xl-flex px-xl-6">
+<nav class="navbar topnav-toolbar d-none d-xl-flex px-xl-6" id="topnavToolbar">
     <div class="container flex-column align-items-stretch">
         <div class="row">
             <div class="col"></div>
@@ -176,3 +177,18 @@
         </div>
     </div>
 </nav>
+
+<script>
+    (() => {
+        const navigationPosition = document.documentElement.getAttribute("data-bs-navigation-position");
+        const topnavToolbar = document.querySelector('#topnavToolbar');
+
+        if (navigationPosition === 'topnav') {
+            topnavToolbar.classList.remove('d-xl-flex');
+            topnavToolbar.classList.add('d-none');
+        } else {
+            topnavToolbar.classList.remove('d-none');
+            topnavToolbar.classList.add('d-xl-flex');
+        }
+    })();
+</script>

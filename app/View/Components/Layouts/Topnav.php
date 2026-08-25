@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\View\Components\Layouts;
 
-use App\Domain\Module\Entities\ModuleEntity;
 use App\Domain\Setting\Entities\SettingEntity;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -14,8 +13,6 @@ class Topnav extends Component
 {
     /**
      * Daftar akses module.
-     *
-     * @var ModuleEntity[]
      */
     public array $modules;
 

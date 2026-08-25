@@ -1,20 +1,46 @@
 (() => {
   "use strict";
 
-  const getStoredTheme = () => localStorage.getItem("theme");
-  const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
+  const hideTopnavToolbar = (navigationPosition) => {
+    const topnavToolbar = document.querySelector("#topnavToolbar");
 
-  const getStoredNavigationPosition = () =>
-    localStorage.getItem("navigationPosition");
-  const setStoredNavigationPosition = (navigationPosition) =>
+    if (navigationPosition === "topnav") {
+      topnavToolbar.classList.remove("d-xl-flex");
+      topnavToolbar.classList.add("d-none");
+    } else {
+      topnavToolbar.classList.add("d-xl-flex");
+      topnavToolbar.classList.remove("d-none");
+    }
+  };
+
+  const getStoredTheme = () => {
+    return localStorage.getItem("theme");
+  };
+
+  const setStoredTheme = (theme) => {
+    localStorage.setItem("theme", theme);
+  };
+
+  const getStoredNavigationPosition = () => {
+    return localStorage.getItem("navigationPosition");
+  };
+
+  const setStoredNavigationPosition = (navigationPosition) => {
     localStorage.setItem("navigationPosition", navigationPosition);
+    hideTopnavToolbar(navigationPosition);
+  };
 
-  const getStoredSidenavSizing = () => localStorage.getItem("sidenavSizing");
-  const setStoredSidenavSizing = (sidenavSizing) =>
+  const getStoredSidenavSizing = () => {
+    return localStorage.getItem("sidenavSizing");
+  };
+
+  const setStoredSidenavSizing = (sidenavSizing) => {
     localStorage.setItem("sidenavSizing", sidenavSizing);
+  };
 
   const getPreferredTheme = () => {
     const storedTheme = getStoredTheme();
+
     if (storedTheme) {
       return storedTheme;
     }
@@ -176,6 +202,7 @@
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", () => {
       const storedTheme = getStoredTheme();
+
       if (storedTheme !== "light" && storedTheme !== "dark") {
         setTheme(getPreferredTheme());
       }
@@ -189,10 +216,13 @@
     document.querySelectorAll("[data-bs-theme-value]").forEach((toggle) => {
       toggle.addEventListener("click", (e) => {
         e.preventDefault();
+
         const theme = toggle.getAttribute("data-bs-theme-value");
+
         const settingsSwitcher = toggle
           .closest(".nav-item")
           .querySelector("[data-bs-settings-switcher]");
+
         setStoredTheme(theme);
         setTheme(theme);
         showActiveTheme(theme, settingsSwitcher);
@@ -205,12 +235,15 @@
       .forEach((toggle) => {
         toggle.addEventListener("click", (e) => {
           e.preventDefault();
+
           const navigationPosition = toggle.getAttribute(
             "data-bs-navigation-position-value",
           );
+
           const settingsSwitcher = toggle
             .closest(".nav-item")
             .querySelector("[data-bs-settings-switcher]");
+
           setStoredNavigationPosition(navigationPosition);
           setNavigationPosition(navigationPosition);
           showActiveNavigationPosition(navigationPosition, settingsSwitcher);
@@ -222,12 +255,15 @@
       .forEach((toggle) => {
         toggle.addEventListener("click", (e) => {
           e.preventDefault();
+
           const sidenavSizing = toggle.getAttribute(
             "data-bs-sidenav-sizing-value",
           );
+
           const settingsSwitcher = toggle
             .closest(".nav-item")
             .querySelector("[data-bs-settings-switcher]");
+
           setStoredSidenavSizing(sidenavSizing);
           setSidenavSizing(sidenavSizing);
           showActiveSidenavSizing(sidenavSizing, settingsSwitcher);

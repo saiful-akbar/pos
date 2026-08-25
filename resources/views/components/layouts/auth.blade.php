@@ -13,7 +13,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/logo.svg') }}" type="image/x-icon" />
 
     <script src="{{ asset('assets/js/settings.js') }}"></script>
-
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @isset($style)

@@ -1,4 +1,4 @@
-<aside class="aside aside-sm sidenav-sm">
+<aside class="aside aside-sm sidenav-sm shadow-sm">
     <nav class="navbar navbar-expand-xl navbar-vertical">
         <div class="container-lg">
             <a class="navbar-brand fs-5 fw-bold text-xl-center mb-xl-4" href="{{ route('dashboard') }}">
@@ -79,9 +79,8 @@
                             <span class="d-xl-none ms-3">Settings</span>
                         </a>
 
-                        <div class="dropdown-menu top-auto bottom-0 ms-xl-3">
-                            {{-- Color mode --}}
-                            <h6 class="dropdown-header">Color mode</h6>
+                        <div class="dropdown-menu top-auto bottom-0 ms-xl-3 border">
+                            <h6 class="dropdown-header">Tema</h6>
                             <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">light_mode</span>
                                 <span>Terang</span>
@@ -97,31 +96,31 @@
 
                             {{-- Navigation position --}}
                             <hr class="dropdown-divider" />
-                            <h6 class="dropdown-header">Navigation position</h6>
+                            <h6 class="dropdown-header">Posisi Navigasi</h6>
                             <a class="dropdown-item d-flex" data-bs-navigation-position-value="sidenav" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">keyboard_tab_rtl</span>
-                                <span>Sidenav</span>
+                                <span>Samping</span>
                             </a>
                             <a class="dropdown-item d-flex" data-bs-navigation-position-value="topnav" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">vertical_align_top</span>
-                                <span>Topnav</span>
+                                <span>Atas</span>
                             </a>
 
                             {{-- Sidenav sizing --}}
                             <div class="sidenav-sizing">
                                 <hr class="dropdown-divider" />
-                                <h6 class="dropdown-header">Sidenav sizing</h6>
+                                <h6 class="dropdown-header">Ukuran Navigasi</h6>
                                 <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="base" href="#" role="button">
                                     <span class="material-symbols-outlined me-2">density_large</span>
-                                    <span>Base</span>
+                                    <span>Bawaan</span>
                                 </a>
                                 <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="md" href="#" role="button">
                                     <span class="material-symbols-outlined me-2">density_medium</span>
-                                    <span>Medi</span>um
+                                    <span>Sedang</span>
                                 </a>
                                 <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="sm" href="#" role="button">
                                     <span class="material-symbols-outlined me-2">density_small</span>
-                                    <span>Small</span>
+                                    <span>Kecil</span>
                                 </a>
                             </div>
                         </div>

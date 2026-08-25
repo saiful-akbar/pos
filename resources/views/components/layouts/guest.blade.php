@@ -29,9 +29,7 @@
 <body>
     <x-preloader></x-preloader>
 
-    <div class="container-fluid">
-        {{ $slot }}
-    </div>
+    {{ $slot }}
 
     {{-- Vendor JS --}}
     <script src="{{ asset('assets/js/vendor.bundle.js') }}"></script>
