@@ -1,5 +1,22 @@
 class App {
-  dataTable(element, properties) {
+  constructor() {
+    this.baseUrl = document
+      .querySelector("meta[name=base-url]")
+      .getAttribute("content");
+
+    this.csrfToken = document
+      .querySelector("meta[name=csrf-token]")
+      .getAttribute("content");
+  }
+
+  /**
+   * Inisialisasi datatable.
+   *
+   * @param {element} element
+   * @param {object} options
+   * @returns
+   */
+  dataTable(element, options) {
     return new DataTable(element, {
       processing: true,
       scrollX: true,
@@ -28,11 +45,17 @@ class App {
         $(`${element}_wrapper`).find("select").removeClass("form-select-sm");
         $(`${element}_wrapper`).find("select").addClass("border");
       },
-      ...properties,
+      ...options,
     });
   }
 
-  timestampForHuman(timestamp) {
+  /**
+   * Format waktu
+   *
+   * @param {string} timestamp
+   * @returns string
+   */
+  dateTimeFormat(timestamp) {
     const now = new Date(timestamp);
     const day = now.getDate();
     const month = now.getMonth();
@@ -62,6 +85,14 @@ class App {
     seconds = seconds < 10 ? `0${seconds}` : seconds;
 
     return `${day} ${months[month]} ${year}, ${hours}:${minutes}:${seconds}`;
+  }
+
+  userPhoto(path = null) {
+    if (path === null) {
+      return `${this.baseUrl}/assets/images/user.webp`;
+    }
+
+    return `${this.baseUrl}/storage/${path}`;
   }
 }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
@@ -55,6 +56,18 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->middleware('module:master.roles,create')->name('.store');
                 Route::get('/{id}/edit', 'edit')->middleware('module:master.roles,update')->name('.edit');
                 Route::put('/{id}', 'update')->middleware('module:master.roles,update')->name('.update');
+            });
+
+        Route::controller(UserController::class)
+            ->middleware('throttle:global')
+            ->name('.users')
+            ->prefix('/users')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:master.users,read');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.users,create');
+                Route::post('/', 'store')->name('.store')->middleware('module:master.users,create');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.users,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.users,update');
             });
     });
 });

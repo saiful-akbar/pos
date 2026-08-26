@@ -122,6 +122,30 @@ class RoleRepository extends Repository implements RoleRepositoryInterface
     }
 
     /**
+     * Mengambil semua daftar
+     *
+     * @return RoleEntity[]
+     */
+    #[Override]
+    public function getActive(): array
+    {
+        try {
+            return $this->model->query()
+                ->orderBy('name', 'asc')
+                ->get()
+                ->map(fn ($role) => $this->mapModelTpRoleEntity($role))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Mapping model ke class RoleEntity.
      */
     private function mapModelTpRoleEntity(Role $model): RoleEntity

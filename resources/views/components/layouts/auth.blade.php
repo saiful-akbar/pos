@@ -59,6 +59,10 @@
     <script src="{{ asset('assets/vendor/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
+    @isset($script)
+        {{ $script }}
+    @endisset
+
     <script>
         $(document).ready(function() {
             $('#preloader').fadeOut();
@@ -69,10 +73,6 @@
             $('form[name=logout]').submit();
         });
     </script>
-
-    @isset($script)
-        {{ $script }}
-    @endisset
 </body>
 
 </html>

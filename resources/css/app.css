@@ -29,6 +29,11 @@ body {
   opacity: 0.5 !important;
 }
 
+p {
+  margin: 0;
+  padding: 0;
+}
+
 #preloader {
   display: flex;
   justify-content: center;

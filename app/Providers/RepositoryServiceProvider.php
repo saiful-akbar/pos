@@ -11,16 +11,22 @@ use App\Application\Module\UseCases\GetModulesByRoleId;
 use App\Application\Module\UseCases\UpdateModuleAccess;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
+use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Setting\UseCases\FindSetting;
+use App\Application\User\UseCases\CreateUser;
+use App\Application\User\UseCases\FindUserById;
+use App\Application\User\UseCases\GetUsersTable;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Repositories\ModuleRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -53,6 +59,14 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateRole::class => RoleRepository::class,
             FindRoleById::class => RoleRepository::class,
             UpdateRole::class => RoleRepository::class,
+            GetActiveRoles::class => RoleRepository::class,
+        ],
+
+        // User
+        UserRepositoryInterface::class => [
+            GetUsersTable::class => UserRepository::class,
+            FindUserById::class => UserRepository::class,
+            CreateUser::class => UserRepository::class,
         ],
     ];
 

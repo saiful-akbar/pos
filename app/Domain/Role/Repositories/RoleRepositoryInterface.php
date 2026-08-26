@@ -31,4 +31,11 @@ interface RoleRepositoryInterface
      * Update role.
      */
     public function update(UpdateRoleDTO $dto): void;
+
+    /**
+     * Mengambil semua daftar
+     *
+     * @return RoleEntity[]
+     */
+    public function getActive(): array;
 }

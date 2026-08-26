@@ -120,13 +120,13 @@ if (! function_exists('user_photo')) {
     /**
      * User photo.
      */
-    function user_photo(): string
+    function user_photo(?string $path = null): string
     {
-        if (user()->photo === null) {
+        if ($path === null) {
             return asset('assets/images/user.webp');
         }
 
-        return storage_asset(user()->photo);
+        return storage_asset($path);
     }
 }
 

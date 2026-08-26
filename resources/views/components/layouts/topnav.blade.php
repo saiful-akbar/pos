@@ -20,7 +20,7 @@
             <div class="dropdown my-n2">
                 <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                        <img class="avatar-img" src="{{ user_photo() }}" alt="{{ user()->full_name }}" />
+                        <img class="avatar-img" src="{{ user_photo(user()->photo) }}" alt="{{ user()->full_name }}" />
                     </span>
 
                     <span class="d-none d-xl-block">{{ user()->full_name }}</span>
@@ -130,7 +130,7 @@
                     <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                            <img class="avatar-img" src="{{ user_photo() }}" alt="{{ user()->full_name }}" />
+                            <img class="avatar-img" src="{{ user_photo(user()->photo) }}" alt="{{ user()->full_name }}" />
                         </span>
                         <span class="d-none d-xl-block ms-xl-2">{{ user()->full_name }}</span>
                     </a>
@@ -162,7 +162,7 @@
                     <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                            <img class="avatar-img" src="{{ user_photo() }}" alt="{{ user()->full_name }}" />
+                            <img class="avatar-img" src="{{ user_photo(user()->photo) }}" alt="{{ user()->full_name }}" />
                         </span>
                         <span class="d-none d-xl-block ms-xl-2">{{ user()->full_name }}</span>
                     </a>

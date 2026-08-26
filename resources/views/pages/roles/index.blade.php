@@ -18,7 +18,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="roleTable" class="table table-hover w-100"></table>
+                    <table id="roleTable" class="table table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -31,31 +31,31 @@
             const tableColumns = [
                 {
                     title: 'Nama',
-                    name: 'name',
+                    name: 'roles.name',
                     data: 'name',
                     className: 'text-nowrap',
                 },
                 {
                     title: 'Deskripsi',
-                    name: 'description',
+                    name: 'roles.description',
                     data: 'description',
                     className: 'text-nowrap',
                 },
                 {
                     title: 'Dibuat',
-                    name: 'created_at',
+                    name: 'roles.created_at',
                     data: 'created_at',
                     className: 'text-nowrap',
                     searchable: false,
-                    render: (data) => app.timestampForHuman(data)
+                    render: (data) => app.dateTimeFormat(data)
                 },
                 {
                     title: 'Diedit',
-                    name: 'updated_at',
+                    name: 'roles.updated_at',
                     data: 'updated_at',
                     className: 'text-nowrap',
                     searchable: false,
-                    render: (data) => app.timestampForHuman(data)
+                    render: (data) => app.dateTimeFormat(data)
                 },
             ];
 
@@ -80,7 +80,7 @@
             }
 
             const table = app.dataTable('#roleTable', {
-                serverside: true,
+                serverSide: true,
                 ajax: "{{ route('master.roles') }}",
                 columns: tableColumns,
             });
