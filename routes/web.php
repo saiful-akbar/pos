@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
@@ -68,6 +69,18 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->name('.store')->middleware('module:master.users,create');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.users,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.users,update');
+            });
+
+        Route::controller(CategoryController::class)
+            ->middleware('throttle:global')
+            ->name('.categories')
+            ->prefix('/categories')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:master.categories,read');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.categories,create');
+                Route::post('/', 'store')->name('.store')->middleware('module:master.categories,create');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.categories,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.categories,update');
             });
     });
 });

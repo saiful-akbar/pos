@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\Category\UseCases\CreateCategory;
+use App\Application\Category\UseCases\FindCategoryById;
+use App\Application\Category\UseCases\GetCategoriesTable;
+use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
@@ -19,11 +23,13 @@ use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
 use App\Application\User\UseCases\GetUsersTable;
 use App\Application\User\UseCases\UpdateUser;
+use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Repositories\CategoryRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
@@ -69,6 +75,14 @@ class RepositoryServiceProvider extends ServiceProvider
             FindUserById::class => UserRepository::class,
             CreateUser::class => UserRepository::class,
             UpdateUser::class => UserRepository::class,
+        ],
+
+        // Category
+        CategoryRepositoryInterface::class => [
+            GetCategoriesTable::class => CategoryRepository::class,
+            FindCategoryById::class => CategoryRepository::class,
+            CreateCategory::class => CategoryRepository::class,
+            UpdateCategory::class => CategoryRepository::class,
         ],
     ];
 

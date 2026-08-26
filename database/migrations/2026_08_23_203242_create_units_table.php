@@ -22,7 +22,9 @@ return new class() extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('name', 100)->unique('units_name_unique');
+            $table->string('code', 100)->unique();
+            $table->string('name');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -61,7 +61,9 @@ class Category extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'code',
         'name',
+        'is_active',
     ];
 
     /**
