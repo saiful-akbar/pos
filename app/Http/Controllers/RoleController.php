@@ -6,16 +6,19 @@ namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
+use App\Application\Module\UseCases\UpdateModuleAccess;
 use App\Application\Role\DTOs\CreateRoleDTO;
+use App\Application\Role\DTOs\UpdateRoleDTO;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetAllRolesTable;
+use App\Application\Role\UseCases\UpdateRole;
 use App\Http\Requests\Roles\CreateRoleRequest;
 use App\Http\Requests\Roles\UpdateRoleRequest;
-use App\Repositories\ModuleRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class RoleController extends Controller
@@ -78,8 +81,6 @@ class RoleController extends Controller
      */
     public function edit(string $id): View
     {
-        app(ModuleRepository::class)->getAllByRoleId($id);
-
         $role = app(FindRoleById::class)->execute(id: $id);
 
         if ($role === null) {
@@ -96,7 +97,28 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
-        dd($request->all());
+        if (count($request->array('modules')) === 0) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'role_name' => 'Pilih minimal 1 akses modul.',
+                ]);
+        }
+
+        DB::connection(pos_connection())->transaction(function () use ($request, $id) {
+            app(UpdateRole::class)->execute(
+                dto: new UpdateRoleDTO(
+                    id: $id,
+                    name: $request->validated('role_name'),
+                    description: $request->validated('role_description'),
+                ),
+            );
+
+            app(UpdateModuleAccess::class)->execute(
+                roleId: $id,
+                modules: $request->array('modules'),
+            );
+        });
 
         return to_route('master.roles.edit', ['id' => $id])->with('alert', [
             'status' => 'success',

@@ -9,6 +9,7 @@ use App\Domain\Setting\Entities\SettingEntity;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 if (! function_exists('parse_date_time_immutable')) {
 
@@ -150,5 +151,18 @@ if (! function_exists('pos_connection')) {
     function pos_connection(): string
     {
         return 'pos';
+    }
+}
+
+if (! function_exists('ulid')) {
+
+    /**
+     * ULID
+     *
+     * @return string
+     */
+    function ulid(): string
+    {
+        return strtolower((string) Str::ulid());
     }
 }

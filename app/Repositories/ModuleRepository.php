@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Module\DTOs\ModuleAccessDTO;
+use App\Application\Module\DTOs\CreateModuleAccessDTO;
+use App\Application\Module\DTOs\UpdateModuleAccessDTO;
 use App\Base\Repository;
+use App\Domain\Module\Entities\DetailModuleEntity;
 use App\Domain\Module\Entities\ModuleEntity;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
@@ -236,9 +238,61 @@ class ModuleRepository extends Repository implements ModuleAccessRepositoryInter
     }
 
     /**
+     * Mengambil daftar hanya module detail berdasarkan role id.
+     *
+     * @param string $roleId
+     * @return DetailModuleEntity[]
+     */
+    #[Override]
+    public function getDetailsByRoleId(string $roleId): array
+    {
+        try {
+            $columns = [
+                'modules.id as id',
+                'modules.header_id as header_id',
+                'modules.name as name',
+                'modules.icon as icon',
+                'modules.path as path',
+                'modules.route as route',
+                'pivot.create as create',
+                'pivot.read as read',
+                'pivot.update as update',
+                'pivot.remove as remove',
+                'pivot.delete as delete',
+            ];
+
+            $modules = $this->model->query()
+                ->from('modules as modules')
+                ->select($columns)
+                ->join('role_module as pivot', function (JoinClause $join) use ($roleId): void {
+                    $join->on('pivot.module_id', '=', 'modules.id')
+                        ->where('pivot.role_id', '=', $roleId)
+                        ->whereNull('pivot.deleted_at');
+                })
+                ->whereNotNull('modules.header_id')
+                ->get();
+
+            $result = [];
+
+            foreach ($modules as $module) {
+                $result[] = $this->mapModelToDetailModuleEntity($module);
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Insert data akses module (role_module)
      */
-    public function createAccess(ModuleAccessDTO $dto): void
+    public function createAccess(CreateModuleAccessDTO $dto): void
     {
         try {
             DB::connection(pos_connection())
@@ -257,7 +311,7 @@ class ModuleRepository extends Repository implements ModuleAccessRepositoryInter
     /**
      * Update data module access (role_module)
      */
-    public function updateAccess(ModuleAccessDTO $dto): void
+    public function updateAccess(UpdateModuleAccessDTO $dto): void
     {
         try {
             DB::connection(pos_connection())
@@ -319,6 +373,25 @@ class ModuleRepository extends Repository implements ModuleAccessRepositoryInter
     private function mapModelToDetailModuleValue(Module $model): DetailModuleValue
     {
         return new DetailModuleValue(
+            id: $model->id,
+            name: $model->name,
+            icon: $model->icon,
+            path: $model->path,
+            route: $model->route,
+            create: $model->create === 1,
+            read: $model->read === 1,
+            update: $model->update === 1,
+            remove: $model->remove === 1,
+            delete: $model->delete === 1,
+        );
+    }
+
+    /**
+     * Pemetaan model ke DetailModuleEntity
+     */
+    private function mapModelToDetailModuleEntity(Module $model): DetailModuleEntity
+    {
+        return new DetailModuleEntity(
             id: $model->id,
             name: $model->name,
             icon: $model->icon,

@@ -8,10 +8,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="base-url" content="{{ url('/') }}" />
 
+    @isset($setting?->store_logo)
+        <link rel="shortcut icon" href="{{ storage_asset($setting?->store_logo) }}" type="image/x-icon" />
+    @else
+        <link rel="shortcut icon" href="{{ asset('assets/images/logo.svg') }}" type="image/x-icon" />
+    @endisset
+
     <title>{{ $title }} - {{ config('app.name') }}</title>
-
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo.svg') }}" type="image/x-icon" />
-
+    
     <script src="{{ asset('assets/js/settings.js') }}"></script>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
