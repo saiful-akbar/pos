@@ -18,6 +18,7 @@ use App\Application\Setting\UseCases\FindSetting;
 use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
 use App\Application\User\UseCases\GetUsersTable;
+use App\Application\User\UseCases\UpdateUser;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
@@ -67,6 +68,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetUsersTable::class => UserRepository::class,
             FindUserById::class => UserRepository::class,
             CreateUser::class => UserRepository::class,
+            UpdateUser::class => UserRepository::class,
         ],
     ];
 

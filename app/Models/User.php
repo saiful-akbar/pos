@@ -69,6 +69,7 @@ class User extends Authenticatable
         'password',
         'full_name',
         'photo',
+        'is_active',
     ];
 
     /**

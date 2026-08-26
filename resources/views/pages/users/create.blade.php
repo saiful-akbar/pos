@@ -21,7 +21,7 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6">
+                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                 <x-form-floating-input
                                     required
                                     type="text"
@@ -61,7 +61,7 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6">
+                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                 <x-form-floating-input
                                     required
                                     type="text"
@@ -102,10 +102,6 @@
 
                     <div class="card-body">
                         <div class="row align-items-center">
-                            <div class="col-auto">
-                                <label for="photo" class="fs-6">Foto</label>
-                            </div>
-
                             <div class="col">
                                 <input
                                     type="file"

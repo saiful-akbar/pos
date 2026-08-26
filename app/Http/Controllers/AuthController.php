@@ -28,6 +28,17 @@ class AuthController extends Controller
         if (Auth::attempt($request->validated())) {
             $request->session()->regenerate();
 
+            if (! user()->is_active) {
+                Auth::logout();
+
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return to_route('login')
+                    ->withErrors(['username' => 'akun anda tidak aktif.'])
+                    ->onlyInput('username');
+            }
+
             return redirect()->intended('/dashboard');
         }
 

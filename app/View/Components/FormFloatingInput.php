@@ -18,6 +18,7 @@ class FormFloatingInput extends Component
         public string $name,
         public string $id,
         public bool $error = false,
+        public ?string $helperText = null,
     ) {}
 
     /**

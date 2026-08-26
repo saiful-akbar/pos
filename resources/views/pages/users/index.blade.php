@@ -58,19 +58,23 @@
                 },
                 {
                     title: 'Status',
-                    name: 'users.deleted_at',
-                    data: 'deleted_at',
+                    name: 'users.is_active',
+                    data: 'is_active',
                     className: 'text-nowrap',
                     searchable: false,
                     render: (data) => {
-                        if (data === null) {
+                        if (data) {
                             return `
-                                <span class="badge bg-success-subtle text-success">Aktif</span>
+                                <span class="badge bg-success-subtle text-success">
+                                    Aktif
+                                </span>
                             `;
                         }
 
                         return `
-                            <span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>
+                            <span class="badge bg-danger-subtle text-danger">
+                                Tidak Aktif
+                            </span>
                         `;
                     }
                 },

@@ -32,6 +32,7 @@ return new class() extends Migration
             $table->string('password');
             $table->string('full_name', 100);
             $table->string('photo', 100)->nullable();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

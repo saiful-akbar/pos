@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,15 +28,13 @@ class CreateUserRequest extends FormRequest
             'full_name' => ['required', 'string', 'max:100'],
             'role' => ['required', 'exists:roles,id'],
             'username' => ['required', 'string', 'max:200', 'unique:users,username'],
-            'password' => ['required', 'string', 'max:200'],
-            'photo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024']
+            'password' => ['required', 'string', 'max:200', 'min:4'],
+            'photo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
         ];
     }
 
     /**
      * Merubah nama attribute untuk pesan error.
-     *
-     * @return array
      */
     #[Override]
     public function attributes(): array

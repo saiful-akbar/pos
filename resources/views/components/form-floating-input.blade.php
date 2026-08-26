@@ -3,6 +3,10 @@
     <label for="{{ $id }}">{{ $label }}</label>
 </div>
 
+@isset($helperText)
+    <div class="form-text">{{ $helperText }}</div>
+@endisset
+
 @error($name)
     <div class="invalid-feedback">{{ $message }}</div>
 @enderror

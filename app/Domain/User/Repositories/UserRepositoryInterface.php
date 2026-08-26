@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\User\Repositories;
 
 use App\Application\User\DTOs\CreateUserDTO;
+use App\Application\User\DTOs\UpdateUserDTO;
 use App\Domain\User\Entities\UserEntity;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -23,9 +24,11 @@ interface UserRepositoryInterface
 
     /**
      * Menambah user baru.
-     *
-     * @param CreateUserDTO $dto
-     * @return UserEntity
      */
     public function create(CreateUserDTO $dto): UserEntity;
+
+    /**
+     * Update user
+     */
+    public function update(UpdateUserDTO $dto): void;
 }

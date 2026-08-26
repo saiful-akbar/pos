@@ -18,12 +18,9 @@ class CreateUser
 
     /**
      * Execute method
-     *
-     * @param CreateUserDTO $dto
-     * @return UserEntity
      */
     public function execute(CreateUserDTO $dto): UserEntity
     {
-        return DB::transaction(fn() => $this->repository->create($dto));
+        return DB::transaction(fn () => $this->repository->create($dto));
     }
 }

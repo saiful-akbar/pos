@@ -17,7 +17,8 @@ class CreateUserDTO extends Entity
         public readonly string $roleId,
         public readonly string $username,
         public readonly string $password,
-        public readonly ?string $photo,
+        public readonly ?string $photo = null,
+        public readonly ?bool $isActive = true,
     ) {}
 
     #[Override]
@@ -29,6 +30,7 @@ class CreateUserDTO extends Entity
             'username' => $this->username,
             'password' => $this->password,
             'photo' => $this->photo,
+            'is_active' => $this->isActive,
         ];
     }
 }
