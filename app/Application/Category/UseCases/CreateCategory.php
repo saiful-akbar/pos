@@ -21,6 +21,6 @@ class CreateCategory
      */
     public function execute(CreateCategoryDTO $dto): CategoryEntity
     {
-        return DB::transaction(fn() => $this->repository->create($dto));
+        return DB::transaction(fn () => $this->repository->create($dto));
     }
 }

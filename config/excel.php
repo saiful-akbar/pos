@@ -324,7 +324,7 @@ return [
     'transactions' => [
         'handler' => 'db',
         'db' => [
-            'connection' => null,
+            'connection' => env('DB_CONNECTION', null),
         ],
     ],
 

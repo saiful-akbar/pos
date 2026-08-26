@@ -11,6 +11,7 @@ use App\Domain\Category\Entities\CategoryEntity;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
+use Override;
 
 class CategoryRepository extends Repository implements CategoryRepositoryInterface
 {
@@ -86,6 +87,29 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
             $this->model->query()
                 ->where('id', '=', $dto->id)
                 ->update($dto->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil semua data kategori
+     *
+     * @return CategoryEntity[]
+     */
+    #[Override]
+    public function getAll(): array
+    {
+        try {
+            return $this->model->query()
+                ->get()
+                ->map(fn ($category) => $this->mapModelToCategoryEntity($category))
+                ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

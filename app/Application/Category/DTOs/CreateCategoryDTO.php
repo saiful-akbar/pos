@@ -22,7 +22,7 @@ class CreateCategoryDTO extends DTO
     public function toArray(): array
     {
         return [
-            'code' => $this->code,
+            'code' => str_replace(' ', '-', strtoupper($this->code)),
             'name' => $this->name,
             'is_active' => $this->isActive,
         ];

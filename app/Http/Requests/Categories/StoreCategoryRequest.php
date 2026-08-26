@@ -25,7 +25,7 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:100'],
+            'code' => ['required', 'string', 'max:100', 'unique:categories,code'],
             'name' => ['required', 'string', 'max:200'],
             'status' => ['required', 'boolean'],
         ];
@@ -33,8 +33,6 @@ class StoreCategoryRequest extends FormRequest
 
     /**
      * Merubah nama attribut untuk pesan error.
-     *
-     * @return array
      */
     #[Override]
     public function attributes(): array
@@ -42,7 +40,7 @@ class StoreCategoryRequest extends FormRequest
         return [
             'code' => 'kode',
             'name' => 'nama',
-            'status' => 'status'
+            'status' => 'status',
         ];
     }
 }

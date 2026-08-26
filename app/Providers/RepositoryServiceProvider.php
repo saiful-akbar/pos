@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Application\Category\UseCases\CreateCategory;
 use App\Application\Category\UseCases\FindCategoryById;
+use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Category\UseCases\GetCategoriesTable;
 use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
@@ -83,6 +84,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindCategoryById::class => CategoryRepository::class,
             CreateCategory::class => CategoryRepository::class,
             UpdateCategory::class => CategoryRepository::class,
+            GetAllCategories::class => CategoryRepository::class,
         ],
     ];
 

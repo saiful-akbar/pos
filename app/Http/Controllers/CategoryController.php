@@ -11,20 +11,22 @@ use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetCategoriesTable;
 use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Exports\Categories\TemplateCategoryExport;
+use App\Http\Requests\Categories\ImportExcelCategoryRequest;
 use App\Http\Requests\Categories\StoreCategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
+use App\Imports\Categories\CategoryImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CategoryController extends Controller
 {
     /**
      * Menampilkan halaman daftar kategori.
-     *
-     * @param Request $request
-     * @return JsonResponse|View
      */
     public function index(Request $request): JsonResponse|View
     {
@@ -42,8 +44,6 @@ class CategoryController extends Controller
 
     /**
      * Menampilkan halaman create kategory
-     *
-     * @return View
      */
     public function create(): View
     {
@@ -52,8 +52,6 @@ class CategoryController extends Controller
 
     /**
      * Membuat (menyimpan) kategori baru
-     *
-     * @return RedirectResponse
      */
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
@@ -67,15 +65,12 @@ class CategoryController extends Controller
 
         return to_route('master.categories.create')->with('alert', [
             'status' => 'success',
-            'message' => 'Kategori baru berhasil ditambahkan.'
+            'message' => 'Kategori baru berhasil ditambahkan.',
         ]);
     }
 
     /**
      * Menampilkan halaman edit kategori.
-     *
-     * @param string $id
-     * @return View
      */
     public function edit(string $id): View
     {
@@ -83,7 +78,7 @@ class CategoryController extends Controller
             id: $id,
         );
 
-        if (is_null($category)) {
+        if ($category === null) {
             abort(404);
         }
 
@@ -92,10 +87,6 @@ class CategoryController extends Controller
 
     /**
      * Merubah data kategori.
-     *
-     * @param UpdateCategoryRequest $request
-     * @param string $id
-     * @return RedirectResponse
      */
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
@@ -103,7 +94,7 @@ class CategoryController extends Controller
             id: $id,
         );
 
-        if (is_null($category)) {
+        if ($category === null) {
             abort(404);
         }
 
@@ -116,9 +107,30 @@ class CategoryController extends Controller
             ),
         );
 
-        return to_route('master.categories.create')->with('alert', [
+        return to_route('master.categories.edit', ['id' => $category->id])->with('alert', [
             'status' => 'success',
-            'message' => 'Kategori berhasil diperbarui.'
+            'message' => 'Kategori berhasil diperbarui.',
+        ]);
+    }
+
+    /**
+     * Download template import excel
+     */
+    public function templateExport(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateCategoryExport(), 'template_import_excel_category.xlsx');
+    }
+
+    /**
+     * Import excel
+     */
+    public function importExcel(ImportExcelCategoryRequest $request): RedirectResponse
+    {
+        $import = Excel::import(new CategoryImport(), $request->file('file'));
+
+        return to_route('master.categories')->with('alert', [
+            'status' => 'success',
+            'message' => 'Import excel berhasil.',
         ]);
     }
 }

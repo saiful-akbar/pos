@@ -26,8 +26,6 @@ class UpdateCategoryRequest extends FormRequest
 
     /**
      * Merubah nama attribut untuk pesan error.
-     *
-     * @return array
      */
     #[Override]
     public function attributes(): array
@@ -35,7 +33,7 @@ class UpdateCategoryRequest extends FormRequest
         return [
             'code' => 'kode',
             'name' => 'nama',
-            'status' => 'status'
+            'status' => 'status',
         ];
     }
 }

@@ -81,6 +81,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->name('.store')->middleware('module:master.categories,create');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.categories,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.categories,update');
+                Route::get('/export/template', 'templateExport')->name('.export.template')->middleware('module:master.categories,create');
+                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.categories,create');
             });
     });
 });

@@ -30,4 +30,11 @@ interface CategoryRepositoryInterface
      * Update category.
      */
     public function update(UpdateCategoryDTO $dto): void;
+
+    /**
+     * Mengambil semua data kategori
+     *
+     * @return CategoryEntity[]
+     */
+    public function getAll(): array;
 }

@@ -36,13 +36,9 @@
     <main class="main px-lg-6">
         <div class="container-lg">
             @session('alert')
-                <div class="row mb-7">
-                    <div class="col-12">
-                        <div class="alert alert-{{ session('alert')['status'] }} border border-{{ session('alert')['status'] }} m-0">
-                            {{ session('alert')['message'] }}
-                        </div>
-                    </div>
-                </div>    
+                <x-alert class="alert-{{ session('alert')['status'] }} border-{{ session('alert')['status'] }} mb-7">
+                    {{ session('alert')['message'] }}
+                </x-alert>
             @endsession
 
             {{ $slot }}

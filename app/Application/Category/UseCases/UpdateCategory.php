@@ -20,6 +20,6 @@ class UpdateCategory
      */
     public function execute(UpdateCategoryDTO $dto): void
     {
-        DB::transaction(fn() => $this->repository->update($dto));
+        DB::transaction(fn () => $this->repository->update($dto));
     }
 }
