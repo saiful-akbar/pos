@@ -158,8 +158,6 @@ if (! function_exists('ulid')) {
 
     /**
      * ULID
-     *
-     * @return string
      */
     function ulid(): string
     {

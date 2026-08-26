@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-read="{{ $access?->read }}" data-create="{{ $access?->create }}" data-update="{{ $access?->update }}" data-remove="{{ $access?->remove }}" data-delete="{{ $access?->delete }}">
 
 <head>
     <meta charset="utf-8" />

@@ -98,9 +98,6 @@ class UpdateModuleAccess
 
     /**
      * Mengambil daftar akses modul saat ini.
-     *
-     * @param string $roleId
-     * @return Collection
      */
     private function getCurrentModules(string $roleId): Collection
     {
@@ -123,9 +120,6 @@ class UpdateModuleAccess
 
     /**
      * Mengambil daftar module baru.
-     *
-     * @param array $modules
-     * @return Collection
      */
     private function getNewModules(array $modules): Collection
     {

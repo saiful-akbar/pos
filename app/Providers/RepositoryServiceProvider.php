@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
 use App\Application\Module\UseCases\GetModulesByRoleId;
@@ -43,6 +44,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Module access (role_module)
         ModuleAccessRepositoryInterface::class => [
             UpdateModuleAccess::class => ModuleRepository::class,
+            FindModuleAccessByRoute::class => ModuleRepository::class,
         ],
 
         // Role

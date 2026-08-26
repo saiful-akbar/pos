@@ -50,11 +50,11 @@ Route::middleware('auth')->group(function (): void {
             ->name('.roles')
             ->prefix('/roles')
             ->group(function (): void {
-                Route::get('/', 'index');
-                Route::get('/create', 'create')->name('.create');
-                Route::post('/', 'store')->name('.store');
-                Route::get('/{id}/edit', 'edit')->name('.edit');
-                Route::put('/{id}', 'update')->name('.update');
+                Route::get('/', 'index')->middleware('module:master.roles,read');
+                Route::get('/create', 'create')->middleware('module:master.roles,create')->name('.create');
+                Route::post('/', 'store')->middleware('module:master.roles,create')->name('.store');
+                Route::get('/{id}/edit', 'edit')->middleware('module:master.roles,update')->name('.edit');
+                Route::put('/{id}', 'update')->middleware('module:master.roles,update')->name('.update');
             });
     });
 });

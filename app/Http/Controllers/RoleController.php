@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
 use App\Application\Module\UseCases\UpdateModuleAccess;
@@ -32,7 +33,12 @@ class RoleController extends Controller
             return app(GetAllRolesTable::class)->execute();
         }
 
-        return view('pages.roles.index');
+        $access = app(FindModuleAccessByRoute::class)->execute(
+            roleId: user()->role_id,
+            route: 'master.roles',
+        );
+
+        return view('pages.roles.index', compact('access'));
     }
 
     /**

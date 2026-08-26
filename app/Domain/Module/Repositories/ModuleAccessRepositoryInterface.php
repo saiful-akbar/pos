@@ -6,6 +6,7 @@ namespace App\Domain\Module\Repositories;
 
 use App\Application\Module\DTOs\CreateModuleAccessDTO;
 use App\Application\Module\DTOs\UpdateModuleAccessDTO;
+use App\Domain\Module\Entities\ModuleAccessEntity;
 
 interface ModuleAccessRepositoryInterface
 {
@@ -23,4 +24,9 @@ interface ModuleAccessRepositoryInterface
      * Update data module access (role_module)
      */
     public function deleteAccess(string $roleId, string $moduleId): void;
+
+    /**
+     * Mengambil data module access
+     */
+    public function findAccessByRoute(string $roleId, string $route): ?ModuleAccessEntity;
 }

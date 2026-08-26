@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Module\UseCases;
 
+use App\Domain\Module\Entities\ModuleEntity;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 
 class GetAllModules

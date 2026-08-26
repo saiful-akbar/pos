@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Module\Repositories;
 
-use App\Domain\Module\Entities\DetailModuleEntity;
+use App\Domain\Module\Entities\ModuleDetailEntity;
 use App\Domain\Module\Entities\ModuleEntity;
 
 interface ModuleRepositoryInterface
@@ -33,8 +33,7 @@ interface ModuleRepositoryInterface
     /**
      * Mengambil daftar hanya module detail berdasarkan role id.
      *
-     * @param string $roleId
-     * @return DetailModuleEntity[]
+     * @return ModuleDetailEntity[]
      */
     public function getDetailsByRoleId(string $roleId): array;
 }

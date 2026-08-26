@@ -10,17 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 abstract class Repository
 {
     /**
-     * Model
-     */
-    protected Model $model;
-
-    /**
      * Create a new class instance.
      */
-    public function __construct(Model $model)
-    {
-        $this->model = new $model();
-    }
+    public function __construct(protected Model $model) {}
 
     /**
      * Membuat (insert) catatan error.

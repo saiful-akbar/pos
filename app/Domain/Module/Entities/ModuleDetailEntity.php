@@ -7,7 +7,7 @@ namespace App\Domain\Module\Entities;
 use App\Base\Entity;
 use Override;
 
-class DetailModuleEntity extends Entity
+class ModuleDetailEntity extends Entity
 {
     /**
      * Create a new class instance.
