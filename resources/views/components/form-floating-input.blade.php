@@ -1,6 +1,9 @@
 <div @class(['form-floating', 'is-invalid' => $error])>
-    <input {{ $attributes->merge(['name' => $name, 'id' => $id])->class(['form-control', 'border' => !$error, 'is-invalid' => $error]) }}>
-    <label for="{{ $id }}">{{ $label }}</label>
+    <input {{ $attributes->merge(['name' => $name, 'id' => $id, 'required' => $required])->class(['form-control', 'border' => !$error, 'is-invalid' => $error]) }}>
+    
+    <label for="{{ $id }}">
+        {{ $label }} {{ $required ? '*' : '' }}
+    </label>
 </div>
 
 @isset($helperText)

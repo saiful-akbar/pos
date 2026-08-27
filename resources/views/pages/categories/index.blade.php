@@ -1,4 +1,4 @@
-<x-layouts.auth title="Produk Kategori" :access="$access">
+<x-layouts.auth title="Kategori Produk" :access="$access">
     @if ($errors->any())
         <x-alert class="alert-danger border-danger mb-7">
             <ul class="m-0">
@@ -9,18 +9,18 @@
         </x-alert>
     @endif
 
-    <x-page-header title="Produk Kategori" icon="data_table">
+    <x-page-header title="Kategori Produk" icon="data_table">
         @if ($access?->create)
             <x-slot:action>
-                <div class="row">
-                    <div class="col-6">
+                <div class="row justify-content-end">
+                    <div class="col-6 col-lg-6 col-xl-4">
                         <button id="modalImportButton" class="btn btn-light w-100">
                             <x-icon class="me-1">upload</x-icon>
                             <span>Impor</span>
                         </button>
                     </div>
 
-                    <div class="col-6">
+                    <div class="col-6 col-lg-6 col-xl-4">
                         <a href="{{ route('master.categories.create') }}" role="button" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>

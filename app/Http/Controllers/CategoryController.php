@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class CategoryController extends Controller
 {
     /**
-     * Menampilkan halaman daftar kategori.
+     * Menampilkan halaman daftar data kategori.
      */
     public function index(Request $request): JsonResponse|View
     {
@@ -43,7 +43,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Menampilkan halaman create kategory
+     * Menampilkan halaman tambah data kategori.
      */
     public function create(): View
     {
@@ -51,7 +51,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Membuat (menyimpan) kategori baru
+     * Membuat (menyimpan) data kategori baru
      */
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
@@ -65,12 +65,12 @@ class CategoryController extends Controller
 
         return to_route('master.categories.create')->with('alert', [
             'status' => 'success',
-            'message' => 'Kategori baru berhasil ditambahkan.',
+            'message' => 'Kategori produk baru berhasil ditambahkan.',
         ]);
     }
 
     /**
-     * Menampilkan halaman edit kategori.
+     * Menampilkan halaman edit data kategori.
      */
     public function edit(string $id): View
     {
@@ -86,7 +86,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Merubah data kategori.
+     * Memperbarui data kategori.
      */
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
@@ -109,7 +109,7 @@ class CategoryController extends Controller
 
         return to_route('master.categories.edit', ['id' => $category->id])->with('alert', [
             'status' => 'success',
-            'message' => 'Kategori berhasil diperbarui.',
+            'message' => 'Kategori produk berhasil diperbarui.',
         ]);
     }
 
@@ -118,7 +118,7 @@ class CategoryController extends Controller
      */
     public function templateExport(): BinaryFileResponse
     {
-        return Excel::download(new TemplateCategoryExport(), 'template_import_excel_category.xlsx');
+        return Excel::download(new TemplateCategoryExport(), 'template_import_kategori_produk.xlsx');
     }
 
     /**
@@ -126,7 +126,7 @@ class CategoryController extends Controller
      */
     public function importExcel(ImportExcelCategoryRequest $request): RedirectResponse
     {
-        $import = Excel::import(new CategoryImport(), $request->file('file'));
+        Excel::import(new CategoryImport(), $request->file('file'));
 
         return to_route('master.categories')->with('alert', [
             'status' => 'success',

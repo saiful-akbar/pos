@@ -45,6 +45,7 @@
         </div>
     </main>
 
+    {{-- Form logout --}}
     <form action="{{ route('logout') }}" method="post" class="d-none" name="logout" id="logout">
         @csrf @method('delete')
     </form>
@@ -55,10 +56,12 @@
     <script src="{{ asset('assets/vendor/datatables/datatables.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
+    {{-- Pages script --}}
     @isset($script)
         {{ $script }}
     @endisset
 
+    {{-- Global script --}}
     <script>
         $(document).ready(function() {
             $('#preloader').fadeOut();

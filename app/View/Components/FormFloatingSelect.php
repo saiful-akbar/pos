@@ -18,6 +18,7 @@ class FormFloatingSelect extends Component
         public string $name,
         public string $id,
         public bool $error = false,
+        public bool $required = false,
     ) {}
 
     /**

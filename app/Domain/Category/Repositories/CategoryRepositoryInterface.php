@@ -22,12 +22,12 @@ interface CategoryRepositoryInterface
     public function findById(string $id): ?CategoryEntity;
 
     /**
-     * Membuat kategory baru
+     * Membuat kategori baru
      */
     public function create(CreateCategoryDTO $dto): CategoryEntity;
 
     /**
-     * Update category.
+     * Update kategori.
      */
     public function update(UpdateCategoryDTO $dto): void;
 

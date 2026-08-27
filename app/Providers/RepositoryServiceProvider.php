@@ -14,12 +14,21 @@ use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
 use App\Application\Module\UseCases\GetModulesByRoleId;
 use App\Application\Module\UseCases\UpdateModuleAccess;
+use App\Application\Product\UseCases\CreateProduct;
+use App\Application\Product\UseCases\FindProductById;
+use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Setting\UseCases\FindSetting;
+use App\Application\Unit\UseCases\CreateUnit;
+use App\Application\Unit\UseCases\FindUnitById;
+use App\Application\Unit\UseCases\GetAllUnits;
+use App\Application\Unit\UseCases\GetUnitsTable;
+use App\Application\Unit\UseCases\UpdateUnit;
 use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
 use App\Application\User\UseCases\GetUsersTable;
@@ -27,13 +36,17 @@ use App\Application\User\UseCases\UpdateUser;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
+use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
+use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ModuleRepository;
+use App\Repositories\ProductRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
+use App\Repositories\UnitRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -85,6 +98,23 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateCategory::class => CategoryRepository::class,
             UpdateCategory::class => CategoryRepository::class,
             GetAllCategories::class => CategoryRepository::class,
+        ],
+
+        // Unit
+        UnitRepositoryInterface::class => [
+            GetUnitsTable::class => UnitRepository::class,
+            FindUnitById::class => UnitRepository::class,
+            CreateUnit::class => UnitRepository::class,
+            UpdateUnit::class => UnitRepository::class,
+            GetAllUnits::class => UnitRepository::class,
+        ],
+
+        // Product
+        ProductRepositoryInterface::class => [
+            GetProductsTable::class => ProductRepository::class,
+            FindProductById::class => ProductRepository::class,
+            CreateProduct::class => ProductRepository::class,
+            UpdateProduct::class => ProductRepository::class,
         ],
     ];
 

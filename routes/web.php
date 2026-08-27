@@ -5,8 +5,10 @@ declare(strict_types=1);
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -77,12 +79,41 @@ Route::middleware('auth')->group(function (): void {
             ->prefix('/categories')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.categories,read');
+                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.categories,create');
+                Route::get('/export/template', 'templateExport')->name('.export.template')->middleware('module:master.categories,create');
                 Route::get('/create', 'create')->name('.create')->middleware('module:master.categories,create');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.categories,create');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.categories,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.categories,update');
-                Route::get('/export/template', 'templateExport')->name('.export.template')->middleware('module:master.categories,create');
-                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.categories,create');
+            });
+
+        Route::controller(UnitController::class)
+            ->middleware('throttle:global')
+            ->name('.units')
+            ->prefix('/units')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:master.units,read');
+                Route::get('/export/template', 'templateExport')->name('.export.template')->middleware('module:master.units,create');
+                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.units,create');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.units,create');
+                Route::post('/', 'store')->name('.store')->middleware('module:master.units,create');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.units,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.units,update');
+            });
+
+        Route::controller(ProductController::class)
+            ->middleware('throttle:global')
+            ->name('.products')
+            ->prefix('/products')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:master.products,read');
+                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.products,read');
+                Route::get('/export/template', 'exportTemplateExcel')->name('.export.template')->middleware('module:master.products,create');
+                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.products,create');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.products,create');
+                Route::post('/', 'store')->name('.store')->middleware('module:master.products,create');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
             });
     });
 });

@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Product\Repositories;
+
+use App\Application\Product\DTOs\CreateProductDTO;
+use App\Application\Product\DTOs\UpdateProductDTO;
+use App\Domain\Product\Entities\ProductDetailEntity;
+use App\Domain\Product\Entities\ProductEntity;
+use Illuminate\Database\Eloquent\Builder;
+
+interface ProductRepositoryInterface
+{
+    /**
+     * Mengambil daftar produk dalam format query builder.
+     */
+    public function getQuery(): Builder;
+
+    /**
+     * Mengambil data produk berdasarkan id.
+     */
+    public function findById(string $id): ?ProductDetailEntity;
+
+    /**
+     * Membuat produk baru
+     */
+    public function create(CreateProductDTO $dto): ProductEntity;
+
+    /**
+     * Update produk.
+     */
+    public function update(UpdateProductDTO $dto): void;
+}

@@ -87,12 +87,28 @@ class App {
     return `${day} ${months[month]} ${year}, ${hours}:${minutes}:${seconds}`;
   }
 
+  /**
+   * user foto
+   *
+   * @param {string} path
+   * @returns
+   */
   userPhoto(path = null) {
     if (path === null) {
       return `${this.baseUrl}/assets/images/user.webp`;
     }
 
     return `${this.baseUrl}/storage/${path}`;
+  }
+
+  /**
+   * Format angka (numerik).
+   *
+   * @param {int} number
+   * @returns
+   */
+  numberFormat(number) {
+    return number.toLocaleString("id-ID");
   }
 }
 

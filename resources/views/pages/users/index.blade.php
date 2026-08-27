@@ -2,10 +2,14 @@
     <x-page-header title="Users" icon="people">
         @if($access?->create)
             <x-slot:action>
-                <a role="button" href="{{ route('master.users.create') }}" class="btn btn-secondary w-100">
-                    <x-icon class="me-1">add</x-icon>
-                    <span>Tambah</span>
-                </a>
+                <div class="row justify-content-end">
+                    <div class="col-12 col-lg-6 col-xl-4">
+                        <a role="button" href="{{ route('master.users.create') }}" class="btn btn-secondary w-100">
+                            <x-icon class="me-1">add</x-icon>
+                            <span>Tambah</span>
+                        </a>
+                    </div>
+                </div>
             </x-slot:action>
         @endif
     </x-page-header>

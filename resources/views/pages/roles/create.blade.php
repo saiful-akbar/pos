@@ -1,10 +1,14 @@
 <x-layouts.auth title="Tambah Role">
     <x-page-header title="Tambah Role" icon="data_table">
         <x-slot:action>
-            <a href="{{ route('master.roles') }}" role="button" class="btn btn-light w-100">
-                <x-icon>arrow_back</x-icon>
-                <span>Kembali</span>
-            </a>
+            <div class="row justify-content-end">
+                <div class="col-12 col-lg-4">
+                    <a href="{{ route('master.roles') }}" role="button" class="btn btn-light w-100">
+                        <x-icon>arrow_back</x-icon>
+                        <span>Kembali</span>
+                    </a>
+                </div>
+            </div>
         </x-slot:action>
     </x-page-header>
 
@@ -23,6 +27,7 @@
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                 <x-form-floating-input
+                                    required
                                     type="text"
                                     label="Nama role"
                                     placeholder="Nama role"

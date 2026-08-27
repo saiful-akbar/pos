@@ -26,6 +26,7 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     /**
      * Mengambil daftar katgori dalam format query builder.
      */
+    #[Override]
     public function getQuery(): Builder
     {
         try {
@@ -43,6 +44,7 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     /**
      * Mengambil data kategori berdasarkan id.
      */
+    #[Override]
     public function findById(string $id): ?CategoryEntity
     {
         try {
@@ -60,8 +62,9 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     }
 
     /**
-     * Membuat kategory baru
+     * Membuat kategori baru
      */
+    #[Override]
     public function create(CreateCategoryDTO $dto): CategoryEntity
     {
         try {
@@ -79,8 +82,9 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     }
 
     /**
-     * Update category.
+     * Update kategori.
      */
+    #[Override]
     public function update(UpdateCategoryDTO $dto): void
     {
         try {

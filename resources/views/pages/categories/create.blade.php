@@ -1,10 +1,14 @@
 <x-layouts.auth title="Tambah Kategori">
     <x-page-header title="Tambah Kategori" icon="data_table">
         <x-slot:action>
-            <a href="{{ route('master.categories') }}" class="btn btn-light w-100" role="button">
-                <x-icon class="me-1">arrow_back</x-icon>
-                <span>Kembali</span>
-            </a>
+            <div class="row justify-content-end">
+                <div class="col-12 col-lg-4">
+                    <a href="{{ route('master.categories') }}" class="btn btn-light w-100" role="button">
+                        <x-icon class="me-1">arrow_back</x-icon>
+                        <span>Kembali</span>
+                    </a>
+                </div>
+            </div>
         </x-slot:action>
     </x-page-header>
 
@@ -40,8 +44,8 @@
                                     type="text"
                                     name="name"
                                     id="name"
-                                    label="Nama atau deskripsi"
-                                    placeholder="Nama atau deskripsi"
+                                    label="Nama (deskripsi)"
+                                    placeholder="Nama (deskripsi)"
                                     error="{{ $errors->has('name') }}"
                                     value="{{ old('name') }}"
                                 />
@@ -56,16 +60,22 @@
                         </div>
                     </div>
     
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="reset" class="btn btn-light me-2">
-                            <x-icon class="me-1">close</x-icon>
-                            <span>Reset</span>
-                        </button>
-    
-                        <button type="submit" class="btn btn-secondary">
-                            <x-icon class="me-1">save</x-icon>
-                            <span>Simpan</span>
-                        </button>
+                    <div class="card-footer">
+                        <div class="row justify-content-end">
+                            <div class="col-6 col-lg-3 col-xl-2">
+                                <button type="reset" class="btn btn-light w-100">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Reset</span>
+                                </button>
+                            </div>
+
+                            <div class="col-6 col-lg-3 col-xl-2">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">save</x-icon>
+                                    <span>Simpan</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,10 +1,14 @@
 <x-layouts.auth title="Edit Role">
     <x-page-header title="Edit Role" icon="data_table">
         <x-slot:action>
-            <a href="{{ route('master.roles') }}" role="button" class="btn btn-light w-100">
-                <x-icon>arrow_back</x-icon>
-                <span>Kembali</span>
-            </a>
+            <div class="row justify-content-end">
+                <div class="col-12 col-lg-4">
+                    <a href="{{ route('master.roles') }}" role="button" class="btn btn-light w-100">
+                        <x-icon>arrow_back</x-icon>
+                        <span>Kembali</span>
+                    </a>
+                </div>
+            </div>
         </x-slot:action>
     </x-page-header>
 

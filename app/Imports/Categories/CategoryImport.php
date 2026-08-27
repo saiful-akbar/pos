@@ -60,7 +60,7 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
          */
         foreach ($rows as $row) {
             Category::query()->create([
-                'code' => trim((string) $row[0]),
+                'code' => strtoupper(trim((string) $row[0])),
                 'name' => trim((string) $row[1]),
                 'is_active' => (int) $row[2] === 1,
             ]);
@@ -95,6 +95,6 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
     #[Override]
     public function startRow(): int
     {
-        return 2;
+        return 3;
     }
 }
