@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
@@ -119,6 +120,19 @@ Route::middleware('auth')->group(function (): void {
                 Route::patch('/reset-discount', 'resetDiscount')->name('.resetDiscount')->middleware('module:master.products,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
+            });
+
+        Route::controller(CustomerController::class)
+            ->middleware('throttle:global')
+            ->name('.customers')
+            ->prefix('/customers')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:master.customers,read');
+                Route::post('/', 'store')->name('.store')->middleware('module:master.customers,create');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.customers,create');
+                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.customers,read');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.customers,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.customers,update');
             });
     });
 });

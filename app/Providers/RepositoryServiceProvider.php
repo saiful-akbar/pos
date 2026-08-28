@@ -10,6 +10,11 @@ use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Category\UseCases\GetCategoriesTable;
 use App\Application\Category\UseCases\UpdateCategory;
+use App\Application\Customer\UseCases\CreateCustomer;
+use App\Application\Customer\UseCases\FindCustomerById;
+use App\Application\Customer\UseCases\GetAllCustomers;
+use App\Application\Customer\UseCases\GetCustomersTable;
+use App\Application\Customer\UseCases\UpdateCustomer;
 use App\Application\ErrorLog\UseCases\CreateErrorLog;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
@@ -38,6 +43,7 @@ use App\Application\User\UseCases\GetUsersTable;
 use App\Application\User\UseCases\UpdateUser;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
+use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
@@ -48,6 +54,7 @@ use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Repositories\ActivityLogRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\CustomerRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
@@ -73,6 +80,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateProduct::class => ErrorLogRepository::class,
             UpdateProduct::class => ErrorLogRepository::class,
             ResetDiscountProduct::class => ErrorLogRepository::class,
+            CreateCustomer::class => ErrorLogRepository::class,
+            UpdateCustomer::class => ErrorLogRepository::class,
+            GetCustomersTable::class => ErrorLogRepository::class,
+            FindCustomerById::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -88,6 +99,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateProduct::class => ActivityLogRepository::class,
             UpdateProduct::class => ActivityLogRepository::class,
             ResetDiscountProduct::class => ActivityLogRepository::class,
+            CreateCustomer::class => ActivityLogRepository::class,
+            UpdateCustomer::class => ActivityLogRepository::class,
+            GetCustomersTable::class => ActivityLogRepository::class,
+            FindCustomerById::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -151,6 +166,15 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateProduct::class => ProductRepository::class,
             UpdateProduct::class => ProductRepository::class,
             ResetDiscountProduct::class => ProductRepository::class,
+        ],
+
+        // Customer
+        CustomerRepositoryInterface::class => [
+            CreateCustomer::class => CustomerRepository::class,
+            UpdateCustomer::class => CustomerRepository::class,
+            GetCustomersTable::class => CustomerRepository::class,
+            FindCustomerById::class => CustomerRepository::class,
+            GetAllCustomers::class => CustomerRepository::class,
         ],
     ];
 

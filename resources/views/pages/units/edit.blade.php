@@ -60,16 +60,22 @@
                         </div>
                     </div>
     
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="reset" class="btn btn-light me-2">
-                            <x-icon class="me-1">close</x-icon>
-                            <span>Reset</span>
-                        </button>
-    
-                        <button type="submit" class="btn btn-secondary">
-                            <x-icon class="me-1">save</x-icon>
-                            <span>Simpan</span>
-                        </button>
+                    <div class="card-footer">
+                        <div class="row justify-content-end align-items-center">
+                            <div class="col-6 col-lg-3 col-xl-2">
+                                <button type="reset" class="btn btn-light w-100">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Reset</span>
+                                </button>
+                            </div>
+
+                            <div class="col-6 col-lg-3 col-xl-2">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">save</x-icon>
+                                    <span>Simpan</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

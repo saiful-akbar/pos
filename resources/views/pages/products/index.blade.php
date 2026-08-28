@@ -1,14 +1,4 @@
 <x-layouts.auth title="Produk" :access="$access">
-    @if ($errors->any())
-        <x-alert class="alert-danger border-danger mb-7">
-            <ul class="m-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </x-alert>
-    @endif
-
     <x-page-header title="Produk" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-lg-end">
@@ -115,56 +105,8 @@
         </div>
     </form>
 
-    {{-- Modal import update discount --}}
-    <form action="{{ route('master.products.import.discount') }}" method="post" enctype="multipart/form-data">
-        @csrf @method('patch')
-
-        <div id="modalImportUpdateDiscount" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="modalImportUpdateDiscountLabel">Update Diskon</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-        
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12 mb-7">
-                                <a href="{{ route('master.products.export.template.discount') }}" class="btn btn-secondary w-100" role="button">
-                                    <x-icon class="me-1">download</x-icon>
-                                    <span>Unduh Template</span>
-                                </a>
-                            </div>
-
-                            <div class="col-12">
-                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <div class="row w-100">
-                            <div class="col-6">
-                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
-                                    <x-icon class="me-1">close</x-icon>
-                                    <span>Batal</span>
-                                </button>
-                            </div>
-                            <div class="col-6">
-                                <button type="submit" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">upload</x-icon>
-                                    <span>Impor</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-
-    {{-- Modal import reset discount --}}
-    <form action="{{ route('master.products.resetDiscount') }}" method="post" enctype="multipart/form-data">
+    {{-- Modal reset discount --}}
+    <form action="{{ route('master.products.resetDiscount') }}" method="post" id="formResetDiscount" enctype="multipart/form-data">
         @csrf @method('patch')
 
         <div id="modalResetDiscount" class="modal fade">
@@ -214,8 +156,56 @@
         </div>
     </form>
 
+    {{-- Modal import update discount --}}
+    <form action="{{ route('master.products.import.discount') }}" method="post" id="formImportUpdateDiscount" enctype="multipart/form-data">
+        @csrf @method('patch')
+
+        <div id="modalImportUpdateDiscount" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalImportUpdateDiscountLabel">Update Diskon</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mb-7">
+                                <a href="{{ route('master.products.export.template.discount') }}" class="btn btn-secondary w-100" role="button">
+                                    <x-icon class="me-1">download</x-icon>
+                                    <span>Unduh Template</span>
+                                </a>
+                            </div>
+
+                            <div class="col-12">
+                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">upload</x-icon>
+                                    <span>Impor</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     {{-- Modal import update selling price --}}
-    <form action="{{ route('master.products.import.sellingPrice') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('master.products.import.sellingPrice') }}" method="post" id="formImportUpdateSellingPrice" enctype="multipart/form-data">
         @csrf @method('patch')
 
         <div id="modalImportUpdateSellingPrice" class="modal fade">
@@ -266,7 +256,7 @@
         <script>
             const updateAccess = $('html').data('update');
 
-            const table = app.dataTable('#unitTable', {
+            const productTable = app.dataTable('#unitTable', {
                 serverSide: true,
                 ajax: "{{ route('master.products') }}",
                 fixedColumns: {
@@ -423,7 +413,7 @@
             const modalImportUpdateSellingPrice = new bootstrap.Modal('#modalImportUpdateSellingPrice', modalOptions);
             
             /**
-             * Import excel.
+             * Buka modal import excel.
              */
             $('#buttonImport').click(function (e) { 
                 e.preventDefault();
@@ -431,7 +421,7 @@
             });
             
             /**
-             * Reset discount
+             * Buka modal reset diskon
              */
             $('#buttonResetDiscount').click(function (e) { 
                 e.preventDefault();
@@ -439,7 +429,7 @@
             });
             
             /**
-             * Import update discount
+             * Buka modal update discount
              */
             $('#buttonImportUpdateDiscount').click(function (e) { 
                 e.preventDefault();
@@ -447,7 +437,7 @@
             });
             
             /**
-             * Update harga jual
+             * Buka modal harga jual
              */
             $('#buttonImportUpdateSellingPrice').click(function (e) { 
                 e.preventDefault();

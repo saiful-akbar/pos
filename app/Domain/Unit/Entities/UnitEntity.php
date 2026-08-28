@@ -18,8 +18,8 @@ class UnitEntity extends Entity
         public readonly string $code,
         public readonly string $name,
         public readonly bool $isActive,
-        public readonly DateTimeInterface $createdAt,
-        public readonly DateTimeInterface $updatedAt,
+        public readonly ?DateTimeInterface $createdAt,
+        public readonly ?DateTimeInterface $updatedAt,
         public readonly ?DateTimeInterface $deletedAt,
     ) {}
 
@@ -31,8 +31,8 @@ class UnitEntity extends Entity
             'code' => $this->code,
             'name' => $this->name,
             'is_active' => $this->isActive,
-            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),
         ];
     }

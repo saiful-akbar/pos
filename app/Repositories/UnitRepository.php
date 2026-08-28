@@ -112,7 +112,7 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
         try {
             return $this->model->query()
                 ->get()
-                ->map(fn ($Unit) => $this->mapModelToUnitEntity($Unit))
+                ->map(fn ($unit) => $this->mapModelToUnitEntity($unit))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

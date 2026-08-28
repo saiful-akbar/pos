@@ -18,7 +18,7 @@
     
     <script src="{{ asset('assets/js/settings.js') }}"></script>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css'])
 
     @isset($style)
         {{ $style }}
@@ -40,6 +40,16 @@
                     {{ session('alert')['message'] }}
                 </x-alert>
             @endsession
+
+            @if ($errors->any())
+                <x-alert class="alert-danger border-danger mb-7">
+                    <ul class="m-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </x-alert>
+            @endif
 
             {{ $slot }}
         </div>
@@ -67,10 +77,6 @@
             e.preventDefault();
             $('form[name=logout]').submit();
         });
-
-        window.onbeforeunload = () => {
-            $('#preloader').fadeIn();
-        }
 
         $(document).ready(function() {
             $('#preloader').fadeOut();

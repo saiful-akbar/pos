@@ -1,14 +1,4 @@
 <x-layouts.auth title="Unit Produk" :access="$access">
-    @if ($errors->any())
-        <x-alert class="alert-danger border-danger mb-7">
-            <ul class="m-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </x-alert>
-    @endif
-
     <x-page-header title="Unit Produk" icon="data_table">
         @if ($access?->create)
             <x-slot:action>

@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\Customer\UseCases;
+
+use App\Domain\Customer\Entities\CustomerEntity;
+use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
+
+class FindCustomerById
+{
+    /**
+     * Create a new class instance.
+     */
+    public function __construct(private CustomerRepositoryInterface $repository) {}
+
+    /**
+     * Execute method.
+     */
+    public function execute(string $id): ?CustomerEntity
+    {
+        return $this->repository->findById($id);
+    }
+}

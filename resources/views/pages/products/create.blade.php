@@ -215,7 +215,7 @@
                     <div class="card-footer">
                         <div class="row justify-content-end align-items-center">
                             <div class="col-6 col-lg-3 col-xl-2">
-                                <button type="reset" class="btn btn-light w-100 me-2">
+                                <button type="reset" class="btn btn-light w-100">
                                     <x-icon class="me-1">close</x-icon>
                                     <span>Reset</span>
                                 </button>
@@ -228,7 +228,6 @@
                                 </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
