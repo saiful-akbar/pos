@@ -90,24 +90,16 @@ class UnitController extends Controller
      */
     public function update(UpdateUnitRequest $request, string $id): RedirectResponse
     {
-        $unit = app(FindUnitById::class)->execute(
-            id: $id,
-        );
-
-        if ($unit === null) {
-            abort(404);
-        }
-
         app(UpdateUnit::class)->execute(
             dto: new UpdateUnitDTO(
-                id: $unit->id,
+                id: $id,
                 code: $request->validated('code'),
                 name: $request->validated('name'),
                 isActive: $request->boolean('status'),
             ),
         );
 
-        return to_route('master.units.edit', ['id' => $unit->id])->with('alert', [
+        return to_route('master.units.edit', ['id' => $id])->with('alert', [
             'status' => 'success',
             'message' => 'Unit produk berhasil diperbarui.',
         ]);

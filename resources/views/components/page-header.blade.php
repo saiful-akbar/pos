@@ -15,7 +15,7 @@
                     </div>
 
                     @isset($action)
-                        <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+                        <div class="col-12 col-lg-8 mt-4 mt-lg-0">
                             {{ $action }}
                         </div>
                     @endisset

@@ -107,13 +107,15 @@ Route::middleware('auth')->group(function (): void {
             ->prefix('/products')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.products,read');
-                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.products,read');
-                Route::get('/export/template', 'exportTemplateExcel')->name('.export.template')->middleware('module:master.products,create');
-                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.products,create');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.products,create');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.products,create');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.products,create');
+                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.products,read');
+                Route::get('/export/template', 'templateImport')->name('.export.template')->middleware('module:master.products,create');
+                Route::get('/export/template/dicount', 'templateImportUpdateDiscount')->name('.export.template.discount')->middleware('module:master.products,update');
+                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.products,create');
+                Route::patch('/import/discount', 'importUpdateDiscount')->name('.import.discount')->middleware('module:master.products,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
             });
     });
 });

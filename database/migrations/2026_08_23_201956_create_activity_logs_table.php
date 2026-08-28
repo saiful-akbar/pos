@@ -29,8 +29,8 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->string('log_name');
-            $table->enum('event', ['create', 'read', 'update', 'delete']);
-            $table->json('attributes')->nullable();
+            $table->enum('event', ['created', 'updated', 'removed', 'restored', 'deleted'])->nullable();
+            $table->json('attribute_changes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

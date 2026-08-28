@@ -15,10 +15,12 @@ use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
 use App\Exports\Products\ProductExport;
 use App\Exports\Products\TemplateProductExport;
+use App\Exports\Products\TemplateUpdateDiscountProductExport;
 use App\Http\Requests\Products\ImportExcelProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
 use App\Imports\Products\ProductImport;
+use App\Imports\Products\UpdateDiscountProductImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -103,14 +105,6 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, string $id): RedirectResponse
     {
-        $product = app(FindProductById::class)->execute(
-            id: $id,
-        );
-
-        if ($product === null) {
-            abort(404);
-        }
-
         app(UpdateProduct::class)->execute(
             dto: new UpdateProductDTO(
                 id: $id,
@@ -128,7 +122,7 @@ class ProductController extends Controller
             ),
         );
 
-        return to_route('master.products.edit', ['id' => $product->id])->with('alert', [
+        return to_route('master.products.edit', ['id' => $id])->with('alert', [
             'status' => 'success',
             'message' => 'Produk berhasil diperbarui.',
         ]);
@@ -145,7 +139,7 @@ class ProductController extends Controller
     /**
      * Export template untuk import excel.
      */
-    public function exportTemplateExcel(): BinaryFileResponse
+    public function templateImport(): BinaryFileResponse
     {
         return Excel::download(new TemplateProductExport(), 'template_import_produk.xlsx');
     }
@@ -160,6 +154,27 @@ class ProductController extends Controller
         return to_route('master.products')->with('alert', [
             'status' => 'success',
             'message' => 'Import excel berhasil.',
+        ]);
+    }
+
+    /**
+     * Download template import excel update discount.
+     */
+    public function templateImportUpdateDiscount(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateUpdateDiscountProductExport(), 'template_import_update_diskon_produk.xlsx');
+    }
+
+    /**
+     * Import update discount.
+     */
+    public function importUpdateDiscount(ImportExcelProductRequest $request): RedirectResponse
+    {
+        Excel::import(new UpdateDiscountProductImport(), $request->file('file'));
+
+        return to_route('master.products')->with('alert', [
+            'status' => 'success',
+            'message' => 'Diskon berhasil diperbarui.',
         ]);
     }
 }

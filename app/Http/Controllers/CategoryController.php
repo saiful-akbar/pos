@@ -90,24 +90,16 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
     {
-        $category = app(FindCategoryById::class)->execute(
-            id: $id,
-        );
-
-        if ($category === null) {
-            abort(404);
-        }
-
         app(UpdateCategory::class)->execute(
             dto: new UpdateCategoryDTO(
-                id: $category->id,
+                id: $id,
                 code: $request->validated('code'),
                 name: $request->validated('name'),
                 isActive: $request->boolean('status'),
             ),
         );
 
-        return to_route('master.categories.edit', ['id' => $category->id])->with('alert', [
+        return to_route('master.categories.edit', ['id' => $id])->with('alert', [
             'status' => 'success',
             'message' => 'Kategori produk berhasil diperbarui.',
         ]);

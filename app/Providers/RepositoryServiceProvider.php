@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\ActivityLog\UseCases\CreateActivity;
 use App\Application\Category\UseCases\CreateCategory;
 use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Category\UseCases\GetCategoriesTable;
 use App\Application\Category\UseCases\UpdateCategory;
+use App\Application\ErrorLog\UseCases\CreateErrorLog;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
@@ -33,7 +35,9 @@ use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
 use App\Application\User\UseCases\GetUsersTable;
 use App\Application\User\UseCases\UpdateUser;
+use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
+use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
@@ -41,7 +45,9 @@ use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Repositories\ActivityLogRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\RoleRepository;
@@ -56,6 +62,32 @@ class RepositoryServiceProvider extends ServiceProvider
      * Repository bindings
      */
     private array $repositories = [
+        // Error log
+        ErrorLogRepositoryInterface::class => [
+            CreateErrorLog::class => ErrorLogRepository::class,
+            CreateCategory::class => ErrorLogRepository::class,
+            UpdateCategory::class => ErrorLogRepository::class,
+            CreateUnit::class => ErrorLogRepository::class,
+            UpdateUnit::class => ErrorLogRepository::class,
+            CreateProduct::class => ErrorLogRepository::class,
+            UpdateProduct::class => ErrorLogRepository::class,
+        ],
+
+        // Activity log
+        ActivityLogRepositoryInterface::class => [
+            CreateActivity::class => ActivityLogRepository::class,
+            UpdateRole::class => ActivityLogRepository::class,
+            CreateUser::class => ActivityLogRepository::class,
+            UpdateUser::class => ActivityLogRepository::class,
+            CreateCategory::class => ActivityLogRepository::class,
+            UpdateCategory::class => ActivityLogRepository::class,
+            CreateUnit::class => ActivityLogRepository::class,
+            UpdateUnit::class => ActivityLogRepository::class,
+            CreateProduct::class => ActivityLogRepository::class,
+            UpdateProduct::class => ActivityLogRepository::class,
+        ],
+
+        // Setting
         SettingRepositoryInterface::class => [
             FindSetting::class => SettingRepository::class,
         ],

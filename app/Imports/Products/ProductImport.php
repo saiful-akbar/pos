@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Imports\Products;
 
+use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\ActivityLog\UseCases\CreateActivity;
+use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Unit;
@@ -30,30 +33,52 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicateCodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Terdapat duplikat kode produk: '.$duplicateCodes->implode(', '),
+                'file' => 'Terdapat duplikat kode produk: ' . $duplicateCodes->implode(', '),
             ]);
         }
 
-        // 3. Ambil semua barcode produk
+        // 3. Periksa duplikat didatabase
+        $existsCode = Product::query()
+            ->whereIn('code', $codes->unique()->values())
+            ->exists();
+
+        if ($existsCode) {
+            throw ValidationException::withMessages([
+                'file' => 'Terdapat kode produk yang sudah terdaftar',
+            ]);
+        }
+
+        // 4. Ambil semua barcode produk
         $barcodes = $rows->pluck(1);
 
-        // 4. Periksa duplikat barcode produk.
+        // 5. Periksa duplikat barcode produk.
         $duplicateBarcodes = $barcodes->duplicates()->unique()->values();
 
         if ($duplicateBarcodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Terdapat duplikat barcode produk: '.$duplicateBarcodes->implode(', '),
+                'file' => 'Terdapat duplikat barcode produk: ' . $duplicateBarcodes->implode(', '),
             ]);
         }
 
-        // 5. Ambil id category
+        // 6. Periksa apakah barcode sudah ada pada database.
+        $existsBarcode = Product::query()
+            ->whereIn('barcode', $barcodes->unique()->values())
+            ->exists();
+
+        if ($existsBarcode) {
+            throw ValidationException::withMessages([
+                'file' => 'Terdapat barcode produk yang sudah terdaftar.',
+            ]);
+        }
+
+        // 7. Ambil id category
         $categories = Category::query()
             ->select('id', 'code')
             ->whereIn('code', $rows->pluck(3)->unique()->values())
             ->where('is_active', '=', 1)
             ->get();
 
-        // 6. Ambil id unit
+        // 8. Ambil id unit
         $units = Unit::query()
             ->select('id', 'code')
             ->whereIn('code', $rows->pluck(4)->unique()->values())
@@ -95,6 +120,12 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
                 'is_active' => $row[10],
             ]);
         }
+
+        app(CreateActivity::class)->execute(new CreateActivityDTO(
+            userId: user()->id,
+            logName: "Import excel untuk menambah produk baru",
+            event: EventActivityEnum::CREATED,
+        ));
     }
 
     /**

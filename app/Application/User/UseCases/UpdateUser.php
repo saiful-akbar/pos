@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\User\UseCases;
 
+use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
+use App\Application\ActivityLog\DTOs\CreateActivityDTO;
 use App\Application\User\DTOs\UpdateUserDTO;
+use App\Domain\ActivityLog\Enums\EventActivityEnum;
+use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\User\Entities\UserEntity;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
@@ -16,7 +20,10 @@ class UpdateUser
     /**
      * Create a new class instance.
      */
-    public function __construct(private UserRepositoryInterface $repository) {}
+    public function __construct(
+        private UserRepositoryInterface $userRepository,
+        private ActivityLogRepositoryInterface $activityRepository,
+    ) {}
 
     /**
      * Execute method.
@@ -39,17 +46,27 @@ class UpdateUser
                 $password = bcrypt($request->validated('password'));
             }
 
-            $this->repository->update(
-                dto: new UpdateUserDTO(
-                    id: $user->id,
-                    roleId: $request->validated('role'),
-                    fullName: $request->validated('full_name'),
-                    username: $request->validated('username'),
-                    password: $password,
-                    photo: $photo,
-                    isActive: $request->boolean('status')
-                ),
+            $dto = new UpdateUserDTO(
+                id: $user->id,
+                roleId: $request->validated('role'),
+                fullName: $request->validated('full_name'),
+                username: $request->validated('username'),
+                password: $password,
+                photo: $photo,
+                isActive: $request->boolean('status')
             );
+
+            $this->userRepository->update($dto);
+
+            $this->activityRepository->create(new CreateActivityDTO(
+                userId: user()->id,
+                logName: "Memperbarui user pada id: {$user->id}",
+                event: EventActivityEnum::UPDATED,
+                attributeChanges: new AttributeActivityDTO(
+                    old: $user->toArray(),
+                    attributes: $dto->toArray(),
+                ),
+            ));
         });
     }
 }

@@ -12,7 +12,7 @@
     <x-page-header title="Produk" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-lg-end">
-                <div class="col-12 col-lg-8 mb-4 mb-lg-0">
+                <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                     <div class="btn-group w-100">
                         <a href="{{ route('master.products.export') }}" class="btn btn-light w-100" role="button">
                             <x-icon class="me-1">Download</x-icon>
@@ -20,16 +20,33 @@
                         </a>
                         
                         @if ($access?->create)
-                            <button id="modalImportButton" class="btn btn-light w-100">
+                            <button id="buttonImport" class="btn btn-light w-100">
                                 <x-icon class="me-1">upload</x-icon>
                                 <span>Impor Excel</span>
                             </button>
                         @endif
                     </div>
                 </div>
+                
+                @if ($access?->update)
+                    <div class="col-12 col-lg-3 mb-4 mb-lg-0">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <x-icon>upload</x-icon>
+                                <span>Update</span>
+                            </button>
+
+                            <ul class="dropdown-menu border">
+                                <li><a class="dropdown-item" href="#" id="buttonImportUpdateDiscount">Update diskon</a></li>
+                                <li><a class="dropdown-item" href="#">Update harga jual</a></li>
+                                <li><a class="dropdown-item" href="#">Update stok</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                @endif
                         
                 @if ($access?->create)
-                    <div class="col-12 col-lg-4">
+                    <div class="col-12 col-lg-3">
                         <a href="{{ route('master.products.create') }}" role="button" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
@@ -57,37 +74,90 @@
         <div id="modalImport" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modalImportLabel">Impor Excel</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-    
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12 mb-7">
-                            <a href="{{ route('master.products.export.template') }}" class="btn btn-secondary w-100" role="button">
-                                <x-icon class="me-1">download</x-icon>
-                                <span>Unduh Template</span>
-                            </a>
-                        </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalImportLabel">Impor Excel</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mb-7">
+                                <a href="{{ route('master.products.export.template') }}" class="btn btn-secondary w-100" role="button">
+                                    <x-icon class="me-1">download</x-icon>
+                                    <span>Unduh Template</span>
+                                </a>
+                            </div>
 
-                        <div class="col-12">
-                            <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                            <div class="col-12">
+                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">upload</x-icon>
+                                    <span>Impor</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
-                        <x-icon class="me-1">close</x-icon>
-                        <span>Tutup</span>
-                    </button>
-    
-                    <button type="submit" class="btn btn-secondary">
-                        <x-icon class="me-1">upload</x-icon>
-                        <span>Impor</span>
-                    </button>
-                </div>
+            </div>
+        </div>
+    </form>
+
+    {{-- Modal import update discount --}}
+    <form action="{{ route('master.products.import.discount') }}" method="post" enctype="multipart/form-data">
+        @csrf @method('patch')
+
+        <div id="modalImportUpdateDiscount" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalImportUpdateDiscountLabel">Update Diskon</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mb-7">
+                                <a href="{{ route('master.products.export.template.discount') }}" class="btn btn-secondary w-100" role="button">
+                                    <x-icon class="me-1">download</x-icon>
+                                    <span>Unduh Template</span>
+                                </a>
+                            </div>
+
+                            <div class="col-12">
+                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">upload</x-icon>
+                                    <span>Impor</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -244,14 +314,23 @@
 
         {{-- Modal import --}}
         <script>
-            const modalImport = new bootstrap.Modal('#modalImport', {
-                backdrop: 'static',
-                keyboard: false,
-            });
-
-            $('#modalImportButton').click(function (e) { 
+            const modalImport = new bootstrap.Modal('#modalImport');
+            const modalImportUpdateDiscount = new bootstrap.Modal('#modalImportUpdateDiscount');
+            
+            /**
+             * Import excel.
+             */
+            $('#buttonImport').click(function (e) { 
                 e.preventDefault();
                 modalImport.show();
+            });
+            
+            /**
+             * Import update discount
+             */
+            $('#buttonImportUpdateDiscount').click(function (e) { 
+                e.preventDefault();
+                modalImportUpdateDiscount.show();
             });
         </script>
     </x-slot:script>

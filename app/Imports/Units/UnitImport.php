@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Imports\Units;
 
+use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\ActivityLog\UseCases\CreateActivity;
+use App\Application\ErrorLog\UseCases\CreateErrorLog;
+use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Models\Unit;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
@@ -25,7 +30,7 @@ class UnitImport implements ToCollection, WithStartRow, WithValidation
          */
         $codes = $rows
             ->pluck(0)
-            ->map(fn ($code) => trim((string) $code))
+            ->map(fn($code) => trim((string) $code))
             ->filter();
 
         /**
@@ -38,7 +43,7 @@ class UnitImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicates->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Kode berikut muncul lebih dari satu kali di Excel: '.$duplicates->implode(', '),
+                'file' => 'Kode berikut muncul lebih dari satu kali di Excel: ' . $duplicates->implode(', '),
             ]);
         }
 
@@ -51,19 +56,38 @@ class UnitImport implements ToCollection, WithStartRow, WithValidation
 
         if ($existsCodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Kode berikut sudah terdaftar: '.$existsCodes->implode(', '),
+                'file' => 'Kode berikut sudah terdaftar: ' . $existsCodes->implode(', '),
             ]);
         }
 
         /**
          * 4. Simpan seluruh data dalam transaction
          */
-        foreach ($rows as $row) {
-            Unit::query()->create([
-                'code' => strtoupper(trim((string) $row[0])),
-                'name' => trim((string) $row[1]),
-                'is_active' => (int) $row[2] === 1,
-            ]);
+        DB::connection(pos_connection())->beginTransaction();
+
+        try {
+            foreach ($rows as $row) {
+                Unit::query()->create([
+                    'code' => strtoupper(trim((string) $row[0])),
+                    'name' => trim((string) $row[1]),
+                    'is_active' => (int) $row[2] === 1,
+                ]);
+            }
+
+            app(CreateActivity::class)->execute(new CreateActivityDTO(
+                userId: user()->id,
+                logName: 'Impor excel untuk menambah unit baru',
+                event: EventActivityEnum::CREATED,
+            ));
+
+            DB::connection(pos_connection())->commit();
+        } catch (\Throwable $e) {
+            DB::connection(pos_connection())->rollBack();
+
+            app(CreateErrorLog::class)->execute(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
         }
     }
 

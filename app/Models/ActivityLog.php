@@ -64,7 +64,7 @@ class ActivityLog extends Model
         'user_id',
         'log_name',
         'event',
-        'attributes',
+        'attribute_changes',
     ];
 
     /**
@@ -73,5 +73,15 @@ class ActivityLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'attribute_changes' => 'array',
+        ];
     }
 }
