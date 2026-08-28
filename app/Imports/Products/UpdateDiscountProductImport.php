@@ -71,13 +71,13 @@ class UpdateDiscountProductImport implements ToCollection, WithStartRow, WithVal
             }
 
             throw ValidationException::withMessages([
-                'file' => 'Kode produk tidak terdaftar: ' . $row[0],
+                'file' => 'Kode produk tidak terdaftar: '.$row[0],
             ]);
         }
 
         app(CreateActivity::class)->execute(new CreateActivityDTO(
             userId: user()->id,
-            logName: "Import excel untuk memperbarui diskon produk",
+            logName: 'Import excel untuk memperbarui diskon produk',
             event: EventActivityEnum::UPDATED,
         ));
     }

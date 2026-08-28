@@ -63,13 +63,17 @@
 
     {{-- Global script --}}
     <script>
-        $(document).ready(function() {
-            $('#preloader').fadeOut();
-        });
-
         $('.logout').click(function (e) { 
             e.preventDefault();
             $('form[name=logout]').submit();
+        });
+
+        window.onbeforeunload = () => {
+            $('#preloader').fadeIn();
+        }
+
+        $(document).ready(function() {
+            $('#preloader').fadeOut();
         });
     </script>
 </body>

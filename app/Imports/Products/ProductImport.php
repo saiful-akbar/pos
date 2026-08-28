@@ -33,7 +33,7 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicateCodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Terdapat duplikat kode produk: ' . $duplicateCodes->implode(', '),
+                'file' => 'Terdapat duplikat kode produk: '.$duplicateCodes->implode(', '),
             ]);
         }
 
@@ -56,7 +56,7 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicateBarcodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Terdapat duplikat barcode produk: ' . $duplicateBarcodes->implode(', '),
+                'file' => 'Terdapat duplikat barcode produk: '.$duplicateBarcodes->implode(', '),
             ]);
         }
 
@@ -123,7 +123,7 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
 
         app(CreateActivity::class)->execute(new CreateActivityDTO(
             userId: user()->id,
-            logName: "Import excel untuk menambah produk baru",
+            logName: 'Import excel untuk menambah produk baru',
             event: EventActivityEnum::CREATED,
         ));
     }

@@ -31,4 +31,9 @@ interface ProductRepositoryInterface
      * Update produk.
      */
     public function update(UpdateProductDTO $dto): void;
+
+    /**
+     * Reset discount.
+     */
+    public function resetDiscount(int $discount): void;
 }

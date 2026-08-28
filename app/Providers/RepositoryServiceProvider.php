@@ -19,6 +19,7 @@ use App\Application\Module\UseCases\UpdateModuleAccess;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
@@ -71,6 +72,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateUnit::class => ErrorLogRepository::class,
             CreateProduct::class => ErrorLogRepository::class,
             UpdateProduct::class => ErrorLogRepository::class,
+            ResetDiscountProduct::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -85,6 +87,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateUnit::class => ActivityLogRepository::class,
             CreateProduct::class => ActivityLogRepository::class,
             UpdateProduct::class => ActivityLogRepository::class,
+            ResetDiscountProduct::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -147,6 +150,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindProductById::class => ProductRepository::class,
             CreateProduct::class => ProductRepository::class,
             UpdateProduct::class => ProductRepository::class,
+            ResetDiscountProduct::class => ProductRepository::class,
         ],
     ];
 

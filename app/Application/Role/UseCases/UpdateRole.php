@@ -29,7 +29,7 @@ class UpdateRole
     {
         $role = $this->repository->findById($dto->id);
 
-        if (is_null($role)) {
+        if ($role === null) {
             abort(404);
         }
 

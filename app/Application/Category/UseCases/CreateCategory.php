@@ -37,7 +37,7 @@ class CreateCategory
 
             $this->activityRepository->create(new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Membuat kategori produk baru",
+                logName: 'Membuat kategori produk baru',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $category->toArray(),

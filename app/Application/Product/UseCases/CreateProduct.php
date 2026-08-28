@@ -37,7 +37,7 @@ class CreateProduct
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Membuat unit produk baru",
+                logName: 'Membuat unit produk baru',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $product->toArray(),

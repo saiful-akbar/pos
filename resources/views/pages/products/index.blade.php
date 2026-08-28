@@ -37,9 +37,9 @@
                             </button>
 
                             <ul class="dropdown-menu border">
-                                <li><a class="dropdown-item" href="#" id="buttonImportUpdateDiscount">Update diskon</a></li>
-                                <li><a class="dropdown-item" href="#">Update harga jual</a></li>
-                                <li><a class="dropdown-item" href="#">Update stok</a></li>
+                                <li><a class="dropdown-item" href="#" id="buttonResetDiscount">Reset diskon</a></li>
+                                <li><a class="dropdown-item" href="#" id="buttonImportUpdateDiscount">Impor update diskon</a></li>
+                                <li><a class="dropdown-item" href="#" id="buttonImportUpdateSellingPrice">Import update harga jual</a></li>
                             </ul>
                         </div>
                     </div>
@@ -131,6 +131,105 @@
                         <div class="row">
                             <div class="col-12 mb-7">
                                 <a href="{{ route('master.products.export.template.discount') }}" class="btn btn-secondary w-100" role="button">
+                                    <x-icon class="me-1">download</x-icon>
+                                    <span>Unduh Template</span>
+                                </a>
+                            </div>
+
+                            <div class="col-12">
+                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">upload</x-icon>
+                                    <span>Impor</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {{-- Modal import reset discount --}}
+    <form action="{{ route('master.products.resetDiscount') }}" method="post" enctype="multipart/form-data">
+        @csrf @method('patch')
+
+        <div id="modalResetDiscount" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalResetDiscountLabel">Reset Diskon</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <x-form-input
+                                    required
+                                    name="discount"
+                                    id="discount"
+                                    placeholder="Masukan diskon"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    class="no-spinners"
+                                    size="lg"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">save</x-icon>
+                                    <span>Simpan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {{-- Modal import update selling price --}}
+    <form action="{{ route('master.products.import.sellingPrice') }}" method="post" enctype="multipart/form-data">
+        @csrf @method('patch')
+
+        <div id="modalImportUpdateSellingPrice" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalImportUpdateSellingPriceLabel">Update Harga Jual</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mb-7">
+                                <a href="{{ route('master.products.export.template.sellingPrice') }}" class="btn btn-secondary w-100" role="button">
                                     <x-icon class="me-1">download</x-icon>
                                     <span>Unduh Template</span>
                                 </a>
@@ -314,8 +413,14 @@
 
         {{-- Modal import --}}
         <script>
-            const modalImport = new bootstrap.Modal('#modalImport');
-            const modalImportUpdateDiscount = new bootstrap.Modal('#modalImportUpdateDiscount');
+            const modalOptions = {
+                backdrop: 'static'
+            };
+
+            const modalImport = new bootstrap.Modal('#modalImport', modalOptions);
+            const modalResetDiscount = new bootstrap.Modal('#modalResetDiscount', modalOptions);
+            const modalImportUpdateDiscount = new bootstrap.Modal('#modalImportUpdateDiscount', modalOptions);
+            const modalImportUpdateSellingPrice = new bootstrap.Modal('#modalImportUpdateSellingPrice', modalOptions);
             
             /**
              * Import excel.
@@ -326,11 +431,27 @@
             });
             
             /**
+             * Reset discount
+             */
+            $('#buttonResetDiscount').click(function (e) { 
+                e.preventDefault();
+                modalResetDiscount.show();
+            });
+            
+            /**
              * Import update discount
              */
             $('#buttonImportUpdateDiscount').click(function (e) { 
                 e.preventDefault();
                 modalImportUpdateDiscount.show();
+            });
+            
+            /**
+             * Update harga jual
+             */
+            $('#buttonImportUpdateSellingPrice').click(function (e) { 
+                e.preventDefault();
+                modalImportUpdateSellingPrice.show();
             });
         </script>
     </x-slot:script>

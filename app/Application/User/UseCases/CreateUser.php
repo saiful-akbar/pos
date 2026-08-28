@@ -33,7 +33,7 @@ class CreateUser
 
             $this->activityRepository->create(new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Membuat user baru",
+                logName: 'Membuat user baru',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $user->toArray(),

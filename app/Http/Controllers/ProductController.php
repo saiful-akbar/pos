@@ -11,16 +11,20 @@ use App\Application\Product\DTOs\UpdateProductDTO;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
 use App\Exports\Products\ProductExport;
 use App\Exports\Products\TemplateProductExport;
 use App\Exports\Products\TemplateUpdateDiscountProductExport;
+use App\Exports\Products\TemplateUpdateSellingPriceProductExport;
 use App\Http\Requests\Products\ImportExcelProductRequest;
+use App\Http\Requests\Products\ResetDiscountProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
 use App\Imports\Products\ProductImport;
 use App\Imports\Products\UpdateDiscountProductImport;
+use App\Imports\Products\UpdateSellingPriceProductImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -175,6 +179,42 @@ class ProductController extends Controller
         return to_route('master.products')->with('alert', [
             'status' => 'success',
             'message' => 'Diskon berhasil diperbarui.',
+        ]);
+    }
+
+    /**
+     * Reset discount.
+     */
+    public function resetDiscount(ResetDiscountProductRequest $request): RedirectResponse
+    {
+        $discount = $request->integer('discount');
+
+        app(ResetDiscountProduct::class)->execute(discount: $discount);
+
+        return to_route('master.products')->with('alert', [
+            'status' => 'success',
+            'message' => "Diskon produk berhasil direset menjadi $discount%.",
+        ]);
+    }
+
+    /**
+     * Download template excel untuk update harga jual.
+     */
+    public function templateImportUpdateSellingPrice(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateUpdateSellingPriceProductExport(), 'template_import_update_harga_jual_produk.xlsx');
+    }
+
+    /**
+     * Import excel untuk update harga jual.
+     */
+    public function importUpdateSellingPrice(ImportExcelProductRequest $request): RedirectResponse
+    {
+        Excel::import(new UpdateSellingPriceProductImport(), $request->file('file'));
+
+        return to_route('master.products')->with('alert', [
+            'status' => 'success',
+            'message' => 'Harga jual produk berhasil diperbarui.',
         ]);
     }
 }

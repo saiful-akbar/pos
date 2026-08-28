@@ -107,6 +107,26 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
+     * Reset discount.
+     */
+    #[Override]
+    public function resetDiscount(int $discount): void
+    {
+        try {
+            $this->model->query()
+                ->where('is_active', '=', 1)
+                ->update(['discount' => $discount]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class model ke class ProductEntity
      */
     private function mapModelToProductEntity(Product $model): ProductEntity

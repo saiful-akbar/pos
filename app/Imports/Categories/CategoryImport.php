@@ -30,7 +30,7 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
          */
         $codes = $rows
             ->pluck(0)
-            ->map(fn($code) => trim((string) $code))
+            ->map(fn ($code) => trim((string) $code))
             ->filter();
 
         /**
@@ -43,7 +43,7 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicates->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Kode berikut muncul lebih dari satu kali di Excel: ' . $duplicates->implode(', '),
+                'file' => 'Kode berikut muncul lebih dari satu kali di Excel: '.$duplicates->implode(', '),
             ]);
         }
 
@@ -56,7 +56,7 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
 
         if ($existsCodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Kode berikut sudah terdaftar: ' . $existsCodes->implode(', '),
+                'file' => 'Kode berikut sudah terdaftar: '.$existsCodes->implode(', '),
             ]);
         }
 
@@ -76,7 +76,7 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
 
             app(CreateActivity::class)->execute(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Impor excel untuk menambah kategori produk baru",
+                logName: 'Impor excel untuk menambah kategori produk baru',
                 event: EventActivityEnum::CREATED,
             ));
 
