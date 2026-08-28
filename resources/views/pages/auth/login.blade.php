@@ -58,7 +58,7 @@
 
                     <div class="mb-5">
                         <div class="input-group @error('username')is-invalid @enderror">
-                            <span class="input-group-text material-symbols-outlined fs-4">person</span>
+                            <span class="input-group-text material-symbols-outlined fs-5">person</span>
 
                             <div class="form-floating">
                                 <input type="text" id="username" name="username"
@@ -78,7 +78,7 @@
 
                     <div class="mb-5">
                         <div class="input-group">
-                            <span class="input-group-text material-symbols-outlined fs-4">lock</span>
+                            <span class="input-group-text material-symbols-outlined fs-5">lock</span>
 
                             <div class="form-floating @error('password')is-invalid @enderror">
                                 <input type="password" id="password" name="password"

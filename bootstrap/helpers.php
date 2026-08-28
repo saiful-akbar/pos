@@ -27,13 +27,9 @@ if (! function_exists('parse_int')) {
     /**
      * Merubah string numerik menjadi bilangan bulat.
      */
-    function parse_int(null|string|float|int $value): null|string|float|int
+    function parse_int(string|float|int $value): int
     {
-        if (is_numeric($value)) {
-            return (int) $value;
-        }
-
-        return $value;
+        return (int) $value;
     }
 }
 

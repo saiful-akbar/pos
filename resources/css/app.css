@@ -56,6 +56,10 @@ p {
   -moz-appearance: textfield;
 }
 
+.form-floating > label {
+  top: 2px !important;
+}
+
 /**
  * DataTable
  */

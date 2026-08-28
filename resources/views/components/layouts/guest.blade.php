@@ -18,7 +18,7 @@
     <script src="{{ asset('assets/js/settings.js') }}"></script>
 
     {{-- CSS AND JS --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css'])
 
     {{-- style page --}}
     @isset($style)
@@ -37,17 +37,17 @@
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datatables/datatables.min.js') }}"></script>
 
+    {{-- page JS --}}
+    @isset($script)
+        {{ $script }}
+    @endisset
+
     {{-- Custom script --}}
     <script>
         $(document).ready(function() {
             $('#preloader').fadeOut();
         });
     </script>
-
-    {{-- page JS --}}
-    @isset($script)
-        {{ $script }}
-    @endisset
 </body>
 
 </html>

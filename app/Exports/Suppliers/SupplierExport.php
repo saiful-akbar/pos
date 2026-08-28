@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Exports\Suppliers;
+
+use App\Models\Supplier;
+use Illuminate\Support\Enumerable;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Override;
+
+class SupplierExport implements FromCollection, ShouldAutoSize, WithHeadings
+{
+    /**
+     * Header row
+     */
+    #[Override]
+    public function headings(): array
+    {
+        return [
+            'Kode Supplier',
+            'Nama',
+            'Nomor Telepon',
+            'Alamat',
+            'Catatan',
+            'Status',
+            'Waktu Dibuat',
+            'Waktu Diperbarui',
+        ];
+    }
+
+    /**
+     * Export dari collection.
+     */
+    #[Override]
+    public function collection(): Enumerable
+    {
+        $columns = [
+            'code',
+            'name',
+            'phone_number',
+            'address',
+            'notes',
+            DB::raw("CASE WHEN is_active THEN 'Aktif' ELSE 'Tidak Aktif' END"),
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s')"),
+            DB::raw("DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s')"),
+        ];
+
+        return Supplier::query()
+            ->select($columns)
+            ->orderBy('code', 'ASC')
+            ->get();
+    }
+}

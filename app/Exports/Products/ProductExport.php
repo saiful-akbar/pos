@@ -36,11 +36,13 @@ class ProductExport implements FromCollection, ShouldAutoSize, WithHeadings
             DB::raw("if(products.is_active, 'Aktif', 'Tidak Aktif') as status"),
         ];
 
-        return Product::query()
+        $products = Product::query()
             ->select($columns)
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->leftJoin('units', 'products.unit_id', '=', 'units.id')
             ->get();
+
+        return $products;
     }
 
     /**

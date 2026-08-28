@@ -32,6 +32,12 @@ use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Setting\UseCases\FindSetting;
+use App\Application\Supplier\UseCases\CreateSupplier;
+use App\Application\Supplier\UseCases\FindSupplierById;
+use App\Application\Supplier\UseCases\GenerateSupplierCode;
+use App\Application\Supplier\UseCases\GetAllSuppliers;
+use App\Application\Supplier\UseCases\GetSuppliersTable;
+use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
 use App\Application\Unit\UseCases\GetAllUnits;
@@ -50,6 +56,7 @@ use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
+use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Repositories\ActivityLogRepository;
@@ -60,6 +67,7 @@ use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
+use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
@@ -84,6 +92,11 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateCustomer::class => ErrorLogRepository::class,
             GetCustomersTable::class => ErrorLogRepository::class,
             FindCustomerById::class => ErrorLogRepository::class,
+            GetSuppliersTable::class => ErrorLogRepository::class,
+            CreateSupplier::class => ErrorLogRepository::class,
+            UpdateSupplier::class => ErrorLogRepository::class,
+            FindSupplierById::class => ErrorLogRepository::class,
+            GetAllSuppliers::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -103,6 +116,11 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateCustomer::class => ActivityLogRepository::class,
             GetCustomersTable::class => ActivityLogRepository::class,
             FindCustomerById::class => ActivityLogRepository::class,
+            GetSuppliersTable::class => ActivityLogRepository::class,
+            CreateSupplier::class => ActivityLogRepository::class,
+            UpdateSupplier::class => ActivityLogRepository::class,
+            FindSupplierById::class => ActivityLogRepository::class,
+            GetAllSuppliers::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -175,6 +193,16 @@ class RepositoryServiceProvider extends ServiceProvider
             GetCustomersTable::class => CustomerRepository::class,
             FindCustomerById::class => CustomerRepository::class,
             GetAllCustomers::class => CustomerRepository::class,
+        ],
+
+        // Supplier
+        SupplierRepositoryInterface::class => [
+            GetSuppliersTable::class => SupplierRepository::class,
+            CreateSupplier::class => SupplierRepository::class,
+            UpdateSupplier::class => SupplierRepository::class,
+            FindSupplierById::class => SupplierRepository::class,
+            GetAllSuppliers::class => SupplierRepository::class,
+            GenerateSupplierCode::class => SupplierRepository::class,
         ],
     ];
 

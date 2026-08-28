@@ -8,18 +8,23 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="base-url" content="{{ url('/') }}" />
 
+    {{-- Title --}}
+    <title>{{ $title }} - {{ config('app.name') }}</title>
+    
+    {{-- Icon --}}
     @isset($setting?->store_logo)
         <link rel="shortcut icon" href="{{ storage_asset($setting?->store_logo) }}" type="image/x-icon" />
     @else
         <link rel="shortcut icon" href="{{ asset('assets/images/logo.svg') }}" type="image/x-icon" />
     @endisset
-
-    <title>{{ $title }} - {{ config('app.name') }}</title>
     
+    {{-- Settings JS --}}
     <script src="{{ asset('assets/js/settings.js') }}"></script>
     
+    {{-- Vite --}}
     @vite(['resources/css/app.css'])
 
+    {{-- Page CSS --}}
     @isset($style)
         {{ $style }}
     @endisset
@@ -60,6 +65,7 @@
         @csrf @method('delete')
     </form>
 
+    {{-- Vendor JS --}}
     <script src="{{ asset('assets/js/vendor.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/theme.bundle.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>

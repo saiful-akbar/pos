@@ -318,6 +318,7 @@
                         name: 'purchase_price',
                         data: 'purchase_price',
                         className: 'text-nowrap',
+                        type: 'num',
                         render: (data) => app.numberFormat(data),
                     },
                     {
@@ -325,6 +326,7 @@
                         name: 'selling_price',
                         data: 'selling_price',
                         className: 'text-nowrap',
+                        type: 'num',
                         render: (data) => app.numberFormat(data),
                     },
                     {
@@ -332,6 +334,7 @@
                         name: 'discount',
                         data: 'discount',
                         className: 'text-nowrap',
+                        type: 'num',
                         render: (data) => `${data}%`,
                     },
                     {
@@ -339,6 +342,7 @@
                         name: 'current_stock',
                         data: 'current_stock',
                         className: 'text-nowrap',
+                        type: 'html-num',
                         render: (data, type, row) => {
                             const { current_stock: currentStock, minimum_stock: minimumStock } = row;
                             const color = currentStock < minimumStock ? 'danger' : 'success';

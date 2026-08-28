@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -133,6 +134,19 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.customers,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.customers,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.customers,update');
+            });
+
+        Route::controller(SupplierController::class)
+            ->middleware('throttle:global')
+            ->name('.suppliers')
+            ->prefix('/suppliers')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:master.suppliers,read');
+                Route::post('/', 'store')->name('.store')->middleware('module:master.suppliers,create');
+                Route::get('/create', 'create')->name('.create')->middleware('module:master.suppliers,create');
+                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.suppliers,read');
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.suppliers,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.suppliers,update');
             });
     });
 });
