@@ -12,6 +12,7 @@ use App\Application\Category\UseCases\GetCategoriesTable;
 use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Exports\Categories\TemplateCategoryExport;
+use App\Exports\Catgories\CategoryExport;
 use App\Http\Requests\Categories\ImportExcelCategoryRequest;
 use App\Http\Requests\Categories\StoreCategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
@@ -124,5 +125,15 @@ class CategoryController extends Controller
             'status' => 'success',
             'message' => 'Import excel berhasil.',
         ]);
+    }
+
+    /**
+     * Export excel.
+     *
+     * @return BinaryFileResponse
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new CategoryExport, 'kategori_produk.xlsx');
     }
 }

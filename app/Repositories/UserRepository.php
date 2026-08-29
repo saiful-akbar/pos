@@ -123,6 +123,29 @@ class UserRepository extends Repository implements UserRepositoryInterface
     }
 
     /**
+     * Remove user berdasarkan id.
+     *
+     * @param string $id
+     * @return void
+     */
+    #[Override]
+    public function removeById(string $id): void
+    {
+        try {
+            $this->model->query()
+                ->where('id', '=', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke UserEntity.
      */
     private function mapModelToUserEntity(User $model): UserEntity

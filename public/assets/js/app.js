@@ -110,6 +110,32 @@ class App {
   numberFormat(number) {
     return number.toLocaleString("id-ID");
   }
+
+  delete(title, callback) {
+    bootbox.confirm({
+      onEscape: true,
+      backdrop: true,
+      title: `Hapus ${title}`,
+      message: `Yakin ingin menghapus data ${title} ini?`,
+      buttons: {
+        cancel: {
+          className: "btn btn-light me-2",
+          label: `
+            <span class="material-symbols-outlined me-1">close</span>
+            <span>Batal</span>
+          `,
+        },
+        confirm: {
+          className: "btn btn-danger",
+          label: `
+            <span class="material-symbols-outlined me-1">delete</span>
+            <span>Hapus</span>
+          `,
+        },
+      },
+      callback: (result) => callback(result),
+    });
+  }
 }
 
 window.app = new App();

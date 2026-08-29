@@ -3,14 +3,20 @@
         @if ($access?->create)
             <x-slot:action>
                 <div class="row justify-content-end">
-                    <div class="col-6 col-lg-6 col-xl-4">
-                        <button id="modalImportButton" class="btn btn-light w-100">
-                            <x-icon class="me-1">upload</x-icon>
-                            <span>Impor</span>
-                        </button>
+                    <div class="col-6 col-lg-8 col-xl-6">
+                        <div class="btn-group w-100">
+                            <a href="{{ route('master.categories.export') }}" class="btn btn-light w-100" role="button">
+                                <x-icon class="me-1">download</x-icon>
+                                <span>Expor Excel</span>
+                            </a>
+                            <button id="modalImportButton" class="btn btn-light w-100">
+                                <x-icon class="me-1">upload</x-icon>
+                                <span>Impor Excel</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="col-6 col-lg-6 col-xl-4">
+                    <div class="col-6 col-lg-4 col-xl-3">
                         <a href="{{ route('master.categories.create') }}" role="button" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
@@ -38,37 +44,44 @@
         <div id="modalImport" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Impor Excel</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-    
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12 mb-7">
-                            <a href="{{ route('master.categories.export.template') }}" class="btn btn-secondary w-100" role="button">
-                                <x-icon class="me-1">download</x-icon>
-                                <span>Unduh Template</span>
-                            </a>
-                        </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Impor Excel</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 mb-7">
+                                <a href="{{ route('master.categories.export.template') }}" class="btn btn-secondary w-100" role="button">
+                                    <x-icon class="me-1">download</x-icon>
+                                    <span>Unduh Template</span>
+                                </a>
+                            </div>
 
-                        <div class="col-12">
-                            <input type="file" name="file" accept=".xlsx" class="form-control" required>
+                            <div class="col-12">
+                                <input type="file" name="file" accept=".xlsx" class="form-control" required>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">
-                        <x-icon class="me-1">close</x-icon>
-                        <span>Tutup</span>
-                    </button>
-    
-                    <button type="submit" class="btn btn-secondary">
-                        <x-icon class="me-1">upload</x-icon>
-                        <span>Impor</span>
-                    </button>
-                </div>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Tutup</span>
+                                </button>
+                            </div>
+
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">upload</x-icon>
+                                    <span>Impor</span>
+                                </button>
+                            </div>
+                        </div>
+        
+                    </div>
                 </div>
             </div>
         </div>

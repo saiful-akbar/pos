@@ -12,6 +12,7 @@ use App\Application\Unit\UseCases\FindUnitById;
 use App\Application\Unit\UseCases\GetUnitsTable;
 use App\Application\Unit\UseCases\UpdateUnit;
 use App\Exports\Units\TemplateUnitExport;
+use App\Exports\Units\UnitExport;
 use App\Http\Requests\Units\ImportExcelUnitRequest;
 use App\Http\Requests\Units\StoreUnitRequest;
 use App\Http\Requests\Units\UpdateUnitRequest;
@@ -124,5 +125,15 @@ class UnitController extends Controller
             'status' => 'success',
             'message' => 'Import excel berhasil.',
         ]);
+    }
+
+    /**
+     * Export excel.
+     *
+     * @return BinaryFileResponse
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new UnitExport, 'unit_produk.xlsx');
     }
 }

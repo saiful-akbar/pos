@@ -70,6 +70,7 @@
     <script src="{{ asset('assets/js/theme.bundle.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/bootbox/bootbox.all.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
     {{-- Pages script --}}
