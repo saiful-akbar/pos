@@ -26,9 +26,10 @@ class ProductEntity extends Entity
         public readonly int $minimumStock,
         public readonly int $currentStock,
         public readonly bool $isActive,
-        public readonly ?DateTimeInterface $createdAt,
-        public readonly ?DateTimeInterface $updatedAt,
-        public readonly ?DateTimeInterface $deletedAt,
+        public readonly ?string $image = null,
+        public readonly ?DateTimeInterface $createdAt = null,
+        public readonly ?DateTimeInterface $updatedAt = null,
+        public readonly ?DateTimeInterface $deletedAt = null,
     ) {}
 
     #[Override]
@@ -47,6 +48,7 @@ class ProductEntity extends Entity
             'minimum_stock' => $this->minimumStock,
             'current_stock' => $this->currentStock,
             'is_active' => $this->isActive,
+            'image' => $this->image,
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),

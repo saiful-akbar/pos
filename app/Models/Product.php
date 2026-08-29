@@ -67,6 +67,7 @@ class Product extends Model
         'code',
         'barcode',
         'name',
+        'image',
         'purchase_price',
         'selling_price',
         'discount',

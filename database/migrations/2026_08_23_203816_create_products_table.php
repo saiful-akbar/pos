@@ -36,6 +36,7 @@ return new class() extends Migration
             $table->string('code', 50)->unique();
             $table->string('barcode', 50)->unique();
             $table->text('name')->nullable()->fulltext()->comment('product name or description');
+            $table->string('image', 100)->nullable();
             $table->unsignedInteger('purchase_price')->default(0);
             $table->unsignedInteger('selling_price')->default(0);
             $table->unsignedTinyInteger('discount')->default(0)->comment('as a percentage (%)');
