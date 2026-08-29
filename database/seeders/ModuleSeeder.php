@@ -108,6 +108,20 @@ class ModuleSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'name' => 'Pengaturan',
+                'icon' => 'settings',
+                'path' => '/settings',
+                'route' => 'settings',
+                'details' => [
+                    [
+                        'name' => 'Pengaturan Aplikasi',
+                        'path' => '/settings/applications',
+                        'route' => 'settings.applications',
+                        'roles' => ['Admin'],
+                    ],
+                ],
+            ],
         ];
     }
 }

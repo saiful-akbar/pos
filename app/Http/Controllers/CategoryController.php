@@ -129,11 +129,9 @@ class CategoryController extends Controller
 
     /**
      * Export excel.
-     *
-     * @return BinaryFileResponse
      */
     public function exportExcel(): BinaryFileResponse
     {
-        return Excel::download(new CategoryExport, 'kategori_produk.xlsx');
+        return Excel::download(new CategoryExport(), 'kategori_produk.xlsx');
     }
 }

@@ -34,9 +34,6 @@ interface UserRepositoryInterface
 
     /**
      * Remove user berdasarkan id.
-     *
-     * @param string $id
-     * @return void
      */
     public function removeById(string $id): void;
 }

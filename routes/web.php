@@ -42,13 +42,17 @@ Route::middleware('auth')->group(function (): void {
             Route::get('/', 'index');
         });
 
-    Route::controller(SettingController::class)
-        ->middleware('throttle:global')
-        ->name('setting')
-        ->prefix('/setting')
-        ->group(function (): void {
-            Route::get('/', 'index');
-        });
+    Route::name('settings')->prefix('/settings')->group(function (): void {
+        Route::controller(SettingController::class)
+            ->middleware('throttle:global')
+            ->name('.applications')
+            ->prefix('/applications')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:settings.applications,read');
+                Route::get('/edit', 'edit')->name('.edit')->middleware('module:settings.applications,update');
+                Route::put('/update', 'update')->name('.update')->middleware('module:settings.applications,update');
+            });
+    });
 
     Route::name('master')->prefix('/master')->group(function (): void {
         Route::controller(RoleController::class)

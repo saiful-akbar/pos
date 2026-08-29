@@ -26,8 +26,8 @@ return new class() extends Migration
             $table->string('app_name', 100);
             $table->string('app_version', 5);
             $table->string('store_name', 100);
-            $table->string('store_logo', 100)->nullable();
             $table->text('store_address')->nullable();
+            $table->string('store_logo', 100)->nullable();
             $table->string('background_image', 100)->nullable();
             $table->timestamps();
             $table->softDeletes();

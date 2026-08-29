@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports\Catgories;
 
 use App\Models\Category;
@@ -10,12 +12,10 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Override;
 
-class CategoryExport implements FromCollection, WithHeadings, ShouldAutoSize
+class CategoryExport implements FromCollection, ShouldAutoSize, WithHeadings
 {
     /**
      * Header row
-     *
-     * @return array
      */
     #[Override]
     public function headings(): array
@@ -31,8 +31,6 @@ class CategoryExport implements FromCollection, WithHeadings, ShouldAutoSize
 
     /**
      * Export from collection.
-     *
-     * @return Enumerable
      */
     #[Override]
     public function collection(): Enumerable

@@ -15,7 +15,7 @@
 @endphp
 
 @if ($label)
-<label for="{{ $id }}">
+<label for="{{ $id }}" class="form-label">
     {{ $label }} {{ $required ? '*' : '' }}
 </label>
 @endif

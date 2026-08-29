@@ -58,12 +58,13 @@
         <div class="row mt-7">
             <div class="col12">
                 <h2 class="fs-4">Akses Modul</h2>
+                <p class="text-body-secondary">Pilih izin untuk akses module role.</p>
                 <hr>
             </div>
         </div>
 
         @foreach ($modules as $module)
-            <div class="row mt-7">
+            <div @class(['row', 'mt-5' => $loop->first, 'mt-7' => !$loop->first])>
                 <div class="col-12">
                     <div class="card shadow-sm">
                         <div class="card-header">
@@ -96,7 +97,7 @@
                                         <tr>
                                             <td class="text-nowrap">{{ $detail->name }}</td>
                                             <td>
-                                                <div class="form-check">
+                                                <div class="form-check form-switch">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -110,7 +111,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="form-check">
+                                                <div class="form-check form-switch">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -124,7 +125,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="form-check">
+                                                <div class="form-check form-switch">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -138,7 +139,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="form-check">
+                                                <div class="form-check form-switch">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -152,7 +153,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="form-check">
+                                                <div class="form-check form-switch">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -176,7 +177,7 @@
         @endforeach
 
         <div class="row mt-7 justify-content-center">
-            <div class="col-12 col-lg-8">
+            <div class="col-12">
                 <button type="submit" class="btn btn-secondary w-100">
                     <x-icon class="me-1">save</x-icon>
                     <span>Simpan</span>

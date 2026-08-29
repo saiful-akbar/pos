@@ -124,9 +124,6 @@ class UserRepository extends Repository implements UserRepositoryInterface
 
     /**
      * Remove user berdasarkan id.
-     *
-     * @param string $id
-     * @return void
      */
     #[Override]
     public function removeById(string $id): void

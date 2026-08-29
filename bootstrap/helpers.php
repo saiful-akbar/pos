@@ -111,6 +111,27 @@ if (! function_exists('storage_asset')) {
     }
 }
 
+if (! function_exists('storage_image')) {
+
+    /**
+     * Mengambil gambar dari storage
+     */
+    function storage_image(?string $path, ?bool $secure = null): string
+    {
+        if (is_string($path)) {
+            return asset(
+                path: 'storage/'.ltrim(trim($path), '/'),
+                secure: $secure,
+            );
+        }
+
+        return asset(
+            path: 'assets/images/background.webp',
+            secure: $secure,
+        );
+    }
+}
+
 if (! function_exists('user_photo')) {
 
     /**

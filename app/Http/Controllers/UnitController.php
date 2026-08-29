@@ -129,11 +129,9 @@ class UnitController extends Controller
 
     /**
      * Export excel.
-     *
-     * @return BinaryFileResponse
      */
     public function exportExcel(): BinaryFileResponse
     {
-        return Excel::download(new UnitExport, 'unit_produk.xlsx');
+        return Excel::download(new UnitExport(), 'unit_produk.xlsx');
     }
 }

@@ -114,7 +114,6 @@
                                     accept="image/*"
                                     @class([
                                         'form-control',
-                                        'form-control-lg',
                                         'is-invalid' => $errors->has('photo'),
                                         'border' => !$errors->has('photo'),
                                     ])

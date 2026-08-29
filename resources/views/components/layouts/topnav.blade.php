@@ -27,8 +27,6 @@
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{{ route('setting') }}">Pengaturan</a></li>
-                    <li><hr class="dropdown-divider" /></li>
                     <li><a class="dropdown-item logout" href="#">keluar</a></li>
                 </ul>
             </div>
@@ -135,9 +133,7 @@
                         <span class="d-none d-xl-block ms-xl-2">{{ user()->full_name }}</span>
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('setting') }}">Pengaturan</a></li>
-                        <li><hr class="dropdown-divider" /></li>
+                    <ul class="dropdown-menu dropdown-menu-end border">
                         <li><a class="dropdown-item logout" href="#">Keluar</a></li>
                     </ul>
                 </div>
@@ -167,9 +163,7 @@
                         <span class="d-none d-xl-block ms-xl-2">{{ user()->full_name }}</span>
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('setting') }}">Pengaturan</a></li>
-                        <li><hr class="dropdown-divider" /></li>
+                    <ul class="dropdown-menu dropdown-menu-end border">
                         <li><a class="dropdown-item logout" href="#">Keluar</a></li>
                     </ul>
                 </div>

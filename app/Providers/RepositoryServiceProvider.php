@@ -32,6 +32,7 @@ use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Setting\UseCases\FindSetting;
+use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
 use App\Application\Supplier\UseCases\GenerateSupplierCode;
@@ -97,6 +98,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSupplier::class => ErrorLogRepository::class,
             FindSupplierById::class => ErrorLogRepository::class,
             GetAllSuppliers::class => ErrorLogRepository::class,
+            UpdateSetting::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -121,11 +123,13 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSupplier::class => ActivityLogRepository::class,
             FindSupplierById::class => ActivityLogRepository::class,
             GetAllSuppliers::class => ActivityLogRepository::class,
+            UpdateSetting::class => ActivityLogRepository::class,
         ],
 
         // Setting
         SettingRepositoryInterface::class => [
             FindSetting::class => SettingRepository::class,
+            UpdateSetting::class => SettingRepository::class,
         ],
 
         // Module
