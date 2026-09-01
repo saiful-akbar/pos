@@ -26,10 +26,13 @@ use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
+use App\Application\Purcahse\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
@@ -61,7 +64,10 @@ use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
+use App\Domain\Purchase\Repositories\PurchaseDetailRepositoryInterface;
+use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -73,7 +79,10 @@ use App\Repositories\CustomerRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\PurchaseCartDetailRepository;
 use App\Repositories\PurchaseCartRepository;
+use App\Repositories\PurchaseDetailRepository;
+use App\Repositories\PurchaseRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupplierRepository;
@@ -109,6 +118,9 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSetting::class => ErrorLogRepository::class,
             CreatePurchaseCart::class => ErrorLogRepository::class,
             CreatePurchaseCartDetail::class => ErrorLogRepository::class,
+            UpdatePurchaseCartDetail::class => ErrorLogRepository::class,
+            DeletePurchaseCartDetail::class => ErrorLogRepository::class,
+            SavePurchase::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -135,6 +147,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetAllSuppliers::class => ActivityLogRepository::class,
             UpdateSetting::class => ActivityLogRepository::class,
             CreatePurchaseCart::class => ActivityLogRepository::class,
+            SavePurchase::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -200,6 +213,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateProduct::class => ProductRepository::class,
             ResetDiscountProduct::class => ProductRepository::class,
             CreatePurchaseCartDetail::class => ProductRepository::class,
+            SavePurchase::class => ProductRepository::class,
         ],
 
         // Customer
@@ -229,6 +243,27 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchaseCartDetail::class => PurchaseCartRepository::class,
             UpdatePurchaseCartDetail::class => PurchaseCartRepository::class,
             DeletePurchaseCartDetail::class => PurchaseCartRepository::class,
+            DeletePurchaseCartByCurrentUser::class => PurchaseCartRepository::class,
+            SavePurchase::class => PurchaseCartRepository::class,
+        ],
+
+        // Purchase cart detail
+        PurchaseCartDetailRepositoryInterface::class => [
+            CreatePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
+            UpdatePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
+            DeletePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
+            GetPurchaseCartDetailByCartId::class => PurchaseCartDetailRepository::class,
+            SavePurchase::class => PurchaseCartDetailRepository::class,
+        ],
+
+        // Purchase
+        PurchaseRepositoryInterface::class => [
+            SavePurchase::class => PurchaseRepository::class,
+        ],
+
+        // Purchase Detail
+        PurchaseDetailRepositoryInterface::class => [
+            SavePurchase::class => PurchaseDetailRepository::class,
         ],
     ];
 

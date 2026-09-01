@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\Purcahse\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
+use App\Http\Requests\Purchases\SavePurchaseRequest;
 use App\Http\Requests\Purchases\StorePuchaseCartDetailRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PurchaseController extends Controller
@@ -23,7 +26,7 @@ class PurchaseController extends Controller
     /**
      * Menampilkan halaman utama pembelian.
      */
-    public function index(Request $request): View
+    public function index(): View
     {
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
@@ -38,21 +41,22 @@ class PurchaseController extends Controller
      */
     public function createCart(): View
     {
-        $purchase = app(FindPurchaseCartByCurrentUser::class)->execute();
+        $cart = app(FindPurchaseCartByCurrentUser::class)->execute();
 
-        if ($purchase === null) {
-            $purchase = app(CreatePurchaseCart::class)->execute();
+        if ($cart === null) {
+            $cart = app(CreatePurchaseCart::class)->execute();
         }
 
+        $details = app(GetPurchaseCartDetailByCartId::class)->execute(cartId: $cart->id);
         $suppliers = app(GetActiveSuppliers::class)->execute();
 
-        return view('pages.purchases.create', compact('purchase', 'suppliers'));
+        return view('pages.purchases.create', compact('cart', 'details', 'suppliers'));
     }
 
     /**
      * Menambah (insert) cart detail.
      */
-    public function addCart(StorePuchaseCartDetailRequest $request): RedirectResponse
+    public function addCartDetail(StorePuchaseCartDetailRequest $request): RedirectResponse
     {
         app(CreatePurchaseCartDetail::class)->execute(
             productCode: $request->validated('product_code'),
@@ -60,7 +64,7 @@ class PurchaseController extends Controller
             quantity: $request->integer('quantity') ?: 1,
         );
 
-        return to_route('transactions.purchases.cart.create')->with('alert', [
+        return to_route('transactions.purchases.cart')->with('alert', [
             'status' => 'success',
             'message' => 'Produk berhasil ditambahkan kedaftar.',
         ]);
@@ -69,15 +73,18 @@ class PurchaseController extends Controller
     /**
      * Update cart detail.
      */
-    public function updateCart(UpdatePurchaseCartDetailRequest $request, string $id): RedirectResponse
+    public function updateCartDetail(UpdatePurchaseCartDetailRequest $request, string $cartDetailId): RedirectResponse
     {
-        app(UpdatePurchaseCartDetail::class)->execute(dto: new UpdatePurchaseCartDetailDTO(
-            id: $id,
-            purchasePrice: $request->integer('purchase_price'),
-            quantity: $request->integer('quantity'),
-        ));
+        app(UpdatePurchaseCartDetail::class)->execute(
+            dto: new UpdatePurchaseCartDetailDTO(
+                id: $cartDetailId,
+                purchasePrice: $request->integer('purchase_price'),
+                quantity: $request->integer('quantity'),
 
-        return to_route('transactions.purchases.cart.create')->with('alert', [
+            )
+        );
+
+        return to_route('transactions.purchases.cart')->with('alert', [
             'status' => 'success',
             'message' => 'Produk berhasil diubah.',
         ]);
@@ -86,13 +93,36 @@ class PurchaseController extends Controller
     /**
      * Menghapus cart detail.
      */
-    public function deleteCart(string $id): RedirectResponse
+    public function deleteCartDetail(string $cartDetailId): RedirectResponse
     {
-        app(DeletePurchaseCartDetail::class)->execute(id: $id);
+        app(DeletePurchaseCartDetail::class)->execute(id: $cartDetailId);
 
-        return to_route('transactions.purchases.cart.create')->with('alert', [
+        return to_route('transactions.purchases.cart')->with('alert', [
             'status' => 'success',
             'message' => 'Produk berhasil dihapus.',
+        ]);
+    }
+
+    /**
+     * Menghapus cart
+     */
+    public function cancelCart(): RedirectResponse
+    {
+        app(DeletePurchaseCartByCurrentUser::class)->execute();
+
+        return to_route('transactions.purchases');
+    }
+
+    /**
+     * Menyimpan data pembelian.
+     */
+    public function save(SavePurchaseRequest $request): RedirectResponse
+    {
+        app(SavePurchase::class)->execute(request: $request);
+
+        return to_route('transactions.purchases')->with('alert', [
+            'status' => 'success',
+            'message' => 'Pembelian berhasil disimpan.',
         ]);
     }
 }

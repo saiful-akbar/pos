@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Purchase\UseCases;
 
-use App\Domain\Purchase\Entities\PurchaseEntity;
+use App\Domain\Purchase\Entities\PurchaseCartEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
 
 class FindPurchaseCartByCurrentUser
@@ -17,8 +17,8 @@ class FindPurchaseCartByCurrentUser
     /**
      * Execute method
      */
-    public function execute(): ?PurchaseEntity
+    public function execute(): ?PurchaseCartEntity
     {
-        return $this->purchaseCartRepository->findByUser(userId: user()->id);
+        return $this->purchaseCartRepository->findByUserId(userId: user()->id);
     }
 }

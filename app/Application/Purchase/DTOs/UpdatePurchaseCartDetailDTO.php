@@ -10,20 +10,46 @@ use Override;
 class UpdatePurchaseCartDetailDTO extends DTO
 {
     /**
+     * ID purchase cart detail
+     */
+    public readonly string $id;
+
+    /**
+     * quantity
+     */
+    public readonly int $quantity;
+
+    /**
+     * harga pembelian
+     */
+    public readonly int $purchasePrice;
+
+    /**
+     * Subtotal harga pembelian.
+     */
+    public readonly int $subtotalPrice;
+
+    /**
      * Create a new class instance.
      */
     public function __construct(
-        public readonly string $id,
-        public readonly int $purchasePrice,
-        public readonly int $quantity,
-    ) {}
+        string $id,
+        int $quantity,
+        int $purchasePrice,
+    ) {
+        $this->id = $id;
+        $this->quantity = $quantity;
+        $this->purchasePrice = $purchasePrice;
+        $this->subtotalPrice = $quantity * $purchasePrice;
+    }
 
     #[Override]
     public function toArray(): array
     {
         return [
-            'purchase_price' => $this->purchasePrice,
             'quantity' => $this->quantity,
+            'purchase_price' => $this->purchasePrice,
+            'subtotal_price' => $this->subtotalPrice,
         ];
     }
 }

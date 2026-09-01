@@ -38,6 +38,9 @@ return new class() extends Migration
             $table->unsignedInteger('subtotal_price')->default(0);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('created_at');
+            $table->index(['purchase_cart_id', 'product_id']);
         });
     }
 

@@ -46,4 +46,9 @@ interface ProductRepositoryInterface
      * Megambil data produk berdasarkan kode atau barcode.
      */
     public function findByCodeOrBarcode(string $value): ?ProductEntity;
+
+    /**
+     * Update stock product saat ini berdasarkan id.
+     */
+    public function updateCurrentStockById(string $id, int $stock): void;
 }

@@ -170,6 +170,26 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
+     * Update stock product saat ini berdasarkan id.
+     */
+    #[Override]
+    public function updateCurrentStockById(string $id, int $stock): void
+    {
+        try {
+            $this->model->query()
+                ->where('id', $id)
+                ->update(['current_stock' => $stock]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class model ke class ProductEntity
      */
     private function mapModelToProductEntity(Product $model): ProductEntity

@@ -16,12 +16,12 @@ class CreatePurchaseDTO extends DTO
      */
     public function __construct(
         public readonly string $userId,
-        public readonly ?string $supplierId,
+        public readonly string $supplierId,
         public readonly DateTimeInterface $purchaseDate,
         public readonly ?string $invoiceNumber,
         public readonly int $totalQuantity,
         public readonly int $totalPrice,
-        public readonly ?PaymentStatusEnum $paymentStatus,
+        public readonly PaymentStatusEnum $paymentStatus,
         public readonly ?string $notes,
     ) {}
 
@@ -35,7 +35,7 @@ class CreatePurchaseDTO extends DTO
             'invoice_number' => $this->invoiceNumber,
             'total_quantity' => $this->totalQuantity,
             'total_price' => $this->totalPrice,
-            'payment_status' => $this->paymentStatus?->value,
+            'payment_status' => $this->paymentStatus->value,
             'notes' => $this->notes,
         ];
     }

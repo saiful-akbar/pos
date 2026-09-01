@@ -4,51 +4,29 @@ declare(strict_types=1);
 
 namespace App\Domain\Purchase\Repositories;
 
-use App\Application\Purchase\DTOs\CreatePurchaseCartDetailDTO;
-use App\Application\Purchase\DTOs\CreatePurchaseDTO;
-use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
-use App\Domain\Purchase\Entities\PurchaseEntity;
+use App\Application\Purchase\DTOs\CreatePurchaseCartDTO;
+use App\Application\Purchase\DTOs\UpdateQuantityAndPricePurchaseCartDTO;
+use App\Domain\Purchase\Entities\PurchaseCartEntity;
 
 interface PurchaseCartRepositoryInterface
 {
     /**
      * Mengambil data cart berdasarkan user id.
      */
-    public function findByUser(string $userId): ?PurchaseEntity;
+    public function findByUserId(string $userId): ?PurchaseCartEntity;
 
     /**
      * Membuat data cart baru.
      */
-    public function create(CreatePurchaseDTO $dto): PurchaseEntity;
+    public function create(CreatePurchaseCartDTO $dto): PurchaseCartEntity;
 
     /**
-     * Membuat (insert) data cart detail
+     * Update total quantity dan total price purchase cart.
      */
-    public function createDetail(string $userId, CreatePurchaseCartDetailDTO $dto): void;
+    public function updateQuantityAndPriceById(UpdateQuantityAndPricePurchaseCartDTO $dto): void;
 
     /**
-     * Update data cart detail.
+     * Hapus purchase cart.
      */
-    public function updateDetail(UpdatePurchaseCartDetailDTO $dto): void;
-
-    /**
-     * Mengahpus cart detail
-     */
-    public function deleteDetailById(string $id): void;
-
-    /**
-     * Menghitung total quantity cart detail berdasarkan id cart.
-     *
-     * @param string $id
-     * @return integer
-     */
-    public function sumDetailQuantityByCartId(string $id): int;
-
-    /**
-     * Menghitung total subtotal berdasarkan id cart.
-     *
-     * @param string $id
-     * @return integer
-     */
-    public function sumDetailSubtotalByCartId(string $id): int;
+    public function deleteByUserId(string $userId): void;
 }

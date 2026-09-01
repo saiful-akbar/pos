@@ -10,35 +10,14 @@ use Override;
 class CreatePurchaseCartDetailDTO extends DTO
 {
     /**
-     * ID product
-     */
-    public readonly string $productId;
-
-    /**
-     * Quantity
-     */
-    public readonly int $quantity;
-
-    /**
-     * Harga beli
-     */
-    public readonly int $purchasePrice;
-
-    /**
-     * Subtotal harga
-     */
-    public readonly int $subtotalPrice;
-
-    /**
      * Create a new class instance.
      */
-    public function __construct(string $productId, int $purchasePrice = 0, int $quantity = 1)
-    {
-        $this->productId = $productId;
-        $this->purchasePrice = $purchasePrice;
-        $this->quantity = $quantity;
-        $this->subtotalPrice = $quantity * $purchasePrice;
-    }
+    public function __construct(
+        public readonly string $cartId,
+        public readonly string $productId,
+        public readonly int $purchasePrice,
+        public readonly int $quantity
+    ) {}
 
     #[Override]
     public function toArray(): array
@@ -47,7 +26,6 @@ class CreatePurchaseCartDetailDTO extends DTO
             'product_id' => $this->productId,
             'quantity' => $this->quantity,
             'purchase_price' => $this->purchasePrice,
-            'subtotal_price' => $this->subtotalPrice,
         ];
     }
 }

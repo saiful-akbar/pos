@@ -163,10 +163,12 @@ Route::middleware('auth')->group(function (): void {
             ->prefix('purchases')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:transactions.purchases,read');
-                Route::get('/cart/create', 'createCart')->name('.cart.create')->middleware('module:transactions.purchases,create');
-                Route::post('/cart', 'addCart')->name('.cart.store')->middleware('module:transactions.purchases,create');
-                Route::patch('/cart/{id}', 'updateCart')->name('.cart.update')->middleware('module:transactions.purchases,create');
-                Route::delete('/cart/{id}', 'deleteCart')->name('.cart.delete')->middleware('module:transactions.purchases,create');
+                Route::post('/', 'save')->name('.save')->middleware('module:transactions.purchases,create');
+                Route::get('/cart', 'createCart')->name('.cart')->middleware('module:transactions.purchases,create');
+                Route::post('/cart', 'addCartDetail')->name('.cart.store')->middleware('module:transactions.purchases,create');
+                Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
+                Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
+                Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
             });
     });
 });

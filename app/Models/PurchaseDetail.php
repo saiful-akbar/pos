@@ -63,7 +63,7 @@ class PurchaseDetail extends Model
     protected $fillable = [
         'purchase_id',
         'product_id',
-        'qty',
+        'quantity',
         'purchase_price',
         'subtotal_price',
     ];

@@ -4,7 +4,7 @@
             <div class="row justify-content-end align-items-center">
                 @if ($access?->create)
                     <div class="col-12 col-lg-6 col-xl-3">
-                        <a href="{{ route('transactions.purchases.cart.create') }}" class="btn btn-secondary w-100" role="button">
+                        <a href="{{ route('transactions.purchases.cart') }}" class="btn btn-secondary w-100" role="button">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah Pembelian</span>
                         </a>
