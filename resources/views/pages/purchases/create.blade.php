@@ -1,7 +1,7 @@
 <x-layouts.auth title="Tambah Pembelian">
     <x-page-header title="Tambah Pembelian" icon="add_shopping_cart">
         <x-slot:action>
-            <div class="row justify-content-end align-items-center w-100">
+            <div class="row justify-content-end align-items-center">
                 <div class="col-12 col-lg-6 col-xl-3">
                     <a href="{{ route('transactions.purchases') }}" class="btn btn-light w-100" role="button">
                         <x-icon class="me-1">arrow_back</x-icon>
@@ -12,88 +12,298 @@
         </x-slot:action>
     </x-page-header>
 
-    <div class="row mt-7">
-        <div class="col-12 col-lg-8">
-            <form action="{{ route('transactions.purchases.create.cart') }}" method="post" id="formAddCart" autocomplete="off">
-                @csrf @method('post')
-                
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h3 class="h5 mb-1">Tambah Produk</h3>
-                        <p class="text-body-secondary m-0">Pilih dan tambahkan produk kedalam daftar</p>
-                    </div>
-                
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-12 col-lg-8 col-xl-9">
-                                <div @class(['input-group', 'is-invalid' => $errors->has('product_code')])>
-                                    <input
-                                        autofocus
-                                        required
-                                        type="text"
-                                        name="product_code"
-                                        id="product_code"
-                                        placeholder="Masukan kode atau barcode produk..."
-                                        value="{{ old('product_code') }}"
-                                        @class(['form-control', 'is-invalid' => $errors->has('product_code'), 'border' => !$errors->has('product_code')])
-                                    />
-
-                                    <button type="button" class="btn btn-outline-secondary" id="buttonModalProductTable">
-                                        <x-icon class="fs-6">table</x-icon>
-                                    </button>
-                                </div>
-
-                                @error('product_code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12 col-lg-4 col-xl-3 mt-5 mt-lg-0">
-                                <button type="submit" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">add</x-icon>
-                                    <span>Tambah</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    {{-- Modal product table --}}
     <div class="modal" tabindex="-1" id="modalProductTable">
-        <div class="modal-dialog modal-xl modal-fullscreen-md-down">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Product</h5>
+                    <h5 class="modal-title">Produk</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
                     <table id="productTable" class="table table-hover align-middle w-100"></table>
                 </div>
-                
+
                 <div class="modal-footer">
-                    <div class="row justify-content-end w-100">
-                        <div class="col-12 col-lg-6 col-xl-3">
-                            <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
-                                <x-icon class="me-1">close</x-icon>
-                                <span>Batal</span>
-                            </button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        <x-icon class="me-1">close</x-icon>
+                        <span>Batal</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-7">
+        <div class="col-12 col-lg-8">
+            <div class="row">
+                <div class="col-12">
+                    <form action="{{ route('transactions.purchases.cart.store') }}" method="post" autocomplete="off">
+                        @csrf @method('post')
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h3 class="fs-6 mb-1">Tambah Produk</h3>
+                                <p class="text-body-secondary m-0">Pilih kode atau barcode produk untuk ditambahkan.</p>
+                            </div>
+    
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-lg-4 mb-5 mb-lg-0">
+                                        <div @class(['input-group', 'is-invalid' => $errors->has('product_code')])>
+                                            <x-form-floating-input
+                                                required
+                                                type="text"
+                                                name="product_code"
+                                                id="product_code"
+                                                label="Produk"
+                                                placeholder="Produk"
+                                                error="{{ $errors->has('product_code') }}"
+                                                value="{{ old('product_code') }}"
+                                            />
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline-secondary"
+                                                id="buttonProductTable"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="Pilih produk"
+                                            >
+                                                <x-icon class="fs-6">table</x-icon>
+                                            </button>
+                                        </div>
+
+                                        @error('product_code')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-12 col-lg-4 mb-5 mb-lg-0">
+                                        <x-form-floating-input
+                                            type="number"
+                                            name="purchase_price"
+                                            id="purchase_price"
+                                            label="Harga Beli"
+                                            placeholder="Harga beli"
+                                            error="{{ $errors->has('purchase_price') }}"
+                                            value="{{ old('purchase_price') }}"
+                                            min="0"
+                                            class="no-spinners"
+                                        />
+                                    </div>
+
+                                    <div class="col-12 col-lg-4">
+                                        <x-form-floating-input
+                                            type="number"
+                                            name="quantity"
+                                            id="quantity"
+                                            label="Quantity"
+                                            placeholder="Quantity"
+                                            error="{{ $errors->has('quantity') }}"
+                                            value="{{ old('quantity') }}"
+                                            min="1"
+                                            class="no-spinners"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">add</x-icon>
+                                    <span>Tambahkan kedaftar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mt-7">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h3 class="fs-6 m-0">Daftar Produk</h3>
+                        </div>
+                        
+                        <div class="card-body">
+                            <table id="cartDetailTable" class="table table-hover table-sm align-middle w-100">
+                                <thead>
+                                    <tr>
+                                        <th class="text-nowrap text-start">Gambar</th>
+                                        <th class="text-nowrap text-start">Kode Produk</th>
+                                        <th class="text-nowrap text-end">Harga Beli</th>
+                                        <th class="text-nowrap text-end">Qty</th>
+                                        <th class="text-nowrap text-end">Subtotal</th>
+                                        <th class="text-nowrap text-center"></th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody>
+                                    @foreach ($purchase->details as $detail)
+                                        <tr>
+                                            <td class="text-start">
+                                                <img src="{{ storage_image($detail->product->image) }}" alt="Product image" class="rounded" width="50" height="50">
+                                            </td>
+                                            <td class="text-nowrap text-start">
+                                                <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
+                                                <p class="text-body-secondary m-0 text-truncate" style="max-width: 250px;">{{ $detail->product->name }}</p>
+                                            </td>
+                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
+                                            <td class="text-nowrap text-end">{{ number_format($detail->quantity) }}</td>
+                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group w-100">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light edit-cart-detail"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-title="Edit"
+                                                        data-id="{{ $detail->id }}"
+                                                        data-quantity="{{ $detail->quantity }}"
+                                                        data-purchase-price="{{ $detail->purchasePrice }}"
+                                                    >
+                                                        <x-icon>edit</x-icon>
+                                                    </button>
+    
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light delete-cart-detail"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-title="Hapus"
+                                                        data-id="{{ $detail->id }}"
+                                                    >
+                                                        <x-icon>delete</x-icon>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3">Total</th>
+                                        <th class="text-end text-nowrap">{{ $purchase->totalQuantity }}</th>
+                                        <th class="text-end text-nowrap">Rp {{ number_format($purchase->totalPrice) }}</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="col-12 col-lg-4 mt-7 mt-lg-0">
+            <form action="#" method="post" id="formSavePurchase">
+                <div class="card shadow sm">
+                    <div class="card-header">
+                        <h3 class="fs-6 mb-1">Total</h3>
+                        <p class="text-body-secondary m-0">Total keseluruhan Pembelian</p>
+                    </div>
+
+                    <div class="card-body">
+                        <x-form-floating-input
+                            type="text"
+                            name="invpoice_number"
+                            id="invpoiceNumber"
+                            label="Nomor Invoice"
+                            placeholder="Nomor invoice dari pemasok..."
+                            error="{{ $errors->has('invoice_number') }}"
+                            value="{{ old('invoice_number') }}"
+                            class="mb-5"
+                        />
+
+                        <x-form-floating-select required name="supplier" id="supplier" label="Pemasok">
+                            <option selected disabled>Pilih pemasok</option>
+
+                            @foreach ($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}" @selected(old('supplier') == $supplier->id)>
+                                    {{ $supplier->code }} - {{ $supplier->name }}
+                                </option>
+                            @endforeach
+                        </x-form-floating-select>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
+    {{-- Modal edit cart detail --}}
+    <form action="#" method="post" id="formEditCartDetail" autocomplete="off">
+        @csrf @method('patch')
+
+        <div class="modal" tabindex="-1" id="modalEditCartDetail">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Produk</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+    
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                                <x-form-floating-input
+                                    required
+                                    type="number"
+                                    name="purchase_price"
+                                    id="editPurchasePrice"
+                                    label="Harga Beli"
+                                    class="no-spinners"
+                                />
+                            </div>
+
+                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                                <x-form-floating-input
+                                    required
+                                    type="number"
+                                    name="quantity"
+                                    id="editQuantity"
+                                    label="Quantity"
+                                    class="no-spinners"
+                                />
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="modal-footer">
+                        <div class="row justify-content-end align-items-center w-100">
+                            <div class="col-6 col-lg-3 col-xl-2">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+
+                            <div class="col-6 col-lg-3 col-xl-2">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">save</x-icon>
+                                    <span>Simpan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {{-- Form delete cart detail --}}
+    <form action="#" method="post" id="formDeleteCartDetail" class="d-none">
+        @csrf @method('delete')
+    </form>
+
     <x-slot:script>
+        {{-- Modal product table --}}
         <script>
-            const baseUrl = app.baseUrl;
             const modalProductTable = new bootstrap.Modal('#modalProductTable');
             let productTable = null;
 
-            $('#buttonModalProductTable').click(function (e) { 
+            $('#buttonProductTable').click(function (e) { 
                 e.preventDefault();
                 modalProductTable.show();
 
@@ -101,68 +311,94 @@
                     productTable = app.dataTable('#productTable', {
                         serverSide: true,
                         ajax: "{{ route('master.products') }}",
-                        scrollY: '500px',
+                        scrollY: "400px",
+                        scrollX: false,
                         layout: {
-                            topStart: null,
+                            topStart: 'pageLength',
                             topEnd: "search",
                             bottomStart: null,
                             bottomEnd: "paging",
                         },
+                        order: {
+                            name: 'code',
+                            dir: 'asc',
+                        },
                         columns: [
                             {
                                 title: 'Gambar',
-                                name: 'products.image',
+                                name: 'image',
                                 data: 'image',
+                                className: 'text-center',
                                 type: 'html',
                                 searchable: false,
                                 orderable: false,
                                 render: (data) => {
-                                    if (data === null) return `<img src="${app.baseUrl}/assets/images/empty.jpg" class="rounded border" width="50" height="50" />`
-                                    return `<img src="${app.baseUrl}/storage/${data}" class="rounded border" width="50" height="50" />`
+                                    if (data === null) {
+                                        return `
+                                            <img
+                                                src="${app.baseUrl}/assets/images/empty.jpg"
+                                                class="rounded"
+                                                width="50"
+                                                height="50"
+                                                alt="Produk"
+                                            />
+                                        `;
+                                    }
+
+                                    return `
+                                        <img
+                                            src="${app.baseUrl}/storage/${data}"
+                                            class="rounded"
+                                            width="50"
+                                            height="50"
+                                            alt="Produk"
+                                        />
+                                    `;
                                 }
                             },
                             {
                                 title: 'Kode Produk',
-                                name: 'products.code',
+                                name: 'code',
                                 data: 'code',
                                 type: 'string',
+                                className: 'text-nowrap',
                             },
                             {
                                 title: 'Barcode',
-                                name: 'products.barcode',
+                                name: 'barcode',
                                 data: 'barcode',
                                 type: 'string',
+                                className: 'text-nowrap',
                             },
                             {
-                                title: 'Nama (Deskripsi)',
-                                name: 'products.name',
-                                data: 'name',
+                                title: 'Harga Beli',
+                                name: 'purchase_price',
+                                data: 'purchase_price',
                                 type: 'string',
+                                className: 'text-nowrap',
                             },
                             {
-                                title: 'Kategory',
+                                title: 'Kategori',
                                 name: 'category.name',
                                 data: 'category.name',
                                 type: 'string',
+                                className: 'text-nowrap',
                             },
                             {
-                                title: 'Stok',
-                                name: 'products.current_stock',
-                                data: 'current_stock',
+                                title: 'Unit',
+                                name: 'unit.name',
+                                data: 'unit.name',
                                 type: 'string',
-                                render: (data) => app.numberFormat(data)
+                                className: 'text-nowrap',
                             },
                         ],
-                        order: {
-                            name: 'products.code',
-                            dir: 'asc',
-                        },
                         createdRow: (row, data, index) => {
                             $(row).addClass('cursor-pointer');
-                            
+
                             $(row).click(function (e) { 
                                 e.preventDefault();
-                                $('#product_code').attr('value', data.code);
+                                $('#product_code').val(data.code);
+                                $('#purchase_price').val(data.purchase_price);
                                 modalProductTable.hide();
                             });
                         }
@@ -170,6 +406,61 @@
                 } else {
                     productTable.ajax.reload(null, false);
                 }
+            });
+        </script>
+
+        {{-- Table cart detail --}}
+        <script>
+            const cartDetailTable = app.dataTable('#cartDetailTable', {
+                scrollX: true,
+                ordering: false,
+                searching: false,
+                info: false,
+                lengthChange: false,
+                pageLength: 5,
+                fixedColumns: {
+                    start: 0,
+                    end: 1,
+                }
+            })
+        </script>
+
+        {{-- Edit cart detail --}}
+        <script>
+            const modalEditCartDetail = new bootstrap.Modal('#modalEditCartDetail');
+
+            $('.edit-cart-detail').click(function (e) { 
+                e.preventDefault();
+                
+                modalEditCartDetail.show();
+
+                const id = $(this).data('id');
+                const purchasePrice = $(this).data('purchase-price');
+                const quantity = $(this).data('quantity');
+
+                $('#editPurchasePrice').val(purchasePrice);
+                $('#editQuantity').val(quantity);
+                $('#formEditCartDetail').attr('action', `${app.baseUrl}/transactions/purchases/cart/${id}`);
+            });
+        </script>
+
+        {{-- Delete cart detail --}}
+        <script>
+            $('.delete-cart-detail').click(function (e) { 
+                e.preventDefault();
+
+                app.delete('Produk', (result) => {
+                    if (!result) {
+                        return;
+                    }
+
+                    const id = $(this).data('id');
+                    const formDeleteCartDetail = $('#formDeleteCartDetail');
+                    const url = `${app.baseUrl}/transactions/purchases/cart/${id}`;
+
+                    formDeleteCartDetail.attr('action', url);
+                    formDeleteCartDetail.submit();
+                });
             });
         </script>
     </x-slot:script>

@@ -26,10 +26,11 @@ use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
-use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
-use App\Application\Purchase\UseCases\FindPurchaseCartWithDetails;
-use App\Application\Purchase\UseCases\GetPurchaseTable;
+use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
+use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
@@ -40,6 +41,7 @@ use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
 use App\Application\Supplier\UseCases\GenerateSupplierCode;
+use App\Application\Supplier\UseCases\GetActiveSuppliers;
 use App\Application\Supplier\UseCases\GetAllSuppliers;
 use App\Application\Supplier\UseCases\GetSuppliersTable;
 use App\Application\Supplier\UseCases\UpdateSupplier;
@@ -60,7 +62,6 @@ use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
-use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -73,7 +74,6 @@ use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\PurchaseCartRepository;
-use App\Repositories\PurchaseRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupplierRepository;
@@ -135,7 +135,6 @@ class RepositoryServiceProvider extends ServiceProvider
             GetAllSuppliers::class => ActivityLogRepository::class,
             UpdateSetting::class => ActivityLogRepository::class,
             CreatePurchaseCart::class => ActivityLogRepository::class,
-            CreatePurchaseCartDetail::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -220,18 +219,16 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSupplierById::class => SupplierRepository::class,
             GetAllSuppliers::class => SupplierRepository::class,
             GenerateSupplierCode::class => SupplierRepository::class,
-        ],
-
-        // Purchase
-        PurchaseRepositoryInterface::class => [
-            GetPurchaseTable::class => PurchaseRepository::class,
+            GetActiveSuppliers::class => SupplierRepository::class,
         ],
 
         // Purchase cart
         PurchaseCartRepositoryInterface::class => [
-            FindPurchaseCartWithDetails::class => PurchaseCartRepository::class,
+            FindPurchaseCartByCurrentUser::class => PurchaseCartRepository::class,
             CreatePurchaseCart::class => PurchaseCartRepository::class,
             CreatePurchaseCartDetail::class => PurchaseCartRepository::class,
+            UpdatePurchaseCartDetail::class => PurchaseCartRepository::class,
+            DeletePurchaseCartDetail::class => PurchaseCartRepository::class,
         ],
     ];
 

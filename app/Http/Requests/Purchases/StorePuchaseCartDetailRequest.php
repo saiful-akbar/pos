@@ -7,7 +7,7 @@ namespace App\Http\Requests\Purchases;
 use Illuminate\Foundation\Http\FormRequest;
 use Override;
 
-class CreatePurchaseCartDetailRequest extends FormRequest
+class StorePuchaseCartDetailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +24,18 @@ class CreatePurchaseCartDetailRequest extends FormRequest
     {
         return [
             'product_code' => ['required', 'string', 'max:100'],
+            'purchase_price' => ['numeric', 'min:0', 'nullable'],
+            'quantity' => ['numeric', 'min:1', 'nullable'],
         ];
     }
 
-    /**
-     * Merubah nama attribute.
-     */
     #[Override]
     public function attributes(): array
     {
         return [
             'product_code' => 'kode atau barcode produk',
+            'purchase_price' => 'harga beli',
+            'quantity' => 'quantity',
         ];
     }
 }

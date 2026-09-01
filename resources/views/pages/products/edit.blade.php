@@ -124,7 +124,21 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                            <div class="col-12 col-lg-6 mb-5">
+                                <x-form-floating-input
+                                    type="number"
+                                    min="0"
+                                    name="purchase_price"
+                                    id="purchase_price"
+                                    label="Harga Beli"
+                                    placeholder="Harga Beli"
+                                    error="{{ $errors->has('purchase_price') }}"
+                                    value="{{ old('purchase_price', $product->purchasePrice) }}"
+                                    class="no-spinners"
+                                />
+                            </div>
+
+                            <div class="col-12 col-lg-6 mb-5">
                                 <x-form-floating-input
                                     type="number"
                                     min="0"

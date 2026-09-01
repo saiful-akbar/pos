@@ -1,11 +1,19 @@
+@php
+    $class = [
+        'form-select',
+        'is-invalid' => $error,
+    ];
+
+    $merge = [
+        'name' => $name,
+        'id' => $id,
+        'required' => $required,
+    ];
+@endphp
+
 <div @class(['form-floating', 'is-invalid' => $error])>
-    <select {{ $attributes->merge(['name' => $name, 'id' => $id, 'required' => $required])->class(['form-select', 'border', 'is-invalid' => $error]) }}>
-        {{ $slot }}
-    </select>
-    
-    <label for="{{ $id }}">
-        {{ $label }} {{ $required ? '*' : '' }}
-    </label>
+    <select {{ $attributes->merge($merge)->class($class) }}>{{ $slot }}</select>
+    <label for="{{ $id }}">{{ $label }} {{ $required ? '*' : '' }}</label>
 </div>
 
 @error($name)

@@ -65,14 +65,12 @@ class PurchaseCartDetail extends Model
         'purchase_cart_id',
         'product_id',
         'quantity',
-        'selling_price',
+        'purchase_price',
         'subtotal_price',
     ];
 
     /**
      * Get the purchaseCart that owns the PurchaseCartDetail
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function purchaseCart(): BelongsTo
     {
@@ -81,8 +79,6 @@ class PurchaseCartDetail extends Model
 
     /**
      * Get the product that owns the PurchaseCartDetail
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function product(): BelongsTo
     {

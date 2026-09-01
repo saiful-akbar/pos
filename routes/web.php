@@ -159,13 +159,14 @@ Route::middleware('auth')->group(function (): void {
 
     Route::name('transactions')->prefix('transactions')->group(function (): void {
         Route::controller(PurchaseController::class)
-            ->middleware('throttle:global')
             ->name('.purchases')
             ->prefix('purchases')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:transactions.purchases,read');
-                Route::get('/create', 'create')->name('.create')->middleware('module:transactions.purchases,create');
-                Route::post('/create/cart', 'createCartDetail')->name('.create.cart')->middleware('module:transactions.purchases,create');
+                Route::get('/cart/create', 'createCart')->name('.cart.create')->middleware('module:transactions.purchases,create');
+                Route::post('/cart', 'addCart')->name('.cart.store')->middleware('module:transactions.purchases,create');
+                Route::patch('/cart/{id}', 'updateCart')->name('.cart.update')->middleware('module:transactions.purchases,create');
+                Route::delete('/cart/{id}', 'deleteCart')->name('.cart.delete')->middleware('module:transactions.purchases,create');
             });
     });
 });

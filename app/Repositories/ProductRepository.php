@@ -148,20 +148,17 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
 
     /**
      * Megambil data produk berdasarkan kode atau barcode.
-     *
-     * @param string $code
-     * @return ProductEntity|null
      */
     #[Override]
-    public function findByCodeOrBarcode(string $code): ?ProductEntity
+    public function findByCodeOrBarcode(string $value): ?ProductEntity
     {
         try {
             $data = $this->model->query()
-                ->where('code', $code)
-                ->orWhere('barcode', $code)
+                ->where('code', $value)
+                ->orWhere('barcode', $value)
                 ->first();
 
-            return is_null($data) ? null : $this->mapModelToProductEntity(model: $data);
+            return $data === null ? null : $this->mapModelToProductEntity(model: $data);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -184,6 +181,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             code: $model->code,
             barcode: $model->barcode,
             name: $model->name,
+            purchasePrice: $model->purchase_price,
             sellingPrice: $model->selling_price,
             discount: $model->discount,
             minimumStock: $model->minimum_stock,
@@ -217,6 +215,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             code: $model->code,
             barcode: $model->barcode,
             name: $model->name,
+            purchasePrice: $model->purchase_price,
             sellingPrice: $model->selling_price,
             discount: $model->discount,
             minimumStock: $model->minimum_stock,

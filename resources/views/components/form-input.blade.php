@@ -2,7 +2,6 @@
     $class = [
         'form-control',
         'is-invalid' => $error,
-        'border' => !$error,
         'form-control-lg' => strtolower($size) === 'lg',
         'form-control-sm' => strtolower($size) === 'sm',
     ];
@@ -15,9 +14,7 @@
 @endphp
 
 @if ($label)
-<label for="{{ $id }}" class="form-label">
-    {{ $label }} {{ $required ? '*' : '' }}
-</label>
+    <label for="{{ $id }}" class="form-label">{{ $label }} {{ $required ? '*' : '' }}</label>
 @endif
 
 <input {{ $attributes->class($class)->merge($merge) }}>

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Purchase\DTOs\AddProductPurchaseDTO;
+use App\Application\Purchase\DTOs\CreatePurchaseCartDetailDTO;
+use App\Application\Purchase\DTOs\CreatePurchaseDTO;
+use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Entities\PurchaseDetailEntity;
 use App\Domain\Purchase\Entities\PurchaseEntity;
@@ -14,9 +16,9 @@ use App\Domain\Purchase\ValueObjects\ProductPurchaseValue;
 use App\Domain\Purchase\ValueObjects\SupplierPurchaseValue;
 use App\Domain\Purchase\ValueObjects\UserPurchaseValue;
 use App\Models\PurchaseCart;
-use DateTimeImmutable;
+use App\Models\PurchaseCartDetail;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
 
 class PurchaseCartRepository extends Repository implements PurchaseCartRepositoryInterface
@@ -30,14 +32,21 @@ class PurchaseCartRepository extends Repository implements PurchaseCartRepositor
     }
 
     /**
-     * Mengambil data keranjang pembelian.
+     * Mengambil data purchase cart berdasarkan user id.
      */
     #[Override]
-    public function find(): ?PurchaseEntity
+    public function findByUser(string $userId): ?PurchaseEntity
     {
         try {
+            $relations = [
+                'user',
+                'details' => fn(HasMany $query) => $query->orderBy('created_at', 'desc'),
+                'details.product',
+            ];
+
             $data = $this->model->query()
-                ->with(['user', 'details.product'])
+                ->with($relations)
+                ->where('user_id', $userId)
                 ->first();
 
             return $data === null ? null : $this->mapModelToPurchaseEntity(model: $data);
@@ -52,43 +61,21 @@ class PurchaseCartRepository extends Repository implements PurchaseCartRepositor
     }
 
     /**
-     * Mengambil data keranjang pembelian beserta detail proknya.
+     * Membuat data purchase cart baru.
      */
     #[Override]
-    public function findWithDetails(): ?PurchaseDetailEntity
+    public function create(CreatePurchaseDTO $dto): PurchaseEntity
     {
-        try {
-            $data = $this->model->query()
-                ->with(['user', 'details'])
-                ->first();
-
-            return $data === null ? null : $this->mapModelToPurchaseDetailEntity(model: $data);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Membuat purchase cart baru.
-     */
-    #[Override]
-    public function create(string $userId): PurchaseDetailEntity
-    {
-        $now = new DateTimeImmutable();
-
         try {
             $data = $this->model->query()->create([
-                'user_id' => $userId,
-                'purchase_date' => $now->format('Y-m-d H:i:s'),
+                'user_id' => $dto->userId,
+                'purchase_date' => $dto->purchaseDate->format('Y-m-d H:i:s'),
+                'total_quantity' => $dto->totalQuantity,
+                'total_price' => $dto->totalPrice,
             ]);
 
-            return $this->mapModelToPurchaseDetailEntity(
-                model: $data->load(['user', 'details']),
+            return $this->mapModelToPurchaseEntity(
+                model: $data->load('user', 'details'),
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -101,40 +88,33 @@ class PurchaseCartRepository extends Repository implements PurchaseCartRepositor
     }
 
     /**
-     * Menambahkan produk ke details
+     * Membuat (insert) data purchase cart detail
      */
     #[Override]
-    public function addProduct(AddProductPurchaseDTO $dto): void
+    public function createDetail(string $userId, CreatePurchaseCartDetailDTO $dto): void
     {
         try {
-            $this->model->query()
-                ->firstOrFail()
-                ->details()
-                ->create($dto->toArray());
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Update total amount
-     */
-    #[Override]
-    public function updateTotalAmount(): void
-    {
-        try {
-            $detail = DB::connection(pos_connection())
-                ->table('purchase_cart_details')
-                ->selectRaw('cast(sum(subtotal) as signed integer) as total')
+            $cart = $this->model->query()
+                ->where('user_id', $userId)
                 ->first();
 
-            $this->model->query()->update([
-                'total_amount' => $detail->total ?? 0,
+            $detail = PurchaseCartDetail::query()
+                ->where('purchase_cart_id', $cart->id)
+                ->where('product_id', $dto->productId)
+                ->first();
+
+            if ($detail === null) {
+                $cart->details()->create($dto->toArray());
+            } else {
+                $detail->quantity = $detail->quantity + $dto->quantity;
+                $detail->purchase_price = $dto->purchasePrice ?: $detail->purchase_price;
+                $detail->subtotal_price = $detail->purchase_price * ($detail->quantity + $dto->quantity);
+                $detail->save();
+            }
+
+            $cart->update([
+                'total_quantity' => $this->sumDetailQuantityByCartId($cart->id),
+                'total_price' => $this->sumDetailSubtotalByCartId($cart->id),
             ]);
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -147,104 +127,157 @@ class PurchaseCartRepository extends Repository implements PurchaseCartRepositor
     }
 
     /**
-     * Pemetaan model ke class ProductPurchaseValue
+     * Update data cart detail.
      */
-    public function mapModelToProductPurchaseValue(Model $model): ProductPurchaseValue
+    #[Override]
+    public function updateDetail(UpdatePurchaseCartDetailDTO $dto): void
     {
-        return new ProductPurchaseValue(
-            id: $model->product->id,
-            code: $model->product->code,
-            barcode: $model->product->barcode,
-            name: $model->product->name,
-            price: $model->price,
-            quantity: $model->quantity,
-            subtotal: $model->subtotal,
-            createdAt: $model->created_at,
-            updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
-        );
+        try {
+            $data = PurchaseCartDetail::query()->findOrFail($dto->id);
+
+            $data->quantity = $dto->quantity;
+            $data->purchase_price = $dto->purchasePrice;
+            $data->subtotal_price = $dto->quantity * $dto->purchasePrice;
+            $data->save();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
     }
 
     /**
-     * Ppemetaan model ke SupplierPurchaseValue
+     * Hapus cart detail
      */
-    private function mapModelToSupplierPurchaseValue(Model $model): SupplierPurchaseValue
+    #[Override]
+    public function deleteDetailById(string $id): void
     {
-        return new SupplierPurchaseValue(
-            id: $model->id,
-            code: $model->code,
-            phoneNumber: $model->phone_umber,
-            address: $model->address,
-            notes: $model->notes,
-            isActive: $model->is_active === 1,
-            createdAt: $model->created_at,
-            updatedAt: $model->updated_at,
-            celetedAt: $model->celeted_at,
-        );
+        try {
+            PurchaseCartDetail::query()
+                ->findOrFail($id)
+                ->forceDelete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
     }
 
     /**
-     * Pemetaan model ke class UserPurchaseValue
+     * Menghitung total quantity cart detail berdasarkan id cart.
+     *
+     * @param string $id
+     * @return integer
      */
-    private function mapModelToUserPurchaseValue(Model $model): UserPurchaseValue
+    #[Override]
+    public function sumDetailQuantityByCartId(string $id): int
     {
-        return new UserPurchaseValue(
-            id: $model->id,
-            username: $model->username,
-            fullName: $model->full_name,
-            photo: $model->photo,
-            isActive: $model->is_active === 1,
-            createdAt: $model->created_at,
-            updatedAt: $model->updated_at,
-            celetedAt: $model->celeted_at,
-        );
+        try {
+            return (int) PurchaseCartDetail::query()
+                ->where('purchase_cart_id', $id)
+                ->sum('quantity');
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
     }
 
     /**
-     * Pemetaan model ke class PurchaseDetailEntity
+     * Menghitung total subtotal berdasarkan id cart.
+     *
+     * @param string $id
+     * @return integer
+     */
+    #[Override]
+    public function sumDetailSubtotalByCartId(string $id): int
+    {
+        try {
+            return (int) PurchaseCartDetail::query()
+                ->where('purchase_cart_id', $id)
+                ->sum('subtotal_price');
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Pemetaan model ke PurchaseDetailEntity.
      */
     private function mapModelToPurchaseDetailEntity(Model $model): PurchaseDetailEntity
     {
-        $supplier = $model->supplier === null ? null : $this->mapModelToSupplierPurchaseValue($model->supplier);
-        $user = $model->user === null ? null : $this->mapModelToUserPurchaseValue($model->user);
-        $paymentStatus = $model->payment_status === null ? null : PaymentStatusEnum::tryFrom($model->payment_status);
-        $products = $model->details->map(fn($detail) => $this->mapModelToProductPurchaseValue($detail))->toArray();
-
         return new PurchaseDetailEntity(
             id: $model->id,
-            supplier: $supplier,
-            user: $user,
-            invoiceNumber: $model->invoice_number,
-            totalAmount: $model->total_amount ?? 0,
-            paymentStatus: $paymentStatus,
-            notes: $model->notes,
-            products: $products,
+            purchaseId: $model->purchase_cart_id,
+            product: new ProductPurchaseValue(
+                id: $model->product->id,
+                code: $model->product->code,
+                barcode: $model->product->barcode,
+                name: $model->product->name,
+                image: $model->product->image,
+            ),
+            quantity: $model->quantity,
+            purchasePrice: $model->purchase_price,
+            subtotalPrice: $model->subtotal_price,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
+            deletedAt: $model->deleted_at
         );
     }
 
     /**
-     * Pemetaan model ke class PurchaseEntity
+     * Pemetaan model ke PurchaseEntity
      */
     private function mapModelToPurchaseEntity(Model $model): PurchaseEntity
     {
-        $supplier = $model->supplier === null ? null : $this->mapModelToSupplierPurchaseValue($model->supplier);
-        $user = $model->user === null ? null : $this->mapModelToUserPurchaseValue($model->user);
-        $paymentStatus = $model->payment_status === null ? null : PaymentStatusEnum::tryFrom($model->payment_status);
+        $details = [];
+
+        foreach ($model->details as $detail) {
+            $details[] = $this->mapModelToPurchaseDetailEntity($detail);
+        }
 
         return new PurchaseEntity(
             id: $model->id,
-            supplier: $supplier,
-            user: $user,
-            invoiceNumber: $model->invoice_number,
-            totalAmount: $model->total_amount ?? 0,
-            paymentStatus: $paymentStatus,
-            notes: $model->notes,
+            user: new UserPurchaseValue(
+                id: $model->user->id,
+                username: $model->user->username,
+                fullName: $model->user->full_name,
+                photo: $model->user->photo,
+                isActive: $model->user->is_active === 1
+            ),
+            supplier: $model->supplier === null ? null : new SupplierPurchaseValue(
+                id: $model->supplier->id,
+                code: $model->supplier->code,
+                name: $model->supplier->name,
+                phoneNumber: $model->supplier->phone_number,
+                address: $model->supplier->address,
+                notes: $model->supplier->notes,
+                isActive: $model->supplier->is_active === 1,
+            ),
+            purchaseDate: parse_date_time_immutable($model->purchase_date),
+            invoiceNumber: $model->invoice_number === null ? null : $model->invoice_number,
+            totalQuantity: $model->total_quantity,
+            totalPrice: $model->total_price,
+            paymentStatus: $model->payment_status === null ? null : PaymentStatusEnum::tryFrom($model->payment_status),
+            notes: $model->notes === null ? null : $model->notes,
+            details: $details,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
+            deletedAt: $model->deleted_at
         );
     }
 }

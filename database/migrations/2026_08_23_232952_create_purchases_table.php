@@ -23,18 +23,18 @@ return new class() extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
-            $table->foreignUlid('supplier_id')
-                ->constrained('suppliers')
-                ->restrictOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignUlid('user_id')
                 ->constrained('users')
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->string('invoice_number', 100)->nullable()->comment('Supplier invoice number');
+            $table->foreignUlid('supplier_id')
+                ->constrained('suppliers')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
             $table->dateTime('purchase_date');
+            $table->string('invoice_number', 100)->nullable()->comment('Supplier invoice number');
             $table->unsignedInteger('total_quantity')->default(0);
             $table->unsignedInteger('total_price')->default(0);
             $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');

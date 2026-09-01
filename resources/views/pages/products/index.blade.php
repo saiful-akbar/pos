@@ -327,6 +327,14 @@
                         type: 'string',
                     },
                     {
+                        title: 'Harga Beli',
+                        name: 'purchase_price',
+                        data: 'purchase_price',
+                        className: 'text-nowrap',
+                        type: 'num',
+                        render: (data) => app.numberFormat(data),
+                    },
+                    {
                         title: 'Harga Jual',
                         name: 'selling_price',
                         data: 'selling_price',

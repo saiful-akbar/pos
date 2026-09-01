@@ -44,9 +44,6 @@ interface ProductRepositoryInterface
 
     /**
      * Megambil data produk berdasarkan kode atau barcode.
-     *
-     * @param string $code
-     * @return ProductEntity|null
      */
-    public function findByCodeOrBarcode(string $code): ?ProductEntity;
+    public function findByCodeOrBarcode(string $value): ?ProductEntity;
 }

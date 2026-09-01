@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Purchase\UseCases;
 
-use App\Application\Purchase\DTOs\AddProductPurchaseDTO;
+use App\Application\Purchase\DTOs\CreatePurchaseCartDetailDTO;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
@@ -17,39 +17,37 @@ class CreatePurchaseCartDetail
      * Create a new class instance.
      */
     public function __construct(
-        private PurchaseCartRepositoryInterface $purchaseRepository,
-        private ErrorLogRepositoryInterface $errorRepository,
+        private PurchaseCartRepositoryInterface $purchaseCartRepository,
         private ProductRepositoryInterface $productRepository,
+        private ErrorLogRepositoryInterface $errorRepository,
     ) {}
 
     /**
-     * Execute method.
-     *
-     * @param string $productCode
-     * @return void
+     * Execute method
      */
-    public function execute(string $productCode): void
+    public function execute(string $productCode, int $purchasePrice, int $quantity): void
     {
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $product = $this->productRepository->findByCodeOrBarcode(
-                code: $productCode,
-            );
+            $product = $this->productRepository->findByCodeOrBarcode(value: $productCode);
 
-            if (is_null($product)) {
+            if ($product === null) {
                 throw ValidationException::withMessages(messages: [
-                    'product_code' => 'kode atau barcode produk tidak terdaftar.'
+                    'product_code' => 'kode atau barcode produk tidak terdaftar.',
                 ]);
             }
 
-            $this->purchaseRepository->addProduct(dto: new AddProductPurchaseDTO(
+            $dto = new CreatePurchaseCartDetailDTO(
                 productId: $product->id,
-                price: $product->purchasePrice,
-                quantity: 1,
-            ));
+                purchasePrice: $purchasePrice,
+                quantity: $quantity,
+            );
 
-            $this->purchaseRepository->updateTotalAmount();
+            $this->purchaseCartRepository->createDetail(
+                userId: user()->id,
+                dto: $dto,
+            );
 
             DB::connection(pos_connection())->commit();
         } catch (\Throwable $e) {

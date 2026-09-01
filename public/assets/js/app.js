@@ -116,7 +116,7 @@ class App {
       onEscape: true,
       backdrop: true,
       title: `Hapus ${title}`,
-      message: `Yakin ingin menghapus data ${title} ini?`,
+      message: `Yakin ingin menghapus data ${title.toLowerCase()} ini?`,
       buttons: {
         cancel: {
           className: "btn btn-light me-2",

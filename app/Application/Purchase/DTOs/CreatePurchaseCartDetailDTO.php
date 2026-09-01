@@ -7,7 +7,7 @@ namespace App\Application\Purchase\DTOs;
 use App\Base\DTO;
 use Override;
 
-class AddProductPurchaseDTO extends DTO
+class CreatePurchaseCartDetailDTO extends DTO
 {
     /**
      * ID product
@@ -15,42 +15,39 @@ class AddProductPurchaseDTO extends DTO
     public readonly string $productId;
 
     /**
-     * Harga beli
-     */
-    public readonly int $price;
-
-    /**
-     * quantity
+     * Quantity
      */
     public readonly int $quantity;
 
     /**
-     * subtotal amount
+     * Harga beli
      */
-    public readonly int $subtotal;
+    public readonly int $purchasePrice;
+
+    /**
+     * Subtotal harga
+     */
+    public readonly int $subtotalPrice;
 
     /**
      * Create a new class instance.
      */
-    public function __construct(string $productId, int $price, int $quantity)
+    public function __construct(string $productId, int $purchasePrice = 0, int $quantity = 1)
     {
         $this->productId = $productId;
-        $this->price = $price;
+        $this->purchasePrice = $purchasePrice;
         $this->quantity = $quantity;
-        $this->subtotal = $price * $quantity;
+        $this->subtotalPrice = $quantity * $purchasePrice;
     }
 
-    /**
-     * Konversi data object ke array.
-     */
     #[Override]
     public function toArray(): array
     {
         return [
             'product_id' => $this->productId,
-            'price' => $this->price,
             'quantity' => $this->quantity,
-            'subtotal' => $this->subtotal,
+            'purchase_price' => $this->purchasePrice,
+            'subtotal_price' => $this->subtotalPrice,
         ];
     }
 }

@@ -42,4 +42,11 @@ interface SupplierRepositoryInterface
      * Mengambil nilai code tertinggi.
      */
     public function findMaxCode(): ?string;
+
+    /**
+     * Mengambil daftar supplier yang masih aktif.
+     *
+     * @return SupplierEntity[]
+     */
+    public function getActive(): array;
 }

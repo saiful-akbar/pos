@@ -8,7 +8,6 @@
     $class = [
         'form-control',
         'is-invalid' => $error,
-        'border' => !$error,
     ]
 @endphp
 

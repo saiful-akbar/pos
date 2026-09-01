@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Purchase\ValueObjects;
 
 use App\Base\Entity;
-use DateTimeInterface;
 use Override;
 
 class UserPurchaseValue extends Entity
@@ -19,9 +18,6 @@ class UserPurchaseValue extends Entity
         public readonly string $fullName,
         public readonly ?string $photo,
         public readonly bool $isActive,
-        public readonly ?DateTimeInterface $createdAt,
-        public readonly ?DateTimeInterface $updatedAt,
-        public readonly ?DateTimeInterface $celetedAt,
     ) {}
 
     #[Override]
@@ -32,10 +28,7 @@ class UserPurchaseValue extends Entity
             'username' => $this->username,
             'full_name' => $this->fullName,
             'photo' => $this->photo,
-            'is_active' => $this->isActive,
-            'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
-            'celeted_at' => $this->celetedAt?->format('Y-m-d H:i:s'),
+            'isActive' => $this->isActive,
         ];
     }
 }

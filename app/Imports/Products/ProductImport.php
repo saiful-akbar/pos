@@ -33,7 +33,7 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicateCodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Terdapat duplikat kode produk: ' . $duplicateCodes->implode(', '),
+                'file' => 'Terdapat duplikat kode produk: '.$duplicateCodes->implode(', '),
             ]);
         }
 
@@ -56,7 +56,7 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
 
         if ($duplicateBarcodes->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => 'Terdapat duplikat barcode produk: ' . $duplicateBarcodes->implode(', '),
+                'file' => 'Terdapat duplikat barcode produk: '.$duplicateBarcodes->implode(', '),
             ]);
         }
 
@@ -112,11 +112,12 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
                 'name' => $row[2],
                 'category_id' => $category['id'],
                 'unit_id' => $unit['id'],
-                'selling_price' => $row[5],
-                'discount' => $row[6],
-                'current_stock' => $row[7],
-                'minimum_stock' => $row[8],
-                'is_active' => $row[9],
+                'purchase_price' => $row[5],
+                'selling_price' => $row[6],
+                'discount' => $row[7],
+                'current_stock' => $row[8],
+                'minimum_stock' => $row[9],
+                'is_active' => $row[10],
             ]);
         }
 
@@ -139,11 +140,12 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
             '*.2' => ['nullable', 'string', 'max:500'], // name
             '*.3' => ['required', 'string'], // category_code
             '*.4' => ['required', 'string'], // unit_code
-            '*.5' => ['nullable', 'numeric', 'min:0'], // selling_price
-            '*.6' => ['nullable', 'numeric', 'min:0', 'max:100'], // discount
-            '*.7' => ['nullable', 'numeric', 'min:0'], // current_stock
-            '*.8' => ['nullable', 'numeric', 'min:0'], // minimum_stock
-            '*.9' => ['required', 'in:1,0'], // is_active
+            '*.5' => ['nullable', 'numeric', 'min:0'], // purchase_price
+            '*.6' => ['nullable', 'numeric', 'min:0'], // selling_price
+            '*.7' => ['nullable', 'numeric', 'min:0', 'max:100'], // discount
+            '*.8' => ['nullable', 'numeric', 'min:0'], // current_stock
+            '*.9' => ['nullable', 'numeric', 'min:0'], // minimum_stock
+            '*.10' => ['required', 'in:1,0'], // is_active
         ];
     }
 
@@ -158,11 +160,12 @@ class ProductImport implements ToCollection, WithStartRow, WithValidation
             '*.2' => 'Nama',
             '*.3' => 'Kode Kategori',
             '*.4' => 'Kode Unit',
-            '*.5' => 'Harga Jual',
-            '*.6' => 'Diskon',
-            '*.7' => 'Stok Tersedia',
-            '*.8' => 'Stok Minimum',
-            '*.9' => 'Status',
+            '*.5' => 'Harga Beli',
+            '*.6' => 'Harga Jual',
+            '*.7' => 'Diskon',
+            '*.8' => 'Stok Tersedia',
+            '*.9' => 'Stok Minimum',
+            '*.10' => 'Status',
         ];
     }
 

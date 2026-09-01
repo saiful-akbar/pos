@@ -34,7 +34,7 @@ return new class() extends Migration
                 ->cascadeOnUpdate();
 
             $table->unsignedInteger('quantity')->default(0);
-            $table->unsignedInteger('selling_price')->default(0);
+            $table->unsignedInteger('purchase_price')->default(0);
             $table->unsignedInteger('subtotal_price')->default(0);
             $table->timestamps();
             $table->softDeletes();

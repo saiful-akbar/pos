@@ -27,6 +27,7 @@ class TemplateProductExport implements Export, ShouldAutoSize, WithHeadings
                 'Nama (Deskripsi)',
                 'Kode Kategori *',
                 'Kode Unit *',
+                'Harga Beli',
                 'Harga Jual',
                 'Diskon (%)',
                 'Stok Tersedia',

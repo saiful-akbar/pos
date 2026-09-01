@@ -68,6 +68,7 @@ class Product extends Model
         'barcode',
         'name',
         'image',
+        'purchase_price',
         'selling_price',
         'discount',
         'minimum_stock',
@@ -133,8 +134,6 @@ class Product extends Model
 
     /**
      * Get all of the purchaseCartDetails for the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function purchaseCartDetails(): HasMany
     {

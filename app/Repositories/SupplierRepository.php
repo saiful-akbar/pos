@@ -152,6 +152,31 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
+     * Mengambil daftar supplier yang masih aktif.
+     *
+     * @return SupplierEntity[]
+     */
+    #[Override]
+    public function getActive(): array
+    {
+        try {
+            return $this->model->query()
+                ->where('is_active', 1)
+                ->orderBy('name', 'asc')
+                ->get()
+                ->map(fn ($supplier) => $this->mapModelToSupplierEntity($supplier))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke SupplierEntity.
      */
     private function mapModelToSupplierEntity(Supplier $model): SupplierEntity

@@ -126,7 +126,7 @@ if (! function_exists('storage_image')) {
         }
 
         return asset(
-            path: 'assets/images/background.jpg',
+            path: 'assets/images/empty.jpg',
             secure: $secure,
         );
     }
