@@ -6,10 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cart extends Model
+class PurchaseCartDetail extends Model
 {
     use HasUlids, SoftDeletes;
 
@@ -39,7 +39,7 @@ class Cart extends Model
      *
      * @var string
      */
-    protected $table = 'carts';
+    protected $table = 'purchase_cart_details';
 
     /**
      * Primary key
@@ -61,15 +61,31 @@ class Cart extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'is_pending',
+        'id',
+        'purchase_cart_id',
+        'product_id',
+        'quantity',
+        'selling_price',
+        'subtotal_price',
     ];
 
     /**
-     * Get all of the details for the Cart
+     * Get the purchaseCart that owns the PurchaseCartDetail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function details(): HasMany
+    public function purchaseCart(): BelongsTo
     {
-        return $this->hasMany(CartDetail::class, 'cart_id', 'id');
+        return $this->belongsTo(PurchaseCart::class, 'purchase_cart_id', 'id');
+    }
+
+    /**
+     * Get the product that owns the PurchaseCartDetail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

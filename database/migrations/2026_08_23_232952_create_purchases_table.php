@@ -35,9 +35,9 @@ return new class() extends Migration
 
             $table->string('invoice_number', 100)->nullable()->comment('Supplier invoice number');
             $table->dateTime('purchase_date');
-            $table->decimal('subtotal', 15, 2)->default(0);
-            $table->decimal('discount', 15, 2)->default(0);
-            $table->decimal('grand_total', 15, 2)->default(0);
+            $table->unsignedInteger('total_quantity')->default(0);
+            $table->unsignedInteger('total_price')->default(0);
+            $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

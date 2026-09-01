@@ -127,6 +127,52 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
+     * Perbarui gambar
+     */
+    #[Override]
+    public function updateImage(string $id, ?string $path = null): void
+    {
+        try {
+            $this->model->query()
+                ->where('id', '=', $id)
+                ->update(['image' => $path]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Megambil data produk berdasarkan kode atau barcode.
+     *
+     * @param string $code
+     * @return ProductEntity|null
+     */
+    #[Override]
+    public function findByCodeOrBarcode(string $code): ?ProductEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->where('code', $code)
+                ->orWhere('barcode', $code)
+                ->first();
+
+            return is_null($data) ? null : $this->mapModelToProductEntity(model: $data);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class model ke class ProductEntity
      */
     private function mapModelToProductEntity(Product $model): ProductEntity
@@ -138,7 +184,6 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             code: $model->code,
             barcode: $model->barcode,
             name: $model->name,
-            purchasePrice: $model->purchase_price,
             sellingPrice: $model->selling_price,
             discount: $model->discount,
             minimumStock: $model->minimum_stock,
@@ -172,7 +217,6 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             code: $model->code,
             barcode: $model->barcode,
             name: $model->name,
-            purchasePrice: $model->purchase_price,
             sellingPrice: $model->selling_price,
             discount: $model->discount,
             minimumStock: $model->minimum_stock,

@@ -20,15 +20,17 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('purchase_carts', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
             $table->foreignUlid('user_id')
-                ->constrained('users', 'id')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+                ->constrained('users')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
 
-            $table->boolean('is_pending')->default(false);
+            $table->dateTime('purchase_date');
+            $table->unsignedInteger('total_quantity')->default(0);
+            $table->unsignedInteger('total_price')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -39,6 +41,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('purchase_carts');
     }
 };

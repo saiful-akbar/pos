@@ -28,12 +28,12 @@ class StoreProductRequest extends FormRequest
             'code' => ['required', 'string', 'max:50', 'unique:products,code'],
             'barcode' => ['required', 'string', 'max:50', 'unique:products,barcode'],
             'name' => ['nullable', 'string', 'max:500'],
-            'purchase_price' => ['nullable', 'numeric', 'min:0'],
             'selling_price' => ['nullable', 'numeric', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'minimum_stock' => ['nullable', 'numeric', 'min:0'],
             'current_stock' => ['nullable', 'numeric', 'min:0'],
             'is_active' => ['required', 'boolean'],
+            'image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
         ];
     }
 
@@ -49,12 +49,12 @@ class StoreProductRequest extends FormRequest
             'code' => 'kode',
             'barcode' => 'barcode',
             'name' => 'nama (deskripsi)',
-            'purchase_price' => 'harga beli',
             'selling_price' => 'harga jual',
             'discount' => 'diskon',
             'minimum_stock' => 'stok minimal',
             'current_stock' => 'stok',
             'is_active' => 'status',
+            'image' => 'gambar',
         ];
     }
 }

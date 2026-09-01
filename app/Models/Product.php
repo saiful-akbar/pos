@@ -68,7 +68,6 @@ class Product extends Model
         'barcode',
         'name',
         'image',
-        'purchase_price',
         'selling_price',
         'discount',
         'minimum_stock',
@@ -122,5 +121,23 @@ class Product extends Model
     public function stockOpnameDetails(): HasMany
     {
         return $this->hasMany(StockOpnameDetail::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get all of the saleCarts for the Product
+     */
+    public function saleCarts(): HasMany
+    {
+        return $this->hasMany(SaleCart::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get all of the purchaseCartDetails for the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function purchaseCartDetails(): HasMany
+    {
+        return $this->hasMany(PurchaseCartDetail::class, 'product_id', 'id');
     }
 }

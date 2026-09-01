@@ -10,8 +10,12 @@ use App\Application\Product\DTOs\UpdateProductDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Domain\Product\Entities\ProductEntity;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateProduct
 {
@@ -27,10 +31,9 @@ class UpdateProduct
     /**
      * Execute method.
      */
-    public function execute(UpdateProductDTO $dto): void
+    public function execute(string $id, Request $request): void
     {
-
-        $product = app(FindProductById::class)->execute(id: $dto->id);
+        $product = app(FindProductById::class)->execute(id: $id);
 
         if ($product === null) {
             abort(404);
@@ -39,7 +42,41 @@ class UpdateProduct
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $this->productRepository->update($dto);
+            $dto = new UpdateProductDTO(
+                id: $product->id,
+                categoryId: $request->validated('category'),
+                unitId: $request->validated('unit'),
+                code: $request->validated('code'),
+                barcode: $request->validated('barcode'),
+                name: $request->validated('name'),
+                sellingPrice: $request->integer('selling_price'),
+                discount: $request->integer('discount'),
+                minimumStock: $request->integer('minimum_stock'),
+                currentStock: $request->integer('current_stock'),
+                isActive: $request->boolean('is_active')
+            );
+
+            $this->productRepository->update(dto: $dto);
+
+            if ($request->hasFile('image')) {
+                $this->uploadImage(
+                    file: $request->file('image'),
+                    product: new ProductEntity(
+                        id: $product->id,
+                        categoryId: $request->validated('category'),
+                        unitId: $request->validated('unit'),
+                        code: $request->validated('code'),
+                        barcode: $request->validated('barcode'),
+                        name: $request->validated('name'),
+                        sellingPrice: $request->integer('selling_price'),
+                        discount: $request->integer('discount'),
+                        minimumStock: $request->integer('minimum_stock'),
+                        currentStock: $request->integer('current_stock'),
+                        isActive: $request->boolean('is_active'),
+                        image: $product->image,
+                    ),
+                );
+            }
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
@@ -62,5 +99,23 @@ class UpdateProduct
 
             throw $e;
         }
+    }
+
+    /**
+     * Upload image
+     */
+    private function uploadImage(ProductEntity $product, UploadedFile $file): void
+    {
+        if (is_string($product->image)) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        $fileName = $product->code . '.' . $file->extension();
+        $path = Storage::disk('public')->putFileAs('images/products', $file, $fileName);
+
+        $this->productRepository->updateImage(
+            id: $product->id,
+            path: $path,
+        );
     }
 }

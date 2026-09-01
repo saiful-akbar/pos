@@ -48,7 +48,7 @@
                     </div>
 
                     @foreach ($modules as $module)
-                        <div class="nav-item">
+                        <div class="nav-item mt-2">
                             <a class="nav-link {{ active_path($module->path) ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#{{ $module->id }}" role="button" aria-expanded="{{ active_path($module->path) ? 'true' : 'false' }}" aria-controls="{{ $module->id }}">
                                 <span class="material-symbols-outlined me-3">{{ $module->icon }}</span>
                                 <span>{{ $module->name }}</span>

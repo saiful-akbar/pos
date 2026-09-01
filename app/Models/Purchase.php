@@ -66,9 +66,9 @@ class Purchase extends Model
         'user_id',
         'invoice_number',
         'purchase_date',
-        'subtotal',
-        'discount',
-        'grand_total',
+        'total_quantity',
+        'total_price',
+        'payment_status',
         'notes',
     ];
 
@@ -94,5 +94,13 @@ class Purchase extends Model
     public function details(): HasMany
     {
         return $this->hasMany(PurchaseDetail::class, 'purchase_id', 'id');
+    }
+
+    /**
+     * Get all of the payments for the Purchase
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(PurchasePayment::class, 'purchase_id', 'id');
     }
 }

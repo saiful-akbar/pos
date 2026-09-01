@@ -20,24 +20,22 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('cart_details', function (Blueprint $table) {
+        Schema::create('purchase_cart_details', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
-            $table->foreignUlid('cart_id')
-                ->constrained('carts', 'id')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->foreignUlid('purchase_cart_id')
+                ->constrained('purchase_carts')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignUlid('product_id')
-                ->constrained('products', 'id')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+                ->constrained('products')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
 
-            $table->unsignedInteger('quantity');
-            $table->decimal('price', 15, 2);
-            $table->decimal('cost_price', 15, 2);
-            $table->decimal('discount', 15, 2);
-            $table->decimal('subtotal', 15, 2);
+            $table->unsignedInteger('quantity')->default(0);
+            $table->unsignedInteger('selling_price')->default(0);
+            $table->unsignedInteger('subtotal_price')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -48,6 +46,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cart_details');
+        Schema::dropIfExists('purchase_cart_details');
     }
 };

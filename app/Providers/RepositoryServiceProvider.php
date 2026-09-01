@@ -26,6 +26,10 @@ use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
+use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\CreatePurchaseCart;
+use App\Application\Purchase\UseCases\FindPurchaseCartWithDetails;
+use App\Application\Purchase\UseCases\GetPurchaseTable;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
@@ -55,6 +59,8 @@ use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
+use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -66,6 +72,8 @@ use App\Repositories\CustomerRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\PurchaseCartRepository;
+use App\Repositories\PurchaseRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupplierRepository;
@@ -99,6 +107,8 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSupplierById::class => ErrorLogRepository::class,
             GetAllSuppliers::class => ErrorLogRepository::class,
             UpdateSetting::class => ErrorLogRepository::class,
+            CreatePurchaseCart::class => ErrorLogRepository::class,
+            CreatePurchaseCartDetail::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -124,6 +134,8 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSupplierById::class => ActivityLogRepository::class,
             GetAllSuppliers::class => ActivityLogRepository::class,
             UpdateSetting::class => ActivityLogRepository::class,
+            CreatePurchaseCart::class => ActivityLogRepository::class,
+            CreatePurchaseCartDetail::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -188,6 +200,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateProduct::class => ProductRepository::class,
             UpdateProduct::class => ProductRepository::class,
             ResetDiscountProduct::class => ProductRepository::class,
+            CreatePurchaseCartDetail::class => ProductRepository::class,
         ],
 
         // Customer
@@ -207,6 +220,18 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSupplierById::class => SupplierRepository::class,
             GetAllSuppliers::class => SupplierRepository::class,
             GenerateSupplierCode::class => SupplierRepository::class,
+        ],
+
+        // Purchase
+        PurchaseRepositoryInterface::class => [
+            GetPurchaseTable::class => PurchaseRepository::class,
+        ],
+
+        // Purchase cart
+        PurchaseCartRepositoryInterface::class => [
+            FindPurchaseCartWithDetails::class => PurchaseCartRepository::class,
+            CreatePurchaseCart::class => PurchaseCartRepository::class,
+            CreatePurchaseCartDetail::class => PurchaseCartRepository::class,
         ],
     ];
 

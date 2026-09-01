@@ -6,10 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CartDetail extends Model
+class SaleCart extends Model
 {
     use HasUlids, SoftDeletes;
 
@@ -39,7 +39,7 @@ class CartDetail extends Model
      *
      * @var string
      */
-    protected $table = 'cart_details';
+    protected $table = 'sale_carts';
 
     /**
      * Primary key
@@ -61,20 +61,15 @@ class CartDetail extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'cart_id',
-        'product_id',
-        'quantity',
-        'price',
-        'cost_price',
-        'discount',
-        'subtotal',
+        'user_id',
+        'is_pending',
     ];
 
     /**
-     * Get the cart that owns the CartDetail
+     * Get all of the details for the Cart
      */
-    public function cart(): BelongsTo
+    public function details(): HasMany
     {
-        return $this->belongsTo(Cart::class, 'cart_id', 'id');
+        return $this->hasMany(SaleCartDetail::class, 'sale_cart_id', 'id');
     }
 }

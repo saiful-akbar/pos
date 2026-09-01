@@ -12,7 +12,7 @@
         </x-slot:action>
     </x-page-header>
 
-    <form action="{{ route('master.products.store') }}" method="post" autocomplete="off">
+    <form action="{{ route('master.products.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
         @csrf @method('post')
 
         <div class="row mt-7">
@@ -124,21 +124,7 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-input
-                                    type="number"
-                                    min="0"
-                                    name="purchase_price"
-                                    id="purchase_price"
-                                    label="Harga Beli"
-                                    placeholder="Harga Beli"
-                                    error="{{ $errors->has('purchase_price') }}"
-                                    value="{{ old('purchase_price') }}"
-                                    class="no-spinners"
-                                />
-                            </div>
-
-                            <div class="col-12 col-lg-6 mb-5">
+                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
                                 <x-form-floating-input
                                     type="number"
                                     min="0"
@@ -171,7 +157,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row mt-7">
             <div class="col-12">
                 <div class="card shadow-sm">
@@ -210,6 +196,27 @@
                                 />
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-7">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h3 class="fs-5">Gambar Produk</h3>
+                        <p class="text-body-secondary">Unggah gambar produk.</p>
+                    </div>
+
+                    <div class="card-body">
+                        <x-form-input
+                            type="file"
+                            name="image"
+                            id="image"
+                            accept=".png, .jpg, .jpeg, .webp"
+                            error="{{ $errors->has('image') }}"
+                        />
                     </div>
 
                     <div class="card-footer">

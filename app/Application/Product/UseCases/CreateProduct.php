@@ -12,7 +12,10 @@ use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Entities\ProductEntity;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CreateProduct
 {
@@ -28,12 +31,27 @@ class CreateProduct
     /**
      * Execute method.
      */
-    public function execute(CreateProductDTO $dto): ProductEntity
+    public function execute(Request $request): ProductEntity
     {
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $product = $this->productRepository->create($dto);
+            $product = $this->productRepository->create(new CreateProductDTO(
+                categoryId: $request->validated('category'),
+                unitId: $request->validated('unit'),
+                code: $request->validated('code'),
+                barcode: $request->validated('barcode'),
+                name: $request->validated('name'),
+                sellingPrice: $request->integer('selling_price'),
+                discount: $request->integer('discount'),
+                minimumStock: $request->integer('minimum_stock'),
+                currentStock: $request->integer('current_stock'),
+                isActive: $request->boolean('is_active')
+            ));
+
+            if ($request->hasFile('image')) {
+                $this->uploadImage(product: $product, file: $request->file('image'));
+            }
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
@@ -57,5 +75,23 @@ class CreateProduct
 
             throw $e;
         }
+    }
+
+    /**
+     * Upload image
+     */
+    private function uploadImage(ProductEntity $product, UploadedFile $file): void
+    {
+        if ($product->image !== null) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        $fileName = $product->code . '.' . $file->extension();
+        $path = Storage::disk('public')->putFileAs('images/products', $file, $fileName);
+
+        $this->productRepository->updateImage(
+            id: $product->id,
+            path: $path,
+        );
     }
 }

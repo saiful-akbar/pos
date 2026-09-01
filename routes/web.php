@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
@@ -18,7 +19,7 @@ Route::middleware('guest')->group(function (): void {
     Route::controller(AuthController::class)
         ->middleware('throttle:global')
         ->name('login')
-        ->prefix('/login')
+        ->prefix('login')
         ->group(function (): void {
             Route::get('/', 'login');
             Route::post('/', 'store')->name('.store');
@@ -29,7 +30,7 @@ Route::middleware('auth')->group(function (): void {
     Route::controller(AuthController::class)
         ->middleware('throttle:global')
         ->name('logout')
-        ->prefix('/logout')
+        ->prefix('logout')
         ->group(function (): void {
             Route::delete('/', 'logout');
         });
@@ -37,16 +38,16 @@ Route::middleware('auth')->group(function (): void {
     Route::controller(DashboardController::class)
         ->middleware('throttle:global')
         ->name('dashboard')
-        ->prefix('/dashboard')
+        ->prefix('dashboard')
         ->group(function (): void {
             Route::get('/', 'index');
         });
 
-    Route::name('settings')->prefix('/settings')->group(function (): void {
+    Route::name('settings')->prefix('settings')->group(function (): void {
         Route::controller(SettingController::class)
             ->middleware('throttle:global')
             ->name('.applications')
-            ->prefix('/applications')
+            ->prefix('applications')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:settings.applications,read');
                 Route::get('/edit', 'edit')->name('.edit')->middleware('module:settings.applications,update');
@@ -54,11 +55,11 @@ Route::middleware('auth')->group(function (): void {
             });
     });
 
-    Route::name('master')->prefix('/master')->group(function (): void {
+    Route::name('master')->prefix('master')->group(function (): void {
         Route::controller(RoleController::class)
             ->middleware('throttle:global')
             ->name('.roles')
-            ->prefix('/roles')
+            ->prefix('roles')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.roles,read');
                 Route::get('/create', 'create')->middleware('module:master.roles,create')->name('.create');
@@ -70,7 +71,7 @@ Route::middleware('auth')->group(function (): void {
         Route::controller(UserController::class)
             ->middleware('throttle:global')
             ->name('.users')
-            ->prefix('/users')
+            ->prefix('users')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.users,read');
                 Route::get('/create', 'create')->name('.create')->middleware('module:master.users,create');
@@ -82,7 +83,7 @@ Route::middleware('auth')->group(function (): void {
         Route::controller(CategoryController::class)
             ->middleware('throttle:global')
             ->name('.categories')
-            ->prefix('/categories')
+            ->prefix('categories')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.categories,read');
                 Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.categories,create');
@@ -97,7 +98,7 @@ Route::middleware('auth')->group(function (): void {
         Route::controller(UnitController::class)
             ->middleware('throttle:global')
             ->name('.units')
-            ->prefix('/units')
+            ->prefix('units')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.units,read');
                 Route::get('/export/template', 'templateExport')->name('.export.template')->middleware('module:master.units,create');
@@ -112,7 +113,7 @@ Route::middleware('auth')->group(function (): void {
         Route::controller(ProductController::class)
             ->middleware('throttle:global')
             ->name('.products')
-            ->prefix('/products')
+            ->prefix('products')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.products,read');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.products,create');
@@ -132,7 +133,7 @@ Route::middleware('auth')->group(function (): void {
         Route::controller(CustomerController::class)
             ->middleware('throttle:global')
             ->name('.customers')
-            ->prefix('/customers')
+            ->prefix('customers')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.customers,read');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.customers,create');
@@ -145,7 +146,7 @@ Route::middleware('auth')->group(function (): void {
         Route::controller(SupplierController::class)
             ->middleware('throttle:global')
             ->name('.suppliers')
-            ->prefix('/suppliers')
+            ->prefix('suppliers')
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.suppliers,read');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.suppliers,create');
@@ -153,6 +154,18 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.suppliers,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.suppliers,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.suppliers,update');
+            });
+    });
+
+    Route::name('transactions')->prefix('transactions')->group(function (): void {
+        Route::controller(PurchaseController::class)
+            ->middleware('throttle:global')
+            ->name('.purchases')
+            ->prefix('purchases')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:transactions.purchases,read');
+                Route::get('/create', 'create')->name('.create')->middleware('module:transactions.purchases,create');
+                Route::post('/create/cart', 'createCartDetail')->name('.create.cart')->middleware('module:transactions.purchases,create');
             });
     });
 });

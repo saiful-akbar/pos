@@ -6,8 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
-use App\Application\Product\DTOs\CreateProductDTO;
-use App\Application\Product\DTOs\UpdateProductDTO;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
@@ -67,19 +65,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        app(CreateProduct::class)->execute(new CreateProductDTO(
-            categoryId: $request->validated('category'),
-            unitId: $request->validated('unit'),
-            code: $request->validated('code'),
-            barcode: $request->validated('barcode'),
-            name: $request->validated('name'),
-            purchasePrice: $request->integer('purchase_price'),
-            sellingPrice: $request->integer('selling_price'),
-            discount: $request->integer('discount'),
-            minimumStock: $request->integer('minimum_stock'),
-            currentStock: $request->integer('current_stock'),
-            isActive: $request->boolean('is_active')
-        ));
+        app(CreateProduct::class)->execute(request: $request);
 
         return to_route('master.products.create')->with('alert', [
             'status' => 'success',
@@ -109,22 +95,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, string $id): RedirectResponse
     {
-        app(UpdateProduct::class)->execute(
-            dto: new UpdateProductDTO(
-                id: $id,
-                categoryId: $request->validated('category'),
-                unitId: $request->validated('unit'),
-                code: $request->validated('code'),
-                barcode: $request->validated('barcode'),
-                name: $request->validated('name'),
-                purchasePrice: $request->integer('purchase_price'),
-                sellingPrice: $request->integer('selling_price'),
-                discount: $request->integer('discount'),
-                minimumStock: $request->integer('minimum_stock'),
-                currentStock: $request->integer('current_stock'),
-                isActive: $request->boolean('is_active')
-            ),
-        );
+        app(UpdateProduct::class)->execute(id: $id, request: $request);
 
         return to_route('master.products.edit', ['id' => $id])->with('alert', [
             'status' => 'success',

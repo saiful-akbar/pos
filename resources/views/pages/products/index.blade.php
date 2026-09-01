@@ -51,7 +51,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="unitTable" class="table table-hover align-middle w-100"></table>
+                    <table id="productTable" class="table table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@
                             </div>
 
                             <div class="col-12">
-                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                                <input type="file" name="file" accept=".xlsx" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -178,7 +178,7 @@
                             </div>
 
                             <div class="col-12">
-                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                                <input type="file" name="file" accept=".xlsx" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -226,7 +226,7 @@
                             </div>
 
                             <div class="col-12">
-                                <input type="file" name="file" accept=".xlsx" class="form-control form-control-lg" required>
+                                <input type="file" name="file" accept=".xlsx" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -255,15 +255,28 @@
     <x-slot:script>
         <script>
             const updateAccess = $('html').data('update');
+            const baseUrl = app.baseUrl;
 
-            const productTable = app.dataTable('#unitTable', {
+            const productTable = app.dataTable('#productTable', {
                 serverSide: true,
                 ajax: "{{ route('master.products') }}",
                 fixedColumns: {
-                    start: 1,
+                    start: 0,
                     end: 1
                 },
                 columns: [
+                    {
+                        title: 'Gambar',
+                        name: 'products.image',
+                        data: 'image',
+                        type: 'string',
+                        searchable: false,
+                        orderable: false,
+                        render: (data) => {
+                            if (data === null) return `<img src="${baseUrl}/assets/images/empty.jpg" alt="Empty image" width="100" height="100" class="rounded border"/>`;
+                            return `<img src="${baseUrl}/storage/${data}" width="100" height="100" alt="image" class="rounded border"/>`;
+                        }
+                    },
                     {
                         title: 'Kode Produk',
                         name: 'products.code',
@@ -312,14 +325,6 @@
                         data: 'unit.name',
                         className: 'text-nowrap',
                         type: 'string',
-                    },
-                    {
-                        title: 'Harga Beli',
-                        name: 'purchase_price',
-                        data: 'purchase_price',
-                        className: 'text-nowrap',
-                        type: 'num',
-                        render: (data) => app.numberFormat(data),
                     },
                     {
                         title: 'Harga Jual',
@@ -388,12 +393,13 @@
                         name: 'products.id',
                         data: 'id',
                         className: 'text-nowrap text-center',
+                        type: 'html',
                         searchable: false,
                         orderable: false,
                         render: (data) => {
                             if (updateAccess === 1) {
                                 return `
-                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-sm btn-light">
+                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-sm btn-light w-100">
                                         <span class="material-symbols-outlined me-1">edit</span>
                                         <span>Edit</span>    
                                     </a>

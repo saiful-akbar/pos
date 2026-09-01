@@ -139,6 +139,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all of the purchasePayments for the User
+     */
+    public function purchasePayments(): HasMany
+    {
+        return $this->hasMany(PurchasePayment::class, 'user_id', 'id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

@@ -60,12 +60,16 @@ p {
   top: 2px !important;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /**
  * DataTable
  */
-div.dt-scroll-body {
+/* div.dt-scroll-body {
   overflow-y: hidden !important;
-}
+} */
 
 div.dt-container div.dt-layout-full {
   position: relative !important;

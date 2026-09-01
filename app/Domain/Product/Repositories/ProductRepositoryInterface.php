@@ -36,4 +36,17 @@ interface ProductRepositoryInterface
      * Reset discount.
      */
     public function resetDiscount(int $discount): void;
+
+    /**
+     * Update gambar
+     */
+    public function updateImage(string $id, ?string $path = null): void;
+
+    /**
+     * Megambil data produk berdasarkan kode atau barcode.
+     *
+     * @param string $code
+     * @return ProductEntity|null
+     */
+    public function findByCodeOrBarcode(string $code): ?ProductEntity;
 }
