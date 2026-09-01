@@ -20,6 +20,7 @@ use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use DateTimeImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SavePurchase
 {
@@ -76,6 +77,13 @@ class SavePurchase
 
             // ambil data purchase_cart_details
             $cartDetails = $this->cartDetailRepository->getByCartId(cartId: $cart->id);
+
+            // validasi purchase_cart_details
+            if (count($cartDetails) === 0) {
+                throw ValidationException::withMessages(messages: [
+                    'product_code' => 'Daftar produk kosong'
+                ]);
+            }
 
             foreach ($cartDetails as $cartDetail) {
                 // insert data purchase_details

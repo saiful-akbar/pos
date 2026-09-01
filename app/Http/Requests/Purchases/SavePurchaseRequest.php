@@ -45,7 +45,7 @@ class SavePurchaseRequest extends FormRequest
         return [
             'invoice_number' => 'nomor invoice',
             'supplier_id' => 'pemasok',
-            'payment_method' => 'metode_pembayarn',
+            'payment_method' => 'metode pembayarn',
             'amount_paid' => 'jumlah yang dibayarkan',
             'notes' => 'catatan',
         ];
