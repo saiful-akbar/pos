@@ -26,7 +26,7 @@ return new class() extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->dateTime('payment_date');
+            $table->date('payment_date');
             $table->enum('payment_method', ['cash', 'transfer', 'credit', 'debit']);
             $table->unsignedInteger('amount');
             $table->string('reference_number', 100)->nullable();

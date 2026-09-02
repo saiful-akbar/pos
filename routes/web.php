@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function (): void {
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.products,read');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.products,create');
+                Route::get('/active', 'getActiveTable')->name('.active');
                 Route::get('/create', 'create')->name('.create')->middleware('module:master.products,create');
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.products,read');
                 Route::get('/export/template', 'templateImport')->name('.export.template')->middleware('module:master.products,create');
@@ -164,13 +165,12 @@ Route::middleware('auth')->group(function (): void {
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:transactions.purchases,read');
                 Route::post('/', 'save')->name('.save')->middleware('module:transactions.purchases,create');
+                Route::get('/{purchaseId}', 'detail')->name('.detail')->middleware('module:transactions.purchases,read');
                 Route::get('/cart', 'createCart')->name('.cart')->middleware('module:transactions.purchases,create');
                 Route::post('/cart', 'addCartDetail')->name('.cart.store')->middleware('module:transactions.purchases,create');
                 Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
                 Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
                 Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
-                Route::get('/details/{purchaseId}', 'getDetailTable')->name('.details')->middleware('module:transactions.purchases,read');
-                Route::get('/{purchaseId}/edit', 'edit')->name('.edit')->middleware('module:transactions.purchases,update');
             });
     });
 });

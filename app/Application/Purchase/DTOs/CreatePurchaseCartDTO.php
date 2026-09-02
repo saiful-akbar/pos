@@ -25,7 +25,7 @@ class CreatePurchaseCartDTO extends DTO
     {
         return [
             'user_id' => $this->userId,
-            'purchase_date' => $this->purchaseDate->format('Y-m-d H:i:s'),
+            'purchase_date' => $this->purchaseDate->format('Y-m-d'),
             'total_quantity' => $this->totalQuantity,
             'total_price' => $this->totalPrice,
         ];

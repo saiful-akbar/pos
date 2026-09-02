@@ -149,11 +149,9 @@
                                                                         height="50"
                                                                     />
                                                                 </div>
+                                                                
                                                                 <div class="col">
                                                                     <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
-                                                                    <p class="text-body-secondary m-0 text-truncate" style="max-width: 250px;">
-                                                                        {{ $detail->product->name }}
-                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -173,6 +171,7 @@
                                                                 >
                                                                     <x-icon>edit</x-icon>
                                                                 </button>
+                                                                
                                                                 <button
                                                                     type="button"
                                                                     class="btn btn-light delete-cart-detail"
@@ -230,6 +229,7 @@
                                     id="supplierId"
                                     label="Pemasok"
                                     error="{{ $errors->has('supplier_id') }}"
+                                    data-choices=""
                                 >
                                     <option selected disabled>Pilih</option>
         
@@ -243,11 +243,12 @@
 
                             <div class="col-12 mb-6">
                                 <x-form-select
+                                    required
                                     label="Metode Pembayaran"
                                     name="payment_method"
                                     id="paymentMethod"
                                     error="{{ $errors->has('payment_method') }}"
-                                    required
+                                    data-choices=""
                                 >
                                     <option disabled selected>Pilih</option>
                                     <option value="cash" @selected(old('payment_method') == 'cash')>Tunai</option>
@@ -398,7 +399,7 @@
                 if (productTable === null) {
                     productTable = app.dataTable('#productTable', {
                         serverSide: true,
-                        ajax: "{{ route('master.products') }}",
+                        ajax: "{{ route('master.products.active') }}",
                         scrollY: "400px",
                         scrollX: false,
                         layout: {
@@ -459,13 +460,6 @@
                                 className: 'text-nowrap',
                             },
                             {
-                                title: 'Harga Beli',
-                                name: 'purchase_price',
-                                data: 'purchase_price',
-                                type: 'string',
-                                className: 'text-nowrap',
-                            },
-                            {
                                 title: 'Kategori',
                                 name: 'category.name',
                                 data: 'category.name',
@@ -478,6 +472,13 @@
                                 data: 'unit.name',
                                 type: 'string',
                                 className: 'text-nowrap',
+                            },
+                            {
+                                title: 'Harga Beli',
+                                name: 'purchase_price',
+                                data: 'purchase_price',
+                                className: 'text-nowrap',
+                                render: (data) => app.numberFormat(data),
                             },
                         ],
                         createdRow: (row, data, index) => {

@@ -31,7 +31,7 @@ class CreatePurchaseDTO extends DTO
         return [
             'user_id' => $this->userId,
             'supplier_id' => $this->supplierId,
-            'purchase_date' => $this->purchaseDate->format('Y-m-d H:i:s'),
+            'purchase_date' => $this->purchaseDate->format('Y-m-d'),
             'invoice_number' => $this->invoiceNumber,
             'total_quantity' => $this->totalQuantity,
             'total_price' => $this->totalPrice,

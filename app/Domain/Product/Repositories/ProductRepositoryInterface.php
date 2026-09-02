@@ -18,6 +18,11 @@ interface ProductRepositoryInterface
     public function getQuery(): Builder;
 
     /**
+     * Mengambil daftar produk yang masih aktif dalam format query.
+     */
+    public function getActiveQuery(): Builder;
+
+    /**
      * Mengambil data produk berdasarkan id.
      */
     public function findById(string $id): ?ProductDetailEntity;

@@ -13,4 +13,11 @@ interface PurchasePaymentRepositoryInterface
      * Membuat (insert) data pembayaran pembelian.
      */
     public function create(CreatePurchasePaymentDTO $dto): PurchasePaymentEntity;
+
+    /**
+     * Mengambil daftar pembayaran pembelian berdasarkan purchase_id.
+     *
+     * @return PurchasePaymentEntity[]
+     */
+    public function getByPurchaseId(string $purchaseId): array;
 }

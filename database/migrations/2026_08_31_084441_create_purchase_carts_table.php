@@ -28,7 +28,7 @@ return new class() extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->dateTime('purchase_date');
+            $table->date('purchase_date');
             $table->unsignedInteger('total_quantity')->default(0);
             $table->unsignedInteger('total_price')->default(0);
             $table->timestamps();

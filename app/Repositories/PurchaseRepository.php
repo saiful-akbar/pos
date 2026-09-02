@@ -77,7 +77,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
                 ->select($columns)
                 ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'));
+                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'));
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -99,8 +99,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
                 ->with(['user', 'supplier'])
                 ->find($id);
 
-
-            return is_null($data) ? null : $this->mapModelToPurchaseEntity(model: $data);
+            return $data === null ? null : $this->mapModelToPurchaseEntity(model: $data);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

@@ -23,6 +23,7 @@ use App\Application\Module\UseCases\GetModulesByRoleId;
 use App\Application\Module\UseCases\UpdateModuleAccess;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
+use App\Application\Product\UseCases\GetActiveProductsTable;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
@@ -36,6 +37,7 @@ use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseIdTable;
+use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
@@ -222,6 +224,7 @@ class RepositoryServiceProvider extends ServiceProvider
             ResetDiscountProduct::class => ProductRepository::class,
             CreatePurchaseCartDetail::class => ProductRepository::class,
             SavePurchase::class => ProductRepository::class,
+            GetActiveProductsTable::class => ProductRepository::class,
         ],
 
         // Customer
@@ -281,6 +284,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Purchase payment
         PurchasePaymentRepositoryInterface::class => [
             SavePurchase::class => PurchasePaymentRepository::class,
+            GetPurchasePaymentByPurchaseId::class => PurchasePaymentRepository::class,
         ],
 
         // Stock movement

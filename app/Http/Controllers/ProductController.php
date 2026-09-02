@@ -8,6 +8,7 @@ use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
+use App\Application\Product\UseCases\GetActiveProductsTable;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
@@ -187,5 +188,17 @@ class ProductController extends Controller
             'status' => 'success',
             'message' => 'Harga jual produk berhasil diperbarui.',
         ]);
+    }
+
+    /**
+     * Mengambil daftar product aktif untuk dataTable.
+     */
+    public function getActiveTable(Request $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetActiveProductsTable::class)->execute();
     }
 }

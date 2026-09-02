@@ -46,6 +46,31 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
     }
 
     /**
+     * Mengambil daftar pembayaran pembelian berdasarkan purchase_id.
+     *
+     * @return PurchasePaymentEntity[]
+     */
+    #[Override]
+    public function getByPurchaseId(string $purchaseId): array
+    {
+        try {
+            return $this->model->query()
+                ->with('user')
+                ->where('purchase_id', $purchaseId)
+                ->get()
+                ->map(fn ($data) => $this->mapModelToPurchasePaymentEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * pemetaan model ke PurchasePaymentEntity.
      */
     private function mapModelToPurchasePaymentEntity(PurchasePayment $model): PurchasePaymentEntity
@@ -63,7 +88,7 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
             paymentDate: parse_date_time_immutable($model->payment_date),
             paymentMethod: PaymentMethodEnum::from($model->payment_method),
             amount: $model->amount,
-            referencesNumber: $model->references_number,
+            referenceNumber: $model->reference_number,
             notes: $model->notes,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

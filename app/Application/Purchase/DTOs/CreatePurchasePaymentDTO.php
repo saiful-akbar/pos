@@ -30,7 +30,7 @@ class CreatePurchasePaymentDTO extends DTO
         return [
             'purchase_id' => $this->purchaseId,
             'user_id' => $this->userId,
-            'payment_date' => $this->paymentDate->format('Y-m-d H:i:s'),
+            'payment_date' => $this->paymentDate->format('Y-m-d'),
             'payment_method' => $this->paymentMethod->value,
             'amount' => $this->amount,
             'references_number' => $this->referencesNumber,

@@ -47,9 +47,12 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
                 );
             }
 
-            $data->quantity = $data->quantity + $dto->quantity;
+            $quantity = $data->quantity + $dto->quantity;
+            $subtotal = $quantity * $dto->purchasePrice;
+
+            $data->quantity = $quantity;
             $data->purchase_price = $dto->purchasePrice;
-            $data->subtotal_price = ($data->quantity + $dto->quantity) * $dto->purchasePrice;
+            $data->subtotal_price = $subtotal;
             $data->save();
 
             return $this->mapModelToPurchaseCartDetailEntity(
