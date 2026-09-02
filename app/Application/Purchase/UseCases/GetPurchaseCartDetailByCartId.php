@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Purcahse\UseCases;
+namespace App\Application\Purchase\UseCases;
 
 use App\Domain\Purchase\Entities\PurchaseCartDetailEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;

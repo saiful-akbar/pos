@@ -26,12 +26,12 @@ use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
-use App\Application\Purcahse\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
 use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
@@ -67,9 +67,11 @@ use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseDetailRepositoryInterface;
+use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
+use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
@@ -82,9 +84,11 @@ use App\Repositories\ProductRepository;
 use App\Repositories\PurchaseCartDetailRepository;
 use App\Repositories\PurchaseCartRepository;
 use App\Repositories\PurchaseDetailRepository;
+use App\Repositories\PurchasePaymentRepository;
 use App\Repositories\PurchaseRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
+use App\Repositories\StockMovementRepository;
 use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
 use App\Repositories\UserRepository;
@@ -265,6 +269,16 @@ class RepositoryServiceProvider extends ServiceProvider
         PurchaseDetailRepositoryInterface::class => [
             SavePurchase::class => PurchaseDetailRepository::class,
         ],
+
+        // Purchase payment
+        PurchasePaymentRepositoryInterface::class => [
+            SavePurchase::class => PurchasePaymentRepository::class,
+        ],
+
+        // Stock movement
+        StockMovementRepositoryInterface::class => [
+            SavePurchase::class => StockMovementRepository::class,
+        ]
     ];
 
     /**

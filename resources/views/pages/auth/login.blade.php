@@ -34,7 +34,7 @@
                     linear-gradient(to left,
                         rgba(255, 255, 255, 0),
                         rgba(255, 255, 255, 1)),
-                    url("{{ storage_image(setting()?->backgroundImage) }}");
+                    url("{{ storage_image(setting()?->backgroundImage, 'assets/images/background.jpg') }}");
             }
 
             [data-bs-theme='dark'] body .login-cover {
@@ -42,7 +42,7 @@
                     linear-gradient(to left,
                         rgba(23, 25, 28, 0),
                         rgba(23, 25, 28, 1)),
-                    url("{{ storage_image(setting()?->backgroundImage) }}");
+                    url("{{ storage_image(setting()?->backgroundImage, 'assets/images/background.jpg') }}");
             }
         </style>
     </x-slot:style>

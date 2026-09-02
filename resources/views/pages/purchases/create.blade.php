@@ -41,7 +41,7 @@
 
     {{-- Form tambah produk dan daftar cart detail --}}
     <div class="row mt-7">
-        <div class="col-12 col-lg-8">
+        <div class="col-12">
             <div class="row">
                 <div class="col-12">
                     <form action="{{ route('transactions.purchases.cart.store') }}" method="post" autocomplete="off">
@@ -53,8 +53,8 @@
                             </div>
     
                             <div class="card-body">
-                                <div class="row align-items-start">
-                                    <div class="col-12 col-lg-4 mb-5 mb-lg-0">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-lg-3 mb-6 mb-lg-0">
                                         <div @class(['input-group', 'is-invalid' => $errors->has('product_code')])>
                                             <div class="form-floating">
                                                 <input
@@ -86,7 +86,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-12 col-lg-4 mb-5 mb-lg-0">
+                                    <div class="col-12 col-lg-3 mb-6 mb-lg-0">
                                         <div @class(['input-group', 'is-invalid' => $errors->has('purchase_price')])>
                                             <div class="form-floating">
                                                 <input
@@ -107,7 +107,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-12 col-lg-4">
+                                    <div class="col-12 col-lg-3 mb-6 mb-lg-0">
                                         <div @class(['input-group', 'is-invalid' => $errors->has('quantity')])>
                                             <div class="form-floating">
                                                 <input
@@ -127,103 +127,192 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">add</x-icon>
-                                    <span>Tambahkan kedaftar</span>
-                                </button>
+                                    <div class="col-12 col-lg-3">
+                                        <button type="submit" class="btn btn-secondary btn-lg w-100">
+                                            <x-icon class="me-1">add</x-icon>
+                                            <span>Tambah kedaftar</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr class="mt-7">
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table id="cartDetailTable" class="table table-hover table-sm align-middle w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-start">No</th>
+                                                    <th class="text-nowrap text-start">Produk</th>
+                                                    <th class="text-nowrap text-end">Harga Beli</th>
+                                                    <th class="text-nowrap text-end">Qty</th>
+                                                    <th class="text-nowrap text-end">Subtotal</th>
+                                                    <th class="text-nowrap text-center">Opsi</th>
+                                                </tr>
+                                            </thead>
+                
+                                            <tbody>
+                                                @foreach ($details as $detail)
+                                                    <tr>
+                                                        <td class="text-start">{{ number_format($loop->iteration) }}</td>
+                                                        <td class="text-nowrap text-start">
+                                                            <div class="row">
+                                                                <div class="col-auto">
+                                                                    <img
+                                                                        src="{{ storage_image($detail->product->image) }}"
+                                                                        alt="Product image"
+                                                                        class="rounded"
+                                                                        width="50"
+                                                                        height="50"
+                                                                    />
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
+                                                                    <p class="text-body-secondary m-0 text-truncate" style="max-width: 250px;">
+                                                                        {{ $detail->product->name }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-nowrap text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
+                                                        <td class="text-nowrap text-end">{{ number_format($detail->quantity) }}</td>
+                                                        <td class="text-nowrap text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
+                                                        <td class="text-center">
+                                                            <div class="btn-group w-100">
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-light edit-cart-detail"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-title="Edit"
+                                                                    data-id="{{ $detail->id }}"
+                                                                    data-quantity="{{ $detail->quantity }}"
+                                                                    data-purchase-price="{{ $detail->purchasePrice }}"
+                                                                >
+                                                                    <x-icon>edit</x-icon>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-light delete-cart-detail"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-title="Hapus"
+                                                                    data-id="{{ $detail->id }}"
+                                                                >
+                                                                    <x-icon>delete</x-icon>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            
-            {{-- Table cart detail --}}
-            <div class="row mt-7">
-                <div class="col-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h3 class="fs-6 m-0">Daftar Produk</h3>
-                        </div>
-                        
-                        <div class="card-body">
-                            <table id="cartDetailTable" class="table table-hover table-sm align-middle w-100">
-                                <thead>
-                                    <tr>
-                                        <th class="text-nowrap text-start">No</th>
-                                        <th class="text-nowrap text-start">Produk</th>
-                                        <th class="text-nowrap text-end">Harga Beli</th>
-                                        <th class="text-nowrap text-end">Qty</th>
-                                        <th class="text-nowrap text-end">Subtotal</th>
-                                        <th class="text-nowrap text-center">Opsi</th>
-                                    </tr>
-                                </thead>
+        </div>
+    </div>
     
-                                <tbody>
-                                    @foreach ($details as $detail)
-                                        <tr>
-                                            <td class="text-start">{{ number_format($loop->iteration) }}</td>
-                                            <td class="text-nowrap text-start">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                        <img
-                                                            src="{{ storage_image($detail->product->image) }}"
-                                                            alt="Product image"
-                                                            class="rounded"
-                                                            width="50"
-                                                            height="50"
-                                                        />
-                                                    </div>
-                                                    <div class="col">
-                                                        <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
-                                                        <p class="text-body-secondary m-0 text-truncate" style="max-width: 250px;">
-                                                            {{ $detail->product->name }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
-                                            <td class="text-nowrap text-end">{{ number_format($detail->quantity) }}</td>
-                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
-                                            <td class="text-center">
-                                                <div class="btn-group w-100">
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-light edit-cart-detail"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-title="Edit"
-                                                        data-id="{{ $detail->id }}"
-                                                        data-quantity="{{ $detail->quantity }}"
-                                                        data-purchase-price="{{ $detail->purchasePrice }}"
-                                                    >
-                                                        <x-icon>edit</x-icon>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-light delete-cart-detail"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-title="Hapus"
-                                                        data-id="{{ $detail->id }}"
-                                                    >
-                                                        <x-icon>delete</x-icon>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+    {{-- Total dan form simpan pembelian --}}
+    <div class="row mt-7">
+        <div class="col-12 col-lg-8 order-2 order-lg-1">
+            <form action="{{ route('transactions.purchases.save') }}" method="post" id="formSavePurchase">
+                @csrf @method('post')
+                
+                <div class="card shadow sm">
+                    <div class="card-header">
+                        <h3 class="fs-6 m-0">Pembayaran</h3>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 mb-6">
+                                <x-form-floating-input
+                                    type="text"
+                                    name="invpoice_number"
+                                    id="invpoiceNumber"
+                                    label="Nomor Invoice"
+                                    placeholder="Nomor invoice dari pemasok..."
+                                    error="{{ $errors->has('invoice_number') }}"
+                                    value="{{ old('invoice_number') }}"
+                                />
+                            </div>
+
+                            <div class="col-12 mb-6">
+                                <x-form-floating-select
+                                    required
+                                    name="supplier_id"
+                                    id="supplierId"
+                                    label="Pemasok"
+                                    error="{{ $errors->has('supplier_id') }}"
+                                >
+                                    <option selected disabled>Pilih pemasok</option>
+        
+                                    @foreach ($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}" @selected(old('supplier_id') == $supplier->id)>
+                                            {{ $supplier->code }} - {{ $supplier->name }}
+                                        </option>
                                     @endforeach
-                                </tbody>
-                            </table>
+                                </x-form-floating-select>
+                            </div>
+
+                            <div class="col-12 mb-6">
+                                <x-form-floating-select
+                                    label="Metode Pembayaran"
+                                    name="payment_method"
+                                    id="paymentMethod"
+                                    error="{{ $errors->has('payment_method') }}"
+                                    required
+                                >
+                                    <option disabled selected>Pilih metode pembayaran</option>
+                                    <option value="cash" @selected(old('payment_method') == 'cash')>Tunai</option>
+                                    <option value="transfer" @selected(old('payment_method') == 'transfer')>Transfer</option>
+                                    <option value="debit" @selected(old('payment_method') == 'debit')>Debit</option>
+                                    <option value="credit" @selected(old('payment_method') == 'credit')>Kredit</option>
+                                </x-form-floating-select>
+                            </div>
+
+                            <div class="col-12 mb-6">
+                                <x-form-floating-input
+                                    type="number"
+                                    name="amount_paid"
+                                    id="amountPaid"
+                                    label="Jumlah yang dibayarkan"
+                                    placeholder="Jumlah yang dibayarkan"
+                                    error="{{ $errors->has('amount_paid') }}"
+                                    value="{{ old('amount_paid') }}"
+                                    class="no-spinners"
+                                />
+                            </div>
+
+                            <div class="col-12">
+                                <x-form-floating-input
+                                    type="textarea"
+                                    name="notes"
+                                    id="notes"
+                                    label="Catatan"
+                                    placeholder="Catatan"
+                                    error="{{ $errors->has('notes') }}"
+                                    value="{{ old('notes') }}"
+                                />
+                            </div>
                         </div>
                     </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-secondary w-100">
+                            <x-icon class="me-1">save</x-icon>
+                            <span>Simpan</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
-        {{-- Total dan form simpan pembelian --}}
-        <div class="col-12 col-lg-4 mt-7 mt-lg-0">
+        <div class="col-12 col-lg-4 order-1 order-lg-2 mb-7 mb-lg-0">
             <div class="row">
                 <div class="col-12">
                     <div class="card shadow-sm">
@@ -236,7 +325,7 @@
                                     <span class="text-body-secondary">Total Qty</span>
                                     <span class="fs-6 fw-bold">{{ number_format($cart->totalQuantity) }}</span>
                                 </li>
-
+    
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <span class="text-body-secondary">Total</span>
                                     <span class="fs-6 fw-bold">Rp {{ number_format($cart->totalPrice) }}</span>
@@ -244,103 +333,6 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            {{-- Form simpan pembelian --}}
-            <div class="row mt-7">
-                <div class="col-12">
-                    <form action="{{ route('transactions.purchases.save') }}" method="post" id="formSavePurchase">
-                        @csrf @method('post')
-                        
-                        <div class="card shadow sm">
-                            <div class="card-header">
-                                <h3 class="fs-6 m-0">Pembayaran</h3>
-                            </div>
-        
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12 mb-5">
-                                        <x-form-floating-input
-                                            type="text"
-                                            name="invpoice_number"
-                                            id="invpoiceNumber"
-                                            label="Nomor Invoice"
-                                            placeholder="Nomor invoice dari pemasok..."
-                                            error="{{ $errors->has('invoice_number') }}"
-                                            value="{{ old('invoice_number') }}"
-                                        />
-                                    </div>
-
-                                    <div class="col-12 mb-5">
-                                        <x-form-floating-select
-                                            required
-                                            name="supplier_id"
-                                            id="supplierId"
-                                            label="Pemasok"
-                                            error="{{ $errors->has('supplier_id') }}"
-                                        >
-                                            <option selected disabled>Pilih pemasok</option>
-                
-                                            @foreach ($suppliers as $supplier)
-                                                <option value="{{ $supplier->id }}" @selected(old('supplier_id') == $supplier->id)>
-                                                    {{ $supplier->code }} - {{ $supplier->name }}
-                                                </option>
-                                            @endforeach
-                                        </x-form-floating-select>
-                                    </div>
-
-                                    <div class="col-12 mb-5">
-                                        <x-form-floating-select
-                                            label="Metode Pembayaran"
-                                            name="payment_method"
-                                            id="paymentMethod"
-                                            error="{{ $errors->has('payment_method') }}"
-                                            required
-                                        >
-                                            <option disabled selected>Pilih metode pembayaran</option>
-                                            <option value="cash" @selected(old('payment_method') == 'cash')>Tunai</option>
-                                            <option value="transfer" @selected(old('payment_method') == 'transfer')>Transfer</option>
-                                            <option value="debit" @selected(old('payment_method') == 'debit')>Debit</option>
-                                            <option value="credit" @selected(old('payment_method') == 'credit')>Kredit</option>
-                                        </x-form-floating-select>
-                                    </div>
-
-                                    <div class="col-12 mb-5">
-                                        <x-form-floating-input
-                                            type="number"
-                                            name="amount_paid"
-                                            id="amountPaid"
-                                            label="Jumlah yang dibayarkan"
-                                            placeholder="Jumlah yang dibayarkan"
-                                            error="{{ $errors->has('amount_paid') }}"
-                                            value="{{ old('amount_paid') }}"
-                                            class="no-spinners"
-                                        />
-                                    </div>
-
-                                    <div class="col-12">
-                                        <x-form-floating-input
-                                            type="textarea"
-                                            name="notes"
-                                            id="notes"
-                                            label="Catatan"
-                                            placeholder="Catatan"
-                                            error="{{ $errors->has('notes') }}"
-                                            value="{{ old('notes') }}"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">save</x-icon>
-                                    <span>Simpan</span>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>

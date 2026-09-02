@@ -65,7 +65,7 @@ class StockMovement extends Model
         'product_id',
         'type',
         'reference_id',
-        'qty',
+        'quantity',
         'stock_before',
         'stock_after',
         'notes',
