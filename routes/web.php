@@ -169,6 +169,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
                 Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
                 Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
+                Route::get('/details/{purchaseId}', 'getDetailTable')->name('.details')->middleware('module:transactions.purchases,read');
+                Route::get('/{purchaseId}/edit', 'edit')->name('.edit')->middleware('module:transactions.purchases,update');
             });
     });
 });

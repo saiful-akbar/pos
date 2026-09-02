@@ -13,7 +13,7 @@
 
 @if ($label)
     <label for="{{ $id }}" class="form-label">
-        {{ $label }} {{ $required ? '*' : '' }}
+        {{ $label }} <span class="text-danger">{{ $required ? '*' : '' }}</span>
     </label>
 @endif
 

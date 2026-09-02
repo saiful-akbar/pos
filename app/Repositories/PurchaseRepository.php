@@ -12,6 +12,10 @@ use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Purchase\ValueObjects\SupplierPurchaseValue;
 use App\Domain\Purchase\ValueObjects\UserPurchaseValue;
 use App\Models\Purchase;
+use App\Models\PurchasePayment;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Override;
 
 class PurchaseRepository extends Repository implements PurchaseRepositoryInterface
@@ -36,6 +40,67 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             return $this->mapModelToPurchaseEntity(
                 model: $data->load('user', 'supplier'),
             );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Menmabil data penjualan berdasarkan rentang waktu dalam format query builder.
+     */
+    #[Override]
+    public function getByDateRangeQuery(DateTimeInterface $fromDate, DateTimeInterface $toDate): Builder
+    {
+        try {
+            $paymentQuery = PurchasePayment::query()
+                ->select('id', 'purchase_id', DB::raw('coalesce(cast(sum(amount) as signed integer), 0) as total_amount'))
+                ->groupBy('id', 'purchase_id');
+
+            $columns = [
+                'purchases.id as id',
+                'purchases.purchase_date as purchase_date',
+                'purchases.invoice_number as invoice_number',
+                'purchases.total_quantity as total_quantity',
+                'purchases.total_price as total_price',
+                'purchases.payment_status as payment_status',
+                'suppliers.id as supplier_id',
+                'suppliers.name as supplier_name',
+                DB::raw('coalesce(payments.total_amount, 0) as payment_total_amount'),
+            ];
+
+            return $this->model->query()
+                ->select($columns)
+                ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
+                ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
+                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'));
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data pembelian berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?PurchaseEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->with(['user', 'supplier'])
+                ->find($id);
+
+
+            return is_null($data) ? null : $this->mapModelToPurchaseEntity(model: $data);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

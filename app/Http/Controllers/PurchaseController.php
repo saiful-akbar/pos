@@ -10,15 +10,22 @@ use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
 use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
+use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
+use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseIdTable;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
+use App\Http\Requests\Purchases\GetPurchaseByDateRangeRequest;
 use App\Http\Requests\Purchases\SavePurchaseRequest;
 use App\Http\Requests\Purchases\StorePuchaseCartDetailRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PurchaseController extends Controller
@@ -26,8 +33,15 @@ class PurchaseController extends Controller
     /**
      * Menampilkan halaman utama pembelian.
      */
-    public function index(): View
+    public function index(GetPurchaseByDateRangeRequest $request): View|JsonResponse
     {
+        if ($request->ajax()) {
+            return app(GetPurchaseByDateRangeTable::class)->execute(
+                fromDate: parse_date_time_immutable($request->query('from_date', date('Y-m-d'))),
+                toDate: parse_date_time_immutable($request->query('to_date', date('Y-m-d'))),
+            );
+        }
+
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: 'transactions.purchases',
@@ -124,5 +138,42 @@ class PurchaseController extends Controller
             'status' => 'success',
             'message' => 'Pembelian berhasil disimpan.',
         ]);
+    }
+
+    /**
+     * Mengambil detail penjualan berdasarkan id penjualan.
+     */
+    public function getDetailTable(Request $request, string $purcahseId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetPurchaseDetailByPurchaseIdTable::class)->execute(
+            purchaseId: $purcahseId,
+        );
+    }
+
+    /**
+     * Menampilkan halaman edit pembelian.
+     *
+     * @param string $id
+     * @return View
+     */
+    public function edit(string $id): View
+    {
+        $purchase = app(FindPurchaseById::class)->execute(
+            id: $id
+        );
+
+        if (is_null($purchase)) {
+            abort(404);
+        }
+
+        $purchaseDetails = app(GetPurchaseDetailByPurchaseId::class)->execute(
+            purchaseId: $purchase->id
+        );
+
+        return view('pages.purchases.edit', compact('purchase', 'purchaseDetails'));
     }
 }

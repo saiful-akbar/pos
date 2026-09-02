@@ -21,6 +21,8 @@ class FormInput extends Component
         public bool $error = false,
         public bool $required = false,
         public ?string $size = null,
+        public string $type = 'text',
+        public null|string|int $value = null,
     ) {}
 
     /**

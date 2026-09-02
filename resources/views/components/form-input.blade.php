@@ -9,15 +9,22 @@
     $merge = [
         'required' => $required,
         'name' => $name,
-        'id' => $id
+        'id' => $id,
+        'value' => $value,
     ];
 @endphp
 
 @if ($label)
-    <label for="{{ $id }}" class="form-label">{{ $label }} {{ $required ? '*' : '' }}</label>
+    <label for="{{ $id }}" class="form-label">
+        {{ $label }} <span class="text-danger">{{ $required ? '*' : '' }}</span>
+    </label>
 @endif
 
-<input {{ $attributes->class($class)->merge($merge) }}>
+@if ($type == 'textarea')
+    <textarea {{ $attributes->class($class)->merge($merge) }}>{{ $value }}</textarea>
+@else
+    <input {{ $attributes->class($class)->merge($merge) }}>
+@endif
 
 @if ($helperText)
     <div class="form-text">{{ $helperText }}</div>

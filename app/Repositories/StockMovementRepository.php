@@ -25,6 +25,28 @@ class StockMovementRepository extends Repository implements StockMovementReposit
     }
 
     /**
+     * Membuat (insert) data pergerak stock.
+     */
+    #[Override]
+    public function create(CreateStockMovementDTO $dto): StockMovementEntity
+    {
+        try {
+            $data = $this->model->query()->create($dto->toArray());
+
+            return $this->mapModelToStockMovementEntity(
+                model: $data->load('user', 'product'),
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke StockMovementEntity.
      */
     private function mapModelToStockMovementEntity(StockMovement $model): StockMovementEntity
@@ -55,30 +77,5 @@ class StockMovementRepository extends Repository implements StockMovementReposit
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at
         );
-    }
-
-    /**
-     * Membuat (insert) data pergerak stock.
-     *
-     * @param CreateStockMovementDTO $dto
-     * @return StockMovementEntity
-     */
-    #[Override]
-    public function create(CreateStockMovementDTO $dto): StockMovementEntity
-    {
-        try {
-            $data = $this->model->query()->create($dto->toArray());
-
-            return $this->mapModelToStockMovementEntity(
-                model: $data->load('user', 'product'),
-            );
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
     }
 }

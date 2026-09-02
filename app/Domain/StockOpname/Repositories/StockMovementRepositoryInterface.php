@@ -11,9 +11,6 @@ interface StockMovementRepositoryInterface
 {
     /**
      * Membuat (insert) data pergerak stock.
-     *
-     * @param CreateStockMovementDTO $dto
-     * @return StockMovementEntity
      */
     public function create(CreateStockMovementDTO $dto): StockMovementEntity;
 }

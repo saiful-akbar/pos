@@ -50,12 +50,10 @@ class SavePurchase
      */
     public function execute(Request $request): void
     {
-        $userId = user()->id;
-
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            // ambil data purchase_carts.
+            $userId = user()->id;
             $cart = $this->cartRepository->findByUserId(userId: $userId);
 
             // validasi purchase_carts
