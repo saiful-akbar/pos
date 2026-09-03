@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Application\Purchase\DTOs\CreatePurchaseDTO;
+use App\Application\Purchase\DTOs\UpdatePurchaseDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Entities\PurchaseEntity;
 use App\Domain\Purchase\Enums\PaymentStatusEnum;
@@ -77,7 +78,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
                 ->select($columns)
                 ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'));
+                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'));
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -100,6 +101,29 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
                 ->find($id);
 
             return $data === null ? null : $this->mapModelToPurchaseEntity(model: $data);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Memperbarui data pembelian.
+     *
+     * @param UpdatePurchaseDTO $dto
+     * @return void
+     */
+    #[Override]
+    public function update(UpdatePurchaseDTO $dto): void
+    {
+        try {
+            $this->model->query()
+                ->where('id', $dto->id)
+                ->update($dto->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

@@ -166,11 +166,26 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/', 'index')->middleware('module:transactions.purchases,read');
                 Route::post('/', 'save')->name('.save')->middleware('module:transactions.purchases,create');
                 Route::get('/{purchaseId}', 'detail')->name('.detail')->middleware('module:transactions.purchases,read');
-                Route::get('/cart', 'createCart')->name('.cart')->middleware('module:transactions.purchases,create');
-                Route::post('/cart', 'addCartDetail')->name('.cart.store')->middleware('module:transactions.purchases,create');
-                Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
-                Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
-                Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
+
+                Route::name('.cart')
+                    ->prefix('/cart')
+                    ->middleware('module:transactions.purchases,create')
+                    ->group(function (): void {
+                        Route::get('/', 'createCart');
+                        Route::post('/', 'addCartDetail')->name('.store');
+                        Route::patch('/{cartDetailId}', 'updateCartDetail')->name('.update');
+                        Route::delete('/cancel', 'cancelCart')->name('.cancel');
+                        Route::delete('/{cartDetailId}', 'deleteCartDetail')->name('.delete');
+                    });
+
+                Route::name('.payments')
+                    ->prefix('/{purchaseId}/payments')
+                    ->middleware('module:transactions.purchases,create')
+                    ->group(function (): void {
+                        Route::get('/', 'payment');
+                        Route::post('/', 'createPayment')->name('.create');
+                        Route::delete('/{paymentId}', 'deletePayment')->name('.delete');
+                    });
             });
     });
 });

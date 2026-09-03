@@ -29,8 +29,10 @@ use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\CreatePurchasePayment;
 use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchasePaymentById;
 use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
@@ -38,6 +40,7 @@ use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseIdTable;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseIdTable;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
@@ -131,6 +134,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdatePurchaseCartDetail::class => ErrorLogRepository::class,
             DeletePurchaseCartDetail::class => ErrorLogRepository::class,
             SavePurchase::class => ErrorLogRepository::class,
+            CreatePurchasePayment::class => ErrorLogRepository::class,
+            DeletePurchasePaymentById::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -158,6 +163,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSetting::class => ActivityLogRepository::class,
             CreatePurchaseCart::class => ActivityLogRepository::class,
             SavePurchase::class => ActivityLogRepository::class,
+            CreatePurchasePayment::class => ActivityLogRepository::class,
+            DeletePurchasePaymentById::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -272,6 +279,8 @@ class RepositoryServiceProvider extends ServiceProvider
             SavePurchase::class => PurchaseRepository::class,
             GetPurchaseByDateRangeTable::class => PurchaseRepository::class,
             FindPurchaseById::class => PurchaseRepository::class,
+            CreatePurchasePayment::class => PurchaseRepository::class,
+            DeletePurchasePaymentById::class => PurchaseRepository::class,
         ],
 
         // Purchase Detail
@@ -285,6 +294,9 @@ class RepositoryServiceProvider extends ServiceProvider
         PurchasePaymentRepositoryInterface::class => [
             SavePurchase::class => PurchasePaymentRepository::class,
             GetPurchasePaymentByPurchaseId::class => PurchasePaymentRepository::class,
+            GetPurchasePaymentByPurchaseIdTable::class => PurchasePaymentRepository::class,
+            CreatePurchasePayment::class => PurchasePaymentRepository::class,
+            DeletePurchasePaymentById::class => PurchasePaymentRepository::class,
         ],
 
         // Stock movement

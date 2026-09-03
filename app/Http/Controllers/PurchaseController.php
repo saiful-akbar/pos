@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\Purchase\DTOs\CreatePurchasePaymentDTO;
 use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\CreatePurchasePayment;
 use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchasePaymentById;
 use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
@@ -19,6 +22,8 @@ use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
+use App\Domain\Purchase\Enums\PaymentMethodEnum;
+use App\Http\Requests\Purchases\CreatePurchasePaymentRequest;
 use App\Http\Requests\Purchases\GetPurchaseByDateRangeRequest;
 use App\Http\Requests\Purchases\SavePurchaseRequest;
 use App\Http\Requests\Purchases\StorePuchaseCartDetailRequest;
@@ -164,5 +169,57 @@ class PurchaseController extends Controller
         );
 
         return view('pages.purchases.detail', compact('purchase', 'details', 'payments', 'access'));
+    }
+
+    /**
+     * Menampilkan halaman daftar pembayaran
+     *
+     * @return View
+     */
+    public function payment(string $purchaseId): View|JsonResponse
+    {
+        $purchase = app(FindPurchaseById::class)->execute(id: $purchaseId);
+        $payments = app(GetPurchasePaymentByPurchaseId::class)->execute(purchaseId: $purchaseId);
+        $totalPaymentAmount = 0;
+
+        foreach ($payments as $payment) {
+            $totalPaymentAmount += $payment->amount;
+        }
+
+        return view('pages.purchases.payment', compact('purchase', 'payments', 'totalPaymentAmount'));
+    }
+
+    /**
+     * Menambah pembayaran pembelian baru.
+     */
+    public function createPayment(CreatePurchasePaymentRequest $request, string $purchaseId): RedirectResponse
+    {
+        app(CreatePurchasePayment::class)->execute(dto: new CreatePurchasePaymentDTO(
+            purchaseId: $purchaseId,
+            userId: user()->id,
+            paymentDate: $request->date('payment_date'),
+            paymentMethod: $request->enum('payment_method', PaymentMethodEnum::class),
+            amount: $request->integer('amount'),
+            referencesNumber: $request->validated('reference_number'),
+            notes: $request->validated('reference_number'),
+        ));
+
+        return to_route('transactions.purchases.payments', ['purchaseId' => $purchaseId])->with('alert', [
+            'status' => 'success',
+            'message' => 'Pembayaran berhasil ditambahkan.',
+        ]);
+    }
+
+    /**
+     * Menghapus pembayaran pembelian
+     */
+    public function deletePayment(string $purchaseId, string $paymentId): RedirectResponse
+    {
+        app(DeletePurchasePaymentById::class)->execute(id: $paymentId);
+
+        return to_route('transactions.purchases.payments', ['purchaseId' => $purchaseId])->with('alert', [
+            'status' => 'success',
+            'message' => 'Pembayaran berhasil dihapus.',
+        ]);
     }
 }

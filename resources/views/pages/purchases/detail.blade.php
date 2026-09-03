@@ -2,21 +2,7 @@
     <x-page-header title="Detail Pembelian" icon="add_shopping_cart">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-12 col-lg-6 order-2 order-lg-1">
-                    <div class="btn-group w-100">
-                        <a href="#" class="btn btn-secondary w-100" role="button">
-                            <x-icon class="me-1">edit</x-icon>
-                            <span>Edit</span>
-                        </a>
-
-                        <a href="#" class="btn btn-secondary w-100" role="button">
-                            <x-icon class="me-1">payments</x-icon>
-                            <span>Pembayaran</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-12 col-lg-3 order-1 order-lg-2 mb-5 mb-lg-0">
+                <div class="col-12 col-lg-3">
                     <a href="{{ route('transactions.purchases') }}" class="btn btn-light w-100" role="button">
                         <x-icon class="me-1">arrow_back</x-icon>
                         <span>Kembali</span>
@@ -108,7 +94,20 @@
                 <div class="col-12">
                     <div class="card shadow-sm">
                         <div class="card-header">
-                            <div class="h3 fs-6 my-0">Pembayaran</div>
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col-auto">
+                                    <div class="h3 fs-6 my-0">Pembayaran</div>
+                                </div>
+                                
+                                @if ($access?->create)
+                                    <div class="col-12 col-lg-4 mt-5 mt-lg-0">
+                                        <a href="{{ route('transactions.purchases.payments', ['purchaseId' => $purchase->id]) }}" class="btn btn-secondary w-100" role="button">
+                                            <x-icon class="me-1">add</x-icon>
+                                            <span>Tambah Pembayaran</span>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
 
                         <dic class="card-body">
@@ -161,9 +160,9 @@
     <x-slot:script>
         <script>
             const tableOptions = {
+                lengthChange: false,
                 searching: false,
                 info: false,
-                lengthChange: false,
                 layout: {
                     topStart: null,
                     topEnd: null,
