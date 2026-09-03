@@ -40,9 +40,6 @@ interface PurchasePaymentRepositoryInterface
 
     /**
      * Menghitung total amount berdasarkan pirchase_id.
-     *
-     * @param string $purchaseId
-     * @return integer
      */
     public function sumAmountByPurchaseId(string $purchaseId): int;
 }

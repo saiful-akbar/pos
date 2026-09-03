@@ -45,9 +45,9 @@ class CreatePurchasePayment
 
             if ($totalAmount <= 0) {
                 $paymentStatus = PaymentStatusEnum::UNPAID;
-            } else if ($totalAmount < $purchase->totalPrice) {
+            } elseif ($totalAmount < $purchase->totalPrice) {
                 $paymentStatus = PaymentStatusEnum::PARTIAL;
-            } else if ($totalAmount >= $purchase->totalPrice) {
+            } elseif ($totalAmount >= $purchase->totalPrice) {
                 $paymentStatus = PaymentStatusEnum::PAID;
             }
 

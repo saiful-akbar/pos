@@ -27,7 +27,7 @@ class UpdateCustomerRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:100'],
-            'phone_number' => ['nullable', 'string', 'max:20', "unique:$connection.customers,phone_number,$id,id"],
+            'phone_number' => ['required', 'string', 'max:20', "unique:$connection.customers,phone_number,$id,id"],
             'address' => ['nullable', 'string', 'max:1000'],
         ];
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Purchase\UseCases;
 
+use App\Domain\Purchase\Enums\PaymentStatusEnum;
 use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use DateTimeInterface;
 use Illuminate\Http\JsonResponse;
@@ -19,12 +20,13 @@ class GetPurchaseByDateRangeTable
     /**
      * Execute method.
      */
-    public function execute(DateTimeInterface $fromDate, DateTimeInterface $toDate): JsonResponse
+    public function execute(DateTimeInterface $fromDate, DateTimeInterface $toDate, ?PaymentStatusEnum $paymentStatus = null): JsonResponse
     {
         $table = DataTables::eloquent(
             builder: $this->purchaseRepository->getByDateRangeQuery(
                 fromDate: $fromDate,
                 toDate: $toDate,
+                paymentStatus: $paymentStatus,
             )
         );
 

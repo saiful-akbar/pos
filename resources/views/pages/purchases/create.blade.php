@@ -422,27 +422,8 @@
                                 searchable: false,
                                 orderable: false,
                                 render: (data) => {
-                                    if (data === null) {
-                                        return `
-                                            <img
-                                                src="${app.baseUrl}/assets/images/empty.jpg"
-                                                class="rounded"
-                                                width="50"
-                                                height="50"
-                                                alt="Produk"
-                                            />
-                                        `;
-                                    }
-
-                                    return `
-                                        <img
-                                            src="${app.baseUrl}/storage/${data}"
-                                            class="rounded"
-                                            width="50"
-                                            height="50"
-                                            alt="Produk"
-                                        />
-                                    `;
+                                    if (data === null) return `<img src="${app.baseUrl}/assets/images/empty.jpg" class="rounded" width="50" height="50" alt="Produk" />`;
+                                    return `<img src="${app.baseUrl}/storage/${data}" class="rounded" width="50" height="50" alt="Produk" />`;
                                 }
                             },
                             {

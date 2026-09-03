@@ -42,6 +42,7 @@ return new class() extends Migration
             $table->decimal('grand_total', 15, 2)->default(0);
             $table->decimal('paid_amount', 15, 2)->default(0);
             $table->decimal('change_amount', 15, 2)->default(0);
+            $table->enum('payment_method', ['cash', 'debit', 'credit', 'qris'])->default('cash');
             $table->enum('status', ['completed', 'void'])->default('completed');
             $table->text('notes')->nullable();
             $table->timestamps();

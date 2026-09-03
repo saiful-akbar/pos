@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
@@ -165,18 +166,12 @@ Route::middleware('auth')->group(function (): void {
             ->group(function (): void {
                 Route::get('/', 'index')->middleware('module:transactions.purchases,read');
                 Route::post('/', 'save')->name('.save')->middleware('module:transactions.purchases,create');
+                Route::get('/cart', 'createCart')->name('.cart')->middleware('module:transactions.purchases,create');
+                Route::post('/cart', 'addCartDetail')->name('.cart.store')->middleware('module:transactions.purchases,create');
+                Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
+                Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
+                Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
                 Route::get('/{purchaseId}', 'detail')->name('.detail')->middleware('module:transactions.purchases,read');
-
-                Route::name('.cart')
-                    ->prefix('/cart')
-                    ->middleware('module:transactions.purchases,create')
-                    ->group(function (): void {
-                        Route::get('/', 'createCart');
-                        Route::post('/', 'addCartDetail')->name('.store');
-                        Route::patch('/{cartDetailId}', 'updateCartDetail')->name('.update');
-                        Route::delete('/cancel', 'cancelCart')->name('.cancel');
-                        Route::delete('/{cartDetailId}', 'deleteCartDetail')->name('.delete');
-                    });
 
                 Route::name('.payments')
                     ->prefix('/{purchaseId}/payments')
@@ -186,6 +181,13 @@ Route::middleware('auth')->group(function (): void {
                         Route::post('/', 'createPayment')->name('.create');
                         Route::delete('/{paymentId}', 'deletePayment')->name('.delete');
                     });
+            });
+
+        Route::controller(SaleController::class)
+            ->name('.sales')
+            ->prefix('sales')
+            ->group(function (): void {
+                Route::get('/', 'index');
             });
     });
 });

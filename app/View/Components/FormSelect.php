@@ -19,6 +19,7 @@ class FormSelect extends Component
         public ?string $label = null,
         public bool $error = false,
         public bool $required = false,
+        public ?string $size = null,
     ) {}
 
     /**

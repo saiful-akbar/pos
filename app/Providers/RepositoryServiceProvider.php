@@ -48,6 +48,7 @@ use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
+use App\Application\Sale\UseCases\FindOrCreateSaleCart;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
@@ -79,6 +80,8 @@ use App\Domain\Purchase\Repositories\PurchaseDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -96,6 +99,7 @@ use App\Repositories\PurchaseDetailRepository;
 use App\Repositories\PurchasePaymentRepository;
 use App\Repositories\PurchaseRepository;
 use App\Repositories\RoleRepository;
+use App\Repositories\SaleCartRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\StockMovementRepository;
 use App\Repositories\SupplierRepository;
@@ -136,6 +140,7 @@ class RepositoryServiceProvider extends ServiceProvider
             SavePurchase::class => ErrorLogRepository::class,
             CreatePurchasePayment::class => ErrorLogRepository::class,
             DeletePurchasePaymentById::class => ErrorLogRepository::class,
+            FindOrCreateSaleCart::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -165,6 +170,7 @@ class RepositoryServiceProvider extends ServiceProvider
             SavePurchase::class => ActivityLogRepository::class,
             CreatePurchasePayment::class => ActivityLogRepository::class,
             DeletePurchasePaymentById::class => ActivityLogRepository::class,
+            FindOrCreateSaleCart::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -303,6 +309,14 @@ class RepositoryServiceProvider extends ServiceProvider
         StockMovementRepositoryInterface::class => [
             SavePurchase::class => StockMovementRepository::class,
         ],
+
+        // Sale cart
+        SaleCartRepositoryInterface::class => [
+            FindOrCreateSaleCart::class => SaleCartRepository::class,
+        ],
+
+        // Sale cart detail
+        SaleCartDetailRepositoryInterface::class => [],
     ];
 
     /**

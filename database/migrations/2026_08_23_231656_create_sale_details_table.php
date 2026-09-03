@@ -34,8 +34,8 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->unsignedInteger('quantity');
-            $table->decimal('price', 15, 2);
-            $table->decimal('cost_price', 15, 2);
+            $table->decimal('purchase_price', 15, 2);
+            $table->decimal('selling_price', 15, 2);
             $table->decimal('discount', 15, 2);
             $table->decimal('subtotal', 15, 2);
             $table->timestamps();

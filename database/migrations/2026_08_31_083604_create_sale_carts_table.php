@@ -29,6 +29,9 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->boolean('is_pending')->default(false);
+            $table->date('transaction_date');
+            $table->decimal('subtotal', 15, 2)->default(0);
+            $table->decimal('grand_total', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

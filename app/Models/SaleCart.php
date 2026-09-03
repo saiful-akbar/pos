@@ -63,6 +63,9 @@ class SaleCart extends Model
     protected $fillable = [
         'user_id',
         'is_pending',
+        'transaction_date',
+        'subtotal',
+        'grand_total',
     ];
 
     /**

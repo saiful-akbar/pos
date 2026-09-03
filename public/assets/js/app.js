@@ -111,6 +111,12 @@ class App {
     return number.toLocaleString("id-ID");
   }
 
+  /**
+   * Alert confirm untuk delete.
+   *
+   * @param {*} title
+   * @param {*} callback
+   */
   delete(title, callback) {
     bootbox.confirm({
       onEscape: true,
@@ -135,6 +141,25 @@ class App {
       },
       callback: (result) => callback(result),
     });
+  }
+
+  /**
+   * Link storage image
+   *
+   * @param {null|string} path
+   * @param {null|string} defaultPath
+   * @returns string
+   */
+  storageImage(path, defaultPath = null) {
+    if (path !== null) {
+      return `${this.baseUrl}/storage/${path}`;
+    }
+
+    if (defaultPath !== null) {
+      return `${this.baseUrl}/${defaultPath}`;
+    }
+
+    return `${this.baseUrl}/assets/images/empty.jpg`;
   }
 }
 

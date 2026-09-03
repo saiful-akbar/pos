@@ -26,7 +26,7 @@ class StoreCustomerRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:100'],
-            'phone_number' => ['nullable', 'string', 'max:20', "unique:$connection.customers,phone_number"],
+            'phone_number' => ['required', 'string', 'max:20', "unique:$connection.customers,phone_number"],
             'address' => ['nullable', 'string', 'max:1000'],
         ];
     }

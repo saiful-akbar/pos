@@ -34,10 +34,10 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->unsignedInteger('quantity')->default(0);
-            $table->unsignedInteger('price')->default(0);
-            $table->unsignedInteger('cost_price')->default(0);
-            $table->unsignedSmallInteger('discount')->default(0);
-            $table->unsignedInteger('subtotal')->default(0);
+            $table->decimal('purchase_price', 15, 2)->default(0);
+            $table->decimal('selling_price', 15, 2)->default(0);
+            $table->decimal('discount', 15, 0)->default(0);
+            $table->decimal('subtotal', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

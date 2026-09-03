@@ -2,6 +2,8 @@
     $class = [
         'form-select',
         'is-invalid' => $error,
+        'form-control-lg' => strtolower($size) === 'lg',
+        'form-control-sm' => strtolower($size) === 'sm',
     ];
 
     $merge = [

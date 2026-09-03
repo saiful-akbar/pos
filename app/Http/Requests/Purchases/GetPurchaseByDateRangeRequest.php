@@ -25,6 +25,7 @@ class GetPurchaseByDateRangeRequest extends FormRequest
         return [
             'from_date' => ['nullable', 'date'],
             'to_date' => ['nullable', 'date'],
+            'payment_method' => ['nullable', 'in:all,unpaid,partial,paid'],
         ];
     }
 

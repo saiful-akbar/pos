@@ -55,7 +55,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
      * Menmabil data penjualan berdasarkan rentang waktu dalam format query builder.
      */
     #[Override]
-    public function getByDateRangeQuery(DateTimeInterface $fromDate, DateTimeInterface $toDate): Builder
+    public function getByDateRangeQuery(DateTimeInterface $fromDate, DateTimeInterface $toDate, ?PaymentStatusEnum $paymentStatus = null): Builder
     {
         try {
             $paymentQuery = PurchasePayment::query()
@@ -76,9 +76,12 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
 
             return $this->model->query()
                 ->select($columns)
-                ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'));
+                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
+                ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
+                ->when($paymentStatus, function (Builder $query, PaymentStatusEnum $paymentStatus): void {
+                    $query->where('payment_status', $paymentStatus->value);
+                });
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -113,9 +116,6 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
 
     /**
      * Memperbarui data pembelian.
-     *
-     * @param UpdatePurchaseDTO $dto
-     * @return void
      */
     #[Override]
     public function update(UpdatePurchaseDTO $dto): void

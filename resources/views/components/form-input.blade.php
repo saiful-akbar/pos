@@ -23,7 +23,7 @@
 @if ($type == 'textarea')
     <textarea {{ $attributes->class($class)->merge($merge) }}>{{ $value }}</textarea>
 @else
-    <input {{ $attributes->class($class)->merge($merge) }}>
+    <input type="{{ $type }}" {{ $attributes->class($class)->merge($merge) }}>
 @endif
 
 @if ($helperText)

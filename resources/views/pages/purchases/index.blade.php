@@ -37,7 +37,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="row align-items-end">
-                            <div class="col-12 col-lg-4 col-xl-5 mb-6 mb-lg-0">
+                            <div class="col-12 col-lg-3 mb-6 mb-lg-0">
                                 <x-form-input
                                     required
                                     type="text"
@@ -46,11 +46,12 @@
                                     label="Periode Awal"
                                     placeholder="Periode Awal"
                                     value="{{ request('from_date', date('Y-m-d')) }}"
+                                    error="{{ $errors->has('from_date') }}"
                                     data-flatpickr=""
                                 />
                             </div>
 
-                            <div class="col-12 col-lg-4 col-xl-5 mb-6 mb-lg-0">
+                            <div class="col-12 col-lg-3 mb-6 mb-lg-0">
                                 <x-form-input
                                     required
                                     type="text"
@@ -59,11 +60,28 @@
                                     label="Periode Akhir"
                                     placeholder="Periode Akhir"
                                     value="{{ request('to_date', date('Y-m-d')) }}"
+                                    error="{{ $errors->has('to_date') }}"
                                     data-flatpickr=""
                                 />
                             </div>
 
-                            <div class="col-12 col-lg-4 col-xl-2">
+                            <div class="col-12 col-lg-3 mb-6 mb-lg-0">
+                                <x-form-select
+                                    required
+                                    id="paymentStatus"
+                                    name="payment_statue"
+                                    label="Status Pembayaran"
+                                    error="{{ $errors->has('payment_status') }}"
+                                    data-choices=""
+                                >
+                                    <option value="all" @selected(request('payment_status', 'all') == 'all')>Semua</option>
+                                    <option value="unpaid" @selected(request('payment_status', 'all') == 'unpaid')>Belum Bayar</option>
+                                    <option value="partial" @selected(request('payment_status', 'all') == 'partial')>Dibayar Sebagian</option>
+                                    <option value="paid" @selected(request('payment_status', 'all') == 'paid')>Lunas</option>
+                                </x-form-select>
+                            </div>
+
+                            <div class="col-12 col-lg-3">
                                 <button type="submit" class="btn btn-secondary w-100">
                                     <x-icon class="me-1">filter_list</x-icon>
                                     <span>Filter</span>
@@ -98,6 +116,7 @@
                     data: function (data) {
                         data.from_date = $('#fromDate').val();
                         data.to_date = $('#toDate').val();
+                        data.payment_status = $('#paymentStatus').val();
                     },
                 },
                 fixedColumns: {

@@ -23,6 +23,7 @@ use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
+use App\Domain\Purchase\Enums\PaymentStatusEnum;
 use App\Http\Requests\Purchases\CreatePurchasePaymentRequest;
 use App\Http\Requests\Purchases\GetPurchaseByDateRangeRequest;
 use App\Http\Requests\Purchases\SavePurchaseRequest;
@@ -43,6 +44,7 @@ class PurchaseController extends Controller
             return app(GetPurchaseByDateRangeTable::class)->execute(
                 fromDate: parse_date_time_immutable($request->query('from_date', date('Y-m-d'))),
                 toDate: parse_date_time_immutable($request->query('to_date', date('Y-m-d'))),
+                paymentStatus: $request->enum('payment_status', PaymentStatusEnum::class),
             );
         }
 

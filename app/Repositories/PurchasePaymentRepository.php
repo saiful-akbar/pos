@@ -59,7 +59,7 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
                 ->with('user')
                 ->where('purchase_id', $purchaseId)
                 ->get()
-                ->map(fn($data) => $this->mapModelToPurchasePaymentEntity($data))
+                ->map(fn ($data) => $this->mapModelToPurchasePaymentEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -134,9 +134,6 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
 
     /**
      * Menghitung total amount berdasarkan pirchase_id.
-     *
-     * @param string $purchaseId
-     * @return integer
      */
     #[Override]
     public function sumAmountByPurchaseId(string $purchaseId): int
