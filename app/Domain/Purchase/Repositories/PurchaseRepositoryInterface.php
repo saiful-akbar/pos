@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Purchase\Repositories;
 
 use App\Application\Purchase\DTOs\CreatePurchaseDTO;
+use App\Application\Purchase\DTOs\GetPurchasesDTO;
 use App\Application\Purchase\DTOs\UpdatePurchaseDTO;
 use App\Domain\Purchase\Entities\PurchaseEntity;
 use App\Domain\Purchase\Enums\PaymentStatusEnum;
@@ -32,4 +33,12 @@ interface PurchaseRepositoryInterface
      * Memperbarui data pembelian.
      */
     public function update(UpdatePurchaseDTO $dto): void;
+
+    /**
+     * Mengambil daftar penjualan
+     *
+     * @param GetPurchasesDTO $dto
+     * @return PurchaseEntity[]
+     */
+    public function get(GetPurchasesDTO $dto): array;
 }

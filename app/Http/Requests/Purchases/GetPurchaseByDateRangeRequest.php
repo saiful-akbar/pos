@@ -22,10 +22,12 @@ class GetPurchaseByDateRangeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $required = $this->ajax() ? 'required' : 'nullable';
+
         return [
-            'from_date' => ['nullable', 'date'],
-            'to_date' => ['nullable', 'date'],
-            'payment_method' => ['nullable', 'in:all,unpaid,partial,paid'],
+            'from_date' => [$required, 'date'],
+            'to_date' => [$required, 'date'],
+            'payment_status' => [$required, 'in:all,unpaid,patrial,paid'],
         ];
     }
 
@@ -35,6 +37,7 @@ class GetPurchaseByDateRangeRequest extends FormRequest
         return [
             'from_date' => 'tanggal awal',
             'to_date' => 'tanggal akhir',
+            'payment_status' => 'status pembayaran',
         ];
     }
 }

@@ -28,8 +28,6 @@ class FindOrCreateSaleCart
 
     /**
      * Execute method.
-     *
-     * @return SaleCartEntity
      */
     public function execute(): SaleCartEntity
     {
@@ -40,7 +38,7 @@ class FindOrCreateSaleCart
                 userId: user()->id,
             );
 
-            if (is_null($saleCart)) {
+            if ($saleCart === null) {
                 $saleCart = $this->saleCartRepository->create(dto: new CreateSaleCartDTO(
                     userId: user()->id,
                     isPending: false,

@@ -41,6 +41,7 @@ use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseIdTable;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseIdTable;
+use App\Application\Purchase\UseCases\GetPurchases;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
@@ -49,6 +50,7 @@ use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Sale\UseCases\FindOrCreateSaleCart;
+use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
@@ -287,6 +289,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindPurchaseById::class => PurchaseRepository::class,
             CreatePurchasePayment::class => PurchaseRepository::class,
             DeletePurchasePaymentById::class => PurchaseRepository::class,
+            GetPurchases::class => PurchaseRepository::class,
         ],
 
         // Purchase Detail
@@ -313,6 +316,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Sale cart
         SaleCartRepositoryInterface::class => [
             FindOrCreateSaleCart::class => SaleCartRepository::class,
+            FindSaleCartByCurrentUser::class => SaleCartRepository::class,
         ],
 
         // Sale cart detail

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Purchase\DTOs\CreatePurchasePaymentDTO;
+use App\Application\Purchase\DTOs\GetPurchasesDTO;
 use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
@@ -15,10 +16,10 @@ use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
 use App\Application\Purchase\UseCases\DeletePurchasePaymentById;
 use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
-use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchases;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
@@ -41,10 +42,14 @@ class PurchaseController extends Controller
     public function index(GetPurchaseByDateRangeRequest $request): View|JsonResponse
     {
         if ($request->ajax()) {
-            return app(GetPurchaseByDateRangeTable::class)->execute(
-                fromDate: parse_date_time_immutable($request->query('from_date', date('Y-m-d'))),
-                toDate: parse_date_time_immutable($request->query('to_date', date('Y-m-d'))),
-                paymentStatus: $request->enum('payment_status', PaymentStatusEnum::class),
+            $data = app(GetPurchases::class)->execute(dto: new GetPurchasesDTO(
+                fromDate: $request->validated('from_date'),
+                toDate: $request->validated('to_date'),
+                paymentStatus: PaymentStatusEnum::tryFrom($request->validated('payment_status')),
+            ));
+
+            return $this->jsonResponse(
+                data: $data,
             );
         }
 

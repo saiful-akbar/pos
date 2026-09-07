@@ -12,23 +12,6 @@
                 @endif
             </div>
         </x-slot:action>
-
-        <x-slot>
-            <hr class="my-7">
-            
-            <div class="row align-items-center">
-                <div class="col-12">
-                    <ul class="nav nav-pills nav-fill">
-                        <li class="nav-item me-4">
-                            <a class="nav-link active" aria-current="page" href="{{ route('transactions.purchases') }}">Pembelian</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Hutang</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </x-slot>
     </x-page-header>
 
     <div class="row mt-7">
@@ -37,47 +20,48 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="row align-items-end">
-                            <div class="col-12 col-lg-3 mb-6 mb-lg-0">
-                                <x-form-input
-                                    required
-                                    type="text"
-                                    id="fromDate"
-                                    name="from_date"
-                                    label="Periode Awal"
-                                    placeholder="Periode Awal"
-                                    value="{{ request('from_date', date('Y-m-d')) }}"
-                                    error="{{ $errors->has('from_date') }}"
-                                    data-flatpickr=""
-                                />
-                            </div>
+                            <div class="col-12 col-lg-6 mb-6 mb-lg-0">
+                                <label for="fromDate" class="form-label">
+                                    <span>Tanggal</span>
+                                    <span class="text-danger">*</span>
+                                </label>
 
-                            <div class="col-12 col-lg-3 mb-6 mb-lg-0">
-                                <x-form-input
-                                    required
-                                    type="text"
-                                    id="toDate"
-                                    name="to_date"
-                                    label="Periode Akhir"
-                                    placeholder="Periode Akhir"
-                                    value="{{ request('to_date', date('Y-m-d')) }}"
-                                    error="{{ $errors->has('to_date') }}"
-                                    data-flatpickr=""
-                                />
+                                <div class="input-group">
+                                    <input
+                                        type="text"
+                                        name="from_date"
+                                        id="fromDate"
+                                        class="form-control"
+                                        placeholder="Pilih tanggal awal"
+                                        data-flatpickr=""
+                                    />
+
+                                    <input
+                                        type="text"
+                                        name="to_date"
+                                        id="toDate"
+                                        class="form-control"
+                                        placeholder="Pilih tanggal akhir"
+                                        data-flatpickr=""
+                                    />
+                                </div>
+
+                                <div class="invalid-feedback" data-error="from_date"></div>
                             </div>
 
                             <div class="col-12 col-lg-3 mb-6 mb-lg-0">
                                 <x-form-select
                                     required
                                     id="paymentStatus"
-                                    name="payment_statue"
+                                    name="payment_status"
                                     label="Status Pembayaran"
                                     error="{{ $errors->has('payment_status') }}"
                                     data-choices=""
                                 >
-                                    <option value="all" @selected(request('payment_status', 'all') == 'all')>Semua</option>
-                                    <option value="unpaid" @selected(request('payment_status', 'all') == 'unpaid')>Belum Bayar</option>
-                                    <option value="partial" @selected(request('payment_status', 'all') == 'partial')>Dibayar Sebagian</option>
-                                    <option value="paid" @selected(request('payment_status', 'all') == 'paid')>Lunas</option>
+                                    <option value="all" selected>Semua</option>
+                                    <option value="unpaid" @selected(request('payment_status') == 'unpaid')>Belum Bayar</option>
+                                    <option value="partial" @selected(request('payment_status') == 'partial')>Dibayar Sebagian</option>
+                                    <option value="paid" @selected(request('payment_status') == 'paid')>Lunas</option>
                                 </x-form-select>
                             </div>
 
@@ -96,7 +80,7 @@
 
     <div class="row mt-7">
         <div class="col-12">
-            <div class="card sahdow-sm">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <table id="purchaseTable" class="table table-hover align-middle w-100"></table>
                 </div>
@@ -108,21 +92,10 @@
         <script>
             const updateAccess = $('html').data('update');
 
+            /**
+             * DataTable penjualan.
+             */
             const purchaseTable = app.dataTable('#purchaseTable', {
-                serverSide: true,
-                ajax: {
-                    url: `${app.baseUrl}/transactions/purchases`,
-                    type: 'get',
-                    data: function (data) {
-                        data.from_date = $('#fromDate').val();
-                        data.to_date = $('#toDate').val();
-                        data.payment_status = $('#paymentStatus').val();
-                    },
-                },
-                fixedColumns: {
-                    start: 0,
-                    end: 1,
-                },
                 columns: [
                     {
                         title: 'Pemasok',
@@ -186,9 +159,40 @@
                 }
             });
 
+            /**
+             * Submit form filter
+             */
             $('#formFilter').submit(function (e) {
                 e.preventDefault();
-                purchaseTable.ajax.reload(null, true);
+                
+                const fromDate = $(this).find('input[name=from_date]').val();
+                const toDate = $(this).find('input[name=to_date]').val();
+                const paymentStatus = $(this).find('select[name=payment_status]').val();
+
+                
+
+                console.log(fromDate);
+                console.log(toDate);
+                console.log(paymentStatus);
+                
+
+                $.ajax({
+                    type: "get",
+                    url: "{{ route('transactions.purchases') }}",
+                    dataType: "json",
+                    data: {
+                        from_date: fromDate,
+                        to_date: toDate,
+                        payment_status: paymentStatus,
+                    },
+                    success: function (response) {
+                        console.log(response);
+                    },
+                    error: function (response) {
+                        for (const name of response.errors.entries) {
+                        }
+                    },
+                });
             });
         </script>
     </x-slot:script>

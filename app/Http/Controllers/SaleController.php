@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use Illuminate\View\View;
 
 class SaleController extends Controller
@@ -13,6 +14,13 @@ class SaleController extends Controller
      */
     public function index(): View
     {
-        return view('pages.sales.index');
+        // $cart = app(FindOsrCreateSaleCart::class)->execute();
+
+        $access = app(FindModuleAccessByRoute::class)->execute(
+            roleId: user()->role_id,
+            route: 'transactions.sales',
+        );
+
+        return view('pages.sales.index', compact('access'));
     }
 }

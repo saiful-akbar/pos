@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Application\Purchase\DTOs\CreatePurchaseDTO;
+use App\Application\Purchase\DTOs\GetPurchasesDTO;
 use App\Application\Purchase\DTOs\UpdatePurchaseDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Entities\PurchaseEntity;
@@ -77,7 +78,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             return $this->model->query()
                 ->select($columns)
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
+                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
                 ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->when($paymentStatus, function (Builder $query, PaymentStatusEnum $paymentStatus): void {
                     $query->where('payment_status', $paymentStatus->value);
@@ -124,6 +125,62 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             $this->model->query()
                 ->where('id', $dto->id)
                 ->update($dto->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar penjualan
+     */
+    #[Override]
+    public function get(GetPurchasesDTO $dto): array
+    {
+        try {
+            $paymentColumns = [
+                'id',
+                'purchase_id',
+                DB::raw('coalesce(cast(sum(amount) as signed integer), 0) as total_amount')
+            ];
+
+            $paymentQuery = PurchasePayment::query()
+                ->select($paymentColumns)
+                ->groupBy('id', 'purchase_id');
+
+            $purchaseColumns = [
+                'purchases.id as id',
+                'purchases.purchase_date as purchase_date',
+                'purchases.invoice_number as invoice_number',
+                'purchases.total_quantity as total_quantity',
+                'purchases.total_price as total_price',
+                'purchases.payment_status as payment_status',
+                'suppliers.id as supplier_id',
+                'suppliers.name as supplier_name',
+                DB::raw('coalesce(payments.total_amount, 0) as payment_total_amount'),
+            ];
+
+            $query = $this->model->query()
+                ->select($purchaseColumns)
+                ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
+                ->leftJoinSub($paymentQuery, 'payments', 'purchases.id', '=', 'payments.purchase_id')
+                ->whereBetween('purchases.purchase_date', [
+                    $dto->fromDate->format('Y-m-d 00:00:00'),
+                    $dto->toDate->format('Y-m-d 23:59:59'),
+                ]);
+
+            if ($dto->paymentStatus !== null) {
+                $query->where('purchases.payment_status', $dto->paymentStatus->value);
+            }
+
+            return $query->orderBy('purchases.purchase_date', 'asc')
+                ->get()
+                ->map(fn($data) => $this->mapModelToPurchaseEntity($data))
+                ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
