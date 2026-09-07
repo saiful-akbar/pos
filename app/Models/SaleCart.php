@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -64,6 +65,7 @@ class SaleCart extends Model
         'user_id',
         'is_pending',
         'transaction_date',
+        'total_quantity',
         'subtotal',
         'grand_total',
     ];
@@ -74,5 +76,13 @@ class SaleCart extends Model
     public function details(): HasMany
     {
         return $this->hasMany(SaleCartDetail::class, 'sale_cart_id', 'id');
+    }
+
+    /**
+     * Get the user that owns the SaleCart
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

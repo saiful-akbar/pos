@@ -31,5 +31,5 @@
 @endif
 
 @error($name)
-    <div class="invalid-feedback">{{ $message }}</div>
+    <div class="invalid-feedback" data-error="{{ $name }}">{{ $message }}</div>
 @enderror

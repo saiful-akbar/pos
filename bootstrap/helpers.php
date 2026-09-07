@@ -179,3 +179,14 @@ if (! function_exists('ulid')) {
         return strtolower((string) Str::ulid());
     }
 }
+
+if (! function_exists('parse_float')) {
+
+    /**
+     * Parsing data ke tipe data float
+     */
+    function parse_float(int|string $value): float
+    {
+        return (float) $value;
+    }
+}

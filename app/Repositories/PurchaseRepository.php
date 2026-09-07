@@ -78,7 +78,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             return $this->model->query()
                 ->select($columns)
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
+                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
                 ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->when($paymentStatus, function (Builder $query, PaymentStatusEnum $paymentStatus): void {
                     $query->where('payment_status', $paymentStatus->value);
@@ -142,32 +142,17 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
     public function get(GetPurchasesDTO $dto): array
     {
         try {
-            $paymentColumns = [
-                'id',
-                'purchase_id',
-                DB::raw('coalesce(cast(sum(amount) as signed integer), 0) as total_amount')
-            ];
-
             $paymentQuery = PurchasePayment::query()
-                ->select($paymentColumns)
-                ->groupBy('id', 'purchase_id');
+                ->select('purchase_id', DB::raw('coalesce(cast(sum(amount) as signed integer), 0) as amount_paid'))
+                ->groupBy('purchase_id');
 
-            $purchaseColumns = [
-                'purchases.id as id',
-                'purchases.purchase_date as purchase_date',
-                'purchases.invoice_number as invoice_number',
-                'purchases.total_quantity as total_quantity',
-                'purchases.total_price as total_price',
-                'purchases.payment_status as payment_status',
-                'suppliers.id as supplier_id',
-                'suppliers.name as supplier_name',
-                DB::raw('coalesce(payments.total_amount, 0) as payment_total_amount'),
-            ];
+            $relations = ['user', 'supplier'];
+            $columns = ['purchases.*', 'payments.amount_paid as amount_paid'];
 
             $query = $this->model->query()
-                ->select($purchaseColumns)
-                ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', 'purchases.id', '=', 'payments.purchase_id')
+                ->select($columns)
+                ->with($relations)
+                ->joinSub($paymentQuery, 'payments', 'purchases.id', '=', 'payments.purchase_id')
                 ->whereBetween('purchases.purchase_date', [
                     $dto->fromDate->format('Y-m-d 00:00:00'),
                     $dto->toDate->format('Y-m-d 23:59:59'),
@@ -179,7 +164,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
 
             return $query->orderBy('purchases.purchase_date', 'asc')
                 ->get()
-                ->map(fn($data) => $this->mapModelToPurchaseEntity($data))
+                ->map(fn ($data) => $this->mapModelToPurchaseEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -219,6 +204,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             totalQuantity: $model->total_quantity,
             totalPrice: $model->total_price,
             paymentStatus: PaymentStatusEnum::tryFrom($model->payment_status),
+            amountPaid: $model->amount_paid ?? 0,
             notes: $model->notes,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

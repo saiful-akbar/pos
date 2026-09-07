@@ -15,6 +15,11 @@ interface SaleCartRepositoryInterface
     public function findByUserId(string $userId): ?SaleCartEntity;
 
     /**
+     * Mengambil data keranjang penjualan berdasarkan id.
+     */
+    public function findById(string $id): ?SaleCartEntity;
+
+    /**
      * Membuat kerangjang belanja baru
      */
     public function create(CreateSaleCartDTO $dto): SaleCartEntity;

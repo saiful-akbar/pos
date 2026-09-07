@@ -30,8 +30,32 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
     {
         try {
             $data = $this->model->query()
+                ->with('user')
                 ->where('user_id', $userId)
+                ->where('is_pending', 0)
                 ->first();
+
+            return $data === null ? null : $this->mapModelToSaleCartEntity(model: $data);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data keranjang penjualan berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?SaleCartEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->with('user')
+                ->find($id);
 
             return $data === null ? null : $this->mapModelToSaleCartEntity(model: $data);
         } catch (\Throwable $e) {
@@ -51,9 +75,9 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
     public function create(CreateSaleCartDTO $dto): SaleCartEntity
     {
         try {
-            return $this->mapModelToSaleCartEntity(
-                model: $this->model->query()->create($dto->toArray())
-            );
+            $data = $this->model->query()->create($dto->toArray())->load('user');
+
+            return $this->mapModelToSaleCartEntity(model: $data);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -98,11 +122,10 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
                 photo: $model->user->photo,
             ),
             isPending: $model->is_pending === 1,
-            transactionDate: parse_date_time_immutable($model->trransaction_date),
-            subtotal: $model->subtotal,
-            discount: $model->discount,
-            tax: $model->tax,
-            grandTotal: $model->frand_total,
+            transactionDate: parse_date_time_immutable($model->transaction_date),
+            totalQuantity: $model->total_quantity,
+            subtotal: parse_float($model->subtotal),
+            grandTotal: parse_float($model->grand_total),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

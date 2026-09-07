@@ -36,6 +36,7 @@ return new class() extends Migration
 
             $table->string('invoice_number', 50)->unique()->comment('format: INV2608-00001');
             $table->date('transaction_date');
+            $table->unsignedInteger('total_quantity')->default(0);
             $table->decimal('subtotal', 15, 2)->default(0);
             $table->decimal('discount', 15, 2)->default(0);
             $table->decimal('tax', 15, 2)->default(0);

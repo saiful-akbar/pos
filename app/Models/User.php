@@ -147,6 +147,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all of the saleCarts for the User
+     */
+    public function saleCarts(): HasMany
+    {
+        return $this->hasMany(SaleCart::class, 'user_id', 'id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

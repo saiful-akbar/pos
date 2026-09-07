@@ -49,8 +49,10 @@ use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
-use App\Application\Sale\UseCases\FindOrCreateSaleCart;
+use App\Application\Sale\UseCases\CreateSaleCart;
+use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
+use App\Application\Sale\UseCases\FindSaleCartById;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
@@ -142,7 +144,8 @@ class RepositoryServiceProvider extends ServiceProvider
             SavePurchase::class => ErrorLogRepository::class,
             CreatePurchasePayment::class => ErrorLogRepository::class,
             DeletePurchasePaymentById::class => ErrorLogRepository::class,
-            FindOrCreateSaleCart::class => ErrorLogRepository::class,
+            CreateSaleCart::class => ErrorLogRepository::class,
+            DeleteSaleCartById::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -172,7 +175,8 @@ class RepositoryServiceProvider extends ServiceProvider
             SavePurchase::class => ActivityLogRepository::class,
             CreatePurchasePayment::class => ActivityLogRepository::class,
             DeletePurchasePaymentById::class => ActivityLogRepository::class,
-            FindOrCreateSaleCart::class => ActivityLogRepository::class,
+            CreateSaleCart::class => ActivityLogRepository::class,
+            DeleteSaleCartById::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -315,8 +319,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Sale cart
         SaleCartRepositoryInterface::class => [
-            FindOrCreateSaleCart::class => SaleCartRepository::class,
             FindSaleCartByCurrentUser::class => SaleCartRepository::class,
+            CreateSaleCart::class => SaleCartRepository::class,
+            DeleteSaleCartById::class => SaleCartRepository::class,
+            FindSaleCartById::class => SaleCartRepository::class,
         ],
 
         // Sale cart detail

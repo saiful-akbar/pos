@@ -18,7 +18,6 @@ class GetPurchases
     /**
      * Mengambil daftar penjualan.
      *
-     * @param GetPurchasesDTO $dto
      * @return PurchaseEntity[]
      */
     public function execute(GetPurchasesDTO $dto): array

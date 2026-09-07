@@ -14,13 +14,66 @@ class App {
    *
    * @param {element} element
    * @param {object} options
-   * @returns
+   * @returns DataTable
    */
   dataTable(element, options) {
     return new DataTable(element, {
       processing: true,
       scrollX: true,
       fixedHeader: true,
+      pageLength: 10,
+      language: {
+        search: "",
+        searchPlaceholder: "Cari...",
+        lengthMenu: "_MENU_",
+      },
+      buttons: [
+        {
+          extend: "excel",
+          text: `<span class="material-symbols-outlined me-1">download</span> Excel`,
+        },
+        {
+          extend: "copy",
+          text: `<span class="material-symbols-outlined me-1">content_copy</span> Salin`,
+        },
+        {
+          extend: "print",
+          text: `<span class="material-symbols-outlined me-1">print</span> Cetak`,
+        },
+      ],
+      layout: {
+        topStart: "buttons",
+        topEnd: "search",
+        bottomStart: "info",
+        bottomEnd: "paging",
+      },
+      preDrawCallback: function () {
+        $(`${element}_wrapper`).find("thead tr th").addClass("bg-light");
+        $(`${element}_wrapper`).find("tfoot tr th").addClass("bg-light");
+        $(`${element}_wrapper`).find("input").removeClass("form-control-sm");
+        $(`${element}_wrapper`).find("input").addClass("w-100");
+        $(`${element}_wrapper`).find("input").attr("autocomplete", "off");
+        $(`${element}_wrapper`).find("select").removeClass("form-select-sm");
+        $(`${element}_wrapper`).find("select").addClass("w-100");
+      },
+      ...options,
+    });
+  }
+
+  /**
+   * Inisialisasi modal datatable.
+   *
+   * @param {element} element
+   * @param {object} options
+   * @returns DataTable
+   */
+  modalDataTable(element, options) {
+    return new DataTable(element, {
+      scrollY: "400",
+      scrollX: true,
+      processing: true,
+      fixedHeader: true,
+      info: false,
       language: {
         search: "",
         searchPlaceholder: "Cari...",
@@ -31,19 +84,24 @@ class App {
         [10, 25, 50, 100, 200],
       ],
       layout: {
-        topStart: "pageLength",
-        topEnd: "search",
-        bottomStart: "info",
-        bottomEnd: "paging",
+        top: "search",
+        topStart: null,
+        topEnd: null,
+        bottom: "paging",
+        bottomStart: null,
+        bottomEnd: null,
       },
       preDrawCallback: function () {
-        $(`${element}_wrapper`).find("thead tr th").addClass("bg-light");
-        $(`${element}_wrapper`).find("tfoot tr th").addClass("bg-light");
-        $(`${element}_wrapper`).find("input").removeClass("form-control-sm");
-        $(`${element}_wrapper`).find("input").addClass("border");
-        $(`${element}_wrapper`).find("input").attr("autocomplete", "off");
-        $(`${element}_wrapper`).find("select").removeClass("form-select-sm");
-        $(`${element}_wrapper`).find("select").addClass("border");
+        const input = $(`${element}_wrapper`).find("input");
+        const tableHead = $(`${element}_wrapper`).find("thead tr th");
+        const tableFooter = $(`${element}_wrapper`).find("tfoot tr th");
+
+        tableHead.addClass("bg-light");
+        tableFooter.addClass("bg-light");
+        input.attr("autocomplete", "off");
+        input.removeClass("form-control-sm");
+        input.addClass("w-100 form-control-lg");
+        input.parent().addClass("w-100 mb-5");
       },
       ...options,
     });
@@ -91,7 +149,7 @@ class App {
    * user foto
    *
    * @param {string} path
-   * @returns
+   * @returns string
    */
   userPhoto(path = null) {
     if (path === null) {
@@ -114,8 +172,8 @@ class App {
   /**
    * Alert confirm untuk delete.
    *
-   * @param {*} title
-   * @param {*} callback
+   * @param {string} title
+   * @param {function} callback
    */
   delete(title, callback) {
     bootbox.confirm({
@@ -160,6 +218,20 @@ class App {
     }
 
     return `${this.baseUrl}/assets/images/empty.jpg`;
+  }
+
+  /**
+   * Menmpilkan preloader
+   */
+  showPreloader() {
+    $("#preloader").fadeIn();
+  }
+
+  /**
+   * Menyembunyikan preloader.
+   */
+  hidePreloader() {
+    $("#preloader").fadeOut();
   }
 }
 

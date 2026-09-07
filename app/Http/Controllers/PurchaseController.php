@@ -30,6 +30,7 @@ use App\Http\Requests\Purchases\GetPurchaseByDateRangeRequest;
 use App\Http\Requests\Purchases\SavePurchaseRequest;
 use App\Http\Requests\Purchases\StorePuchaseCartDetailRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
+use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -43,8 +44,8 @@ class PurchaseController extends Controller
     {
         if ($request->ajax()) {
             $data = app(GetPurchases::class)->execute(dto: new GetPurchasesDTO(
-                fromDate: $request->validated('from_date'),
-                toDate: $request->validated('to_date'),
+                fromDate: new DateTimeImmutable($request->validated('from_date')),
+                toDate: new DateTimeImmutable($request->validated('to_date')),
                 paymentStatus: PaymentStatusEnum::tryFrom($request->validated('payment_status')),
             ));
 

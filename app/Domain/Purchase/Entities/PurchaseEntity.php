@@ -25,10 +25,11 @@ class PurchaseEntity extends Entity
         public readonly int $totalQuantity,
         public readonly int $totalPrice,
         public readonly PaymentStatusEnum $paymentStatus,
-        public readonly ?string $notes,
-        public readonly ?DateTimeInterface $createdAt,
-        public readonly ?DateTimeInterface $updatedAt,
-        public readonly ?DateTimeInterface $deletedAt,
+        public readonly int $amountPaid = 0,
+        public readonly ?string $notes = null,
+        public readonly ?DateTimeInterface $createdAt = null,
+        public readonly ?DateTimeInterface $updatedAt = null,
+        public readonly ?DateTimeInterface $deletedAt = null,
     ) {}
 
     /**
@@ -42,10 +43,11 @@ class PurchaseEntity extends Entity
             'user' => $this->user->toArray(),
             'supplier' => $this->supplier->toArray(),
             'invoice_number' => $this->invoiceNumber,
-            'purchase_date' => $this->purchaseDate,
+            'purchase_date' => $this->purchaseDate->format('Y-m-d'),
             'total_quantity' => $this->totalQuantity,
             'total_price' => $this->totalPrice,
             'payment_status' => $this->paymentStatus->value,
+            'amount_paid' => $this->amountPaid,
             'notes' => $this->notes,
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),

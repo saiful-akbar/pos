@@ -17,9 +17,8 @@ class CreateSaleCartDTO extends DTO
         public readonly string $userId,
         public readonly bool $isPending,
         public readonly DateTimeInterface $transactionDate,
+        public readonly int $totalQuantity,
         public readonly int|float $subtotal,
-        public readonly int|float $discount,
-        public readonly int|float $tax,
         public readonly int|float $grandTotal,
     ) {}
 
@@ -30,9 +29,8 @@ class CreateSaleCartDTO extends DTO
             'user_id' => $this->userId,
             'is_pending' => $this->isPending,
             'transaction_date' => $this->transactionDate->format('Y-m-d H:i:s'),
+            'total_quantity' => $this->totalQuantity,
             'subtotal' => $this->subtotal,
-            'discount' => $this->discount,
-            'tax' => $this->tax,
             'grand_total' => $this->grandTotal,
         ];
     }

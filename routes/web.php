@@ -183,12 +183,15 @@ Route::middleware('auth')->group(function (): void {
                     });
             });
 
-        Route::controller(SaleController::class)
-            ->name('.sales')
-            ->prefix('sales')
-            ->group(function (): void {
-                Route::get('/', 'index');
+        Route::controller(SaleController::class)->name('.sales')->prefix('sales')->group(function (): void {
+            Route::get('/', 'index');
+
+            Route::name('.cart')->prefix('cart')->group(function (): void {
+                Route::post('/', 'storeCart')->name('.store');
+                Route::get('/{cartId}', 'showCart')->name('.show');
+                Route::delete('/{cartId}', 'deleteCart')->name('.delete');
             });
+        });
     });
 });
 

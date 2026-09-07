@@ -19,53 +19,45 @@
             <form action="{{ route('transactions.purchases') }}" method="get" autocomplete="off" id="formFilter">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <div class="row align-items-end">
-                            <div class="col-12 col-lg-6 mb-6 mb-lg-0">
-                                <label for="fromDate" class="form-label">
-                                    <span>Tanggal</span>
-                                    <span class="text-danger">*</span>
-                                </label>
-
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="from_date"
-                                        id="fromDate"
-                                        class="form-control"
-                                        placeholder="Pilih tanggal awal"
-                                        data-flatpickr=""
-                                    />
-
-                                    <input
-                                        type="text"
-                                        name="to_date"
-                                        id="toDate"
-                                        class="form-control"
-                                        placeholder="Pilih tanggal akhir"
-                                        data-flatpickr=""
-                                    />
+                        <div class="row align-items-top">
+                            <div class="col-12 col-lg-4 mb-6 mb-lg-0">
+                                <div class="form-floating">
+                                    <input type="text" name="from_date" id="from_date" placeholder="Priode awal" class="form-control" data-flatpickr="">
+                                    <label for="fromDate">Periode awal <span class="text-danger">*</span></label>
                                 </div>
 
-                                <div class="invalid-feedback" data-error="from_date"></div>
+                                <div class="invalid-feedback"></div>
                             </div>
 
-                            <div class="col-12 col-lg-3 mb-6 mb-lg-0">
-                                <x-form-select
-                                    required
-                                    id="paymentStatus"
-                                    name="payment_status"
-                                    label="Status Pembayaran"
-                                    error="{{ $errors->has('payment_status') }}"
-                                    data-choices=""
-                                >
-                                    <option value="all" selected>Semua</option>
-                                    <option value="unpaid" @selected(request('payment_status') == 'unpaid')>Belum Bayar</option>
-                                    <option value="partial" @selected(request('payment_status') == 'partial')>Dibayar Sebagian</option>
-                                    <option value="paid" @selected(request('payment_status') == 'paid')>Lunas</option>
-                                </x-form-select>
+                            <div class="col-12 col-lg-4 mb-6 mb-lg-0">
+                                <div class="form-floating">
+                                    <input type="text" name="to_date" id="to_date" placeholder="Priode awal" class="form-control" data-flatpickr="">
+                                    <label for="toDate">Periode akhir <span class="text-danger">*</span></label>
+                                </div>
+
+                                <div class="invalid-feedback"></div>
                             </div>
 
-                            <div class="col-12 col-lg-3">
+                            <div class="col-12 col-lg-4">
+                                <div class="form-floating">
+                                    <select name="payment_status" id="payment_status" class="form-select">
+                                        <option value="all" selected>Semua</option>
+                                        <option value="paid">Lunas</option>
+                                        <option value="partial">Dibayar sebagian</option>
+                                        <option value="unpaid">Belum dibayar</option>
+                                    </select>
+
+                                    <label for="toDate">Status pembayaran <span class="text-danger">*</span></label>
+                                </div>
+
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="row justify-content-end">
+                            <div class="col-12 col-lg-4 col-xl-2">
                                 <button type="submit" class="btn btn-secondary w-100">
                                     <x-icon class="me-1">filter_list</x-icon>
                                     <span>Filter</span>
@@ -89,18 +81,71 @@
     </div>
 
     <x-slot:script>
+
+        {{-- CLass form filter --}}
         <script>
-            const updateAccess = $('html').data('update');
+            class FormFilter {
+                constructor() {
+                    this.form = $('#formFilter');
+                }
+
+                /**
+                 * Membersihkan pesan error pada form filter
+                 */
+                clearErrors() {
+                    this.form.find('.is-invalid').removeClass('is-invalid');
+                    this.form.find('.is-invalid').parent().removeClass('is-invalid');
+                    this.form.find('.is-invalid').parent().next().text('');
+                }
+                
+                /**
+                 * Menampilkan pesan error.
+                 */
+                showErrors(errors) {
+                    Object.entries(errors).forEach(([field, messages]) => {
+                        this.form.find(`#${field}`).addClass('is-invalid');
+                        this.form.find(`#${field}`).parent().addClass('is-invalid');
+                        this.form.find(`#${field}`).parent().next().text(messages[0]);
+                    });
+                }
+
+                /**
+                 * Submit form filter
+                 */
+                submit(values) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "get",
+                            url: "{{ route('transactions.purchases') }}",
+                            data: values,
+                            dataType: "json",
+                            success: function (response) {
+                                resolve(response);
+                            },
+                            error: function (response) {
+                                reject(response.responseJSON);
+                            },
+                        });
+                    });
+                }
+            }
+
+            window.formFilter = new FormFilter();
+        </script>
+
+        {{-- Global script --}}
+        <script>
+            "use strict"
 
             /**
-             * DataTable penjualan.
+             * Purchase datatable.
              */
             const purchaseTable = app.dataTable('#purchaseTable', {
                 columns: [
                     {
                         title: 'Pemasok',
                         name: 'suppliers.name',
-                        data: 'supplier_name',
+                        data: 'supplier.name',
                         className: 'text-nowrap',
                         type: 'string',
                     },
@@ -132,15 +177,15 @@
                     },
                     {
                         title: 'Sudah Dibayar',
-                        name: 'payments.total_amount',
-                        data: 'payment_total_amount',
+                        name: 'amount_paid',
+                        data: 'amount_paid',
                         className: 'text-nowrap',
                         render: (data) => app.numberFormat(data),
                     },
                     {
                         title: 'Kurang Bayar',
                         className: 'text-nowrap',
-                        render: (data, type, row) => app.numberFormat(row.total_price - row.payment_total_amount),
+                        render: (data, type, row) => app.numberFormat(row.total_price - row.amount_paid),
                     },
                     {
                         title: 'Status Pembayaran',
@@ -154,7 +199,7 @@
                     
                     $(row).click(function (e) { 
                         e.preventDefault();
-                        window.location = `${app.baseUrl}/transactions/purchases/${data.id}`;
+                        window.open(`${app.baseUrl}/transactions/purchases/${data.id}`);
                     });
                 }
             });
@@ -162,38 +207,25 @@
             /**
              * Submit form filter
              */
-            $('#formFilter').submit(function (e) {
+            formFilter.form.submit(async (e) => {
                 e.preventDefault();
-                
-                const fromDate = $(this).find('input[name=from_date]').val();
-                const toDate = $(this).find('input[name=to_date]').val();
-                const paymentStatus = $(this).find('select[name=payment_status]').val();
 
-                
+                formFilter.clearErrors();
+                app.showPreloader();
 
-                console.log(fromDate);
-                console.log(toDate);
-                console.log(paymentStatus);
-                
+                try {
+                    const values = formFilter.form.serialize();
+                    const response = await formFilter.submit(values);
 
-                $.ajax({
-                    type: "get",
-                    url: "{{ route('transactions.purchases') }}",
-                    dataType: "json",
-                    data: {
-                        from_date: fromDate,
-                        to_date: toDate,
-                        payment_status: paymentStatus,
-                    },
-                    success: function (response) {
-                        console.log(response);
-                    },
-                    error: function (response) {
-                        for (const name of response.errors.entries) {
-                        }
-                    },
-                });
-            });
+                    purchaseTable.clear().draw();
+                    purchaseTable.rows.add(response.data).draw();
+                } catch (error) {
+                    formFilter.showErrors(error.errors);
+                } finally {
+                    app.hidePreloader();
+                }
+            })
         </script>
+    
     </x-slot:script>
 </x-layouts.auth>

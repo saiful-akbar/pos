@@ -37,7 +37,6 @@ interface PurchaseRepositoryInterface
     /**
      * Mengambil daftar penjualan
      *
-     * @param GetPurchasesDTO $dto
      * @return PurchaseEntity[]
      */
     public function get(GetPurchasesDTO $dto): array;

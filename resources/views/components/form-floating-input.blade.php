@@ -3,6 +3,7 @@
         'name' => $name,
         'id' => $id,
         'required' => $required,
+        'placeholder' => $label
     ];
 
     $class = [
@@ -18,7 +19,9 @@
         <input value="{{ $value }}" type="{{ $type }}" {{ $attributes->merge($merge)->class($class) }}>
     @endif
     
-    <label for="{{ $id }}">{{ $label }} {{ $required ? '*' : '' }}</label>
+    <label for="{{ $id }}">
+        {{ $label }} @if($required) <span class="text-danger">*</span> @endif
+    </label>
 </div>
 
 @isset($helperText)

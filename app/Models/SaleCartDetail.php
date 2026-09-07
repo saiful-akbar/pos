@@ -67,6 +67,7 @@ class SaleCartDetail extends Model
         'purchase_price',
         'selling_price',
         'discount',
+        'discount_name',
         'subtotal',
     ];
 

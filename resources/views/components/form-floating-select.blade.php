@@ -8,6 +8,7 @@
         'name' => $name,
         'id' => $id,
         'required' => $required,
+        'placeholder' => $label,
     ];
 @endphp
 
