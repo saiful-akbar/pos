@@ -273,8 +273,27 @@
                         searchable: false,
                         orderable: false,
                         render: (data) => {
-                            if (data === null) return `<img src="${baseUrl}/assets/images/empty.jpg" alt="Empty image" width="100" height="100" class="rounded border"/>`;
-                            return `<img src="${baseUrl}/storage/${data}" width="100" height="100" alt="image" class="rounded border"/>`;
+                            if (data === null) {
+                                return `
+                                    <img
+                                        src="${baseUrl}/assets/images/empty.jpg"
+                                        alt="Empty image"
+                                        width="70"
+                                        height="70"
+                                        class="rounded border
+                                    "/>
+                                `;
+                            }
+
+                            return `
+                                <img
+                                    src="${baseUrl}/storage/${data}"
+                                    width="70"
+                                    height="70"
+                                    alt="image"
+                                    class="rounded border"
+                                />
+                            `;
                         }
                     },
                     {

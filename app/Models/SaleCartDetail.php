@@ -63,11 +63,10 @@ class SaleCartDetail extends Model
     protected $fillable = [
         'sale_cart_id',
         'product_id',
+        'discount_id',
         'quantity',
         'purchase_price',
         'selling_price',
-        'discount',
-        'discount_name',
         'subtotal',
     ];
 
@@ -85,5 +84,15 @@ class SaleCartDetail extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get the discount that owns the SaleCartDetail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function discount(): BelongsTo
+    {
+        return $this->belongsTo(Discount::class, 'discount_id', 'id');
     }
 }

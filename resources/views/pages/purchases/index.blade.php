@@ -140,7 +140,7 @@
             /**
              * Purchase datatable.
              */
-            const purchaseTable = app.dataTable('#purchaseTable', {
+            const purchaseTable = app.buttonDataTable('#purchaseTable', {
                 columns: [
                     {
                         title: 'Pemasok',

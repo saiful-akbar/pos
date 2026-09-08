@@ -87,7 +87,7 @@
 
                     <hr>
 
-                    <img src="{{ storage_image($setting?->backgroundImage) }}" alt="Background Image" class="img-fluid">
+                    <img src="{{ storage_image($setting?->backgroundImage) }}" alt="Background" width="200" height="200" class="img-fluid rounded">
                 </div>
             </section>
         </div>

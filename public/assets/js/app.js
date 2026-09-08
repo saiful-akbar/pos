@@ -11,12 +11,42 @@ class App {
 
   /**
    * Inisialisasi datatable.
-   *
-   * @param {element} element
-   * @param {object} options
-   * @returns DataTable
    */
   dataTable(element, options) {
+    return new DataTable(element, {
+      processing: true,
+      scrollX: true,
+      fixedHeader: true,
+      language: {
+        search: "",
+        searchPlaceholder: "Cari...",
+        lengthMenu: "_MENU_",
+      },
+      lengthMenu: [
+        [10, 25, 50, 100, 200],
+        [10, 25, 50, 100, 200],
+      ],
+      layout: {
+        topStart: "pageLength",
+        topEnd: "search",
+        bottomStart: "info",
+        bottomEnd: "paging",
+      },
+      preDrawCallback: function () {
+        $(`${element}_wrapper`).find("thead tr th").addClass("bg-light");
+        $(`${element}_wrapper`).find("tfoot tr th").addClass("bg-light");
+        $(`${element}_wrapper`).find("input").removeClass("form-control-sm");
+        $(`${element}_wrapper`).find("input").attr("autocomplete", "off");
+        $(`${element}_wrapper`).find("select").removeClass("form-select-sm");
+      },
+      ...options,
+    });
+  }
+
+  /**
+   * Inisialisasi datatable.
+   */
+  buttonDataTable(element, options) {
     return new DataTable(element, {
       processing: true,
       scrollX: true,
@@ -25,7 +55,6 @@ class App {
       language: {
         search: "",
         searchPlaceholder: "Cari...",
-        lengthMenu: "_MENU_",
       },
       buttons: [
         {
@@ -62,10 +91,6 @@ class App {
 
   /**
    * Inisialisasi modal datatable.
-   *
-   * @param {element} element
-   * @param {object} options
-   * @returns DataTable
    */
   modalDataTable(element, options) {
     return new DataTable(element, {
@@ -109,9 +134,6 @@ class App {
 
   /**
    * Format waktu
-   *
-   * @param {string} timestamp
-   * @returns string
    */
   dateTimeFormat(timestamp) {
     const now = new Date(timestamp);
@@ -147,9 +169,6 @@ class App {
 
   /**
    * user foto
-   *
-   * @param {string} path
-   * @returns string
    */
   userPhoto(path = null) {
     if (path === null) {
@@ -161,9 +180,6 @@ class App {
 
   /**
    * Format angka (numerik).
-   *
-   * @param {int} number
-   * @returns
    */
   numberFormat(number) {
     return number.toLocaleString("id-ID");
@@ -171,9 +187,6 @@ class App {
 
   /**
    * Alert confirm untuk delete.
-   *
-   * @param {string} title
-   * @param {function} callback
    */
   delete(title, callback) {
     bootbox.confirm({
@@ -203,10 +216,6 @@ class App {
 
   /**
    * Link storage image
-   *
-   * @param {null|string} path
-   * @param {null|string} defaultPath
-   * @returns string
    */
   storageImage(path, defaultPath = null) {
     if (path !== null) {
