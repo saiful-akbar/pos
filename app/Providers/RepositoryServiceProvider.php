@@ -18,6 +18,7 @@ use App\Application\Customer\UseCases\UpdateCustomer;
 use App\Application\Discount\UseCases\CreateDiscount;
 use App\Application\Discount\UseCases\FindDiscountById;
 use App\Application\Discount\UseCases\GetActiveDiscountsTable;
+use App\Application\Discount\UseCases\GetAllDiscounts;
 use App\Application\Discount\UseCases\GetAllDiscountsTable;
 use App\Application\Discount\UseCases\RemoveDiscountById;
 use App\Application\Discount\UseCases\UpdateDiscount;
@@ -350,6 +351,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateDiscount::class => DiscountRepository::class,
             FindDiscountById::class => DiscountRepository::class,
             RemoveDiscountById::class => DiscountRepository::class,
+            GetAllDiscounts::class => DiscountRepository::class,
         ],
     ];
 

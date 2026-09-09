@@ -11,12 +11,15 @@ use App\Application\Discount\UseCases\GetAllDiscountsTable;
 use App\Application\Discount\UseCases\RemoveDiscountById;
 use App\Application\Discount\UseCases\UpdateDiscount;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Exports\Discounts\DiscountExport;
 use App\Http\Requests\Discounts\StoreDiscountRequest;
 use App\Http\Requests\Discounts\UpdateDiscountRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DiscountController extends Controller
 {
@@ -110,5 +113,15 @@ class DiscountController extends Controller
         return $this->jsonResponse(
             message: 'Diskon berhasill dihapus',
         );
+    }
+
+    /**
+     * Export excel
+     *
+     * @return BinaryFileResponse
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new DiscountExport, 'diskon.xlsx');
     }
 }

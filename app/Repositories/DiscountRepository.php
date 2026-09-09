@@ -153,6 +153,27 @@ class DiscountRepository extends Repository implements DiscountRepositoryInterfa
     }
 
     /**
+     * Mengambil semua daftar diskon.
+     */
+    #[Override]
+    public function getAll(): array
+    {
+        try {
+            return $this->model->query()
+                ->get()
+                ->map(fn ($data) => $this->mapModelToDiscountEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class model ke DiscountEntity.
      */
     private function mapModelToDiscountEntity(Discount $model): DiscountEntity

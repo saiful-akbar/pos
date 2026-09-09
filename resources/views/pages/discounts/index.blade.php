@@ -2,8 +2,15 @@
     <x-page-header title="Diskon" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-end align-items-center">
+                <div class="col-12 col-lg-6 col-xl-3 order-2 order-lg-1">
+                    <a href="{{ route('master.discounts.export') }}" class="btn btn-light w-100" role="button">
+                        <x-icon class="me-1">download</x-icon>
+                        <span>Expor Excel</span>
+                    </a>
+                </div>
+                
                 @if ($access?->create)
-                    <div class="col-12 col-lg-6 col-xl-3">
+                    <div class="col-12 col-lg-6 col-xl-3 order-1 order-lg-2 mb-5 mb-lg-0">
                         <a href="{{ route('master.discounts.create') }}" class="btn btn-secondary w-100" role="button">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah Diskon</span>
@@ -180,7 +187,6 @@
 
                     try {
                         const response = await discount.remove(id);
-                        
                         discountTable.ajax.reload();
                         app.alert('success', response.message);
                     } catch (error) {

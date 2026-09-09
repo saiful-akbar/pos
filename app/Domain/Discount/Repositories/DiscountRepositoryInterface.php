@@ -40,4 +40,11 @@ interface DiscountRepositoryInterface
      * hapus data diskon.
      */
     public function removeById(string $id): int;
+
+    /**
+     * Mengambil semua daftar diskon.
+     *
+     * @return DiscountEntity[]
+     */
+    public function getAll(): array;
 }

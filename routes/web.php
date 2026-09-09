@@ -167,6 +167,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/', 'index')->middleware('module:master.discounts,read');
                 Route::post('/', 'store')->name('.store')->middleware('module:master.discounts,create');
                 Route::get('/create', 'create')->name('.create')->middleware('module:master.discounts,create');
+                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.discounts,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.discounts,update');
                 Route::patch('/{id}', 'update')->name('.update')->middleware('module:master.discounts,update');
                 Route::delete('/{id}', 'removeJson')->name('.remove')->middleware('module:master.discounts,remove');
