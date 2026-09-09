@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports\Discounts;
 
 use App\Application\Discount\UseCases\GetAllDiscounts;
@@ -8,12 +10,10 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Override;
 
-class DiscountExport implements WithHeadings, ShouldAutoSize, FromArray
+class DiscountExport implements FromArray, ShouldAutoSize, WithHeadings
 {
     /**
      * Header
-     *
-     * @return array
      */
     #[Override]
     public function headings(): array
@@ -36,7 +36,7 @@ class DiscountExport implements WithHeadings, ShouldAutoSize, FromArray
 
         foreach ($discounts as $discount) {
             $result[] = [
-                'discount' => $discount->discount . '%',
+                'discount' => $discount->discount.'%',
                 'name' => $discount->name,
                 'effective_date' => $discount->effectiveDate->format('Y-m-d'),
                 'expiration_date' => $discount->expirationDate?->format('Y-m-d'),

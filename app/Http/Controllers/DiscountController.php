@@ -117,11 +117,9 @@ class DiscountController extends Controller
 
     /**
      * Export excel
-     *
-     * @return BinaryFileResponse
      */
     public function exportExcel(): BinaryFileResponse
     {
-        return Excel::download(new DiscountExport, 'diskon.xlsx');
+        return Excel::download(new DiscountExport(), 'diskon.xlsx');
     }
 }
