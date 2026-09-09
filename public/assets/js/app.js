@@ -168,6 +168,33 @@ class App {
   }
 
   /**
+   * Format tanggal
+   */
+  dateFormat(date) {
+    const now = new Date(date);
+    const day = now.getDate();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "apr",
+      "Mei",
+      "Jun",
+      "Jul",
+      "Agu",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des",
+    ];
+
+    return `${day} ${months[month]} ${year}`;
+  }
+
+  /**
    * user foto
    */
   userPhoto(path = null) {
@@ -241,6 +268,25 @@ class App {
    */
   hidePreloader() {
     $("#preloader").fadeOut();
+  }
+
+  /**
+   * Menapilkan alert
+   */
+  alert(variant, message) {
+    $("#alert").html(`
+      <div class="alert alert-${variant} border-${variant}  mb-6">
+        <div class="row align-items-center">
+            <div class="col">
+                ${message}
+            </div>
+
+            <div class="col-auto">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+      </div>
+    `);
   }
 }
 

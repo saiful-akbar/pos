@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -67,8 +69,6 @@ class Discount extends Model
 
     /**
      * Get all of the saleDetails for the Discount
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function saleDetails(): HasMany
     {
@@ -77,8 +77,6 @@ class Discount extends Model
 
     /**
      * Get all of the saleCartDetails for the Discount
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function saleCartDetails(): HasMany
     {

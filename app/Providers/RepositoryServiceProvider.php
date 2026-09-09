@@ -15,6 +15,12 @@ use App\Application\Customer\UseCases\FindCustomerById;
 use App\Application\Customer\UseCases\GetAllCustomers;
 use App\Application\Customer\UseCases\GetCustomersTable;
 use App\Application\Customer\UseCases\UpdateCustomer;
+use App\Application\Discount\UseCases\CreateDiscount;
+use App\Application\Discount\UseCases\FindDiscountById;
+use App\Application\Discount\UseCases\GetActiveDiscountsTable;
+use App\Application\Discount\UseCases\GetAllDiscountsTable;
+use App\Application\Discount\UseCases\RemoveDiscountById;
+use App\Application\Discount\UseCases\UpdateDiscount;
 use App\Application\ErrorLog\UseCases\CreateErrorLog;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
@@ -74,6 +80,7 @@ use App\Application\User\UseCases\UpdateUser;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
+use App\Domain\Discount\Repositories\DiscountRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
@@ -94,6 +101,7 @@ use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Repositories\ActivityLogRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CustomerRepository;
+use App\Repositories\DiscountRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\ProductRepository;
@@ -146,6 +154,9 @@ class RepositoryServiceProvider extends ServiceProvider
             DeletePurchasePaymentById::class => ErrorLogRepository::class,
             CreateSaleCart::class => ErrorLogRepository::class,
             DeleteSaleCartById::class => ErrorLogRepository::class,
+            CreateDiscount::class => ErrorLogRepository::class,
+            UpdateDiscount::class => ErrorLogRepository::class,
+            RemoveDiscountById::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -177,6 +188,9 @@ class RepositoryServiceProvider extends ServiceProvider
             DeletePurchasePaymentById::class => ActivityLogRepository::class,
             CreateSaleCart::class => ActivityLogRepository::class,
             DeleteSaleCartById::class => ActivityLogRepository::class,
+            CreateDiscount::class => ActivityLogRepository::class,
+            UpdateDiscount::class => ActivityLogRepository::class,
+            RemoveDiscountById::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -327,6 +341,16 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Sale cart detail
         SaleCartDetailRepositoryInterface::class => [],
+
+        // Discount
+        DiscountRepositoryInterface::class => [
+            GetAllDiscountsTable::class => DiscountRepository::class,
+            GetActiveDiscountsTable::class => DiscountRepository::class,
+            CreateDiscount::class => DiscountRepository::class,
+            UpdateDiscount::class => DiscountRepository::class,
+            FindDiscountById::class => DiscountRepository::class,
+            RemoveDiscountById::class => DiscountRepository::class,
+        ],
     ];
 
     /**

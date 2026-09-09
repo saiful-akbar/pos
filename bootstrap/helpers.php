@@ -16,7 +16,7 @@ if (! function_exists('parse_date_time_immutable')) {
     /**
      * Merubah string waktu menjadi class DateTimeImmutable
      */
-    function parse_date_time_immutable(?string $value): DateTimeImmutable
+    function parse_date_time_immutable(?string $value): ?DateTimeImmutable
     {
         return $value === null ? null : new DateTimeImmutable($value);
     }
@@ -185,7 +185,7 @@ if (! function_exists('parse_float')) {
     /**
      * Parsing data ke tipe data float
      */
-    function parse_float(int|string $value): float
+    function parse_float(string|int|float $value): float
     {
         return (float) $value;
     }

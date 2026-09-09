@@ -37,6 +37,20 @@ class ModuleSeeder extends Seeder
                     if (in_array($role->name, $detail['roles'], true)) {
                         $now = now();
 
+                        if ($role->name === 'Kasir' && $moduleDetail->name === 'Diskon') {
+                            $role->modules()->attach($moduleDetail->id, [
+                                'read' => true,
+                                'create' => true,
+                                'update' => true,
+                                'remove' => false,
+                                'delete' => false,
+                                'created_at' => $now,
+                                'updated_at' => $now,
+                            ]);
+
+                            continue;
+                        }
+
                         $role->modules()->attach($moduleDetail->id, [
                             'read' => true,
                             'create' => $role->name === 'Admin',
@@ -97,6 +111,18 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin'],
                     ],
                     [
+                        'name' => 'Pemasok',
+                        'path' => 'master/suppliers',
+                        'route' => 'master.suppliers',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Pelanggan',
+                        'path' => 'master/customers',
+                        'route' => 'master.customers',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
                         'name' => 'Kategori Produk',
                         'path' => 'master/categories',
                         'route' => 'master.categories',
@@ -115,15 +141,9 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Pelanggan',
-                        'path' => 'master/customers',
-                        'route' => 'master.customers',
-                        'roles' => ['Admin', 'Kasir'],
-                    ],
-                    [
-                        'name' => 'Pemasok',
-                        'path' => 'master/suppliers',
-                        'route' => 'master.suppliers',
+                        'name' => 'Diskon',
+                        'path' => 'master/discounts',
+                        'route' => 'master.discounts',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                 ],

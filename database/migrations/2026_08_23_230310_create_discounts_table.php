@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+return new class() extends Migration
 {
     /**
      * Database connection
@@ -20,10 +22,10 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->decimal('discount', 15, 0);
-            $table->string('name', 100);
-            $table->dateTime('effective_date');
-            $table->dateTime('expiration_date')->nullable();
+            $table->decimal('discount', 5, 0);
+            $table->string('name');
+            $table->date('effective_date');
+            $table->date('expiration_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

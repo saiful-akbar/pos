@@ -40,21 +40,23 @@
 
     <main class="main px-lg-6">
         <div class="container-lg">
-            @session('alert')
-                <x-alert class="alert-{{ session('alert')['status'] }} border-{{ session('alert')['status'] }} mb-7">
-                    {{ session('alert')['message'] }}
-                </x-alert>
-            @endsession
-
-            @if ($errors->any())
-                <x-alert class="alert-danger border-danger mb-7">
-                    <ul class="m-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </x-alert>
-            @endif
+            <div class="" id="alert">
+                @session('alert')
+                    <x-alert class="alert-{{ session('alert')['status'] }} border-{{ session('alert')['status'] }} mb-6">
+                        {{ session('alert')['message'] }}
+                    </x-alert>
+                @endsession
+    
+                @if ($errors->any())
+                    <x-alert class="alert-danger border-danger mb-6">
+                        <ul class="m-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </x-alert>
+                @endif
+            </div>
 
             {{ $slot }}
         </div>

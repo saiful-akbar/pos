@@ -88,8 +88,6 @@ class SaleCartDetail extends Model
 
     /**
      * Get the discount that owns the SaleCartDetail
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function discount(): BelongsTo
     {
