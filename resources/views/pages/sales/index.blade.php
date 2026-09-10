@@ -78,24 +78,39 @@
             </div>
 
             <div class="col-12 col-lg-4">
-                <section class="card shadow-sm mb-6">
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <span class="text-body-secondary">Total Qty</span>
-                                <span class="fs-6 fw-bold" id="totalQuantity">0</span>
-                            </li>
-
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <span class="text-body-secondary">Total Harga</span>
-                                <span class="fs-6 fw-bold" id="totalAmount">0</span>
-                            </li>
-                        </ul>
-                    </div>
-                </section>
-
-                <form action="" method="post" autocomplete="off" id="formSaveSale">
+                <form method="{{ route('transactions.sales.store') }}" method="post" autocomplete="off" id="formSaveSale">
                     @csrf @method('post')
+
+                    <input type="hidden" name="cart_id" value="{{ $cart->id }}">
+
+                    <section class="card shadow-sm mb-6">
+                        <div class="card-header">
+                            <h3 class="fs-6 m-0">Pelanggan</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-12 mb-5">
+                                    <div class="form-floating">
+                                        <input type="hidden" name="customer_id">
+                                        <input type="text" name="customer" id="customer" class="form-control cursor-pointer" placeholder="pelanggan" readonly>
+                                        <label for="customer">Pelanggan</label>
+                                    </div>
+
+                                    <div class="invalid-feedback"></div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea name="notes" id="notes" placeholder="Catatan" cols="30" rows="50" class="form-control"></textarea>
+                                        <label for="notes">Catatan</label>
+                                    </div>
+
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section class="card shadow-sm">
                         <div class="card-header">
@@ -104,6 +119,26 @@
 
                         <div class="card-body">
                             <div class="row align-items-center justify-content-between">
+                                <div class="col-12 mb-5">
+                                    <div class="bg-light rounded p-5">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold">Total Qty</span>
+                                            <span class="fs-6 fw-bold" id="totalQuantity">0</span>
+                                        </div>
+
+                                        <hr class="my-3">
+    
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold">Grand Total</span>
+                                            <span class="fs-6 fw-bold" id="totalAmount">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-5">
+                                    <hr>
+                                </div>
+
                                 <div class="col-12 mb-5">
                                     <div class="form-floating">
                                         <select name="payment_method" id="payment_method" class="form-select" required>
@@ -123,12 +158,8 @@
 
                                 <div class="col-12 mb-5">
                                     <div class="form-floating">
-                                        <input type="number" name="paid_amount" id="paid_amount"
-                                            class="form-control form-control-lg no-spinners" placeholder="Pembayaran" required>
-                                        
-                                            <label for="paid_amount">
-                                                Pembayaran <span class="text-danger">*</span>
-                                            </label>
+                                        <input type="number" name="paid_amount" id="paid_amount" class="form-control form-control-lg no-spinners" placeholder="Pembayaran" required>
+                                        <label for="paid_amount">Pembayaran <span class="text-danger">*</span></label>
                                     </div>
 
                                     <div class="invalid-feedback"></div>
@@ -136,12 +167,8 @@
 
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input type="number" name="change_amount" id="change_amount"
-                                            class="form-control form-control-lg no-spinners" placeholder="Kembalian" readonly>
-                                        
-                                            <label for="change_amount">
-                                                Kembalian
-                                            </label>
+                                        <input type="number" name="change_amount" id="change_amount" class="form-control form-control-lg no-spinners" placeholder="Kembalian" readonly>
+                                        <label for="change_amount">Kembalian</label>
                                     </div>
 
                                     <div class="invalid-feedback"></div>
@@ -161,7 +188,7 @@
         </div>
 
         {{-- Modal product table --}}
-        <div class="modal" tabindex="-1" id="modalProductTable">
+        <div class="modal" tabindex="-1" id="productModal">
             <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
                 <div class="modal-content border">
                     <div class="modal-header">
@@ -227,24 +254,56 @@
             </div>
         </form>
 
+        {{-- Modal tabel pelanggan --}}
+        <div class="modal" tabindex="-1" id="customerModal">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
+                <div class="modal-content border">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Pelanggan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <table id="customerTable" class="table table-hover table-sm table-img align-middle w-100"></table>
+                    </div>
+
+                    <div class="modal-footer">
+                        <div class="row justify-content-end w-100">
+                            <div class="col-12 col-lg-4 col-xl-2">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Batal</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <x-slot:script>
             <script>
                 class Service {
                     constructor() {
                         this.cartId = "{{ $cart->id }}";
-                        this.modalProduct = new bootstrap.Modal('#modalProductTable');
+                        this.productModal = new bootstrap.Modal('#productModal');
                         this.productTable = this.productTable();
                         this.cartDetailTable = this.cartDetailTable();
                         this.csrfToken = $('meta[name="csrf-token"]').attr('content');
                         this.modalUpdateCartdetail = new bootstrap.Modal('#modalUpdateCartDetail');
                         this.formUpdateCartDetail = $('#formUpdateCartDetail');
+                        this.formCreateCartDetail = $('#formCreateCartDetail');
+                        this.formSaveSale = $('#formSaveSale');
+                        this.customerModal = new bootstrap.Modal('#customerModal');
+                        this.customerTable = this.customerTable();
+                        this.formSaveSale = $('#formSaveSale')
                     }
 
                     /**
                      * Product dataTable
                      */
                     productTable() {
-                        return app.modalDataTable('#productTable', {
+                        return window.app.modalDataTable('#productTable', {
                             serverSide: true,
                             ajax: "{{ route('master.products.active') }}",
                             columns: [
@@ -258,7 +317,7 @@
                                         return `
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar">
-                                                    <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
+                                                    <img src="${window.app.storageImage(row.image)}" class="rounded" alt="Produk" />
                                                 </div>
                                                 <div class="ms-4">
                                                     <div>${row.code}</div>
@@ -283,7 +342,7 @@
                                     data: 'current_stock',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => app.numberFormat(data),
+                                    render: (data) => window.app.numberFormat(data),
                                 },
                                 {
                                     title: 'Harga',
@@ -291,7 +350,7 @@
                                     data: 'selling_price',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => app.numberFormat(data),
+                                    render: (data) => window.app.numberFormat(data),
                                 },
                                 {
                                     title: 'Diskon',
@@ -299,7 +358,7 @@
                                     data: 'discount',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => `${app.numberFormat(data)}%`,
+                                    render: (data) => `${window.app.numberFormat(data)}%`,
                                 },
                             ],
                             createdRow: (row, data, index) => {
@@ -307,8 +366,51 @@
 
                                 $(row).click((e) => {
                                     e.preventDefault();
-                                    $('#product').val(data.code);
-                                    this.modalProduct.hide();
+                                    this.formCreateCartDetail.find('input[name=product]').val(data.code);
+                                    this.productModal.hide();
+                                });
+                            }
+                        });
+                    }
+
+                    /**
+                     * Customer dataTable
+                     */
+                    customerTable() {
+                        return window.app.modalDataTable('#customerTable', {
+                            serverSide: true,
+                            ajax: "{{ route('master.customers') }}",
+                            columns: [
+                                {
+                                    title: 'Nama',
+                                    name: 'name',
+                                    data: 'name',
+                                    className: 'text-nowrap',
+                                    type: 'string',
+                                },
+                                {
+                                    title: 'No. Telp',
+                                    name: 'phone_number',
+                                    data: 'phone_number',
+                                    className: 'text-nowrap',
+                                    type: 'string',
+                                },
+                                {
+                                    title: 'Alamat',
+                                    name: 'address',
+                                    data: 'address',
+                                    type: 'string',
+                                },
+                            ],
+                            createdRow: (row, data, index) => {
+                                $(row).addClass('cursor-pointer');
+
+                                $(row).click((e) => {
+                                    e.preventDefault();
+
+                                    this.formSaveSale.find('input[name=customer_id]').val(data.id);
+                                    this.formSaveSale.find('input[name=customer]').val(data.name);
+                                    this.customerModal.hide();
                                 });
                             }
                         });
@@ -318,7 +420,7 @@
                      * Cart detail table
                      */
                     cartDetailTable() {
-                        return app.modalDataTable('#cartDetailTable', {
+                        return window.app.modalDataTable('#cartDetailTable', {
                             serverSide: true,
                             ajax: "{{ route('transactions.sales.carts.details', ['cartId' => $cart->id]) }}",
                             searching: false,
@@ -339,7 +441,7 @@
                                         return `
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar">
-                                                    <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
+                                                    <img src="${window.app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
                                                 </div>
                                                 <div class="ms-4">
                                                     <div>${row.product.code}</div>
@@ -357,7 +459,7 @@
                                     data: 'quantity',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => app.numberFormat(data),
+                                    render: (data) => window.app.numberFormat(data),
                                 },
                                 {
                                     title: 'Harga',
@@ -365,7 +467,7 @@
                                     data: 'selling_price',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => app.numberFormat(data),
+                                    render: (data) => window.app.numberFormat(data),
                                 },
                                 {
                                     title: 'Diskon',
@@ -373,7 +475,7 @@
                                     data: 'discount',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => `${app.numberFormat(data)} %`,
+                                    render: (data) => `${window.app.numberFormat(data)} %`,
                                 },
                                 {
                                     title: 'Subtotal',
@@ -381,7 +483,7 @@
                                     data: 'subtotal',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => app.numberFormat(data),
+                                    render: (data) => window.app.numberFormat(data),
                                 },
                                 {
                                     className: 'text-nowrap',
@@ -405,7 +507,7 @@
                                 $(row).find('button[data-action="update"]').click((e) => {
                                     e.preventDefault();
 
-                                    const actionUrl = `${app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${data.id}`;
+                                    const actionUrl = `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${data.id}`;
 
                                     this.formUpdateCartDetail.attr('action', actionUrl);
                                     this.formUpdateCartDetail.find('input[name=quantity]').val(data.quantity);
@@ -424,20 +526,21 @@
                         return new Promise((resolve, reject) => {
                             $.ajax({
                                 type: "get",
-                                url: `${app.baseUrl}/transactions/sales/carts/${this.cartId}`,
-                                success: function(response) {
+                                url: `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}`,
+                                success: (response) => {
                                     const cart = response.data;
+                                    const totalQuantityEl = $('#totalQuantity');
+                                    const totalAmountEl = $('#totalAmount');
 
-                                    $('#totalQuantity').text(cart.total_quantity.toLocaleString('id-ID'));
-                                    $('#totalQuantity').data('value', cart.total_quantity);
-                                    $('#totalAmount').text(cart.total_amount.toLocaleString('id-ID'));
-                                    $('#totalAmount').data('value', cart.total_amount);
+                                    totalQuantityEl.text(cart.total_quantity.toLocaleString('id-ID'));
+                                    totalQuantityEl.data('value', cart.total_quantity);
+                                    totalAmountEl.text(cart.total_amount.toLocaleString('id-ID'));
+                                    totalAmountEl.data('value', cart.total_amount);
 
-                                    resolve(response);
+                                    resolve(response)
                                 },
-                                error: function(error) {
-                                    app.alert('danger', error.responseJSON.message);
-
+                                error: (error) => {
+                                    window.app.alert('danger', error.message);
                                     reject(error.responseJSON);
                                 },
                             });
@@ -449,7 +552,7 @@
                      */
                     createCartDetail() {
                         const data = $('#formCreateCartDetail').serialize();
-                        const url = `${app.baseUrl}/transactions/sales/carts/${this.cartId}/details`
+                        const url = `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}/details`
 
                         return new Promise((resolve, reject) => {
                             $.ajax({
@@ -470,7 +573,7 @@
                         return new Promise((resolve, reject) => {
                             $.ajax({
                                 type: "delete",
-                                url: `${app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${cartDetailId}`,
+                                url: `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${cartDetailId}`,
                                 data: {
                                     _token: this.csrfToken,
                                 },
@@ -503,6 +606,25 @@
                             });
                         });
                     }
+
+                    /**
+                     * Menyimpan data penjualan
+                     */
+                    saveSale() {
+                        const action = this.formSaveSale.attr('action');
+                        const values = this.formSaveSale.serialize();
+
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                type: "post",
+                                url: action,
+                                data: values,
+                                dataType: "json",
+                                success: (response) => resolve(response),
+                                error: (error) => reject(error.responseJSON),
+                            });
+                        });
+                    }
                 }
 
                 window.service = new Service();
@@ -511,24 +633,28 @@
             {{-- Global script --}}
             <script>
                 $(document).ready(function () {
-                    service.findCart();
+                    window.service.findCart();
                 });
 
                 /**
                  * Mengisi nilai defaul pada form pembayaran jika
                  * metode pembayaran yang dipilih bukan cash (tunai).
                  */
-                $('#payment_method').change(function(e) {
+                window.service.formSaveSale.find('select[name=payment_method]').change(function(e) {
                     e.preventDefault();
 
+                    const inputPaidAmount = window.service.formSaveSale.find('input[name=paid_amount]');
+                    const inputChangeAmount = window.service.formSaveSale.find('input[name=change_amount]');
+                    const totalAmount = $('#totalAmount').data('value');
+
                     if ($(this).val() !== 'cash') {
-                        $('#paid_amount').attr('readonly', 'readonly');
-                        $('#paid_amount').val($('#grandTotal').data('value'));
-                        $('#paid_amount').removeClass('is-invalid');
-                        $('#change_amount').val('');
+                        inputPaidAmount.attr('readonly', 'readonly');
+                        inputPaidAmount.removeClass('is-invalid');
+                        inputPaidAmount.val(totalAmount);
+                        inputChangeAmount.val('');
                     } else {
-                        $('#paid_amount').val("");
-                        $('#paid_amount').removeAttr('readonly');
+                        inputPaidAmount.val("");
+                        inputPaidAmount.removeAttr('readonly');
                     }
                 });
 
@@ -536,19 +662,21 @@
                  * Update nilai kembalian ketika form
                  * pembayaran diinput.
                  */
-                $('#paid_amount').keyup(function(e) {
+                window.service.formSaveSale.find('input[name=paid_amount]').keyup(function(e) {
                     e.preventDefault();
 
-                    const grandTotal = $('#grandTotal').data('value');
+                    const totalAmount = $('#totalAmount').data('value');
                     const paidAmount = $(this).val();
-                    const changeAmount = paidAmount - grandTotal;
+                    const changeAmount = paidAmount - totalAmount;
+                    const inputChangeAmount = window.service.formSaveSale.find('input[name=change_amount]');
+                    const inputPaidAmount = window.service.formSaveSale.find('input[name=paid_amount]');
 
                     if (changeAmount >= 0) {
-                        $('#change_amount').val(changeAmount);
-                        $('#paid_amount').removeClass('is-invalid');
+                        inputChangeAmount.val(changeAmount);
+                        inputPaidAmount.removeClass('is-invalid');
                     } else {
-                        $('#change_amount').val(0);
-                        $('#paid_amount').addClass('is-invalid');
+                        inputChangeAmount.val(0);
+                        inputPaidAmount.addClass('is-invalid');
                     }
                 });
 
@@ -557,13 +685,21 @@
                  */
                 $('#buttonProductTable').click(function(e) {
                     e.preventDefault();
-                    service.modalProduct.show();
+                    window.service.productModal.show();
+                });
+
+                /**
+                 * Menampilkan modal daftar pelanggan (customer)
+                 */
+                window.service.formSaveSale.find('input[name=customer]').click(function (e) { 
+                    e.preventDefault();
+                    window.service.customerModal.show();
                 });
 
                 /**
                  * Submit form create cart detail.
                  */
-                $('#formCreateCartDetail').submit(async function (e) { 
+                window.service.formCreateCartDetail.submit(async function (e) { 
                     e.preventDefault();
                     
                     $(this).find('input[name="product"]').removeClass('is-invalid border-danger');
@@ -571,11 +707,11 @@
                     $(this).find('input[name="product"]').parent().next().text('');
                     
                     try {
-                        const response = await service.createCartDetail();
+                        const response = await window.service.createCartDetail();
 
-                        app.alert('success', response.message);
-                        service.findCart();
-                        service.cartDetailTable.ajax.reload();
+                        window.app.alert('success', response.message);
+                        window.service.findCart();
+                        window.service.cartDetailTable.ajax.reload();
 
                         $(this).trigger('reset');
                         $(this).find('input[name="product"]').focus();
@@ -589,52 +725,77 @@
                 });
 
                 /**
+                 * Submit form update cart detail.
+                 */
+                window.service.formUpdateCartDetail.submit(async (event) => {
+                    event.preventDefault();
+                    window.app.showPreloader();
+
+                    window.service.formUpdateCartDetail.find(`input[name=quantity]`).removeClass('is-invalid');
+                    window.service.formUpdateCartDetail.find(`input[name=quantity]`).next().text('');
+                    
+                    try {
+                        const response = await window.service.updateCartDetail();
+                        
+                        window.service.findCart();
+                        window.service.cartDetailTable.ajax.reload();
+                        window.service.modalUpdateCartdetail.hide();
+                        window.app.alert('success', response.message);
+                    } catch (error) {
+                        Object.entries(error.errors).forEach(([field, message]) => {
+                            window.service.formUpdateCartDetail.find(`input[name=${field}]`).addClass('is-invalid');
+                            window.service.formUpdateCartDetail.find(`input[name=${field}]`).next().text(message[0]);
+                        });
+                    } finally {
+                        window.app.hidePreloader();
+                    }
+                });
+
+                /**
                  * Fungsi untuk menghapus daftar cart detail
                  */
                 const deleteCartDetail = (event, id) => {
                     event.preventDefault();
 
-                    app.delete('Produk', async (deleted) => {
+                    window.app.delete('Produk', async (deleted) => {
                         if (!deleted) return;
 
                         try {
-                            const response = await service.deleteCartDetail(id);
+                            const response = await window.service.deleteCartDetail(id);
 
-                            service.findCart()
-                            service.cartDetailTable.ajax.reload();
-                            app.alert('success', response.message);
+                            window.service.findCart()
+                            window.service.cartDetailTable.ajax.reload();
+                            window.app.alert('success', response.message);
                         } catch (error) {
-                            app.alert('danger', error.message);
+                            window.app.alert('danger', error.message);
                         }
                     })
                 }
 
                 /**
-                 * Submit form update cart detail.
+                 * Simpan penjualan
                  */
-                service.formUpdateCartDetail.submit(async (event) => {
+                window.service.formSaveSale.submit(async function(event) {
                     event.preventDefault();
-                    app.showPreloader();
 
-                    service.formUpdateCartDetail.find(`input[name=quantity]`).removeClass('is-invalid');
-                    service.formUpdateCartDetail.find(`input[name=quantity]`).next().text('');
-                    
+                    window.app.showPreloader();
+                    window.service.formSaveSale.find('.is-invalid').removeClass('is-invalid');
+
                     try {
-                        const response = await service.updateCartDetail();
-                        
-                        service.findCart();
-                        service.cartDetailTable.ajax.reload();
-                        service.modalUpdateCartdetail.hide();
-                        app.alert('success', response.message);
+                        await window.service.saveSale();
+                        window.open("{{ route('transactions.sales') }}");
+                        window.location.reload();
                     } catch (error) {
                         Object.entries(error.errors).forEach(([field, message]) => {
-                            service.formUpdateCartDetail.find(`input[name=${field}]`).addClass('is-invalid');
-                            service.formUpdateCartDetail.find(`input[name=${field}]`).next().text(message[0]);
+                            window.service.formSaveSale.find(`#${field}`).addClass('is-invalid');
+                            window.service.formSaveSale.find(`#${field}`).parent().addClass('is-invalid');
+                            window.service.formSaveSale.find(`#${field}`).parent().next().text(message[0]);
                         });
-                    } finally {
-                        app.hidePreloader();
+
+                        window.app.hidePreloader();
+                        window.app.alert('danger', error.message);
                     }
-                });
+                })
             </script>
         </x-slot:script>
     @else

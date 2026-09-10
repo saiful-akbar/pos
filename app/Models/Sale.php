@@ -97,12 +97,4 @@ class Sale extends Model
     {
         return $this->hasMany(SaleDetail::class, 'sale_id', 'id');
     }
-
-    /**
-     * Get all of the payments for the Sale
-     */
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class, 'sale_id', 'id');
-    }
 }

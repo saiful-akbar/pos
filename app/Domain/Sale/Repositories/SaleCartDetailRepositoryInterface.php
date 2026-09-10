@@ -50,4 +50,11 @@ interface SaleCartDetailRepositoryInterface
      * Menghapus data cart details.
      */
     public function deleteById(string $id): int;
+
+    /**
+     * Mengambil daftar cart detail berdasarkan cart id.
+     *
+     * @return SaleCartDetailEntity[]
+     */
+    public function getByCartId(string $cartId): array;
 }

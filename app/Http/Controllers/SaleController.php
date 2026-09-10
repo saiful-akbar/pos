@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
@@ -14,6 +15,7 @@ use App\Application\Sale\UseCases\FindSaleCartById;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
+use App\Http\Requests\Sales\StoreSaleRequest;
 use App\Http\Requests\Sales\UpdateQuantitySaleCartDetailRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -129,6 +131,20 @@ class SaleController extends Controller
 
         return $this->jsonResponse(
             message: 'Quantity produk berhasil diperbarui.',
+        );
+    }
+
+    /**
+     * Menyimpan (insert) data penjualan
+     */
+    public function storeSale(StoreSaleRequest $request): JsonResponse
+    {
+        app(CreateSale::class)->execute(
+            request: $request,
+        );
+
+        return $this->jsonResponse(
+            message: 'Penjualan berhasil disimpan',
         );
     }
 }

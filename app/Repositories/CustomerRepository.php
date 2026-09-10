@@ -27,10 +27,20 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
      * Mengambil daftar customer dalam format query builder.
      */
     #[Override]
-    public function getQuery(): Builder
+    public function getQuery(?bool $active = null): Builder
     {
         try {
-            return $this->model->query();
+            $query = $this->model->query();
+
+            if ($active === true) {
+                $query->whereNotNull('deleted_at');
+            }
+
+            if ($active === false) {
+                $query->whereNull('deleted_at');
+            }
+
+            return $query;
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

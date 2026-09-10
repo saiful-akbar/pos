@@ -14,7 +14,7 @@ interface CustomerRepositoryInterface
     /**
      * Mengambil daftar customer dalam format query builder.
      */
-    public function getQuery(): Builder;
+    public function getQuery(?bool $active = null): Builder;
 
     /**
      * Mengambil data customer berdasarkan id.

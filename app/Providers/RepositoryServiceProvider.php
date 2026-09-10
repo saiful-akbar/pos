@@ -56,6 +56,7 @@ use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
+use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
@@ -98,6 +99,8 @@ use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -118,6 +121,8 @@ use App\Repositories\PurchaseRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SaleCartDetailRepository;
 use App\Repositories\SaleCartRepository;
+use App\Repositories\SaleDetailRepository;
+use App\Repositories\SaleRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\StockMovementRepository;
 use App\Repositories\SupplierRepository;
@@ -166,6 +171,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleCartDetail::class => ErrorLogRepository::class,
             DeleteSaleCartDetailById::class => ErrorLogRepository::class,
             UpdateQuantitySalesCartDetailById::class => ErrorLogRepository::class,
+            CreateSale::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -200,6 +206,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateDiscount::class => ActivityLogRepository::class,
             UpdateDiscount::class => ActivityLogRepository::class,
             RemoveDiscountById::class => ActivityLogRepository::class,
+            CreateSale::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -279,6 +286,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetCustomersTable::class => CustomerRepository::class,
             FindCustomerById::class => CustomerRepository::class,
             GetAllCustomers::class => CustomerRepository::class,
+            CreateSale::class => CustomerRepository::class,
         ],
 
         // Supplier
@@ -290,6 +298,17 @@ class RepositoryServiceProvider extends ServiceProvider
             GetAllSuppliers::class => SupplierRepository::class,
             GenerateSupplierCode::class => SupplierRepository::class,
             GetActiveSuppliers::class => SupplierRepository::class,
+        ],
+
+        // Discount
+        DiscountRepositoryInterface::class => [
+            GetAllDiscountsTable::class => DiscountRepository::class,
+            GetActiveDiscountsTable::class => DiscountRepository::class,
+            CreateDiscount::class => DiscountRepository::class,
+            UpdateDiscount::class => DiscountRepository::class,
+            FindDiscountById::class => DiscountRepository::class,
+            RemoveDiscountById::class => DiscountRepository::class,
+            GetAllDiscounts::class => DiscountRepository::class,
         ],
 
         // Purchase cart
@@ -352,6 +371,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleCartDetail::class => SaleCartRepository::class,
             DeleteSaleCartDetailById::class => SaleCartRepository::class,
             UpdateQuantitySalesCartDetailById::class => SaleCartRepository::class,
+            CreateSale::class => SaleCartRepository::class,
         ],
 
         // Sale cart detail
@@ -360,17 +380,17 @@ class RepositoryServiceProvider extends ServiceProvider
             GetSaleCartDetailsByCartIdTable::class => SaleCartDetailRepository::class,
             DeleteSaleCartDetailById::class => SaleCartDetailRepository::class,
             UpdateQuantitySalesCartDetailById::class => SaleCartDetailRepository::class,
+            CreateSale::class => SaleCartDetailRepository::class,
         ],
 
-        // Discount
-        DiscountRepositoryInterface::class => [
-            GetAllDiscountsTable::class => DiscountRepository::class,
-            GetActiveDiscountsTable::class => DiscountRepository::class,
-            CreateDiscount::class => DiscountRepository::class,
-            UpdateDiscount::class => DiscountRepository::class,
-            FindDiscountById::class => DiscountRepository::class,
-            RemoveDiscountById::class => DiscountRepository::class,
-            GetAllDiscounts::class => DiscountRepository::class,
+        // Sale
+        SaleRepositoryInterface::class => [
+            CreateSale::class => SaleRepository::class,
+        ],
+
+        // Sale detail
+        SaleDetailRepositoryInterface::class => [
+            CreateSale::class => SaleDetailRepository::class,
         ],
     ];
 

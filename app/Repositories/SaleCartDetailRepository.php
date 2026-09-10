@@ -215,6 +215,31 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     }
 
     /**
+     * Mengambil daftar cart detail berdasarkan cart id.
+     *
+     * @return SaleCartDetailEntity[]
+     */
+    #[Override]
+    public function getByCartId(string $cartId): array
+    {
+        try {
+            return $this->model->query()
+                ->with('product')
+                ->where('sale_cart_id', $cartId)
+                ->get()
+                ->map(fn ($data) => $this->mapModelToSaleCartDetailEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class model ke SalesCartDetailEntity.
      */
     private function mapModelToSaleCartDetailEntity(SaleCartDetail $model): SaleCartDetailEntity

@@ -7,6 +7,7 @@ namespace App\Domain\Purchase\Enums;
 enum PaymentMethodEnum: string
 {
     case CASH = 'cash';
+    case QRIS = 'qris';
     case TRANSFER = 'transfer';
     case DEBIT = 'debit';
     case CREDIT = 'credit';

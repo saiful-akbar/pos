@@ -199,6 +199,7 @@ Route::middleware('auth')->group(function (): void {
 
         Route::controller(SaleController::class)->name('.sales')->prefix('sales')->group(function (): void {
             Route::get('/', 'index');
+            Route::post('/', 'storeSale')->name('.store');
             Route::post('/carts', 'storeCart')->name('.carts.store');
             Route::get('/carts/{cartId}', 'showCart')->name('.carts.show');
             Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete');
