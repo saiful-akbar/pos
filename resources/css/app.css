@@ -26,7 +26,10 @@ body {
 
 .modal-backdrop.show,
 .offcanvas-backdrop.show {
-  opacity: 0.5 !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  opacity: 1 !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
 }
 
 p {
@@ -72,6 +75,11 @@ p {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.table-img img {
+  width: 50px;
+  height: 50px;
 }
 
 /**

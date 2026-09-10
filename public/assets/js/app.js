@@ -94,11 +94,11 @@ class App {
    */
   modalDataTable(element, options) {
     return new DataTable(element, {
-      scrollY: "400",
-      scrollX: true,
       processing: true,
       fixedHeader: true,
       info: false,
+      scrollX: false,
+      scrollY: "400",
       language: {
         search: "",
         searchPlaceholder: "Cari...",

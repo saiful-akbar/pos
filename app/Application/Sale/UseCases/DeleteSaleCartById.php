@@ -42,7 +42,7 @@ class DeleteSaleCartById
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
                 logName: "Membatalkan transaksi penjualan dengan id: {$cart->id}",
-                event: EventActivityEnum::CREATED,
+                event: EventActivityEnum::DELETED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $cart->toArray(),
                 ),

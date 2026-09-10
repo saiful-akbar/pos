@@ -48,14 +48,26 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
      * Mengambil data produk berdasarkan id.
      */
     #[Override]
-    public function findById(string $id): ?ProductDetailEntity
+    public function findById(string $id, string $response = ProductDetailEntity::class): ProductDetailEntity|ProductEntity|null
     {
         try {
             $product = $this->model->query()
                 ->with(['category', 'unit'])
                 ->find($id);
 
-            return $product === null ? null : $this->mapModelToProductDetailEntity($product);
+            if ($product === null) {
+                return null;
+            }
+
+            if ($response === ProductDetailEntity::class) {
+                return $this->mapModelToProductDetailEntity(
+                    model: $product
+                );
+            }
+
+            return $this->mapModelToProductEntity(
+                model: $product,
+            );
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -154,8 +166,10 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     {
         try {
             $data = $this->model->query()
-                ->where('code', $value)
-                ->orWhere('barcode', $value)
+                ->where('is_active', 1)
+                ->where(function (Builder $query) use ($value): void {
+                    $query->where('code', $value)->orWhere('barcode', $value);
+                })
                 ->first();
 
             return $data === null ? null : $this->mapModelToProductEntity(model: $data);

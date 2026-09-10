@@ -37,14 +37,10 @@ return new class() extends Migration
             $table->string('invoice_number', 50)->unique()->comment('format: INV2608-00001');
             $table->date('transaction_date');
             $table->unsignedInteger('total_quantity')->default(0);
-            $table->decimal('subtotal', 15, 2)->default(0);
-            $table->decimal('discount', 15, 2)->default(0);
-            $table->decimal('tax', 15, 2)->default(0);
-            $table->decimal('grand_total', 15, 2)->default(0);
-            $table->decimal('paid_amount', 15, 2)->default(0);
-            $table->decimal('change_amount', 15, 2)->default(0);
+            $table->unsignedInteger('total_amount')->default(0);
+            $table->unsignedInteger('paid_amount')->default(0);
+            $table->unsignedInteger('change_amount')->default(0);
             $table->enum('payment_method', ['cash', 'debit', 'credit', 'qris'])->default('cash');
-            $table->enum('status', ['completed', 'void'])->default('completed');
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

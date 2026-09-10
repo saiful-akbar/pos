@@ -6,7 +6,7 @@ namespace App\Application\Sale\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Sale\DTOs\CreateSaleCartDTO;
+use App\Application\Sale\DTOs\SaleCartDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
@@ -34,13 +34,12 @@ class CreateSaleCart
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $cart = $this->cartRepository->create(dto: new CreateSaleCartDTO(
+            $cart = $this->cartRepository->create(dto: new SaleCartDTO(
                 userId: user()->id,
                 isPending: false,
                 transactionDate: new DateTimeImmutable(),
                 totalQuantity: 0,
-                subtotal: 0,
-                grandTotal: 0,
+                totalAmount: 0,
             ));
 
             $this->activityRepository->create(dto: new CreateActivityDTO(

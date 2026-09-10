@@ -66,8 +66,7 @@ class SaleCart extends Model
         'is_pending',
         'transaction_date',
         'total_quantity',
-        'subtotal',
-        'grand_total',
+        'total_amount',
     ];
 
     /**

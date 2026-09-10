@@ -25,7 +25,10 @@ interface ProductRepositoryInterface
     /**
      * Mengambil data produk berdasarkan id.
      */
-    public function findById(string $id): ?ProductDetailEntity;
+    /**
+     * Undocumented function
+     */
+    public function findById(string $id, string $response = ProductDetailEntity::class): ProductDetailEntity|ProductEntity|null;
 
     /**
      * Membuat produk baru

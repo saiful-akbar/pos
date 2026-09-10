@@ -67,13 +67,10 @@ class Sale extends Model
         'invoice_number',
         'transaction_date',
         'total_quantity',
-        'subtotal',
-        'discount',
-        'tax',
-        'grand_total',
+        'total_amount',
         'paid_amount',
         'change_amount',
-        'status',
+        'payment_method',
         'notes',
     ];
 

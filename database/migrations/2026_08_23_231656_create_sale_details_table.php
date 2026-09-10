@@ -33,15 +33,11 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-            $table->foreignUlid('discount_id')
-                ->constrained('discounts', 'id')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
-
-            $table->unsignedInteger('quantity');
-            $table->decimal('purchase_price', 15, 2)->default(0);
-            $table->decimal('selling_price', 15, 2)->default(0);
-            $table->decimal('subtotal', 15, 2)->default(0);
+            $table->unsignedInteger('quantity')->default(0);
+            $table->unsignedInteger('purchase_price')->default(0);
+            $table->unsignedInteger('selling_price')->default(0);
+            $table->unsignedInteger('discount')->default(0);
+            $table->unsignedInteger('subtotal')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

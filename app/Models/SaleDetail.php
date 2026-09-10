@@ -63,10 +63,10 @@ class SaleDetail extends Model
     protected $fillable = [
         'sale_id',
         'product_id',
-        'discount_id',
         'quantity',
-        'price',
-        'cost_price',
+        'purchase_price',
+        'selling_price',
+        'discount',
         'subtotal',
     ];
 

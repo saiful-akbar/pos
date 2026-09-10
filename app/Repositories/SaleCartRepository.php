@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Sale\DTOs\CreateSaleCartDTO;
+use App\Application\Sale\DTOs\SaleCartDTO;
 use App\Base\Repository;
 use App\Domain\Sale\Entities\SaleCartEntity;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
@@ -72,12 +72,12 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
      * Membuat kerangjang belanja baru
      */
     #[Override]
-    public function create(CreateSaleCartDTO $dto): SaleCartEntity
+    public function create(SaleCartDTO $dto): SaleCartEntity
     {
         try {
-            $data = $this->model->query()->create($dto->toArray())->load('user');
+            $data = $this->model->query()->create($dto->toArray());
 
-            return $this->mapModelToSaleCartEntity(model: $data);
+            return $this->mapModelToSaleCartEntity(model: $data->load('user'));
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -109,6 +109,26 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
     }
 
     /**
+     * Memperbarui data cart.
+     */
+    #[Override]
+    public function update(string $id, SaleCartDTO $dto): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->update($dto->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke SaleCartEntity.
      */
     private function mapModelToSaleCartEntity(SaleCart $model): SaleCartEntity
@@ -124,8 +144,7 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
             isPending: $model->is_pending === 1,
             transactionDate: parse_date_time_immutable($model->transaction_date),
             totalQuantity: $model->total_quantity,
-            subtotal: parse_float($model->subtotal),
-            grandTotal: parse_float($model->grand_total),
+            totalAmount: $model->total_amount,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

@@ -6,7 +6,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
@@ -159,19 +158,19 @@ Route::middleware('auth')->group(function (): void {
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.suppliers,update');
             });
 
-        Route::controller(DiscountController::class)
-            ->middleware('throttle:global')
-            ->name('.discounts')
-            ->prefix('discounts')
-            ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.discounts,read');
-                Route::post('/', 'store')->name('.store')->middleware('module:master.discounts,create');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.discounts,create');
-                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.discounts,read');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.discounts,update');
-                Route::patch('/{id}', 'update')->name('.update')->middleware('module:master.discounts,update');
-                Route::delete('/{id}', 'removeJson')->name('.remove')->middleware('module:master.discounts,remove');
-            });
+        // Route::controller(DiscountController::class)
+        //     ->middleware('throttle:global')
+        //     ->name('.discounts')
+        //     ->prefix('discounts')
+        //     ->group(function (): void {
+        //         Route::get('/', 'index')->middleware('module:master.discounts,read');
+        //         Route::post('/', 'store')->name('.store')->middleware('module:master.discounts,create');
+        //         Route::get('/create', 'create')->name('.create')->middleware('module:master.discounts,create');
+        //         Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.discounts,read');
+        //         Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.discounts,update');
+        //         Route::patch('/{id}', 'update')->name('.update')->middleware('module:master.discounts,update');
+        //         Route::delete('/{id}', 'removeJson')->name('.remove')->middleware('module:master.discounts,remove');
+        //     });
     });
 
     Route::name('transactions')->prefix('transactions')->group(function (): void {
@@ -200,12 +199,13 @@ Route::middleware('auth')->group(function (): void {
 
         Route::controller(SaleController::class)->name('.sales')->prefix('sales')->group(function (): void {
             Route::get('/', 'index');
-
-            Route::name('.cart')->prefix('cart')->group(function (): void {
-                Route::post('/', 'storeCart')->name('.store');
-                Route::get('/{cartId}', 'showCart')->name('.show');
-                Route::delete('/{cartId}', 'deleteCart')->name('.delete');
-            });
+            Route::post('/carts', 'storeCart')->name('.carts.store');
+            Route::get('/carts/{cartId}', 'showCart')->name('.carts.show');
+            Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete');
+            Route::get('/carts/{cartId}/details', 'getCartDetails')->name('.carts.details');
+            Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store');
+            Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete');
+            Route::patch('/carts/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.carts.details.update');
         });
     });
 });

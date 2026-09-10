@@ -140,12 +140,12 @@ class ModuleSeeder extends Seeder
                         'route' => 'master.products',
                         'roles' => ['Admin', 'Kasir'],
                     ],
-                    [
-                        'name' => 'Diskon',
-                        'path' => 'master/discounts',
-                        'route' => 'master.discounts',
-                        'roles' => ['Admin', 'Kasir'],
-                    ],
+                    // [
+                    //     'name' => 'Diskon',
+                    //     'path' => 'master/discounts',
+                    //     'route' => 'master.discounts',
+                    //     'roles' => ['Admin', 'Kasir'],
+                    // ],
                 ],
             ],
             [
