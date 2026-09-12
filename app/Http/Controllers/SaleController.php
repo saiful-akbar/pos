@@ -10,6 +10,7 @@ use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
+use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
 use App\Application\Sale\UseCases\FindSaleCartById;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
@@ -21,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class SaleController extends Controller
 {
@@ -139,12 +141,36 @@ class SaleController extends Controller
      */
     public function storeSale(StoreSaleRequest $request): JsonResponse
     {
-        app(CreateSale::class)->execute(
+        $sale = app(CreateSale::class)->execute(
             request: $request,
         );
 
         return $this->jsonResponse(
             message: 'Penjualan berhasil disimpan',
+            data: $sale,
         );
+    }
+
+    /**
+     * Undocumented function
+     */
+    public function printReceipt(string $id): View
+    {
+        $sale = app(FindSaleById::class)->execute(id: $id);
+
+        if ($sale === null) {
+            abort(404);
+        }
+
+        $generator = new BarcodeGeneratorSVG();
+
+        $barcode = $generator->getBarcode(
+            barcode: $sale->invoiceNumber,
+            type: $generator::TYPE_CODE_128,
+            height: 80,
+
+        );
+
+        return view('pages.sales.receipt', compact('sale', 'barcode'));
     }
 }

@@ -18,6 +18,7 @@ use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
 use App\Domain\Sale\Entities\SaleCartDetailEntity;
 use App\Domain\Sale\Entities\SaleCartEntity;
+use App\Domain\Sale\Entities\SaleEntity;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
@@ -49,7 +50,7 @@ class CreateSale
     /**
      * Execute method
      */
-    public function execute(Request $request): void
+    public function execute(Request $request): SaleEntity
     {
         DB::connection(pos_connection())->beginTransaction();
 
@@ -141,6 +142,8 @@ class CreateSale
 
             // commit transaction
             DB::connection(pos_connection())->commit();
+
+            return $sale;
         } catch (\Throwable $e) {
             DB::connection(pos_connection())->rollBack();
 

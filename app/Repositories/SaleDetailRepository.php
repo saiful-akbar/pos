@@ -8,7 +8,9 @@ use App\Application\Sale\DTOs\CreateSaleDetailDTO;
 use App\Base\Repository;
 use App\Domain\Sale\Entities\SaleDetailEntity;
 use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
+use App\Domain\Sale\ValueObjects\CategoryProductSaleValue;
 use App\Domain\Sale\ValueObjects\ProductSaleValue;
+use App\Domain\Sale\ValueObjects\UnitProductSaleValue;
 use App\Models\SaleDetail;
 use Override;
 
@@ -32,7 +34,7 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
             $data = $this->model->query()->create($dto->toArray());
 
             return $this->mapModelToSaleDetailEntity(
-                model: $data->load('product'),
+                model: $data->load(['product.category', 'product.unit']),
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -54,6 +56,18 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
             saleId: $model->sale_id,
             product: new ProductSaleValue(
                 id: $model->product->id,
+                unit: new UnitProductSaleValue(
+                    id: $model->product->unit->id,
+                    code: $model->product->unit->code,
+                    name: $model->product->unit->name,
+                    isActive: $model->product->unit->is_active === 1
+                ),
+                category: new CategoryProductSaleValue(
+                    id: $model->product->unit->id,
+                    code: $model->product->unit->code,
+                    name: $model->product->unit->name,
+                    isActive: $model->product->unit->is_active === 1
+                ),
                 code: $model->product->code,
                 barcode: $model->product->barcode,
                 name: $model->product->name,

@@ -788,9 +788,12 @@
                     service.formSaveSale.find('.is-invalid').removeClass('is-invalid');
 
                     try {
-                        await service.saveSale();
-                        open("{{ route('transactions.sales') }}");
-                        location.reload();
+                        const response = await service.saveSale();
+                        const sale = response.data;
+                        const saleId = sale.id;
+
+                        window.open(`${app.baseUrl}/transactions/sales/${saleId}/receipt`);
+                        window.location.reload();
                     } catch (error) {
                         Object.entries(error.errors).forEach(([field, message]) => {
                             service.formSaveSale.find(`#${field}`).addClass('is-invalid');

@@ -13,6 +13,7 @@
     "laravel/framework": "^12.0",
     "laravel/tinker": "^2.10.1",
     "maatwebsite/excel": "^4.0",
+    "picqer/php-barcode-generator": "^3.3",
     "yajra/laravel-datatables-oracle": "^12.0"
   },
   "require-dev": {

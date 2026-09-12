@@ -207,6 +207,7 @@ Route::middleware('auth')->group(function (): void {
             Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store');
             Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete');
             Route::patch('/carts/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.carts.details.update');
+            Route::get('/{id}/receipt', 'printReceipt')->name('.receipt');
         });
     });
 });

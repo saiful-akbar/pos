@@ -14,6 +14,8 @@ class ProductSaleValue extends Entity
      */
     public function __construct(
         public readonly string $id,
+        public readonly UnitProductSaleValue $unit,
+        public readonly CategoryProductSaleValue $category,
         public readonly string $code,
         public readonly string $barcode,
         public readonly ?string $name,
@@ -30,6 +32,8 @@ class ProductSaleValue extends Entity
     {
         return [
             'id' => $this->id,
+            'unit' => $this->unit->toArray(),
+            'category' => $this->category->toArray(),
             'code' => $this->code,
             'barcode' => $this->barcode,
             'name' => $this->name,

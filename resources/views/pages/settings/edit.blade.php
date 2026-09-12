@@ -57,6 +57,7 @@
                                     id="store_logo"
                                     label="Logo"
                                     error="{{ $errors->has('store_logo') }}"
+                                    accept="image/*"
                                     helperText="NB: Biarkan logo tetap kosong jika tidak ingin merubahnya"
                                 />
                             </div>

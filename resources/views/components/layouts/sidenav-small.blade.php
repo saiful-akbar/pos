@@ -2,17 +2,8 @@
     <nav class="navbar navbar-expand-xl navbar-vertical">
         <div class="container-lg">
             <a class="navbar-brand fs-5 fw-bold text-xl-center mb-xl-4" href="{{ route('dashboard') }}">
-                @empty($setting->store_logo)
-                    <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" width="25">
-                @else
-                    <img src="{{ storage_asset($setting->store_logo) }}" alt="Logo" width="25">
-                @endempty
-                
-                @empty($setting->appName)
-                    <span class="d-xl-none ms-1">{{ config('app.name') }}</span>
-                @else
-                    <span class="d-xl-none ms-1">{{ $setting->appName }}</span>
-                @endempty
+                <img src="{{ logo($setting->storeLogo) }}" alt="Logo" width="25" class="rounded">
+                <span class="d-xl-none ms-2">{{ $setting?->appName ?? config('app.name') }}</span>
             </a>
 
             {{-- User --}}

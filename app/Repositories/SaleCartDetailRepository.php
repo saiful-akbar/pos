@@ -8,7 +8,9 @@ use App\Application\Sale\DTOs\SaleCartDetailDTO;
 use App\Base\Repository;
 use App\Domain\Sale\Entities\SaleCartDetailEntity;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
+use App\Domain\Sale\ValueObjects\CategoryProductSaleValue;
 use App\Domain\Sale\ValueObjects\ProductSaleValue;
+use App\Domain\Sale\ValueObjects\UnitProductSaleValue;
 use App\Models\SaleCartDetail;
 use Illuminate\Database\Eloquent\Builder;
 use Override;
@@ -33,7 +35,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
             $data = $this->model->query()->create($dto->toArray());
 
             return $this->mapModelToSaleCartDetailEntity(
-                model: $data->load('product'),
+                model: $data->load(['product.category', 'product.unit']),
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -112,7 +114,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     {
         try {
             $data = $this->model->query()
-                ->with('product')
+                ->with(['product.category', 'product.unit'])
                 ->find($id);
 
             if ($data === null) {
@@ -141,7 +143,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     {
         try {
             return $this->model->query()
-                ->with('product.unit')
+                ->with(['product.category', 'product.unit'])
                 ->where('sale_cart_id', '=', $cartId)
                 ->orderBy('created_at', 'desc');
         } catch (\Throwable $e) {
@@ -224,7 +226,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     {
         try {
             return $this->model->query()
-                ->with('product')
+                ->with(['product.category', 'product.unit'])
                 ->where('sale_cart_id', $cartId)
                 ->get()
                 ->map(fn ($data) => $this->mapModelToSaleCartDetailEntity($data))
@@ -249,6 +251,18 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
             saleCartId: $model->sale_cart_id,
             product: new ProductSaleValue(
                 id: $model->product->id,
+                unit: new UnitProductSaleValue(
+                    id: $model->product->unit->id,
+                    code: $model->product->unit->code,
+                    name: $model->product->unit->name,
+                    isActive: $model->product->unit->is_active === 1
+                ),
+                category: new CategoryProductSaleValue(
+                    id: $model->product->unit->id,
+                    code: $model->product->unit->code,
+                    name: $model->product->unit->name,
+                    isActive: $model->product->unit->is_active === 1
+                ),
                 code: $model->product->code,
                 barcode: $model->product->barcode,
                 name: $model->product->name,

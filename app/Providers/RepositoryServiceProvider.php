@@ -61,6 +61,7 @@ use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
+use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
 use App\Application\Sale\UseCases\FindSaleCartById;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
@@ -388,6 +389,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Sale
         SaleRepositoryInterface::class => [
             CreateSale::class => SaleRepository::class,
+            FindSaleById::class => SaleRepository::class,
         ],
 
         // Sale detail

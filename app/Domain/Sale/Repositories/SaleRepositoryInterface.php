@@ -6,6 +6,7 @@ namespace App\Domain\Sale\Repositories;
 
 use App\Application\Sale\DTOs\CreateSaleDTO;
 use App\Domain\Sale\Entities\SaleEntity;
+use App\Domain\Sale\Entities\SaleWithDetailEntity;
 
 interface SaleRepositoryInterface
 {
@@ -18,4 +19,9 @@ interface SaleRepositoryInterface
      * Menyimpan (insert) data penjualan.
      */
     public function create(CreateSaleDTO $dto): SaleEntity;
+
+    /**
+     * Mengambil data sales berdsarkan id.
+     */
+    public function findById(string $id): ?SaleWithDetailEntity;
 }

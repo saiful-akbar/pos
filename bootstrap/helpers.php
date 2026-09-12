@@ -190,3 +190,16 @@ if (! function_exists('parse_float')) {
         return (float) $value;
     }
 }
+
+if (! function_exists('logo')) {
+    function logo(?string $path): string
+    {
+        if ($path === null) {
+            return asset('assets/images/logo.svg');
+        }
+
+        $path = ltrim(trim($path), '/');
+
+        return asset("storage/$path");
+    }
+}
