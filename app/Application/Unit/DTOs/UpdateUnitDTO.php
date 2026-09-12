@@ -23,7 +23,7 @@ class UpdateUnitDTO extends DTO
     public function toArray(): array
     {
         return [
-            'code' => strtoupper($this->code),
+            'code' => $this->code,
             'name' => $this->name,
             'is_active' => $this->isActive,
         ];

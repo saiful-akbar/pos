@@ -121,11 +121,11 @@ class SavePurchase
                     userId: $userId,
                     productId: $product->id,
                     type: TypeStockMovementEnum::PURCHASE,
-                    referenceId: $purchaseDetail->id,
                     quantity: $purchaseDetail->quantity,
                     stockBefore: $product->currentStock,
                     stockAfter: $product->currentStock + $cartDetail->quantity,
-                    notes: 'Penambahan stok dari pembelian',
+                    referenceId: $purchase->id,
+                    notes: 'Penambahan stok dari hasil pembelian',
                 ));
 
                 // update current_stock product.

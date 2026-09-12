@@ -277,6 +277,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleCartDetail::class => ProductRepository::class,
             DeleteSaleCartDetailById::class => ProductRepository::class,
             UpdateQuantitySalesCartDetailById::class => ProductRepository::class,
+            CreateSale::class => ProductRepository::class,
         ],
 
         // Customer
@@ -360,6 +361,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Stock movement
         StockMovementRepositoryInterface::class => [
             SavePurchase::class => StockMovementRepository::class,
+            CreateSale::class => StockMovementRepository::class,
         ],
 
         // Sale cart

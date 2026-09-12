@@ -25,9 +25,6 @@ interface ProductRepositoryInterface
     /**
      * Mengambil data produk berdasarkan id.
      */
-    /**
-     * Undocumented function
-     */
     public function findById(string $id, string $response = ProductDetailEntity::class): ProductDetailEntity|ProductEntity|null;
 
     /**
@@ -59,4 +56,11 @@ interface ProductRepositoryInterface
      * Update stock product saat ini berdasarkan id.
      */
     public function updateCurrentStockById(string $id, int $stock): void;
+
+    /**
+     * Mengambil daftar produk aktif.
+     *
+     * @return ProductEntity[]
+     */
+    public function getActive(): array;
 }

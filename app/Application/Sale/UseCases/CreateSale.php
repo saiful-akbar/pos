@@ -8,15 +8,22 @@ use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
 use App\Application\Sale\DTOs\CreateSaleDetailDTO;
 use App\Application\Sale\DTOs\CreateSaleDTO;
+use App\Application\StockOpname\DTOs\CreateStockMovementDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Customer\Entities\CustomerEntity;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
+use App\Domain\Sale\Entities\SaleCartDetailEntity;
+use App\Domain\Sale\Entities\SaleCartEntity;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
+use App\Domain\StockOpname\Enums\TypeStockMovementEnum;
+use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use DateTimeImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +42,8 @@ class CreateSale
         private CustomerRepositoryInterface $customerRepository,
         private ActivityLogRepositoryInterface $activityRepository,
         private ErrorLogRepositoryInterface $errorRepository,
+        private StockMovementRepositoryInterface $stockMovementRepository,
+        private ProductRepositoryInterface $productRepository,
     ) {}
 
     /**
@@ -45,56 +54,19 @@ class CreateSale
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $customerId = $request->validated('customer_id');
             $paymentMethod = $request->enum('payment_method', PaymentMethodEnum::class);
             $paidAmount = $request->integer('paid_amount');
             $changeAmount = $request->integer('change_amount');
             $notes = $request->validated('notes');
+            $customerId = $request->validated('customer_id');
             $cartId = $request->validated('cart_id');
 
-            $customer = null;
-
-            // Jika customer dipilih, ambil dan validasi data customer.
-            if ($customerId !== null) {
-                $customer = $this->customerRepository->findById(id: $customerId);
-
-                if ($customer === null) {
-                    throw ValidationException::withMessages(messages: [
-                        'customer' => 'Data pelanggan tidak ditemukan.',
-                    ]);
-                }
-            }
-
-            // Ambil data cart
-            $cart = $this->cartRepository->findById(id: $cartId);
-
-            // validasi data cart
-            if ($cart === null) {
-                throw ValidationException::withMessages(messages: [
-                    'message' => 'Transaksi tidak ditemukan.',
-                ]);
-            }
-
-            // Ambil daftar cart detail
-            $cartDetails = $this->cartDetailRepository->getByCartId(cartId: $cart->id);
-
-            // Validasi cart detail
-            if (count($cartDetails) === 0) {
-                throw ValidationException::withMessages(messages: [
-                    'message' => 'Belum ada produk yang dipilih.',
-                ]);
-            }
-
-            // Generate invoice number
+            $customer = $this->findCustomer(id: $customerId);
+            $cart = $this->findCart(id: $cartId);
+            $cartDetails = $this->getCartDetails(cartId: $cart->id);
+            $changeAmount = $this->calculateChangeAmount(totalAmount: $cart->totalAmount, paid: $paidAmount);
             $invoiceNumber = $this->saleRepository->generateInvoiceNumber();
-            $changeAmount = $paidAmount - $cart->totalAmount;
-
-            // Validasi pembayaran
-            if ($changeAmount < 0) {
-                throw ValidationException::withMessages(messages: [
-                    'paid_amount' => 'Jumlah pembayaran kurang.',
-                ]);
-            }
+            $products = $this->productRepository->getActive();
 
             // Simpan (insert) data sales
             $sale = $this->saleRepository->create(dto: new CreateSaleDTO(
@@ -112,15 +84,46 @@ class CreateSale
 
             // Simpan (insert) data sale detail
             foreach ($cartDetails as $cartDetail) {
-                $this->saleDetailRepository->create(dto: new CreateSaleDetailDTO(
-                    saleId: $sale->id,
-                    productId: $cartDetail->product->id,
-                    quantity: $cartDetail->quantity,
-                    purchasePrice: $cartDetail->purchasePrice,
-                    sellingPrice: $cartDetail->sellingPrice,
-                    discount: $cartDetail->discount,
-                    subtotal: $cartDetail->subtotal,
-                ));
+                foreach ($products as $product) {
+                    if ($product->id === $cartDetail->product->id) {
+
+                        // Validasi quantity produk
+                        if ($product->currentStock < $cartDetail->quantity) {
+                            throw ValidationException::withMessages(messages: [
+                                'message' => "Stok pada {$product->name} tidak cukup.",
+                            ]);
+                        }
+
+                        // Insert sale detail
+                        $this->saleDetailRepository->create(dto: new CreateSaleDetailDTO(
+                            saleId: $sale->id,
+                            productId: $cartDetail->product->id,
+                            quantity: $cartDetail->quantity,
+                            purchasePrice: $cartDetail->purchasePrice,
+                            sellingPrice: $cartDetail->sellingPrice,
+                            discount: $cartDetail->discount,
+                            subtotal: $cartDetail->subtotal,
+                        ));
+
+                        // Insert stock movement
+                        $this->stockMovementRepository->create(dto: new CreateStockMovementDTO(
+                            userId: user()->id,
+                            productId: $product->id,
+                            type: TypeStockMovementEnum::SALE,
+                            quantity: $cartDetail->quantity,
+                            stockBefore: $product->currentStock,
+                            stockAfter: $product->currentStock - $cartDetail->quantity,
+                            referenceId: $sale->id,
+                            notes: 'Pengurangan stok dari hasil penjualan'
+                        ));
+
+                        // Update stock produk
+                        $this->productRepository->updateCurrentStockById(
+                            id: $product->id,
+                            stock: $product->currentStock - $cartDetail->quantity,
+                        );
+                    }
+                }
             }
 
             // Hapus cart
@@ -149,5 +152,75 @@ class CreateSale
 
             throw $e;
         }
+    }
+
+    /**
+     * Mengambil data customer.
+     */
+    private function findCustomer(?string $id): ?CustomerEntity
+    {
+        if ($id === null) {
+            return null;
+        }
+
+        $customer = $this->customerRepository->findById(id: $id);
+
+        if ($customer === null) {
+            throw ValidationException::withMessages(messages: [
+                'customer' => 'Data pelanggan tidak ditemukan.',
+            ]);
+        }
+
+        return $customer;
+    }
+
+    /**
+     * Mengambil data sale cart.
+     */
+    private function findCart(string $id): SaleCartEntity
+    {
+        $result = $this->cartRepository->findById(id: $id);
+
+        if ($result === null) {
+            throw ValidationException::withMessages(messages: [
+                'message' => 'Transaksi tidak ditemukan.',
+            ]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Mengambil daftar cart detail berdasarkan cart id.
+     *
+     * @return SaleCartDetailEntity[]
+     */
+    private function getCartDetails(string $cartId): array
+    {
+        $result = $this->cartDetailRepository->getByCartId(cartId: $cartId);
+
+        if (count($result) === 0) {
+            throw ValidationException::withMessages(messages: [
+                'message' => 'Belum ada produk yang dipilih.',
+            ]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Menghitung kembalian;
+     */
+    private function calculateChangeAmount(int $totalAmount, int $paid): int
+    {
+        $change = $paid - $totalAmount;
+
+        if ($change < 0) {
+            throw ValidationException::withMessages(messages: [
+                'paid_amount' => 'Jumlah pembayaran kurang.',
+            ]);
+        }
+
+        return $change;
     }
 }

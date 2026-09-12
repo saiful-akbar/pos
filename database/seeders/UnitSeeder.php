@@ -15,8 +15,8 @@ class UnitSeeder extends Seeder
     public function run(): void
     {
         Unit::query()->create([
-            'code' => 'PCS',
-            'name' => 'PCs',
+            'code' => 'PCs',
+            'name' => 'Pieces',
         ]);
     }
 }

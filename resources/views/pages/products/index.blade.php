@@ -314,8 +314,8 @@
                         title: 'Nama (Deskripsi)',
                         name: 'products.name',
                         data: 'name',
-                        className: 'text-nowrap',
                         type: 'string',
+                        width: '400px'
                     },
                     {
                         title: 'Kode Kategori',

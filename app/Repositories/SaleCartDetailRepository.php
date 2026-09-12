@@ -141,7 +141,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     {
         try {
             return $this->model->query()
-                ->with('product')
+                ->with('product.unit')
                 ->where('sale_cart_id', '=', $cartId)
                 ->orderBy('created_at', 'desc');
         } catch (\Throwable $e) {

@@ -106,7 +106,8 @@
                     </div>
 
                     <button type="submit" class="btn btn-secondary w-100">
-                        Masuk
+                        <x-icon class="me-1">login</x-icon>
+                        <span>Masuk</span>
                     </button>
                 </form>
             </div>

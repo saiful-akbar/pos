@@ -66,7 +66,14 @@ class UpdateQuantitySalesCartDetailById
             // validasi data product.
             if ($product === null) {
                 throw ValidationException::withMessages(messages: [
-                    'message' => 'Produk tidak ditemukan.',
+                    'quantity' => 'Produk tidak ditemukan.',
+                ]);
+            }
+
+            // Validasi quantity
+            if ($product->currentStock < $quantity) {
+                throw ValidationException::withMessages(messages: [
+                    'quantity' => 'Stok tidak cukup.',
                 ]);
             }
 

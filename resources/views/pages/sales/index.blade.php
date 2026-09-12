@@ -119,7 +119,7 @@
 
                         <div class="card-body">
                             <div class="row align-items-center justify-content-between">
-                                <div class="col-12 mb-5">
+                                <div class="col-12">
                                     <div class="bg-light rounded p-5">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="fw-bold">Total Qty</span>
@@ -135,7 +135,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 mb-5">
+                                <div class="col-12 my-4">
                                     <hr>
                                 </div>
 
@@ -219,7 +219,7 @@
             @csrf @method('patch')
             
             <div class="modal" tabindex="-1" id="modalUpdateCartDetail">
-                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
+                <div class="modal-dialog modal-dialog-scrollable">
                     <div class="modal-content border">
                         <div class="modal-header">
                             <h5 class="modal-title">Ubah Quantity</h5>
@@ -303,7 +303,7 @@
                      * Product dataTable
                      */
                     productTable() {
-                        return window.app.modalDataTable('#productTable', {
+                        return app.modalDataTable('#productTable', {
                             serverSide: true,
                             ajax: "{{ route('master.products.active') }}",
                             columns: [
@@ -317,7 +317,7 @@
                                         return `
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar">
-                                                    <img src="${window.app.storageImage(row.image)}" class="rounded" alt="Produk" />
+                                                    <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
                                                 </div>
                                                 <div class="ms-4">
                                                     <div>${row.code}</div>
@@ -342,7 +342,7 @@
                                     data: 'current_stock',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => window.app.numberFormat(data),
+                                    render: (data) => app.numberFormat(data),
                                 },
                                 {
                                     title: 'Harga',
@@ -350,7 +350,7 @@
                                     data: 'selling_price',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => window.app.numberFormat(data),
+                                    render: (data) => app.numberFormat(data),
                                 },
                                 {
                                     title: 'Diskon',
@@ -358,7 +358,7 @@
                                     data: 'discount',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => `${window.app.numberFormat(data)}%`,
+                                    render: (data) => `${app.numberFormat(data)}%`,
                                 },
                             ],
                             createdRow: (row, data, index) => {
@@ -377,7 +377,7 @@
                      * Customer dataTable
                      */
                     customerTable() {
-                        return window.app.modalDataTable('#customerTable', {
+                        return app.modalDataTable('#customerTable', {
                             serverSide: true,
                             ajax: "{{ route('master.customers') }}",
                             columns: [
@@ -420,7 +420,7 @@
                      * Cart detail table
                      */
                     cartDetailTable() {
-                        return window.app.modalDataTable('#cartDetailTable', {
+                        return app.modalDataTable('#cartDetailTable', {
                             serverSide: true,
                             ajax: "{{ route('transactions.sales.carts.details', ['cartId' => $cart->id]) }}",
                             searching: false,
@@ -441,7 +441,7 @@
                                         return `
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar">
-                                                    <img src="${window.app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
+                                                    <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
                                                 </div>
                                                 <div class="ms-4">
                                                     <div>${row.product.code}</div>
@@ -459,7 +459,9 @@
                                     data: 'quantity',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => window.app.numberFormat(data),
+                                    render: (data, type, row) => {
+                                        return `${app.numberFormat(data)} <span class="text-body-secondary">${row.product.unit.code}</span>`;
+                                    },
                                 },
                                 {
                                     title: 'Harga',
@@ -467,7 +469,7 @@
                                     data: 'selling_price',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => window.app.numberFormat(data),
+                                    render: (data) => app.numberFormat(data),
                                 },
                                 {
                                     title: 'Diskon',
@@ -475,7 +477,7 @@
                                     data: 'discount',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => `${window.app.numberFormat(data)} %`,
+                                    render: (data) => `${app.numberFormat(data)} %`,
                                 },
                                 {
                                     title: 'Subtotal',
@@ -483,7 +485,7 @@
                                     data: 'subtotal',
                                     className: 'text-nowrap',
                                     type: 'num',
-                                    render: (data) => window.app.numberFormat(data),
+                                    render: (data) => app.numberFormat(data),
                                 },
                                 {
                                     className: 'text-nowrap',
@@ -507,7 +509,7 @@
                                 $(row).find('button[data-action="update"]').click((e) => {
                                     e.preventDefault();
 
-                                    const actionUrl = `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${data.id}`;
+                                    const actionUrl = `${app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${data.id}`;
 
                                     this.formUpdateCartDetail.attr('action', actionUrl);
                                     this.formUpdateCartDetail.find('input[name=quantity]').val(data.quantity);
@@ -526,7 +528,7 @@
                         return new Promise((resolve, reject) => {
                             $.ajax({
                                 type: "get",
-                                url: `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}`,
+                                url: `${app.baseUrl}/transactions/sales/carts/${this.cartId}`,
                                 success: (response) => {
                                     const cart = response.data;
                                     const totalQuantityEl = $('#totalQuantity');
@@ -540,7 +542,7 @@
                                     resolve(response)
                                 },
                                 error: (error) => {
-                                    window.app.alert('danger', error.message);
+                                    app.alert('danger', error.message);
                                     reject(error.responseJSON);
                                 },
                             });
@@ -552,7 +554,7 @@
                      */
                     createCartDetail() {
                         const data = $('#formCreateCartDetail').serialize();
-                        const url = `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}/details`
+                        const url = `${app.baseUrl}/transactions/sales/carts/${this.cartId}/details`
 
                         return new Promise((resolve, reject) => {
                             $.ajax({
@@ -573,7 +575,7 @@
                         return new Promise((resolve, reject) => {
                             $.ajax({
                                 type: "delete",
-                                url: `${window.app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${cartDetailId}`,
+                                url: `${app.baseUrl}/transactions/sales/carts/${this.cartId}/details/${cartDetailId}`,
                                 data: {
                                     _token: this.csrfToken,
                                 },
@@ -627,24 +629,24 @@
                     }
                 }
 
-                window.service = new Service();
+                service = new Service();
             </script>
 
             {{-- Global script --}}
             <script>
                 $(document).ready(function () {
-                    window.service.findCart();
+                    service.findCart();
                 });
 
                 /**
                  * Mengisi nilai defaul pada form pembayaran jika
                  * metode pembayaran yang dipilih bukan cash (tunai).
                  */
-                window.service.formSaveSale.find('select[name=payment_method]').change(function(e) {
+                service.formSaveSale.find('select[name=payment_method]').change(function(e) {
                     e.preventDefault();
 
-                    const inputPaidAmount = window.service.formSaveSale.find('input[name=paid_amount]');
-                    const inputChangeAmount = window.service.formSaveSale.find('input[name=change_amount]');
+                    const inputPaidAmount = service.formSaveSale.find('input[name=paid_amount]');
+                    const inputChangeAmount = service.formSaveSale.find('input[name=change_amount]');
                     const totalAmount = $('#totalAmount').data('value');
 
                     if ($(this).val() !== 'cash') {
@@ -662,14 +664,14 @@
                  * Update nilai kembalian ketika form
                  * pembayaran diinput.
                  */
-                window.service.formSaveSale.find('input[name=paid_amount]').keyup(function(e) {
+                service.formSaveSale.find('input[name=paid_amount]').keyup(function(e) {
                     e.preventDefault();
 
                     const totalAmount = $('#totalAmount').data('value');
                     const paidAmount = $(this).val();
                     const changeAmount = paidAmount - totalAmount;
-                    const inputChangeAmount = window.service.formSaveSale.find('input[name=change_amount]');
-                    const inputPaidAmount = window.service.formSaveSale.find('input[name=paid_amount]');
+                    const inputChangeAmount = service.formSaveSale.find('input[name=change_amount]');
+                    const inputPaidAmount = service.formSaveSale.find('input[name=paid_amount]');
 
                     if (changeAmount >= 0) {
                         inputChangeAmount.val(changeAmount);
@@ -685,21 +687,21 @@
                  */
                 $('#buttonProductTable').click(function(e) {
                     e.preventDefault();
-                    window.service.productModal.show();
+                    service.productModal.show();
                 });
 
                 /**
                  * Menampilkan modal daftar pelanggan (customer)
                  */
-                window.service.formSaveSale.find('input[name=customer]').click(function (e) { 
+                service.formSaveSale.find('input[name=customer]').click(function (e) { 
                     e.preventDefault();
-                    window.service.customerModal.show();
+                    service.customerModal.show();
                 });
 
                 /**
                  * Submit form create cart detail.
                  */
-                window.service.formCreateCartDetail.submit(async function (e) { 
+                service.formCreateCartDetail.submit(async function (e) { 
                     e.preventDefault();
                     
                     $(this).find('input[name="product"]').removeClass('is-invalid border-danger');
@@ -707,11 +709,11 @@
                     $(this).find('input[name="product"]').parent().next().text('');
                     
                     try {
-                        const response = await window.service.createCartDetail();
+                        const response = await service.createCartDetail();
 
-                        window.app.alert('success', response.message);
-                        window.service.findCart();
-                        window.service.cartDetailTable.ajax.reload();
+                        app.alert('success', response.message);
+                        service.findCart();
+                        service.cartDetailTable.ajax.reload();
 
                         $(this).trigger('reset');
                         $(this).find('input[name="product"]').focus();
@@ -727,47 +729,51 @@
                 /**
                  * Submit form update cart detail.
                  */
-                window.service.formUpdateCartDetail.submit(async (event) => {
+                service.formUpdateCartDetail.submit(async (event) => {
                     event.preventDefault();
-                    window.app.showPreloader();
+                    app.showPreloader();
 
-                    window.service.formUpdateCartDetail.find(`input[name=quantity]`).removeClass('is-invalid');
-                    window.service.formUpdateCartDetail.find(`input[name=quantity]`).next().text('');
+                    service.formUpdateCartDetail.find(`input[name=quantity]`).removeClass('is-invalid');
+                    service.formUpdateCartDetail.find(`input[name=quantity]`).next().text('');
                     
                     try {
-                        const response = await window.service.updateCartDetail();
+                        const response = await service.updateCartDetail();
                         
-                        window.service.findCart();
-                        window.service.cartDetailTable.ajax.reload();
-                        window.service.modalUpdateCartdetail.hide();
-                        window.app.alert('success', response.message);
+                        service.findCart();
+                        service.cartDetailTable.ajax.reload();
+                        service.modalUpdateCartdetail.hide();
+                        app.alert('success', response.message);
                     } catch (error) {
+                        console.error(error);
+                        
                         Object.entries(error.errors).forEach(([field, message]) => {
-                            window.service.formUpdateCartDetail.find(`input[name=${field}]`).addClass('is-invalid');
-                            window.service.formUpdateCartDetail.find(`input[name=${field}]`).next().text(message[0]);
+                            service.formUpdateCartDetail.find(`input[name=${field}]`).addClass('is-invalid');
+                            service.formUpdateCartDetail.find(`input[name=${field}]`).next().text(message[0]);
                         });
+
+                        app.alert('danger', error.message);
                     } finally {
-                        window.app.hidePreloader();
+                        app.hidePreloader();
                     }
                 });
 
                 /**
-                 * Fungsi untuk menghapus daftar cart detail
+                 * Menghapus daftar cart detail
                  */
                 const deleteCartDetail = (event, id) => {
                     event.preventDefault();
 
-                    window.app.delete('Produk', async (deleted) => {
+                    app.delete('Produk', async (deleted) => {
                         if (!deleted) return;
 
                         try {
-                            const response = await window.service.deleteCartDetail(id);
+                            const response = await service.deleteCartDetail(id);
 
-                            window.service.findCart()
-                            window.service.cartDetailTable.ajax.reload();
-                            window.app.alert('success', response.message);
+                            service.findCart()
+                            service.cartDetailTable.ajax.reload();
+                            app.alert('success', response.message);
                         } catch (error) {
-                            window.app.alert('danger', error.message);
+                            app.alert('danger', error.message);
                         }
                     })
                 }
@@ -775,25 +781,25 @@
                 /**
                  * Simpan penjualan
                  */
-                window.service.formSaveSale.submit(async function(event) {
+                service.formSaveSale.submit(async function(event) {
                     event.preventDefault();
 
-                    window.app.showPreloader();
-                    window.service.formSaveSale.find('.is-invalid').removeClass('is-invalid');
+                    app.showPreloader();
+                    service.formSaveSale.find('.is-invalid').removeClass('is-invalid');
 
                     try {
-                        await window.service.saveSale();
-                        window.open("{{ route('transactions.sales') }}");
-                        window.location.reload();
+                        await service.saveSale();
+                        open("{{ route('transactions.sales') }}");
+                        location.reload();
                     } catch (error) {
                         Object.entries(error.errors).forEach(([field, message]) => {
-                            window.service.formSaveSale.find(`#${field}`).addClass('is-invalid');
-                            window.service.formSaveSale.find(`#${field}`).parent().addClass('is-invalid');
-                            window.service.formSaveSale.find(`#${field}`).parent().next().text(message[0]);
+                            service.formSaveSale.find(`#${field}`).addClass('is-invalid');
+                            service.formSaveSale.find(`#${field}`).parent().addClass('is-invalid');
+                            service.formSaveSale.find(`#${field}`).parent().next().text(message[0]);
                         });
 
-                        window.app.hidePreloader();
-                        window.app.alert('danger', error.message);
+                        app.hidePreloader();
+                        app.alert('danger', error.message);
                     }
                 })
             </script>
