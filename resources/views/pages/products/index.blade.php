@@ -261,7 +261,7 @@
                 serverSide: true,
                 ajax: "{{ route('master.products') }}",
                 fixedColumns: {
-                    start: 0,
+                    start: 2,
                     end: 1
                 },
                 columns: [
