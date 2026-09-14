@@ -122,7 +122,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
      * Reset discount.
      */
     #[Override]
-    public function resetDiscount(int $discount): void
+    public function resetDiscount(int|float $discount): void
     {
         try {
             $this->model->query()
@@ -187,7 +187,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
      * Update stock product saat ini berdasarkan id.
      */
     #[Override]
-    public function updateCurrentStockById(string $id, int $stock): void
+    public function updateCurrentStockById(string $id, int|float $stock): void
     {
         try {
             $this->model->query()
@@ -235,8 +235,31 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             return $this->model->query()
                 ->where('is_active', 1)
                 ->get()
-                ->map(fn ($product) => $this->mapModelToProductEntity($product))
+                ->map(fn($product) => $this->mapModelToProductEntity($product))
                 ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Menghapus data produk berdasarkan id.
+     *
+     * @param string $id
+     * @return integer
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -259,11 +282,11 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             code: $model->code,
             barcode: $model->barcode,
             name: $model->name,
-            purchasePrice: $model->purchase_price,
-            sellingPrice: $model->selling_price,
-            discount: $model->discount,
-            minimumStock: $model->minimum_stock,
-            currentStock: $model->current_stock,
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            minimumStock: parse_float($model->minimum_stock),
+            currentStock: parse_float($model->current_stock),
             isActive: $model->is_active === 1,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
@@ -293,11 +316,11 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             code: $model->code,
             barcode: $model->barcode,
             name: $model->name,
-            purchasePrice: $model->purchase_price,
-            sellingPrice: $model->selling_price,
-            discount: $model->discount,
-            minimumStock: $model->minimum_stock,
-            currentStock: $model->current_stock,
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            minimumStock: parse_float($model->minimum_stock),
+            currentStock: parse_float($model->current_stock),
             isActive: $model->is_active === 1,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

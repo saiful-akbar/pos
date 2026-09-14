@@ -35,9 +35,9 @@ return new class() extends Migration
 
             $table->enum('type', ['purchase', 'sale', 'sale_return', 'purchase_return', 'adjustment', 'stock_opname']);
             $table->ulid('reference_id')->nullable();
-            $table->integer('quantity');
-            $table->integer('stock_before');
-            $table->integer('stock_after');
+            $table->decimal('quantity', 15, 2);
+            $table->decimal('stock_before', 15, 2);
+            $table->decimal('stock_after', 15, 2);
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

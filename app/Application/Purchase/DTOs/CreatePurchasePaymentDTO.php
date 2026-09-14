@@ -19,7 +19,7 @@ class CreatePurchasePaymentDTO extends DTO
         public readonly string $userId,
         public readonly DateTimeInterface $paymentDate,
         public readonly PaymentMethodEnum $paymentMethod,
-        public readonly int $amount,
+        public readonly int|float $amount,
         public readonly ?string $referencesNumber = null,
         public readonly ?string $notes = null,
     ) {}

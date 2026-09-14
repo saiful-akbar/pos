@@ -42,22 +42,22 @@ class SaleWithDetailEntity extends Entity
     /**
      * Total quantity yang dibeli.
      */
-    public readonly int $totalQuantity;
+    public readonly int|float $totalQuantity;
 
     /**
      * Total harga yang dibeli.
      */
-    public readonly int $totalAmount;
+    public readonly int|float $totalAmount;
 
     /**
      * Jumlah pembayaran.
      */
-    public readonly int $paidAmount;
+    public readonly int|float $paidAmount;
 
     /**
      * Jumlah kembalian.
      */
-    public readonly int $changeAmount;
+    public readonly int|float $changeAmount;
 
     /**
      * Metode transaksi yang digunakan.
@@ -100,10 +100,10 @@ class SaleWithDetailEntity extends Entity
         ?CustomerSaleValue $customer,
         string $invoiceNumber,
         DateTimeInterface $transactionDate,
-        int $totalQuantity,
-        int $totalAmount,
-        int $paidAmount,
-        int $changeAmount,
+        int|float $totalQuantity,
+        int|float $totalAmount,
+        int|float $paidAmount,
+        int|float $changeAmount,
         PaymentMethodEnum $paymentMethod,
         ?string $notes,
         array $details,
@@ -146,7 +146,7 @@ class SaleWithDetailEntity extends Entity
             'change_amount' => $this->changeAmount,
             'payment_method' => $this->paymentMethod->value,
             'notes' => $this->notes,
-            'details' => array_map(fn ($detail) => $detail->toArray(), $this->details),
+            'details' => array_map(fn($detail) => $detail->toArray(), $this->details),
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),

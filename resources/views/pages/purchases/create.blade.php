@@ -40,11 +40,11 @@
     </div>
 
     {{-- Form tambah produk dan daftar cart detail --}}
-    <div class="row mt-7">
-        <div class="col-12">
-            <div class="row">
+    <div class="row mt-6">
+        <div class="col-12 col-lg-6 col-xl-8">
+            <div class="row mb-6">
                 <div class="col-12">
-                    <form action="{{ route('transactions.purchases.cart.store') }}" method="post" autocomplete="off">
+                    <form action="{{ route('transactions.purchases.cart.store') }}" method="post" autocomplete="off" id="formCreateCartDetail">
                         @csrf @method('post')
                         
                         <div class="card shadow-sm">
@@ -53,22 +53,23 @@
                             </div>
     
                             <div class="card-body">
-                                <div class="row align-items-end">
-                                    <div class="col-12 col-lg-3 mb-6 mb-lg-0">
-                                        <label for="productCode" class="form-label">
-                                            Produk <span class="text-danger">*</span>
-                                        </label>
-
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-lg-4 mb-6 mb-lg-0">
                                         <div @class(['input-group', 'is-invalid' => $errors->has('product_code')])>
-                                            <input
-                                                required
-                                                type="text"
-                                                name="product_code"
-                                                id="productCode"
-                                                placeholder="Masukan kode atau barcode..."
-                                                value="{{ old('product_code') }}"
-                                                @class(['form-control', 'is-invalid' => $errors->has('product_code')])
-                                            />
+                                            <div @class(["form-floating", $errors->has('product_code')])>
+                                                <input
+                                                    type="text"
+                                                    name="product_code"
+                                                    id="product_code"
+                                                    placeholder="Produk"
+                                                    value="{{ old('product_code') }}"
+                                                    @class(['form-control', 'is-invalid' => $errors->has('product_code')])
+                                                />
+                                                
+                                                <label for="product_code">
+                                                    Produk <span class="text-danger">*</span>
+                                                </label>
+                                            </div>
 
                                             <button
                                                 type="button"
@@ -86,229 +87,128 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-12 col-lg-3 mb-6 mb-lg-0">
-                                        <x-form-input
+                                    <div class="col-12 col-lg-4 mb-6 mb-lg-0">
+                                        <x-form-floating-input
                                             type="text"
                                             name="purchase_price"
-                                            id="purchasePrice"
+                                            id="purchase_price"
                                             label="Harga beli"
-                                            placeholder="Masukan harga beli..."
+                                            placeholder="Harga beli"
                                             value="{{ old('purchase_price') }}"
                                             error="{{ $errors->has('purchase_price') }}"
                                         />
                                     </div>
 
-                                    <div class="col-12 col-lg-3 mb-6 mb-lg-0">
-                                        <x-form-input
-                                            type="text"
+                                    <div class="col-12 col-lg-4">
+                                        <x-form-floating-input
+                                            type="number"
                                             name="quantity"
                                             id="quantity"
                                             label="Quantity"
-                                            placeholder="Masukan quantity..."
+                                            placeholder="Quantity"
                                             value="{{ old('quantity') }}"
                                             error="{{ $errors->has('quantity') }}"
+                                            step="any"
                                         />
                                     </div>
-
-                                    <div class="col-12 col-lg-3">
-                                        <button type="submit" class="btn btn-secondary w-100">
-                                            <x-icon class="me-1">add</x-icon>
-                                            <span>Tambah</span>
-                                        </button>
-                                    </div>
                                 </div>
+                            </div>
 
-                                <hr class="mt-7">
-
-                                <div class="row">
-                                    <div class="col-12">
-                                        <table id="cartDetailTable" class="table table-hover table-sm align-middle w-100">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-nowrap text-start">No</th>
-                                                    <th class="text-nowrap text-start">Produk</th>
-                                                    <th class="text-nowrap text-end">Harga Beli</th>
-                                                    <th class="text-nowrap text-end">Quantity</th>
-                                                    <th class="text-nowrap text-end">Subtotal</th>
-                                                    <th class="text-nowrap text-center">Opsi</th>
-                                                </tr>
-                                            </thead>
-                
-                                            <tbody>
-                                                @foreach ($details as $detail)
-                                                    <tr>
-                                                        <td class="text-start">{{ number_format($loop->iteration) }}</td>
-                                                        <td class="text-nowrap text-start">
-                                                            <div class="row">
-                                                                <div class="col-auto">
-                                                                    <img
-                                                                        src="{{ storage_image($detail->product->image) }}"
-                                                                        alt="Product image"
-                                                                        class="rounded"
-                                                                        width="50"
-                                                                        height="50"
-                                                                    />
-                                                                </div>
-                                                                
-                                                                <div class="col">
-                                                                    <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-nowrap text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
-                                                        <td class="text-nowrap text-end">{{ number_format($detail->quantity) }}</td>
-                                                        <td class="text-nowrap text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
-                                                        <td class="text-center">
-                                                            <div class="btn-group w-100">
-                                                                <button
-                                                                    type="button"
-                                                                    class="btn btn-light edit-cart-detail"
-                                                                    data-bs-toggle="tooltip"
-                                                                    data-bs-title="Edit"
-                                                                    data-id="{{ $detail->id }}"
-                                                                    data-quantity="{{ $detail->quantity }}"
-                                                                    data-purchase-price="{{ $detail->purchasePrice }}"
-                                                                >
-                                                                    <x-icon>edit</x-icon>
-                                                                </button>
-                                                                
-                                                                <button
-                                                                    type="button"
-                                                                    class="btn btn-light delete-cart-detail"
-                                                                    data-bs-toggle="tooltip"
-                                                                    data-bs-title="Hapus"
-                                                                    data-id="{{ $detail->id }}"
-                                                                >
-                                                                    <x-icon>delete</x-icon>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">add</x-icon>
+                                    <span>Tambah</span>
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
+
+            <div class="row mb-6 mb-lg-0">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <table id="cartDetailTable" class="table table-hover table-sm align-middle w-100">
+                                <thead>
+                                    <tr>
+                                        <th class="text-nowrap text-start">No</th>
+                                        <th class="text-nowrap text-start">Produk</th>
+                                        <th class="text-nowrap text-end">Harga Beli</th>
+                                        <th class="text-nowrap text-end">Quantity</th>
+                                        <th class="text-nowrap text-end">Subtotal</th>
+                                        <th class="text-nowrap text-center">Opsi</th>
+                                    </tr>
+                                </thead>
     
-    {{-- Total dan form simpan pembelian --}}
-    <div class="row mt-7">
-        <div class="col-12 col-lg-6 col-xl-8 order-2 order-lg-1">
-            <form action="{{ route('transactions.purchases.save') }}" method="post" id="formSavePurchase">
-                @csrf @method('post')
-                
-                <div class="card shadow sm">
-                    <div class="card-header">
-                        <h3 class="fs-6 m-0">Pembayaran</h3>
-                    </div>
-
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 mb-6">
-                                <x-form-input
-                                    type="text"
-                                    name="invoice_number"
-                                    id="invoiceNumber"
-                                    label="Nomor Invoice"
-                                    placeholder="Nomor invoice dari pemasok..."
-                                    error="{{ $errors->has('invoice_number') }}"
-                                    value="{{ old('invoice_number') }}"
-                                />
-                            </div>
-
-                            <div class="col-12 mb-6">
-                                <x-form-select
-                                    required
-                                    name="supplier_id"
-                                    id="supplierId"
-                                    label="Pemasok"
-                                    error="{{ $errors->has('supplier_id') }}"
-                                    data-choices=""
-                                >
-                                    <option selected disabled>Pilih</option>
-        
-                                    @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}" @selected(old('supplier_id') == $supplier->id)>
-                                            {{ $supplier->code }} - {{ $supplier->name }}
-                                        </option>
+                                <tbody>
+                                    @foreach ($details as $detail)
+                                        <tr>
+                                            <td class="text-start">{{ number_format($loop->iteration) }}</td>
+                                            <td class="text-nowrap text-start">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <img src="{{ storage_image($detail->product->image) }}" alt="Product image" class="rounded" width="50" height="50" />
+                                                    </div>
+                                                    
+                                                    <div class="col">
+                                                        <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
+                                            <td class="text-nowrap text-end">{{ number_format($detail->quantity) }}</td>
+                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group w-100">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light edit-cart-detail"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-title="Edit"
+                                                        data-id="{{ $detail->id }}"
+                                                        data-quantity="{{ $detail->quantity }}"
+                                                        data-purchase-price="{{ $detail->purchasePrice }}"
+                                                    >
+                                                        <x-icon>edit</x-icon>
+                                                    </button>
+                                                    
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-light delete-cart-detail"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-title="Hapus"
+                                                        data-id="{{ $detail->id }}"
+                                                    >
+                                                        <x-icon>delete</x-icon>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
-                                </x-form-select>
-                            </div>
-
-                            <div class="col-12 mb-6">
-                                <x-form-select
-                                    required
-                                    label="Metode Pembayaran"
-                                    name="payment_method"
-                                    id="paymentMethod"
-                                    error="{{ $errors->has('payment_method') }}"
-                                    data-choices=""
-                                >
-                                    <option disabled selected>Pilih</option>
-                                    <option value="cash" @selected(old('payment_method') == 'cash')>Tunai</option>
-                                    <option value="transfer" @selected(old('payment_method') == 'transfer')>Transfer</option>
-                                    <option value="debit" @selected(old('payment_method') == 'debit')>Debit</option>
-                                    <option value="credit" @selected(old('payment_method') == 'credit')>Kredit</option>
-                                </x-form-select>
-                            </div>
-
-                            <div class="col-12 mb-6">
-                                <x-form-input
-                                    type="number"
-                                    name="amount_paid"
-                                    id="amountPaid"
-                                    label="Jumlah yang dibayarkan"
-                                    placeholder="Jumlah yang dibayarkan"
-                                    error="{{ $errors->has('amount_paid') }}"
-                                    value="{{ old('amount_paid') }}"
-                                    class="no-spinners"
-                                />
-                            </div>
-
-                            <div class="col-12">
-                                <x-form-input
-                                    type="textarea"
-                                    name="notes"
-                                    id="notes"
-                                    label="Catatan"
-                                    placeholder="Catatan"
-                                    error="{{ $errors->has('notes') }}"
-                                    value="{{ old('notes') }}"
-                                />
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-secondary w-100">
-                            <x-icon class="me-1">save</x-icon>
-                            <span>Simpan</span>
-                        </button>
-                    </div>
                 </div>
-            </form>
+            </div>
         </div>
 
-        <div class="col-12 col-lg-6 col-xl-4 order-1 order-lg-2 mb-7 mb-lg-0">
-            <div class="row">
+        <div class="col-12 col-lg-6 col-xl-4">
+            <div class="row mb-6">
                 <div class="col-12">
                     <div class="card shadow-sm">
                         <div class="card-header">
                             <h3 class="fs-6 m-0">Total</h3>
                         </div>
+        
                         <div class="card-body">
                             <ul class="list-group list-group-flush m-0 p-0">
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <span class="text-body-secondary">Total Quantity</span>
                                     <span class="fs-6 fw-bold">{{ number_format($cart->totalQuantity) }}</span>
                                 </li>
-    
+        
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     <span class="text-body-secondary">Total Harga</span>
                                     <span class="fs-6 fw-bold">Rp {{ number_format($cart->totalPrice) }}</span>
@@ -316,6 +216,104 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <form action="{{ route('transactions.purchases.save') }}" method="post" id="formSavePurchase">
+                        @csrf @method('post')
+                        
+                        <div class="card shadow sm">
+                            <div class="card-header">
+                                <h3 class="fs-6 m-0">Pembayaran</h3>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 mb-5">
+                                        <x-form-floating-input
+                                            type="text"
+                                            name="invoice_number"
+                                            id="invoiceNumber"
+                                            label="Nomor Invoice"
+                                            placeholder="Nomor invoice"
+                                            error="{{ $errors->has('invoice_number') }}"
+                                            value="{{ old('invoice_number') }}"
+                                        />
+                                    </div>
+
+                                    <div class="col-12 mb-5">
+                                        <x-form-floating-select
+                                            required
+                                            name="supplier_id"
+                                            id="supplierId"
+                                            label="Pemasok"
+                                            placeholder="Pemasok"
+                                            error="{{ $errors->has('supplier_id') }}"
+                                        >
+                                            <option selected disabled>Pilih</option>
+                
+                                            @foreach ($suppliers as $supplier)
+                                                <option value="{{ $supplier->id }}" @selected(old('supplier_id') == $supplier->id)>
+                                                    {{ $supplier->code }} - {{ $supplier->name }}
+                                                </option>
+                                            @endforeach
+                                        </x-form-floating-select>
+                                    </div>
+
+                                    <div class="col-12 mb-5">
+                                        <x-form-floating-select
+                                            required
+                                            label="Metode Pembayaran"
+                                            placeholder="Metode Pembayaran"
+                                            name="payment_method"
+                                            id="paymentMethod"
+                                            error="{{ $errors->has('payment_method') }}"
+                                        >
+                                            <option disabled selected>Pilih</option>
+                                            <option value="cash" @selected(old('payment_method') == 'cash')>Tunai</option>
+                                            <option value="transfer" @selected(old('payment_method') == 'transfer')>Transfer</option>
+                                            <option value="debit" @selected(old('payment_method') == 'debit')>Debit</option>
+                                            <option value="credit" @selected(old('payment_method') == 'credit')>Kredit</option>
+                                        </x-form-floating-select>
+                                    </div>
+
+                                    <div class="col-12 mb-5">
+                                        <x-form-floating-input
+                                            type="number"
+                                            name="amount_paid"
+                                            id="amountPaid"
+                                            label="Jumlah yang dibayarkan"
+                                            placeholder="Jumlah yang dibayarkan"
+                                            error="{{ $errors->has('amount_paid') }}"
+                                            value="{{ old('amount_paid') }}"
+                                            step="any"
+                                        />
+                                    </div>
+
+                                    <div class="col-12">
+                                        <x-form-floating-input
+                                            type="textarea"
+                                            name="notes"
+                                            id="notes"
+                                            label="Catatan"
+                                            placeholder="Catatan"
+                                            error="{{ $errors->has('notes') }}"
+                                            value="{{ old('notes') }}"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <x-icon class="me-1">save</x-icon>
+                                    <span>Simpan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -422,8 +420,7 @@
                                 searchable: false,
                                 orderable: false,
                                 render: (data) => {
-                                    if (data === null) return `<img src="${app.baseUrl}/assets/images/empty.jpg" class="rounded" width="50" height="50" alt="Produk" />`;
-                                    return `<img src="${app.baseUrl}/storage/${data}" class="rounded" width="50" height="50" alt="Produk" />`;
+                                    return `<img src="${app.storageImage(data)}" class="rounded" width="50" height="50" alt="Produk"/>`;
                                 }
                             },
                             {
@@ -439,6 +436,13 @@
                                 data: 'barcode',
                                 type: 'string',
                                 className: 'text-nowrap',
+                            },
+                            {
+                                title: 'Nama (Deskripsi)',
+                                name: 'name',
+                                data: 'name',
+                                type: 'string',
+                                width: '300px',
                             },
                             {
                                 title: 'Kategori',
@@ -465,10 +469,13 @@
                         createdRow: (row, data, index) => {
                             $(row).addClass('cursor-pointer');
 
-                            $(row).click(function (e) { 
+                            $(row).click(function (e) {
                                 e.preventDefault();
-                                $('#productCode').val(data.code);
-                                $('#purchasePrice').val(data.purchase_price);
+
+                                const formCreateCartDetail  = $('#formCreateCartDetail');
+
+                                formCreateCartDetail.find('input[name=product_code]').val(data.code);
+                                formCreateCartDetail.find('input[name=purchase_price]').val(data.purchase_price);
                                 modalProductTable.hide();
                             });
                         }

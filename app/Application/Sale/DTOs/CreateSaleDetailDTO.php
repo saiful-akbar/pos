@@ -15,11 +15,11 @@ class CreateSaleDetailDTO extends DTO
     public function __construct(
         public readonly string $saleId,
         public readonly string $productId,
-        public readonly int $quantity,
-        public readonly int $purchasePrice,
-        public readonly int $sellingPrice,
-        public readonly int $discount,
-        public readonly int $subtotal,
+        public readonly int|float $quantity,
+        public readonly int|float $purchasePrice,
+        public readonly int|float $sellingPrice,
+        public readonly int|float $discount,
+        public readonly int|float $subtotal,
     ) {}
 
     #[Override]

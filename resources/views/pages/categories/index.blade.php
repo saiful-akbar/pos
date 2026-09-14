@@ -43,7 +43,7 @@
 
         <div id="modalImport" class="modal fade">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content border">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="staticBackdropLabel">Impor Excel</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -154,7 +154,7 @@
                     orderable: false,
                     render: (data) => {
                         return `
-                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-sm btn-light">
+                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-sm btn-light w-100">
                                 <span class="material-symbols-outlined me-1">edit</span>
                                 <span>Edit</span>    
                             </a>

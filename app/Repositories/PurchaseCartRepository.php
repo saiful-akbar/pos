@@ -125,8 +125,8 @@ class PurchaseCartRepository extends Repository implements PurchaseCartRepositor
                 isActive: $model->user->is_active === 1
             ),
             purchaseDate: parse_date_time_immutable($model->purchase_date),
-            totalQuantity: $model->total_quantity,
-            totalPrice: $model->total_price,
+            totalQuantity: parse_float($model->total_quantity),
+            totalPrice: parse_float($model->total_price),
             createdAt: $model->createdAt,
             updatedAt: $model->updatedAt,
             deletedAt: $model->deletedAt

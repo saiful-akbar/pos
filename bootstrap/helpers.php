@@ -29,7 +29,11 @@ if (! function_exists('parse_int')) {
      */
     function parse_int(string|float|int $value): int
     {
-        return (int) $value;
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        throw new InvalidArgumentException('Argument value harus bertipe numerik');
     }
 }
 
@@ -119,7 +123,7 @@ if (! function_exists('storage_image')) {
     function storage_image(?string $path, ?string $default = null, ?bool $secure = null): string
     {
         if (is_string($path)) {
-            return asset(path: 'storage/'.ltrim(trim($path), '/'), secure: $secure);
+            return asset(path: 'storage/' . ltrim(trim($path), '/'), secure: $secure);
         }
 
         if (is_string($default)) {
@@ -187,7 +191,11 @@ if (! function_exists('parse_float')) {
      */
     function parse_float(string|int|float $value): float
     {
-        return (float) $value;
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        throw new InvalidArgumentException('Argument value harus bertipe numerik');
     }
 }
 

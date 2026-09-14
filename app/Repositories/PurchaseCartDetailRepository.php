@@ -162,7 +162,7 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
                 ->where('purchase_cart_id', $cartId)
                 ->orderBy('created_at', 'desc')
                 ->get()
-                ->map(fn ($detail) => $this->mapModelToPurchaseCartDetailEntity($detail))
+                ->map(fn($detail) => $this->mapModelToPurchaseCartDetailEntity($detail))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -189,9 +189,9 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
                 name: $model->product->name,
                 image: $model->product->image
             ),
-            quantity: $model->quantity,
-            purchasePrice: $model->purchase_price,
-            subtotalPrice: $model->subtotal_price,
+            quantity: parse_float($model->quantity),
+            purchasePrice: parse_float($model->purchase_price),
+            subtotalPrice: parse_float($model->subtotal_price),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

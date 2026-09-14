@@ -14,8 +14,8 @@ class UpdateQuantityAndPricePurchaseCartDTO extends DTO
      */
     public function __construct(
         public readonly string $id,
-        public readonly int $totalQuantity,
-        public readonly int $totalPrice,
+        public readonly int|float $totalQuantity,
+        public readonly int|float $totalPrice,
     ) {}
 
     #[Override]

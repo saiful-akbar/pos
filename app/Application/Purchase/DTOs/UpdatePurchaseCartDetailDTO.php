@@ -17,25 +17,25 @@ class UpdatePurchaseCartDetailDTO extends DTO
     /**
      * quantity
      */
-    public readonly int $quantity;
+    public readonly int|float $quantity;
 
     /**
      * harga pembelian
      */
-    public readonly int $purchasePrice;
+    public readonly int|float $purchasePrice;
 
     /**
      * Subtotal harga pembelian.
      */
-    public readonly int $subtotalPrice;
+    public readonly int|float $subtotalPrice;
 
     /**
      * Create a new class instance.
      */
     public function __construct(
         string $id,
-        int $quantity,
-        int $purchasePrice,
+        int|float $quantity,
+        int|float $purchasePrice,
     ) {
         $this->id = $id;
         $this->quantity = $quantity;

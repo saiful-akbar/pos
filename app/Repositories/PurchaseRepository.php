@@ -78,7 +78,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             return $this->model->query()
                 ->select($columns)
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
+                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
                 ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->when($paymentStatus, function (Builder $query, PaymentStatusEnum $paymentStatus): void {
                     $query->where('payment_status', $paymentStatus->value);
@@ -143,11 +143,11 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
     {
         try {
             $paymentQuery = PurchasePayment::query()
-                ->select('purchase_id', DB::raw('coalesce(cast(sum(amount) as signed integer), 0) as amount_paid'))
+                ->select('purchase_id', DB::raw('coalesce(sum(amount), 0) as paid_amount'))
                 ->groupBy('purchase_id');
 
             $relations = ['user', 'supplier'];
-            $columns = ['purchases.*', 'payments.amount_paid as amount_paid'];
+            $columns = ['purchases.*', 'payments.paid_amount as paid_amount'];
 
             $query = $this->model->query()
                 ->select($columns)
@@ -164,7 +164,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
 
             return $query->orderBy('purchases.purchase_date', 'asc')
                 ->get()
-                ->map(fn ($data) => $this->mapModelToPurchaseEntity($data))
+                ->map(fn($data) => $this->mapModelToPurchaseEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -201,10 +201,10 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             ),
             purchaseDate: parse_date_time_immutable($model->purchase_date),
             invoiceNumber: $model->invoice_number,
-            totalQuantity: $model->total_quantity,
-            totalPrice: $model->total_price,
+            totalQuantity: parse_float($model->total_quantity),
+            totalPrice: parse_float($model->total_price),
             paymentStatus: PaymentStatusEnum::tryFrom($model->payment_status),
-            amountPaid: $model->amount_paid ?? 0,
+            paidAmount: parse_float($model->paid_amount ?? 0),
             notes: $model->notes,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

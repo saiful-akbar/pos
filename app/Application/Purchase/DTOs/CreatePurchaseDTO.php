@@ -19,8 +19,8 @@ class CreatePurchaseDTO extends DTO
         public readonly string $supplierId,
         public readonly DateTimeInterface $purchaseDate,
         public readonly ?string $invoiceNumber,
-        public readonly int $totalQuantity,
-        public readonly int $totalPrice,
+        public readonly int|float $totalQuantity,
+        public readonly int|float $totalPrice,
         public readonly PaymentStatusEnum $paymentStatus,
         public readonly ?string $notes,
     ) {}

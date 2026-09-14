@@ -59,7 +59,7 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
                 ->with('user')
                 ->where('purchase_id', $purchaseId)
                 ->get()
-                ->map(fn ($data) => $this->mapModelToPurchasePaymentEntity($data))
+                ->map(fn($data) => $this->mapModelToPurchasePaymentEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -169,7 +169,7 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
             ),
             paymentDate: parse_date_time_immutable($model->payment_date),
             paymentMethod: PaymentMethodEnum::from($model->payment_method),
-            amount: $model->amount,
+            amount: parse_float($model->amount),
             referenceNumber: $model->reference_number,
             notes: $model->notes,
             createdAt: $model->created_at,

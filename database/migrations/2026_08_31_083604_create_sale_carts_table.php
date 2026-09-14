@@ -30,8 +30,8 @@ return new class() extends Migration
 
             $table->boolean('is_pending')->default(false);
             $table->date('transaction_date');
-            $table->unsignedInteger('total_quantity')->default(0);
-            $table->unsignedInteger('total_amount')->default(0);
+            $table->decimal('total_quantity', 15, 2)->default(0);
+            $table->decimal('total_amount', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

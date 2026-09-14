@@ -18,11 +18,11 @@ class CreateProductDTO extends DTO
         public readonly string $code,
         public readonly string $barcode,
         public readonly ?string $name,
-        public readonly int $purchasePrice,
-        public readonly int $sellingPrice,
-        public readonly int $discount,
-        public readonly int $minimumStock,
-        public readonly int $currentStock,
+        public readonly int|float $purchasePrice,
+        public readonly int|float $sellingPrice,
+        public readonly int|float $discount,
+        public readonly int|float $minimumStock,
+        public readonly int|float $currentStock,
         public readonly bool $isActive,
     ) {}
 
@@ -32,7 +32,7 @@ class CreateProductDTO extends DTO
         return [
             'category_id' => $this->categoryId,
             'unit_id' => $this->unitId,
-            'code' => $this->code,
+            'code' => strtoupper($this->code),
             'barcode' => $this->barcode,
             'name' => $this->name,
             'purchase_price' => $this->purchasePrice,

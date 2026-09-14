@@ -40,7 +40,7 @@ interface ProductRepositoryInterface
     /**
      * Reset discount.
      */
-    public function resetDiscount(int $discount): void;
+    public function resetDiscount(int|float $discount): void;
 
     /**
      * Update gambar
@@ -55,7 +55,7 @@ interface ProductRepositoryInterface
     /**
      * Update stock product saat ini berdasarkan id.
      */
-    public function updateCurrentStockById(string $id, int $stock): void;
+    public function updateCurrentStockById(string $id, int|float $stock): void;
 
     /**
      * Mengambil daftar produk aktif.
@@ -63,4 +63,12 @@ interface ProductRepositoryInterface
      * @return ProductEntity[]
      */
     public function getActive(): array;
+
+    /**
+     * Menghapus data produk berdasarkan id.
+     *
+     * @param string $id
+     * @return integer
+     */
+    public function removeById(string $id): int;
 }

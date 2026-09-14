@@ -209,7 +209,12 @@ class App {
    * Format angka (numerik).
    */
   numberFormat(number) {
-    return number.toLocaleString("id-ID");
+    const intl = new Intl.NumberFormat("id-ID", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    return intl.format(number);
   }
 
   /**

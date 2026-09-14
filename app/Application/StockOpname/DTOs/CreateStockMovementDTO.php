@@ -17,9 +17,9 @@ class CreateStockMovementDTO extends DTO
         public readonly string $userId,
         public readonly string $productId,
         public readonly TypeStockMovementEnum $type,
-        public readonly int $quantity,
-        public readonly int $stockBefore,
-        public readonly int $stockAfter,
+        public readonly int|float $quantity,
+        public readonly int|float $stockBefore,
+        public readonly int|float $stockAfter,
         public readonly ?string $referenceId = null,
         public readonly ?string $notes = null,
     ) {}

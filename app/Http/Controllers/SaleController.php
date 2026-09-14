@@ -128,7 +128,7 @@ class SaleController extends Controller
         app(UpdateQuantitySalesCartDetailById::class)->execute(
             cartId: $cartId,
             cartDetailId: $cartDetailId,
-            quantity: $request->integer('quantity'),
+            quantity: $request->float('quantity'),
         );
 
         return $this->jsonResponse(

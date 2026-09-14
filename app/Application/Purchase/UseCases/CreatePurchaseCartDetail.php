@@ -10,6 +10,7 @@ use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -28,13 +29,15 @@ class CreatePurchaseCartDetail
     /**
      * Execute method
      */
-    public function execute(string $productCode, int $purchasePrice, int $quantity): void
+    public function execute(Request $request): void
     {
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            // ambil data product berdasarkan kode atau barcode.
+            $productCode = $request->validated('product_code');
             $product = $this->productRepository->findByCodeOrBarcode(value: $productCode);
+            $purchasePrice = $request->float('purchase_price') ?: $product->purchasePrice;
+            $quantity = $request->float('quantity') ?: 1;
 
             // validasi produk
             if ($product === null) {

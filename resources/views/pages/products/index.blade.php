@@ -63,7 +63,7 @@
 
         <div id="modalImport" class="modal fade">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content border">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="modalImportLabel">Impor Excel</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -111,7 +111,7 @@
 
         <div id="modalResetDiscount" class="modal fade">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content border">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="modalResetDiscountLabel">Reset Diskon</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -162,7 +162,7 @@
 
         <div id="modalImportUpdateDiscount" class="modal fade">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content border">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="modalImportUpdateDiscountLabel">Update Diskon</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -210,7 +210,7 @@
 
         <div id="modalImportUpdateSellingPrice" class="modal fade">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content border">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="modalImportUpdateSellingPriceLabel">Update Harga Jual</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -273,24 +273,12 @@
                         searchable: false,
                         orderable: false,
                         render: (data) => {
-                            if (data === null) {
-                                return `
-                                    <img
-                                        src="${baseUrl}/assets/images/empty.jpg"
-                                        alt="Empty image"
-                                        width="70"
-                                        height="70"
-                                        class="rounded border
-                                    "/>
-                                `;
-                            }
-
                             return `
                                 <img
-                                    src="${baseUrl}/storage/${data}"
+                                    src="${app.storageImage(data)}"
+                                    alt="Empty"
                                     width="70"
                                     height="70"
-                                    alt="image"
                                     class="rounded border"
                                 />
                             `;
@@ -351,7 +339,7 @@
                         data: 'purchase_price',
                         className: 'text-nowrap',
                         type: 'num',
-                        render: (data) => app.numberFormat(data),
+                        render: (data) => `Rp ${app.numberFormat(data)}`,
                     },
                     {
                         title: 'Harga Jual',
@@ -359,7 +347,7 @@
                         data: 'selling_price',
                         className: 'text-nowrap',
                         type: 'num',
-                        render: (data) => app.numberFormat(data),
+                        render: (data) => `Rp ${app.numberFormat(data)}`,
                     },
                     {
                         title: 'Diskon',
@@ -376,17 +364,17 @@
                         className: 'text-nowrap',
                         type: 'html-num',
                         render: (data, type, row) => {
-                            const { current_stock: currentStock, minimum_stock: minimumStock } = row;
-                            const color = currentStock < minimumStock ? 'danger' : 'success';
-
-                            return `<span class="text-${color} fw-bold">${data}</span>`
+                            return `${app.numberFormat(data)} ${row.unit.code}`
                         }
                     },
                     {
-                        title: 'Minimal Stok',
+                        title: 'Minimum Stok',
                         name: 'minimum_stock',
                         data: 'minimum_stock',
                         className: 'text-nowrap',
+                        render: (data, type, row) => {
+                            return `${app.numberFormat(data)} ${row.unit.code}`
+                        }
                     },
                     {
                         title: 'Status',

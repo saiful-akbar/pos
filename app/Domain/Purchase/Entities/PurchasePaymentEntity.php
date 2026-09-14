@@ -21,7 +21,7 @@ class PurchasePaymentEntity extends Entity
         public readonly UserPurchaseValue $user,
         public readonly DateTimeInterface $paymentDate,
         public readonly PaymentMethodEnum $paymentMethod,
-        public readonly int $amount,
+        public readonly int|float $amount,
         public readonly ?string $referenceNumber = null,
         public readonly ?string $notes = null,
         public readonly ?DateTimeInterface $createdAt = null,

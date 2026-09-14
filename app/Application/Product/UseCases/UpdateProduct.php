@@ -49,11 +49,11 @@ class UpdateProduct
                 code: $request->validated('code'),
                 barcode: $request->validated('barcode'),
                 name: $request->validated('name'),
-                purchasePrice: $request->integer('purchase_price'),
-                sellingPrice: $request->integer('selling_price'),
-                discount: $request->integer('discount'),
-                minimumStock: $request->integer('minimum_stock'),
-                currentStock: $request->integer('current_stock'),
+                purchasePrice: $request->float('purchase_price'),
+                sellingPrice: $request->float('selling_price'),
+                discount: $request->float('discount'),
+                minimumStock: $request->float('minimum_stock'),
+                currentStock: $request->float('current_stock'),
                 isActive: $request->boolean('is_active')
             );
 
@@ -112,7 +112,7 @@ class UpdateProduct
             Storage::disk('public')->delete($product->image);
         }
 
-        $fileName = $product->code.'.'.$file->extension();
+        $fileName = $product->code . '.' . $file->extension();
         $path = Storage::disk('public')->putFileAs('images/products', $file, $fileName);
 
         $this->productRepository->updateImage(

@@ -28,12 +28,12 @@ interface SaleCartDetailRepositoryInterface
     /**
      * Menghitung total quantity
      */
-    public function sumQuantityByCartId(string $cartId): int;
+    public function sumQuantityByCartId(string $cartId): int|float;
 
     /**
      * Menghitung total subtotal.
      */
-    public function sumSubtotalByCartId(string $cartId): int;
+    public function sumSubtotalByCartId(string $cartId): int|float;
 
     /**
      * Mengambil data cart detail berdasarkan id.

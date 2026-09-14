@@ -160,7 +160,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
      * Menghitung total quantity
      */
     #[Override]
-    public function sumQuantityByCartId(string $cartId): int
+    public function sumQuantityByCartId(string $cartId): int|float
     {
         try {
             return (int) $this->model->query()
@@ -180,7 +180,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
      * Menghitung total subtotal.
      */
     #[Override]
-    public function sumSubtotalByCartId(string $cartId): int
+    public function sumSubtotalByCartId(string $cartId): int|float
     {
         try {
             return (int) $this->model->query()
@@ -229,7 +229,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
                 ->with(['product.category', 'product.unit'])
                 ->where('sale_cart_id', $cartId)
                 ->get()
-                ->map(fn ($data) => $this->mapModelToSaleCartDetailEntity($data))
+                ->map(fn($data) => $this->mapModelToSaleCartDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -267,17 +267,17 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
                 barcode: $model->product->barcode,
                 name: $model->product->name,
                 image: $model->product->image,
-                purchasePrice: $model->product->purchase_price,
-                sellingPrice: $model->product->selling_price,
-                discount: $model->product->discount,
-                currentStock: $model->product->current_stock,
-                minimumStock: $model->product->minimum_stock,
+                purchasePrice: parse_float($model->product->purchase_price),
+                sellingPrice: parse_float($model->product->selling_price),
+                discount: parse_float($model->product->discount),
+                currentStock: parse_float($model->product->current_stock),
+                minimumStock: parse_float($model->product->minimum_stock),
             ),
-            quantity: $model->quantity,
-            purchasePrice: $model->purchase_price,
-            sellingPrice: $model->selling_price,
-            discount: $model->discount,
-            subtotal: $model->subtotal,
+            quantity: parse_float($model->quantity),
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            subtotal: parse_float($model->subtotal),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,

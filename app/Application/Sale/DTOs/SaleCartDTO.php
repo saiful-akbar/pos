@@ -17,8 +17,8 @@ class SaleCartDTO extends DTO
         public readonly string $userId,
         public readonly bool $isPending,
         public readonly DateTimeInterface $transactionDate,
-        public readonly int $totalQuantity,
-        public readonly int $totalAmount,
+        public readonly int|float $totalQuantity,
+        public readonly int|float $totalAmount,
     ) {}
 
     #[Override]

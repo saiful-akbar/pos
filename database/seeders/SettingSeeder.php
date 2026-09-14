@@ -15,11 +15,11 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         Setting::query()->create([
-            'app_name' => 'POS',
+            'app_name' => 'SMI Sembako POS',
             'app_version' => '1.0.0',
-            'store_name' => 'POS Toko',
+            'store_name' => 'SMI Sembako',
             'store_logo' => null,
-            'store_address' => 'Jl. buah No. 01, Jakarta, Indonesia 4454',
+            'store_address' => null,
             'background_image' => null,
         ]);
     }

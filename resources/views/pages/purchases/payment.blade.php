@@ -43,17 +43,17 @@
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Total</span>
-                            <span>{{ number_format($purchase->totalPrice) }}</span>
+                            <span>Rp {{ number_format($purchase->totalPrice) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
-                            <span class="text-body-secondary">Dibayar</span>
-                            <span>{{ number_format($totalPaymentAmount) }}</span>
+                            <span class="text-body-secondary">Sudah Dibayar</span>
+                            <span>Rp {{ number_format($totalPaymentAmount) }}</span>
                         </li>
 
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Kurang Bayar</span>
-                            <span>{{ number_format($totalPaymentAmount - $purchase->totalPrice) }}</span>
+                            <span>Rp {{ number_format($totalPaymentAmount - $purchase->totalPrice) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
@@ -79,13 +79,13 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-12 col-lg-6 mb-6">
-                                        <x-form-input
+                                        <x-form-floating-input
                                             required
                                             type="text"
                                             name="payment_date"
                                             id="payment_date"
                                             label="Tanggal Pembayaran"
-                                            placeholder="Pilih tanggal..."
+                                            placeholder="Tanggal Pembayaran"
                                             error="{{ $errors->has('payment_date') }}"
                                             value="{{ old('payment_date', date('Y-m-d')) }}"
                                             data-flatpickr=""
@@ -93,44 +93,44 @@
                                     </div>
 
                                     <div class="col-12 col-lg-6 mb-6">
-                                        <x-form-select
+                                        <x-form-floating-select
                                             required
                                             type="text"
                                             name="payment_method"
                                             id="payment_method"
                                             label="Metode Pembayaran"
+                                            placeholder="Metode Pembayaran"
                                             error="{{ $errors->has('payment_method') }}"
                                             value="{{ old('payment_method', date('Y-m-d')) }}"
-                                            data-choices=""
                                         >
                                             <option disabled selected>Pilih</option>
                                             <option value="cash" @selected(old('payment_method') == 'cash')>Cash</option>
                                             <option value="transfer" @selected(old('payment_method') == 'transfer')>Transfer</option>
                                             <option value="credit" @selected(old('payment_method') == 'credit')>Kartu Kredit</option>
                                             <option value="debit" @selected(old('payment_method') == 'debit')>Kartu Debit</option>
-                                        </x-form-select>
+                                        </x-form-floating-select>
                                     </div>
 
                                     <div class="col-12 col-lg-6 mb-6">
-                                        <x-form-input
+                                        <x-form-floating-input
                                             type="string"
                                             name="reference_number"
                                             id="reference_number"
-                                            label="No. Referensi"
-                                            placeholder="Masukan nomor referensi..."
+                                            label="Nomor Referensi"
+                                            placeholder="Nomor Referensi"
                                             error="{{ $errors->has('reference_number') }}"
                                             value="{{ old('reference_number') }}"
                                         />
                                     </div>
 
                                     <div class="col-12 col-lg-6 mb-6">
-                                        <x-form-input
+                                        <x-form-floating-input
                                             required
                                             type="number"
                                             name="amount"
                                             id="amount"
                                             label="Jumlah"
-                                            placeholder="Masukan jumlah pembayaran..."
+                                            placeholder="Jumlah"
                                             min="0"
                                             error="{{ $errors->has('amount') }}"
                                             value="{{ old('amount') }}"
@@ -138,12 +138,12 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <x-form-input
+                                        <x-form-floating-input
                                             type="textarea"
                                             name="notes"
                                             id="notes"
                                             label="Catatan"
-                                            placeholder="Masukan catatan..."
+                                            placeholder="Catatan"
                                             error="{{ $errors->has('notes') }}"
                                             value="{{ old('notes') }}"
                                         />
@@ -182,7 +182,7 @@
                                             <td class="text-start text-nowrap">{{ $payment->paymentDate->format('d M Y') }}</td>
                                             <td class="text-start text-nowrap">{{ strtoupper($payment->paymentMethod->value) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->referenceNumber }}</td>
-                                            <td class="text-end text-nowrap">{{ number_format($payment->amount) }}</td>
+                                            <td class="text-end text-nowrap">Rp {{ number_format($payment->amount) }}</td>
                                             <td class="text-start" style="width: 1000px">{{ $payment->notes }}</td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-danger btn-sm" data-action="delete" data-purchase-id="{{ $purchase->id }}" data-payment-id="{{ $payment->id }}" data-bs-toggle="tooltip" data-bs-title="Hapus">

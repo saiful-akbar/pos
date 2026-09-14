@@ -15,8 +15,8 @@ class CreatePurchaseCartDetailDTO extends DTO
     public function __construct(
         public readonly string $cartId,
         public readonly string $productId,
-        public readonly int $purchasePrice,
-        public readonly int $quantity
+        public readonly int|float $purchasePrice,
+        public readonly int|float $quantity
     ) {}
 
     #[Override]

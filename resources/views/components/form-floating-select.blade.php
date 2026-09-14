@@ -14,7 +14,10 @@
 
 <div @class(['form-floating', 'is-invalid' => $error])>
     <select {{ $attributes->merge($merge)->class($class) }}>{{ $slot }}</select>
-    <label for="{{ $id }}">{{ $label }} {{ $required ? '*' : '' }}</label>
+    
+    <label for="{{ $id }}">
+        {{ $label }} @if($required)<span class="text-danger">*</span>@endif
+    </label>
 </div>
 
 @error($name)

@@ -56,8 +56,8 @@ class CreateSale
 
         try {
             $paymentMethod = $request->enum('payment_method', PaymentMethodEnum::class);
-            $paidAmount = $request->integer('paid_amount');
-            $changeAmount = $request->integer('change_amount');
+            $paidAmount = $request->float('paid_amount');
+            $changeAmount = $request->float('change_amount');
             $notes = $request->validated('notes');
             $customerId = $request->validated('customer_id');
             $cartId = $request->validated('cart_id');
@@ -65,7 +65,7 @@ class CreateSale
             $customer = $this->findCustomer(id: $customerId);
             $cart = $this->findCart(id: $cartId);
             $cartDetails = $this->getCartDetails(cartId: $cart->id);
-            $changeAmount = $this->calculateChangeAmount(totalAmount: $cart->totalAmount, paid: $paidAmount);
+            $changeAmount = $this->calculateChangeAmount(totalAmount: $cart->totalAmount, paidAmount: $paidAmount);
             $invoiceNumber = $this->saleRepository->generateInvoiceNumber();
             $products = $this->productRepository->getActive();
 
@@ -214,9 +214,9 @@ class CreateSale
     /**
      * Menghitung kembalian;
      */
-    private function calculateChangeAmount(int $totalAmount, int $paid): int
+    private function calculateChangeAmount(int|float $totalAmount, int|float $paidAmount): int|float
     {
-        $change = $paid - $totalAmount;
+        $change = $paidAmount - $totalAmount;
 
         if ($change < 0) {
             throw ValidationException::withMessages(messages: [

@@ -43,7 +43,7 @@
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Total</span>
-                            <span>{{ number_format($purchase->totalPrice) }}</span>
+                            <span>Rp {{ number_format($purchase->totalPrice) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
@@ -79,8 +79,8 @@
                                         <tr>
                                             <td class="text-start">{{ $detail->product->code }}</td>
                                             <td class="text-end">{{ number_format($detail->quantity) }}</td>
-                                            <td class="text-end">{{ number_format($detail->purchasePrice) }}</td>
-                                            <td class="text-end">{{ number_format($detail->subtotalPrice) }}</td>
+                                            <td class="text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
+                                            <td class="text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -136,7 +136,7 @@
                                             <td class="text-start text-nowrap">{{ $payment->paymentDate->format('d M Y') }}</td>
                                             <td class="text-start text-nowrap">{{ strtoupper($payment->paymentMethod->value) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->referenceNumber }}</td>
-                                            <td class="text-end text-nowrap">{{ number_format($payment->amount) }}</td>
+                                            <td class="text-end text-nowrap">Rp {{ number_format($payment->amount) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->notes }}</td>
                                         </tr>
                                     @endforeach
@@ -145,7 +145,7 @@
                                 <tfoot>
                                     <tr>
                                         <th class="text-start text-nowrap" colspan="3">Kurang Bayar</th>
-                                        <th class="text-end text-nowrap">{{ number_format($purchase->totalPrice - $totalAmount) }}</th>
+                                        <th class="text-end text-nowrap">Rp {{ number_format($purchase->totalPrice - $totalAmount) }}</th>
                                         <th class="text-end text-nowrap"></th>
                                     </tr>
                                 </tfoot>

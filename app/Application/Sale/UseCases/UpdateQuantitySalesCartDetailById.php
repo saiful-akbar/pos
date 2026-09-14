@@ -29,7 +29,7 @@ class UpdateQuantitySalesCartDetailById
     /**
      * Execute method.
      */
-    public function execute(string $cartId, string $cartDetailId, int $quantity): void
+    public function execute(string $cartId, string $cartDetailId, int|float $quantity): void
     {
         DB::connection(pos_connection())->beginTransaction();
 

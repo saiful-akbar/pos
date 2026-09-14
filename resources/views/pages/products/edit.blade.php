@@ -135,6 +135,7 @@
                                     error="{{ $errors->has('purchase_price') }}"
                                     value="{{ old('purchase_price', $product->purchasePrice) }}"
                                     class="no-spinners"
+                                    step="any"
                                 />
                             </div>
 
@@ -149,6 +150,7 @@
                                     error="{{ $errors->has('selling_price') }}"
                                     value="{{ old('selling_price', $product->sellingPrice) }}"
                                     class="no-spinners"
+                                    step="any"
                                 />
                             </div>
 
@@ -164,6 +166,7 @@
                                     error="{{ $errors->has('discount') }}"
                                     value="{{ old('discount', $product->discount) }}"
                                     class="no-spinners"
+                                    step="any"
                                 />
                             </div>
                         </div>
@@ -193,6 +196,7 @@
                                     error="{{ $errors->has('current_stock') }}"
                                     value="{{ old('current_stock', $product->currentStock) }}"
                                     class="no-spinners"
+                                    step="any"
                                 />
                             </div>
 
@@ -207,6 +211,7 @@
                                     error="{{ $errors->has('minimum_stock') }}"
                                     value="{{ old('minimum_stock', $product->minimumStock) }}"
                                     class="no-spinners"
+                                    step="any"
                                 />
                             </div>
                         </div>

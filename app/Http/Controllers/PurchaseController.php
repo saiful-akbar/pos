@@ -84,11 +84,7 @@ class PurchaseController extends Controller
      */
     public function addCartDetail(StorePuchaseCartDetailRequest $request): RedirectResponse
     {
-        app(CreatePurchaseCartDetail::class)->execute(
-            productCode: $request->validated('product_code'),
-            purchasePrice: $request->integer('purchase_price') ?: 0,
-            quantity: $request->integer('quantity') ?: 1,
-        );
+        app(CreatePurchaseCartDetail::class)->execute(request: $request);
 
         return to_route('transactions.purchases.cart')->with('alert', [
             'status' => 'success',
@@ -104,8 +100,8 @@ class PurchaseController extends Controller
         app(UpdatePurchaseCartDetail::class)->execute(
             dto: new UpdatePurchaseCartDetailDTO(
                 id: $cartDetailId,
-                purchasePrice: $request->integer('purchase_price'),
-                quantity: $request->integer('quantity'),
+                purchasePrice: $request->float('purchase_price'),
+                quantity: $request->float('quantity'),
 
             )
         );
@@ -207,7 +203,7 @@ class PurchaseController extends Controller
             userId: user()->id,
             paymentDate: $request->date('payment_date'),
             paymentMethod: $request->enum('payment_method', PaymentMethodEnum::class),
-            amount: $request->integer('amount'),
+            amount: $request->float('amount'),
             referencesNumber: $request->validated('reference_number'),
             notes: $request->validated('reference_number'),
         ));

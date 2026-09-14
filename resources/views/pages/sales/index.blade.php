@@ -1,5 +1,5 @@
-<x-layouts.auth title="POS">
-    <x-page-header title="POS" icon="shopping_cart">
+<x-layouts.auth title="Penjualan (Kasir POS)">
+    <x-page-header title="Penjualan (Kasir POS)" icon="shopping_cart">
         <x-slot:action>
             <div class="row justify-content-end">
                 <div class="col-12 col-lg-6 col-xl-4">
@@ -228,7 +228,7 @@
     
                         <div class="modal-body">
                             <input type="hidden" name="cart_detail_id" class="d-none">
-                            <input type="number" name="quantity" placeholder="Masukan quantity..." class="form-control form-control-lg" min="1" required>
+                            <input type="number" name="quantity" placeholder="Masukan quantity..." class="form-control form-control-lg" min="0" step="any" required>
                             <div class="invalid-feedback"></div>
                         </div>
     
@@ -306,6 +306,7 @@
                         return app.modalDataTable('#productTable', {
                             serverSide: true,
                             ajax: "{{ route('master.products.active') }}",
+                            ordering: false,
                             columns: [
                                 {
                                     title: 'Kode',
@@ -364,10 +365,11 @@
                             createdRow: (row, data, index) => {
                                 $(row).addClass('cursor-pointer');
 
-                                $(row).click((e) => {
+                                $(row).click(async (e) => {
                                     e.preventDefault();
-                                    this.formCreateCartDetail.find('input[name=product]').val(data.code);
                                     this.productModal.hide();
+                                    this.formCreateCartDetail.find('input[name=product]').val(data.code);
+                                    this.formCreateCartDetail.submit();
                                 });
                             }
                         });
@@ -795,14 +797,15 @@
                         window.open(`${app.baseUrl}/transactions/sales/${saleId}/receipt`);
                         window.location.reload();
                     } catch (error) {
+                        console.error(error);
+                        app.hidePreloader();
+                        app.alert('danger', error.message);
+                        
                         Object.entries(error.errors).forEach(([field, message]) => {
                             service.formSaveSale.find(`#${field}`).addClass('is-invalid');
                             service.formSaveSale.find(`#${field}`).parent().addClass('is-invalid');
                             service.formSaveSale.find(`#${field}`).parent().next().text(message[0]);
                         });
-
-                        app.hidePreloader();
-                        app.alert('danger', error.message);
                     }
                 })
             </script>

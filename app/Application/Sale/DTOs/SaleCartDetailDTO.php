@@ -24,17 +24,17 @@ class SaleCartDetailDTO extends DTO
     /**
      * Quantity
      */
-    public readonly int $quantity;
+    public readonly int|float $quantity;
 
     /**
      * Subtotal harga
      */
-    public readonly int $subtotal;
+    public readonly int|float $subtotal;
 
     /**
      * Create a new class instance.
      */
-    public function __construct(SaleCartEntity $cart, ProductEntity $product, int $quantity)
+    public function __construct(SaleCartEntity $cart, ProductEntity $product, int|float $quantity)
     {
         $this->cart = $cart;
         $this->product = $product;
@@ -66,7 +66,7 @@ class SaleCartDetailDTO extends DTO
     /**
      * Menghitung subtotal
      */
-    private function subtotalCalculation(ProductEntity $product, int $quantity): int
+    private function subtotalCalculation(ProductEntity $product, int|float $quantity): int|float
     {
         $discountPrice = 0;
 

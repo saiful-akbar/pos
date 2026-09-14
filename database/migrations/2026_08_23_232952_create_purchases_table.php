@@ -35,8 +35,8 @@ return new class() extends Migration
 
             $table->date('purchase_date');
             $table->string('invoice_number', 100)->nullable()->comment('Supplier invoice number');
-            $table->unsignedInteger('total_quantity')->default(0);
-            $table->unsignedInteger('total_price')->default(0);
+            $table->decimal('total_quantity', 15, 2)->default(0);
+            $table->decimal('total_price', 15, 2)->default(0);
             $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->text('notes')->nullable();
             $table->timestamps();

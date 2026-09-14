@@ -22,7 +22,7 @@ class CreateUnitDTO extends DTO
     public function toArray(): array
     {
         return [
-            'code' => $this->code,
+            'code' => strtoupper($this->code),
             'name' => $this->name,
             'is_active' => $this->isActive,
         ];

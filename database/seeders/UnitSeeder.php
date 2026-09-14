@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Unit;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class UnitSeeder extends Seeder
 {
@@ -14,9 +15,29 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
-        Unit::query()->create([
-            'code' => 'PCs',
-            'name' => 'Pieces',
-        ]);
+        DB::transaction(function (): void {
+            foreach ($this->data() as $data) {
+                Unit::query()->create($data);
+            }
+        });
+    }
+
+    /**
+     * data
+     *
+     * @return array
+     */
+    private function data(): array
+    {
+        return [
+            [
+                'code' => 'PCS',
+                'name' => 'Pieces',
+            ],
+            [
+                'code' => 'KG',
+                'name' => 'Kilogram',
+            ],
+        ];
     }
 }

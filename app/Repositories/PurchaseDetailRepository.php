@@ -77,7 +77,7 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
                 ->with('product')
                 ->where('purchase_id', $purchaseId)
                 ->get()
-                ->map(fn ($data) => $this->mapModelToPurchaseDetailEntity($data))
+                ->map(fn($data) => $this->mapModelToPurchaseDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -104,9 +104,9 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
                 name: $model->product->name,
                 image: $model->product->image
             ),
-            quantity: $model->quantity,
-            purchasePrice: $model->purchase_price,
-            subtotalPrice: $model->subtotal_price,
+            quantity: parse_float($model->quantity),
+            purchasePrice: parse_float($model->purchase_price),
+            subtotalPrice: parse_float($model->subtotal_price),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

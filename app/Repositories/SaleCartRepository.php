@@ -143,8 +143,8 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
             ),
             isPending: $model->is_pending === 1,
             transactionDate: parse_date_time_immutable($model->transaction_date),
-            totalQuantity: $model->total_quantity,
-            totalAmount: $model->total_amount,
+            totalQuantity: parse_float($model->total_quantity),
+            totalAmount: parse_float($model->total_amount),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

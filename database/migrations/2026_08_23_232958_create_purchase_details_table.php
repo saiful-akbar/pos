@@ -33,9 +33,9 @@ return new class() extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->unsignedInteger('quantity')->default(0);
-            $table->unsignedInteger('purchase_price')->default(0);
-            $table->unsignedInteger('subtotal_price')->default(0);
+            $table->decimal('quantity', 15, 2)->default(0);
+            $table->decimal('purchase_price', 15, 2)->default(0);
+            $table->decimal('subtotal_price', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

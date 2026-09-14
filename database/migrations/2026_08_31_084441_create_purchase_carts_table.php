@@ -29,8 +29,8 @@ return new class() extends Migration
                 ->cascadeOnUpdate();
 
             $table->date('purchase_date');
-            $table->unsignedInteger('total_quantity')->default(0);
-            $table->unsignedInteger('total_price')->default(0);
+            $table->decimal('total_quantity', 15, 2)->default(0);
+            $table->decimal('total_price', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
