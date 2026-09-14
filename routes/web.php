@@ -197,18 +197,34 @@ Route::middleware('auth')->group(function (): void {
                     });
             });
 
-        Route::controller(SaleController::class)->name('.sales')->prefix('sales')->group(function (): void {
-            Route::get('/', 'index');
-            Route::post('/', 'storeSale')->name('.store');
-            Route::post('/carts', 'storeCart')->name('.carts.store');
-            Route::get('/carts/{cartId}', 'showCart')->name('.carts.show');
-            Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete');
-            Route::get('/carts/{cartId}/details', 'getCartDetails')->name('.carts.details');
-            Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store');
-            Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete');
-            Route::patch('/carts/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.carts.details.update');
-            Route::get('/{id}/receipt', 'printReceipt')->name('.receipt');
-        });
+        Route::controller(SaleController::class)
+            ->name('.sales')
+            ->prefix('sales')
+            ->group(function (): void {
+                Route::get('/', 'index')->middleware('module:transactions.sales,read');
+                Route::post('/', 'storeSale')->name('.store')->middleware('module:transactions.sales,create');
+
+                Route::name('.carts')
+                    ->prefix('/carts')
+                    ->middleware('module:transactions.sales,create')
+                    ->group(function (): void {
+                        Route::get('/', 'carts');
+                        Route::post('/', 'storeCart')->name('.store');
+                        Route::get('/{cartId}', 'showCart')->name('.show');
+                        Route::delete('/{cartId}', 'deleteCart')->name('.delete');
+                        Route::get('/{cartId}/details', 'getCartDetails')->name('.details');
+                        Route::post('/{cartId}/details', 'storeCartDetail')->name('.details.store');
+                        Route::delete('/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.details.delete');
+                        Route::patch('/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.details.update');
+                    });
+
+                Route::name('.receipt')
+                    ->prefix('/{saleId}/receipt')
+                    ->middleware('module:transactions.sales,read')
+                    ->group(function (): void {
+                        Route::get('/', 'printReceipt')->name('.receipt');
+                    });
+            });
     });
 });
 

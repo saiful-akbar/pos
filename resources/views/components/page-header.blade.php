@@ -7,7 +7,6 @@
                         <div class="avatar avatar-xl rounded text-primary">
                             <span class="material-symbols-outlined fs-2 text-secondary">{{ $icon }}</span>
                         </div>
-            
                     </div>
             
                     <div class="col">
@@ -15,7 +14,7 @@
                     </div>
 
                     @isset($action)
-                        <div class="col-12 col-lg-8 mt-4 mt-lg-0">
+                        <div class="col-12 col-lg-8 mt-5 mt-lg-0">
                             {{ $action }}
                         </div>
                     @endisset

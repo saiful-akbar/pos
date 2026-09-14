@@ -85,7 +85,7 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Penjualan (Kasir POS)',
+                        'name' => 'Penjualan',
                         'path' => '/transactions/sales',
                         'route' => 'transactions.sales',
                         'roles' => ['Admin', 'Kasir'],

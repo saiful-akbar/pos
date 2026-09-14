@@ -162,7 +162,7 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
                 ->where('purchase_cart_id', $cartId)
                 ->orderBy('created_at', 'desc')
                 ->get()
-                ->map(fn($detail) => $this->mapModelToPurchaseCartDetailEntity($detail))
+                ->map(fn ($detail) => $this->mapModelToPurchaseCartDetailEntity($detail))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

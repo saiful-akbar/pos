@@ -66,9 +66,6 @@ interface ProductRepositoryInterface
 
     /**
      * Menghapus data produk berdasarkan id.
-     *
-     * @param string $id
-     * @return integer
      */
     public function removeById(string $id): int;
 }

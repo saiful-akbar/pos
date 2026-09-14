@@ -85,12 +85,4 @@ class SaleDetail extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
-
-    /**
-     * Get the discount that owns the SaleDetail
-     */
-    public function discount(): BelongsTo
-    {
-        return $this->belongsTo(Discount::class, 'discount_id', 'id');
-    }
 }

@@ -24,8 +24,6 @@ class UnitSeeder extends Seeder
 
     /**
      * data
-     *
-     * @return array
      */
     private function data(): array
     {

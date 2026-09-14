@@ -235,7 +235,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             return $this->model->query()
                 ->where('is_active', 1)
                 ->get()
-                ->map(fn($product) => $this->mapModelToProductEntity($product))
+                ->map(fn ($product) => $this->mapModelToProductEntity($product))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -249,9 +249,6 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
 
     /**
      * Menghapus data produk berdasarkan id.
-     *
-     * @param string $id
-     * @return integer
      */
     #[Override]
     public function removeById(string $id): int

@@ -78,7 +78,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             return $this->model->query()
                 ->select($columns)
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->leftJoinSub($paymentQuery, 'payments', fn($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
+                ->leftJoinSub($paymentQuery, 'payments', fn ($join) => $join->on('payments.purchase_id', '=', 'purchases.id'))
                 ->whereBetween('purchases.purchase_date', [$fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
                 ->when($paymentStatus, function (Builder $query, PaymentStatusEnum $paymentStatus): void {
                     $query->where('payment_status', $paymentStatus->value);
@@ -164,7 +164,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
 
             return $query->orderBy('purchases.purchase_date', 'asc')
                 ->get()
-                ->map(fn($data) => $this->mapModelToPurchaseEntity($data))
+                ->map(fn ($data) => $this->mapModelToPurchaseEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

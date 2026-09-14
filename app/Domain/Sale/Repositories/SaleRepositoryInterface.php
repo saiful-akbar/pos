@@ -24,4 +24,9 @@ interface SaleRepositoryInterface
      * Mengambil data sales berdsarkan id.
      */
     public function findById(string $id): ?SaleWithDetailEntity;
+
+    /**
+     * Mengambil data penjualan berdasarkan nomor faktur.
+     */
+    public function findByInvoice(string $invoice): ?SaleEntity;
 }

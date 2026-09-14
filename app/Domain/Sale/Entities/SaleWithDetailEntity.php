@@ -146,7 +146,7 @@ class SaleWithDetailEntity extends Entity
             'change_amount' => $this->changeAmount,
             'payment_method' => $this->paymentMethod->value,
             'notes' => $this->notes,
-            'details' => array_map(fn($detail) => $detail->toArray(), $this->details),
+            'details' => array_map(fn ($detail) => $detail->toArray(), $this->details),
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),

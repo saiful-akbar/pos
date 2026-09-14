@@ -59,6 +59,7 @@ use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
+use App\Application\Sale\UseCases\CreateSaleReturnCart;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
 use App\Application\Sale\UseCases\FindSaleById;
@@ -102,6 +103,7 @@ use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnCartRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -124,6 +126,7 @@ use App\Repositories\SaleCartDetailRepository;
 use App\Repositories\SaleCartRepository;
 use App\Repositories\SaleDetailRepository;
 use App\Repositories\SaleRepository;
+use App\Repositories\SaleReturnCartRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\StockMovementRepository;
 use App\Repositories\SupplierRepository;
@@ -173,6 +176,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteSaleCartDetailById::class => ErrorLogRepository::class,
             UpdateQuantitySalesCartDetailById::class => ErrorLogRepository::class,
             CreateSale::class => ErrorLogRepository::class,
+            CreateSaleReturnCart::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -208,6 +212,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateDiscount::class => ActivityLogRepository::class,
             RemoveDiscountById::class => ActivityLogRepository::class,
             CreateSale::class => ActivityLogRepository::class,
+            CreateSaleReturnCart::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -390,11 +395,17 @@ class RepositoryServiceProvider extends ServiceProvider
         SaleRepositoryInterface::class => [
             CreateSale::class => SaleRepository::class,
             FindSaleById::class => SaleRepository::class,
+            CreateSaleReturnCart::class => SaleRepository::class,
         ],
 
         // Sale detail
         SaleDetailRepositoryInterface::class => [
             CreateSale::class => SaleDetailRepository::class,
+        ],
+
+        // Sale return cart
+        SaleReturnCartRepositoryInterface::class => [
+            CreateSaleReturnCart::class => SaleReturnCartRepository::class,
         ],
     ];
 

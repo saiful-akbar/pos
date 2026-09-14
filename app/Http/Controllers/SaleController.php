@@ -8,6 +8,7 @@ use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
+use App\Application\Sale\UseCases\CreateSaleReturnCart;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
 use App\Application\Sale\UseCases\FindSaleById;
@@ -17,6 +18,7 @@ use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleRequest;
+use App\Http\Requests\Sales\StoreSaleReturnCartRequest;
 use App\Http\Requests\Sales\UpdateQuantitySaleCartDetailRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -29,16 +31,24 @@ class SaleController extends Controller
     /**
      * Menampilkan halaman POS
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
-        $cart = app(FindSaleCartByCurrentUser::class)->execute();
-
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: 'transactions.sales',
         );
 
-        return view('pages.sales.index', compact('access', 'cart'));
+        return view('pages.sales.index', compact('access'));
+    }
+
+    /**
+     * Menampilkan halaman sales cart.
+     */
+    public function carts(): View|RedirectResponse
+    {
+        $cart = app(FindSaleCartByCurrentUser::class)->execute();
+
+        return view('pages.sales.cart', compact('cart'));
     }
 
     /**
@@ -46,9 +56,13 @@ class SaleController extends Controller
      */
     public function storeCart(): RedirectResponse
     {
-        app(CreateSaleCart::class)->execute();
+        $cart = app(FindSaleCartByCurrentUser::class)->execute();
 
-        return to_route('transactions.sales');
+        if ($cart === null) {
+            app(CreateSaleCart::class)->execute();
+        }
+
+        return to_route('transactions.sales.carts');
     }
 
     /**
@@ -58,7 +72,7 @@ class SaleController extends Controller
     {
         app(DeleteSaleCartById::class)->execute(id: $cartId);
 
-        return to_route('transactions.sales');
+        return to_route('transactions.sales.carts');
     }
 
     /**
@@ -172,5 +186,25 @@ class SaleController extends Controller
         );
 
         return view('pages.sales.receipt', compact('sale', 'barcode'));
+    }
+
+    /**
+     * Membuat (insert) sesi untuk pengembalian penjualan.
+     */
+    public function storeReturnCart(StoreSaleReturnCartRequest $request): RedirectResponse
+    {
+        app(CreateSaleReturnCart::class)->execute(
+            invoiceNumber: $request->validated('invoice_number'),
+        );
+
+        return to_route('transactions.sales.return');
+    }
+
+    /**
+     * Menampilkan halaman return cart.
+     */
+    public function returnCart(): View
+    {
+        return view('pages.sales.return');
     }
 }

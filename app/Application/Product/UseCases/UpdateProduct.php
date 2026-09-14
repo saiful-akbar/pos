@@ -112,7 +112,7 @@ class UpdateProduct
             Storage::disk('public')->delete($product->image);
         }
 
-        $fileName = $product->code . '.' . $file->extension();
+        $fileName = $product->code.'.'.$file->extension();
         $path = Storage::disk('public')->putFileAs('images/products', $file, $fileName);
 
         $this->productRepository->updateImage(

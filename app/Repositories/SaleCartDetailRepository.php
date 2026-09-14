@@ -163,9 +163,11 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     public function sumQuantityByCartId(string $cartId): int|float
     {
         try {
-            return (int) $this->model->query()
+            $result = $this->model->query()
                 ->where('sale_cart_id', $cartId)
                 ->sum('quantity');
+
+            return parse_float($result);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -183,9 +185,11 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
     public function sumSubtotalByCartId(string $cartId): int|float
     {
         try {
-            return (int) $this->model->query()
+            $result = $this->model->query()
                 ->where('sale_cart_id', $cartId)
                 ->sum('subtotal');
+
+            return parse_float($result);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -229,7 +233,7 @@ class SaleCartDetailRepository extends Repository implements SaleCartDetailRepos
                 ->with(['product.category', 'product.unit'])
                 ->where('sale_cart_id', $cartId)
                 ->get()
-                ->map(fn($data) => $this->mapModelToSaleCartDetailEntity($data))
+                ->map(fn ($data) => $this->mapModelToSaleCartDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

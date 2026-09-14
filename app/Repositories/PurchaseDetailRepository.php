@@ -77,7 +77,7 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
                 ->with('product')
                 ->where('purchase_id', $purchaseId)
                 ->get()
-                ->map(fn($data) => $this->mapModelToPurchaseDetailEntity($data))
+                ->map(fn ($data) => $this->mapModelToPurchaseDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

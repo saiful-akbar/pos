@@ -59,7 +59,7 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
                 ->with('user')
                 ->where('purchase_id', $purchaseId)
                 ->get()
-                ->map(fn($data) => $this->mapModelToPurchasePaymentEntity($data))
+                ->map(fn ($data) => $this->mapModelToPurchasePaymentEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

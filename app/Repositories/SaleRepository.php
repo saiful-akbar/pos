@@ -45,7 +45,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
                 ->first();
 
             if ($sale === null) {
-                return 'INV' . date('y') . date('m') . '-00001';
+                return 'INV'.date('y').date('m').'-00001';
             }
 
             $invoice = explode('-', $sale->invoice_number);
@@ -113,6 +113,35 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
             }
 
             return $this->mapModelToSaleWithDetailEntity(
+                model: $data,
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data penjualan berdasarkan nomor faktur.
+     */
+    #[Override]
+    public function findByInvoice(string $invoice): ?SaleEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->with(['user', 'customer'])
+                ->where('invoice_number', $invoice)
+                ->first();
+
+            if ($data === null) {
+                return null;
+            }
+
+            return $this->mapModelToSaleEntity(
                 model: $data,
             );
         } catch (\Throwable $e) {
