@@ -23,4 +23,14 @@ interface SaleReturnCartRepositoryInterface
      * Memperbarui data keranjang pengambalian belanja.
      */
     public function update(string $id, SaleReturnCartDTO $dto): int;
+
+    /**
+     * Mengambil data keranjang pengembalian penjualan berdasarkan id user.
+     */
+    public function findByUserId(string $userId): ?SaleReturnCartEntity;
+
+    /**
+     * Mengambil data keranjang pengembalian pembelian berdasarkan id.
+     */
+    public function findById(string $id): ?SaleReturnCartEntity;
 }

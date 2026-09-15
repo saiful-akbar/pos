@@ -85,6 +85,64 @@ class SaleReturnCartRepository extends Repository implements SaleReturnCartRepos
     }
 
     /**
+     * Mengambil data keranjang pengembalian penjualan berdasarkan id user.
+     */
+    #[Override]
+    public function findByUserId(string $userId): ?SaleReturnCartEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->with('user')
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($data === null) {
+                return null;
+            }
+
+            return $this->mapModelToSaleReturnCartEntity(
+                model: $data,
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data keranjang pengembalian penjualan berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?SaleReturnCartEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->with('user')
+                ->where('id', $id)
+                ->first();
+
+            if ($data === null) {
+                return null;
+            }
+
+            return $this->mapModelToSaleReturnCartEntity(
+                model: $data,
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class model ke class SaleReturnCartEntity.
      */
     private function mapModelToSaleReturnCartEntity(SaleReturnCart $model): SaleReturnCartEntity
@@ -99,8 +157,8 @@ class SaleReturnCartRepository extends Repository implements SaleReturnCartRepos
                 photo: $model->user->photo
             ),
             transactionDate: parse_date_time_immutable($model->transaction_date),
-            totalQuantity: $model->total_quantity,
-            totalAmount: $model->total_amount,
+            totalQuantity: parse_float($model->total_quantity),
+            totalAmount: parse_float($model->total_amount),
             notes: $model->notes,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

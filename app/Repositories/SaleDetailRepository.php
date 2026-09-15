@@ -12,6 +12,7 @@ use App\Domain\Sale\ValueObjects\CategoryProductSaleValue;
 use App\Domain\Sale\ValueObjects\ProductSaleValue;
 use App\Domain\Sale\ValueObjects\UnitProductSaleValue;
 use App\Models\SaleDetail;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 class SaleDetailRepository extends Repository implements SaleDetailRepositoryInterface
@@ -35,6 +36,67 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
 
             return $this->mapModelToSaleDetailEntity(
                 model: $data->load(['product.category', 'product.unit']),
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar detail sales berdasarkan sales id
+     * dalam format query builder.
+     */
+    #[Override]
+    public function getBySaleIdQuery(string $saleId): Builder
+    {
+        try {
+            $relations = [
+                'product',
+                'product.unit',
+                'product.category',
+            ];
+
+            return $this->model->query()
+                ->with($relations)
+                ->where('sale_id', $saleId);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan id sales dan id product.
+     *
+     * @param string $saleId
+     * @param string $productId
+     * @return SaleDetailEntity|null
+     */
+    #[Override]
+    public function findBySaleIdAndProductId(string $saleId, string $productId): ?SaleDetailEntity
+    {
+        try {
+            $data = $this->model->query()
+                ->with(['product', 'product.unit', 'product.category'])
+                ->where('sale_id', $saleId)
+                ->where('product_id', $productId)
+                ->first();
+
+            if ($data === null) {
+                return null;
+            }
+
+            return $this->mapModelToSaleDetailEntity(
+                model: $data,
             );
         } catch (\Throwable $e) {
             $this->errorLog(

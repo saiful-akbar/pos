@@ -98,7 +98,7 @@ class App {
       fixedHeader: true,
       info: false,
       scrollX: false,
-      scrollY: "400",
+      scrollY: "450px",
       language: {
         search: "",
         searchPlaceholder: "Cari...",
@@ -125,7 +125,7 @@ class App {
         tableFooter.addClass("bg-light");
         input.attr("autocomplete", "off");
         input.removeClass("form-control-sm");
-        input.addClass("w-100 form-control-lg");
+        input.addClass("w-100 border");
         input.parent().addClass("w-100 mb-5");
       },
       ...options,

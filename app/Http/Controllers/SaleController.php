@@ -9,19 +9,25 @@ use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\CreateSaleReturnCart;
+use App\Application\Sale\UseCases\CreateSaleReturnCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
+use App\Application\Sale\UseCases\DeleteSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
 use App\Application\Sale\UseCases\FindSaleCartById;
+use App\Application\Sale\UseCases\FindSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
+use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleRequest;
+use App\Http\Requests\Sales\StoreSaleReturnCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleReturnCartRequest;
 use App\Http\Requests\Sales\UpdateQuantitySaleCartDetailRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Picqer\Barcode\BarcodeGeneratorSVG;
@@ -78,8 +84,12 @@ class SaleController extends Controller
     /**
      * Mengambil data sale cart (keranjang belanja) berdasarkan id.
      */
-    public function showCart(string $id): JsonResponse
+    public function showCart(Request $request, string $id): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         $data = app(FindSaleCartById::class)->execute(id: $id);
 
         if ($data === null) {
@@ -98,6 +108,10 @@ class SaleController extends Controller
      */
     public function storeCartDetail(StoreSaleCartDetailRequest $request, string $cartId): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         app(CreateSaleCartDetail::class)->execute(
             cartId: $cartId,
             productCode: $request->validated('product'),
@@ -112,8 +126,12 @@ class SaleController extends Controller
     /**
      * Mengambil daftar produk keranjang belanja.
      */
-    public function getCartDetails(string $cartId): JsonResponse
+    public function getCartDetailsTable(Request $request, string $cartId): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         return app(GetSaleCartDetailsByCartIdTable::class)->execute(
             cartId: $cartId
         );
@@ -122,8 +140,12 @@ class SaleController extends Controller
     /**
      * Menghapus produk dari daftar kerangjang belanja.
      */
-    public function deleteCartDetail(string $cartId, string $cartDetailId): JsonResponse
+    public function deleteCartDetail(Request $request, string $cartId, string $cartDetailId): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         app(DeleteSaleCartDetailById::class)->execute(
             cartId: $cartId,
             cartDetailId: $cartDetailId,
@@ -139,6 +161,10 @@ class SaleController extends Controller
      */
     public function updateCartDetail(UpdateQuantitySaleCartDetailRequest $request, string $cartId, string $cartDetailId): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         app(UpdateQuantitySalesCartDetailById::class)->execute(
             cartId: $cartId,
             cartDetailId: $cartDetailId,
@@ -155,6 +181,10 @@ class SaleController extends Controller
      */
     public function storeSale(StoreSaleRequest $request): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         $sale = app(CreateSale::class)->execute(
             request: $request,
         );
@@ -189,6 +219,30 @@ class SaleController extends Controller
     }
 
     /**
+     * Mengambil daftar detail sales dalam format json berdasarkan id sales.
+     */
+    public function getDetailsTable(Request $request, string $saleId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetSaleDetailsTable::class)->execute(
+            saleId: $saleId,
+        );
+    }
+
+    /**
+     * Menampilkan halaman return cart.
+     */
+    public function returnCart(): View
+    {
+        $cart = app(FindSaleReturnCartByCurrentUser::class)->execute();
+
+        return view('pages.sales.return', compact('cart'));
+    }
+
+    /**
      * Membuat (insert) sesi untuk pengembalian penjualan.
      */
     public function storeReturnCart(StoreSaleReturnCartRequest $request): RedirectResponse
@@ -197,14 +251,41 @@ class SaleController extends Controller
             invoiceNumber: $request->validated('invoice_number'),
         );
 
-        return to_route('transactions.sales.return');
+        return to_route('transactions.sales.return.carts');
     }
 
     /**
-     * Menampilkan halaman return cart.
+     * Menghapus data keranjang pengembalian penjualan
      */
-    public function returnCart(): View
+    public function deleteReturnCart(): RedirectResponse
     {
-        return view('pages.sales.return');
+        app(DeleteSaleReturnCartByCurrentUser::class)->execute();
+
+        return to_route('transactions.sales.return.carts')->with('alert', [
+            'status' => 'success',
+            'message' => 'Transaksi pengembalian penjualan berhasil dibatalkan.',
+        ]);
+    }
+
+    /**
+     * Menambah (insert) data produk kedalam daftar pengembalian penjualan.
+     *
+     * @param StoreSaleReturnCartDetailRequest $request
+     * @return JsonResponse
+     */
+    public function storeReturnCartDetail(StoreSaleReturnCartDetailRequest $request): JsonResponse
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        app(CreateSaleReturnCartDetail::class)->execute(
+            productCode: $request->validated('product_code'),
+        );
+
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Produk berhasil ditambahkan.'
+        );
     }
 }
