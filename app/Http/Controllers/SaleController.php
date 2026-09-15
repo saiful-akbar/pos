@@ -13,18 +13,22 @@ use App\Application\Sale\UseCases\CreateSaleReturnCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
 use App\Application\Sale\UseCases\DeleteSaleReturnCartByCurrentUser;
+use App\Application\Sale\UseCases\DeleteSaleReturnCartDetailById;
 use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
 use App\Application\Sale\UseCases\FindSaleCartById;
 use App\Application\Sale\UseCases\FindSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
+use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleRequest;
 use App\Http\Requests\Sales\StoreSaleReturnCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleReturnCartRequest;
 use App\Http\Requests\Sales\UpdateQuantitySaleCartDetailRequest;
+use App\Http\Requests\Sales\UpdateSaleReturnCartDetailRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -235,9 +239,15 @@ class SaleController extends Controller
     /**
      * Menampilkan halaman return cart.
      */
-    public function returnCart(): View
+    public function returnCart(Request $request): View|JsonResponse
     {
         $cart = app(FindSaleReturnCartByCurrentUser::class)->execute();
+
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: $cart,
+            );
+        }
 
         return view('pages.sales.return', compact('cart'));
     }
@@ -269,13 +279,10 @@ class SaleController extends Controller
 
     /**
      * Menambah (insert) data produk kedalam daftar pengembalian penjualan.
-     *
-     * @param StoreSaleReturnCartDetailRequest $request
-     * @return JsonResponse
      */
     public function storeReturnCartDetail(StoreSaleReturnCartDetailRequest $request): JsonResponse
     {
-        if (!$request->ajax()) {
+        if (! $request->ajax()) {
             abort(404);
         }
 
@@ -286,6 +293,53 @@ class SaleController extends Controller
         return $this->jsonResponse(
             status: 201,
             message: 'Produk berhasil ditambahkan.'
+        );
+    }
+
+    /**
+     * Mengambil daftar produk pada keranjang pengembalian penjualan.
+     */
+    public function getReturnCartDetails(Request $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetSaleReturnCartDetailsTable::class)->execute();
+    }
+
+    /**
+     * Menghapus data detail (produk) pada keranjang pengembalian penjualan.
+     */
+    public function deleteReturnCartDetail(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(DeleteSaleReturnCartDetailById::class)->execute(id: $id);
+
+        return $this->jsonResponse(
+            message: 'Produk berhasil dihapus.'
+        );
+    }
+
+    /**
+     * Memperbarui detail (produk) daftar keranjang pengembalian penjualan.
+     */
+    public function updateReturnCartDetail(UpdateSaleReturnCartDetailRequest $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(UpdateQuantityReturnCartDetail::class)->execute(
+            id: $id,
+            quantity: $request->float('quantity'),
+        );
+
+        return $this->jsonResponse(
+            message: 'Quantity produk berhasil ubah.'
         );
     }
 }

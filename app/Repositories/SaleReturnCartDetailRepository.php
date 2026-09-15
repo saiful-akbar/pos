@@ -95,7 +95,7 @@ class SaleReturnCartDetailRepository extends Repository implements SaleReturnCar
     {
         try {
             $data = $this->model->query()
-                ->with(['product', 'product.unit', 'product.catcegory'])
+                ->with(['product', 'product.unit', 'product.category'])
                 ->where('sale_return_cart_id', $cartId)
                 ->where('product_id', $productId)
                 ->first();
@@ -125,7 +125,7 @@ class SaleReturnCartDetailRepository extends Repository implements SaleReturnCar
     {
         try {
             $data = $this->model->query()
-                ->with(['product', 'product.unit', 'product.catcegory'])
+                ->with(['product', 'product.unit', 'product.category'])
                 ->where('id', $id)
                 ->first();
 
@@ -154,7 +154,7 @@ class SaleReturnCartDetailRepository extends Repository implements SaleReturnCar
     {
         try {
             return $this->model->query()
-                ->with(['product', 'product.unit', 'product.catcegory'])
+                ->with(['product', 'product.unit', 'product.category'])
                 ->where('sale_return_cart_id', $cartId);
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -217,7 +217,7 @@ class SaleReturnCartDetailRepository extends Repository implements SaleReturnCar
     {
         return new SaleReturnCartDetailEntity(
             id: $model->id,
-            saleReturnCartId: $model->sale_cart_id,
+            saleReturnCartId: $model->sale_return_cart_id,
             product: new ProductSaleValue(
                 id: $model->product->id,
                 unit: new UnitProductSaleValue(

@@ -227,9 +227,9 @@ Route::middleware('auth')->group(function (): void {
                         Route::post('/carts', 'storeReturnCart')->name('.carts.store');
                         Route::delete('/casrts', 'deleteReturnCart')->name('.carts.delete');
                         Route::get('/carts/details', 'getReturnCartDetails')->name('.carts.details');
-                        Route::post('/carts/details', 'storeReturnCartDetails')->name('.carts.details.store');
-                        Route::patch('/carts/details/{detailId}', 'updateReturnCartDetails')->name('.carts.details.update');
-                        Route::delete('/carts/details/{detailId}', 'deleteReturnCartDetails')->name('.carts.details.delete');
+                        Route::post('/carts/details', 'storeReturnCartDetail')->name('.carts.details.store');
+                        Route::patch('/carts/details/{detailId}', 'updateReturnCartDetail')->name('.carts.details.update');
+                        Route::delete('/carts/details/{detailId}', 'deleteReturnCartDetail')->name('.carts.details.delete');
                     });
 
                 Route::name('.receipt')

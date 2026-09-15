@@ -23,7 +23,7 @@ interface SaleRepositoryInterface
     /**
      * Mengambil data sales berdsarkan id.
      */
-    public function findById(string $id): ?SaleWithDetailEntity;
+    public function findById(string $id, string $responseType = SaleWithDetailEntity::class): SaleWithDetailEntity|SaleEntity|null;
 
     /**
      * Mengambil data penjualan berdasarkan nomor faktur.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Sales;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -17,20 +19,16 @@ class StoreSaleReturnCartDetailRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'product_code' => ['required', 'string', 'max:100']
+            'product_code' => ['required', 'string', 'max:100'],
         ];
     }
 
     /**
      * Merubah nama atribut untuk pesans error.
-     *
-     * @return array
      */
     #[Override]
     public function attributes(): array

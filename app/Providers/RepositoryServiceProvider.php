@@ -64,12 +64,15 @@ use App\Application\Sale\UseCases\CreateSaleReturnCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
 use App\Application\Sale\UseCases\DeleteSaleCartDetailById;
 use App\Application\Sale\UseCases\DeleteSaleReturnCartByCurrentUser;
+use App\Application\Sale\UseCases\DeleteSaleReturnCartDetailById;
 use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByCurrentUser;
 use App\Application\Sale\UseCases\FindSaleCartById;
 use App\Application\Sale\UseCases\FindSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
+use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
@@ -185,6 +188,8 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCart::class => ErrorLogRepository::class,
             DeleteSaleReturnCartByCurrentUser::class => ErrorLogRepository::class,
             CreateSaleReturnCartDetail::class => ErrorLogRepository::class,
+            DeleteSaleReturnCartDetailById::class => ErrorLogRepository::class,
+            UpdateQuantityReturnCartDetail::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -406,6 +411,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSale::class => SaleRepository::class,
             FindSaleById::class => SaleRepository::class,
             CreateSaleReturnCart::class => SaleRepository::class,
+            UpdateQuantityReturnCartDetail::class => SaleRepository::class,
         ],
 
         // Sale detail
@@ -413,6 +419,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSale::class => SaleDetailRepository::class,
             GetSaleDetailsTable::class => SaleDetailRepository::class,
             CreateSaleReturnCartDetail::class => SaleDetailRepository::class,
+            UpdateQuantityReturnCartDetail::class => SaleDetailRepository::class,
         ],
 
         // Sale return cart
@@ -421,11 +428,17 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSaleReturnCartByCurrentUser::class => SaleReturnCartRepository::class,
             DeleteSaleReturnCartByCurrentUser::class => SaleReturnCartRepository::class,
             CreateSaleReturnCartDetail::class => SaleReturnCartRepository::class,
+            GetSaleReturnCartDetailsTable::class => SaleReturnCartRepository::class,
+            DeleteSaleReturnCartDetailById::class => SaleReturnCartRepository::class,
+            UpdateQuantityReturnCartDetail::class => SaleReturnCartRepository::class,
         ],
 
         // Sale return cart detail
         SaleReturnCartDetailRepositoryInterface::class => [
             CreateSaleReturnCartDetail::class => SaleReturnCartDetailRepository::class,
+            GetSaleReturnCartDetailsTable::class => SaleReturnCartDetailRepository::class,
+            DeleteSaleReturnCartDetailById::class => SaleReturnCartDetailRepository::class,
+            UpdateQuantityReturnCartDetail::class => SaleReturnCartDetailRepository::class,
         ],
     ];
 

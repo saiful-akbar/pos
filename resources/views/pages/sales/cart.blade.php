@@ -411,12 +411,10 @@
                      * Cart detail table
                      */
                     cartDetailTable() {
-                        return app.modalDataTable('#cartDetailTable', {
+                        return app.dataTable('#cartDetailTable', {
                             serverSide: true,
                             ajax: "{{ route('transactions.sales.carts.details', ['cartId' => $cart->id]) }}",
-                            searching: false,
                             ordering: false,
-                            scrollY: false,
                             fixedColumns: {
                                 start: 0,
                                 end: 1,
@@ -436,7 +434,7 @@
                                                 </div>
                                                 <div class="ms-4">
                                                     <div>${row.product.code}</div>
-                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">
+                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 100px;">
                                                         ${row.product.name}
                                                     </div>
                                                 </div>
@@ -803,18 +801,18 @@
         <x-page-header title="Kasir POS" icon="shopping_cart">
             <x-slot:action>
                 <div class="row justify-content-end">
-                    <div class="col-12 col-lg-6 col-xl-3 order-2 order-lg-1">
+                    <div class="col-12 col-lg-4 col-xl-3 order-2 order-lg-1">
                         <form action="{{ route('transactions.sales.carts.store') }}" method="post">
                             @csrf @method('post')
 
                             <button type="submit" class="btn btn-secondary w-100">
                                 <x-icon class="me-1">shopping_cart</x-icon>
-                                <span>Mulai</span>
+                                <span>Mulai Transaksi</span>
                             </button>
                         </form>
                     </div>
 
-                    <div class="col-12 col-lg-6 col-xl-3 order-1 order-lg-2 mb-5 mb-lg-0">
+                    <div class="col-12 col-lg-4 col-xl-3 order-1 order-lg-2 mb-5 mb-lg-0">
                         <a href="{{ route('transactions.sales') }}" role="submit" class="btn btn-light w-100">
                             <x-icon class="me-1">arrow_back</x-icon>
                             <span>Kembali</span>

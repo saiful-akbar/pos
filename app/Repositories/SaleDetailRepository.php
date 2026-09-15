@@ -76,10 +76,6 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
 
     /**
      * Mengambil data berdasarkan id sales dan id product.
-     *
-     * @param string $saleId
-     * @param string $productId
-     * @return SaleDetailEntity|null
      */
     #[Override]
     public function findBySaleIdAndProductId(string $saleId, string $productId): ?SaleDetailEntity

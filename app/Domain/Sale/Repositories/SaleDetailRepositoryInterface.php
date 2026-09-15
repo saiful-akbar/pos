@@ -23,10 +23,6 @@ interface SaleDetailRepositoryInterface
 
     /**
      * Mengambil data berdasarkan id sales dan id product.
-     *
-     * @param string $saleId
-     * @param string $productId
-     * @return SaleDetailEntity|null
      */
     public function findBySaleIdAndProductId(string $saleId, string $productId): ?SaleDetailEntity;
 }

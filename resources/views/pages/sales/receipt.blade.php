@@ -34,12 +34,13 @@
                             
                             <div class="row justify-content-between">
                                 <div class="col-auto">
+                                    <div class="fs-sm">Nota: {{ $sale->invoiceNumber }}</div>
+                                    <div class="fs-sm">Kasir: {{ $sale->user->fullName }}</div>
+                                </div>
+
+                                <div class="col-auto text-end">
                                     <div class="fs-sm">{{ $sale->createdAt->format('d M Y') }}</div>
                                     <div class="fs-sm">{{ $sale->createdAt->format('H:i:s') }}</div>
-                                </div>
-                                <div class="col-auto text-end">
-                                    <div class="fs-sm">{{ $sale->invoiceNumber }}</div>
-                                    <div class="fs-sm">Kasir: {{ $sale->user->fullName }}</div>
                                 </div>
                             </div>
         
@@ -54,11 +55,9 @@
                             @foreach ($sale->details as $detail)
                                 <div class="row justify-content-between align-items-start mt-3">
                                     <div class="col-8">
-                                        <div class="text-start text-body-primary fw-bold fs-sm text-truncate" style="max-width: auto;">
-                                            <span>{{ $detail->product->code }}</span>
-                                            @isset($detail->product->name)
-                                                <span> - {{ $detail->product->name }}</span>
-                                            @endisset
+                                        <div class="text-start text-body-primary fs-sm text-truncate" style="max-width: auto;">
+                                            <span class="fw-bold">{{ $detail->product->code }}</span>
+                                            @isset($detail->product->name) <span> - {{ $detail->product->name }}</span> @endisset
                                         </div>
                                         
                                         <div class="text-body-primary fs-sm">

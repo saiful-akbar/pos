@@ -98,7 +98,7 @@ class App {
       fixedHeader: true,
       info: false,
       scrollX: false,
-      scrollY: "450px",
+      scrollY: "400px",
       language: {
         search: "",
         searchPlaceholder: "Cari...",
@@ -280,7 +280,7 @@ class App {
    */
   alert(variant, message) {
     $("#alert").html(`
-      <div class="alert alert-${variant} border-${variant}  mb-6">
+      <div class="alert alert-${variant} border-${variant} mb-6">
         <div class="row align-items-center">
             <div class="col">
                 ${message}

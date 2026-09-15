@@ -101,7 +101,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
      * Mengambil data sales berdsarkan id.
      */
     #[Override]
-    public function findById(string $id): ?SaleWithDetailEntity
+    public function findById(string $id, string $responseType = SaleWithDetailEntity::class): SaleWithDetailEntity|SaleEntity|null
     {
         try {
             $data = $this->model->query()
@@ -110,6 +110,12 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
 
             if ($data === null) {
                 return null;
+            }
+
+            if ($responseType === SaleEntity::class) {
+                return $this->mapModelToSaleEntity(
+                    model: $data,
+                );
             }
 
             return $this->mapModelToSaleWithDetailEntity(

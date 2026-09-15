@@ -24,9 +24,6 @@
                         <form action="#" method="post" id="formCreateCartDetail" autocomplete="off">
                             @csrf @method('post')
                             
-                            <input type="hidden" name="sale_detail_id">
-                            <input type="hidden" name="product_id">
-
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <div class="row">
@@ -40,12 +37,12 @@
                                                     <x-icon class="text-secondary">table</x-icon>
                                                 </x-button>
                                             </div>
+
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <div class="col-12 col-lg-4 col-xl-3 mt-5 mt-lg-0">
-                                            <x-button type="submit" start-icon="add" full-width>
-                                                Tambah
-                                            </x-button>
+                                            <x-button type="submit" start-icon="add" full-width>Tambah</x-button>
                                         </div>
                                     </div>
                                 </div>
@@ -53,9 +50,70 @@
                         </form>
                     </div>
                 </div>
+                
+                <div class="row mt-6">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <table id="tableCartDetail" class="table table-hover align-middle w-100"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-12 col-lg-4"></div>
+            <div class="col-12 col-lg-4 mt-6">
+                <div class="row">
+                    <div class="col-12">
+                        <form action="" method="post" id="formSave">
+                            <div class="card shadow-sm">
+                                <div class="card-header">
+                                    <h3 class="fs-6 m-0">Total</h3>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="bg-light rounded p-5">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold">Total Qty</span>
+                                                    <span class="fs-6 fw-bold" id="totalQuantity">0</span>
+                                                </div>
+    
+                                                <hr class="my-3">
+    
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold">Grand Total</span>
+                                                    <span class="fs-6 fw-bold" id="totalAmount">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                        <div class="col-12 my-4">
+                                            <hr>
+                                        </div>
+    
+                                        <div class="col-12">
+                                            <div class="form-floating">
+                                                <textarea name="notes" id="notes" cols="30" rows="10" class="form-control" placeholder="Catatan"></textarea>
+                                                <label for="notes">Catatan</label>
+                                            </div>
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <x-button type="submit" start-icon="save" full-width>
+                                        Simpan Transaksi
+                                    </x-button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Modal product --}}
@@ -85,16 +143,60 @@
             </div>
         </div>
 
+        {{-- Modal edit quantity return cart detail --}}
+        <form action="#" method="post" autocomplete="off" id="formEditCartDetail">
+            @csrf
+            @method('patch')
+            
+            <div class="modal" tabindex="-1" id="modalEditCartDetail">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content border">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ubah Quantity</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+    
+                        <div class="modal-body">
+                            <x-form-input type="number" name="quantity" id="editQuantity" placeholder="Masukan quantity" step="any" min="0.01" required />
+                            <div class="invalid-feedback"></div>
+                        </div>
+    
+                        <div class="modal-footer">
+                            <div class="row justify-content-end w-100">
+                                <div class="col-6">
+                                    <button type="reset" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                        <x-icon class="me-1">close</x-icon>
+                                        <span>Batal</span>
+                                    </button>
+                                </div>
+
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-secondary w-100">
+                                        <x-icon class="me-1">save</x-icon>
+                                        <span>Simpan</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <x-slot:script>
             <script>
                 class Service {
                     constructor() {
+                        this.csrfToken = $('meta[name="csrf-token"]').attr('content');
                         this.buttonDeleteCart = $('#buttonDeleteCart');
                         this.formDeleteCart = $('#formDeleteCart');
                         this.buttonProduct = $('#buttonProduct');
                         this.modalProduct = new bootstrap.Modal('#modalProduct');
                         this.tableProduct = this.tableProduct();
                         this.formCreateCartDetail = $('#formCreateCartDetail');
+                        this.tableCartDetail = this.tableCartDetail();
+                        this.formEditCartDetail = $('#formEditCartDetail');
+                        this.modalEditCartDetail = new bootstrap.Modal('#modalEditCartDetail');
                     }
 
                     /**
@@ -166,13 +268,180 @@
                                 
                                 $(row).click((e) => { 
                                     e.preventDefault();
-                                    this.formCreateCartDetail.find('input[name=sale_detail_id]').val(data.id);
-                                    this.formCreateCartDetail.find('input[name=product_id]').val(data.product.id);
                                     this.formCreateCartDetail.find('input[name=product_code]').val(data.product.code);
+                                    this.formCreateCartDetail.submit();
                                     this.modalProduct.hide();
                                 });
                             }
                         });
+                    }
+
+                    /**
+                     * Tabel return cart detail
+                     */
+                    tableCartDetail() {
+                        return app.dataTable('#tableCartDetail', {
+                            serverSide: true,
+                            ajax: "{{ route('transactions.sales.return.carts.details') }}",
+                            ordering: false,
+                            fixedColumns: {
+                                start: 0,
+                                end: 1,
+                            },
+                            columns: [
+                                {
+                                    title: 'Produk',
+                                    name: 'product.code',
+                                    data: 'product.code',
+                                    type: 'string',
+                                    className: 'text-nowrap',
+                                    render: (data, type, row) => {
+                                        return `
+                                            <div class="d-flex align-items-center">
+                                                <img src="${app.storageImage(row.product.image)}" class="rounded avatar" alt="Produk" />
+                                                <div class="ms-4">
+                                                    <div>${row.product.code}</div>
+                                                    <div class="text-body-secondary text-truncate" style="max-width: 100px;">${row.product.name}</div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
+                                },
+                                {
+                                    title: 'Harga',
+                                    name: 'selling_price',
+                                    data: 'selling_price',
+                                    type: 'num',
+                                    className: 'text-nowrap',
+                                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                                },
+                                {
+                                    title: 'Qty',
+                                    name: 'quantity',
+                                    data: 'quantity',
+                                    type: 'num',
+                                    className: 'text-nowrap',
+                                    render: (data, type, row) => {
+                                        return `
+                                            <span>${app.numberFormat(data)}</span>
+                                            <span class="fs-sm text-body-secondary ms-1">${row.product.unit.code}</span>
+                                        `
+                                    },
+                                },
+                                {
+                                    title: 'Diskon',
+                                    name: 'discount',
+                                    data: 'discount',
+                                    type: 'num',
+                                    className: 'text-nowrap',
+                                    render: (data) => `${app.numberFormat(data)} %`,
+                                },
+                                {
+                                    title: 'Subtotal',
+                                    name: 'subtotal',
+                                    data: 'subtotal',
+                                    type: 'num',
+                                    className: 'text-nowrap',
+                                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                                },
+                                {
+                                    title: `<span class="material-symbols-outlined">settings</span>`,
+                                    name: 'id',
+                                    data: 'id',
+                                    type: 'html',
+                                    className: 'text-nowrap text-center',
+                                    ordering: false,
+                                    searching: false,
+                                    render: (data, type, row) => {
+                                        return `
+                                            <div class="btn-group w-100">
+                                                <button type="button" class="btn btn-light w-100" title="edit" data-action="edit">
+                                                    <span class="material-symbols-outlined">edit</span>
+                                                </button>
+                                                <button type="button" class="btn btn-light w-100" title="edit" onclick="deleteCartDetail(event, '${data}')">
+                                                    <span class="material-symbols-outlined">delete</span>
+                                                </button>
+                                            </div>
+                                        `;
+                                    },
+                                },
+                            ],
+                            createdRow: (row, data, index) => {
+                                $(row).find('button[data-action="edit"]').click((e) => { 
+                                    e.preventDefault();
+                                    this.formEditCartDetail.attr('action', `${app.baseUrl}/transactions/sales/return/carts/details/${data.id}`);
+                                    this.formEditCartDetail.find('input[name="quantity"]').val(data.quantity);
+                                    this.formEditCartDetail.find('input[name="quantity"]').focus();
+                                    this.modalEditCartDetail.show();
+                                });
+                            }
+                        })
+                    }
+
+                    /**
+                     * Mengambil data return cart.
+                     */
+                    findCart() {
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                type: "get",
+                                url: "{{ route('transactions.sales.return.carts') }}",
+                                success: function (response) {
+                                    $('#totalQuantity').text(app.numberFormat(response.data.total_quantity));
+                                    $('#totalAmount').text(`Rp ${app.numberFormat(response.data.total_amount)}`);
+                                }
+                            });
+                        })
+                    }
+
+                    /**
+                     * Create return cart detail
+                     */
+                    createCartDetail() {
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                type: "post",
+                                url: "{{ route('transactions.sales.return.carts.details.store') }}",
+                                data: this.formCreateCartDetail.serialize(),
+                                dataType: "json",
+                                success: (response) => resolve(response),
+                                error: (error) => reject(error.responseJSON),
+                            });
+                        })
+                    }
+
+                    /**
+                     * Delete return cart detail
+                     */
+                    deleteCartDetail(id) {
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                type: "delete",
+                                url: `${app.baseUrl}/transactions/sales/return/carts/details/${id}`,
+                                data: {
+                                    _token: this.csrfToken,
+                                },
+                                dataType: "json",
+                                success: (response) => resolve(response),
+                                error: (error) => reject(error.responseJSON),
+                            });
+                        })
+                    }
+
+                    /**
+                     * Update quantity return cart detail.
+                     */
+                    updateCartDetail(id) {
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                type: "patch",
+                                url: this.formEditCartDetail.attr('action'),
+                                data: this.formEditCartDetail.serialize(),
+                                dataType: "json",
+                                success: (response) => resolve(response),
+                                error: (error) => reject(error.responseJSON),
+                            });
+                        })
                     }
                 }
 
@@ -181,6 +450,13 @@
 
             {{-- Global script --}}
             <script>
+                $(document).ready(function () {
+                    service.findCart();
+                });
+
+                /**
+                 * Hapus (batal) transaksi
+                 */
                 service.buttonDeleteCart.click((e) => {
                     e.preventDefault();
 
@@ -197,6 +473,86 @@
                     e.preventDefault();
                     service.modalProduct.show();
                     service.tableProduct.ajax.reload();
+                });
+
+                /**
+                 * Submit form create return cart detail.
+                 */
+                service.formCreateCartDetail.submit(async function (e) { 
+                    e.preventDefault();
+                    
+                    service.formCreateCartDetail.find(`input[name=product_code]`).removeClass('is-invalid');
+                    service.formCreateCartDetail.find(`input[name=product_code]`).parent().removeClass('is-invalid');
+                    service.formCreateCartDetail.find(`input[name=product_code]`).parent().next().text('');
+                    
+                    try {
+                        const response = await service.createCartDetail();
+                        
+                        service.formCreateCartDetail.trigger('reset');
+                        service.formCreateCartDetail.find(`input[name=product_code]`).focus();
+                        service.tableCartDetail.ajax.reload();
+                        service.findCart();
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                        
+                        Object.entries(error.errors).forEach(([field, message]) => {
+                            service.formCreateCartDetail.find(`input[name=${field}]`).focus();
+                            service.formCreateCartDetail.find(`input[name=${field}]`).addClass('is-invalid');
+                            service.formCreateCartDetail.find(`input[name=${field}]`).parent().addClass('is-invalid');
+                            service.formCreateCartDetail.find(`input[name=${field}]`).parent().next().text(message[0]);
+                        });
+                    }
+                });
+
+                /**
+                 * Fungsi untuk menghapus return cart detail
+                 */
+                const deleteCartDetail = (e, id) => {
+                    e.preventDefault();
+
+                    app.delete('Produk', async (deleted) => {
+                        if (!deleted) return;
+
+                        try {
+                            const response = await service.deleteCartDetail(id);
+
+                            service.tableCartDetail.ajax.reload();
+                            service.findCart();
+                            app.alert('success', response.message);
+                        } catch (error) {
+                            app.alert('danger', error.message);
+                        } finally {
+                            service.formCreateCartDetail.find('input[name="product_code"]').focus();
+                        }
+                    })
+                }
+
+                /**
+                 * Update quantity return cart detail
+                 */
+                service.formEditCartDetail.submit(async (e) => { 
+                    e.preventDefault();
+                    
+                    app.showPreloader();
+                    service.formEditCartDetail.find('input[name="quantity"]').removeClass('is-invalid');
+                    service.formEditCartDetail.find('input[name="quantity"]').next().text('');
+
+                    try {
+                        const response = await service.updateCartDetail();
+
+                        app.alert('success', response.message);
+                        service.modalEditCartDetail.hide();
+                        service.tableCartDetail.ajax.reload();
+                        service.findCart();
+                    } catch (error) {
+                        Object.entries(error.errors).forEach(([field, message]) => {
+                            service.formEditCartDetail.find(`input[name=${field}]`).addClass('is-invalid');
+                            service.formEditCartDetail.find(`input[name=${field}]`).next().text(message[0]);
+                        })
+                    } finally {
+                        app.hidePreloader();
+                        service.formCreateCartDetail.find('input[name="product_code"]').focus();
+                    }
                 });
             </script>
         </x-slot:script>

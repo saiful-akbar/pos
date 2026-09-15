@@ -45,7 +45,7 @@ class CreateSaleReturnCartDetail
 
             if ($returnCartDetail) {
                 throw ValidationException::withMessages(messages: [
-                    'product_code' => 'Produk sudah ada dalam daftar.'
+                    'product_code' => 'Produk sudah ada dalam daftar.',
                 ]);
             }
 
@@ -90,8 +90,6 @@ class CreateSaleReturnCartDetail
     /**
      * Mengambil data keranjang pengembalian penjualan
      * berdasarkan user yang sedang login saat ini.
-     *
-     * @return SaleReturnCartEntity
      */
     private function findSaleReturnCart(): SaleReturnCartEntity
     {
@@ -99,9 +97,9 @@ class CreateSaleReturnCartDetail
             userId: user()->id,
         );
 
-        if (is_null($result)) {
+        if ($result === null) {
             throw ValidationException::withMessages(messages: [
-                'message' => 'Transaksi tidak ditemukan.'
+                'product_code' => 'Transaksi tidak ditemukan.',
             ]);
         }
 
@@ -110,9 +108,6 @@ class CreateSaleReturnCartDetail
 
     /**
      * Mengambil data produk berdasarkan code atau barcode.
-     *
-     * @param string $value
-     * @return ProductEntity
      */
     private function findProduct(string $value): ProductEntity
     {
@@ -120,9 +115,9 @@ class CreateSaleReturnCartDetail
             value: $value,
         );
 
-        if (is_null($result)) {
+        if ($result === null) {
             throw ValidationException::withMessages(messages: [
-                'message' => 'Produk tidak ditemukan.'
+                'product_code' => 'Produk tidak ditemukan.',
             ]);
         }
 
@@ -131,10 +126,6 @@ class CreateSaleReturnCartDetail
 
     /**
      * Mengambil data detail sales berdasarkan id sale dsn id product.
-     *
-     * @param string $saleId
-     * @param string $productId
-     * @return SaleDetailEntity
      */
     private function findSaleDetail(string $saleId, string $productId): SaleDetailEntity
     {
@@ -143,9 +134,9 @@ class CreateSaleReturnCartDetail
             productId: $productId,
         );
 
-        if (is_null($result)) {
+        if ($result === null) {
             throw ValidationException::withMessages(messages: [
-                'message' => 'Produk pada transaksi ini tidak ditemukan.'
+                'product_code' => 'Produk pada transaksi ini tidak ditemukan.',
             ]);
         }
 
