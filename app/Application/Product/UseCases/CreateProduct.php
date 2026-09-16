@@ -56,7 +56,7 @@ class CreateProduct
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat unit produk baru',
+                logName: 'Membuat produk baru',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $product->toArray(),
@@ -87,7 +87,7 @@ class CreateProduct
             Storage::disk('public')->delete($product->image);
         }
 
-        $fileName = $product->code.'.'.$file->extension();
+        $fileName = $product->code . '.' . $file->extension();
         $path = Storage::disk('public')->putFileAs('images/products', $file, $fileName);
 
         $this->productRepository->updateImage(

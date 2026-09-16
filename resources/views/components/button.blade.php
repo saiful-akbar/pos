@@ -28,7 +28,7 @@
 @endphp
 
 @if ($type === 'link')
-    <a {{ $attributes->class($class)->merge($merge) }}>
+    <a {{ $attributes->class($class)->merge($merge) }} role="button">
         @if ($startIcon) <x-icon class="me-1">{{ $startIcon }}</x-icon> @endif
         {{ $slot }}
         @if ($endIcon) <x-icon class="ms-1">{{ $endIcon }}</x-icon> @endif

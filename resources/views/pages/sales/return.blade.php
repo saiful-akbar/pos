@@ -1,6 +1,6 @@
-<x-layouts.auth title="Pengembalian Penjualan">
+<x-layouts.auth title="Pengembalian">
     @isset($cart)
-        <x-page-header icon="assignment_return" title="Pengembalian Penjualan">
+        <x-page-header icon="assignment_return" title="Pengembalian">
             <x-slot:action>
                 <div class="row justify-content-end align-items-center w-100">
                     <div class="col-12 col-lg-6 col-xl-4">
@@ -65,7 +65,9 @@
             <div class="col-12 col-lg-4 mt-6">
                 <div class="row">
                     <div class="col-12">
-                        <form action="" method="post" id="formSave">
+                        <form action="{{ route('transactions.sales.return.store') }}" method="post" id="formCreateReturn">
+                            @csrf @method('post')
+
                             <div class="card shadow-sm">
                                 <div class="card-header">
                                     <h3 class="fs-6 m-0">Total</h3>
@@ -94,12 +96,14 @@
                                         </div>
     
                                         <div class="col-12">
-                                            <div class="form-floating">
-                                                <textarea name="notes" id="notes" cols="30" rows="10" class="form-control" placeholder="Catatan"></textarea>
-                                                <label for="notes">Catatan</label>
-                                            </div>
-
-                                            <div class="invalid-feedback"></div>
+                                            <x-form-floating-input
+                                                type="textarea"
+                                                name="notes"
+                                                id="notes"
+                                                label="Catatan"
+                                                error="{{ $errors->has('notes') }}"
+                                                value="{{ old('notes') }}"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -557,12 +561,12 @@
             </script>
         </x-slot:script>
     @else
-        <x-page-header icon="assignment_return" title="Pengembalian Penjualan">
+        <x-page-header icon="assignment_return" title="Pengembalian">
             <x-slot:action>
                 <div class="row justify-content-end align-items-center w-100">
                     <div class="col-12 col-lg-6 col-xl-3 order-2 order-lg-1">
                         <button type="submit" class="btn btn-secondary w-100" id="buttonCreateCart">
-                            <x-icon class="me-1">assignment_return</x-icon>
+                            <x-icon class="me-1">add</x-icon>
                             <span>Mulai Transaksi</span>
                         </button>
 

@@ -2,7 +2,7 @@
     <x-page-header title="Pemasok" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-6 col-lg-6 col-xl-4">
+                <div class="col-6 col-lg-5 col-xl-3">
                     <a href="{{ route('master.suppliers.export') }}" role="button" class="btn btn-light w-100">
                         <x-icon class="me-1">download</x-icon>
                         <span>Expor Excel</span>
@@ -10,7 +10,7 @@
                 </div>
                     
                 @if ($access?->create)
-                    <div class="col-6 col-lg-6 col-xl-4">
+                    <div class="col-6 col-lg-5 col-xl-3">
                         <a href="{{ route('master.suppliers.create') }}" role="button" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
@@ -120,9 +120,8 @@
                         render: (data) => {
                             if (updateAccess === 1) {
                                 return `
-                                    <a href="${app.baseUrl}/master/suppliers/${data}/edit" class="btn btn-sm btn-light">
-                                        <span class="material-symbols-outlined me-1">edit</span>
-                                        <span>Edit</span>    
+                                    <a href="${app.baseUrl}/master/suppliers/${data}/edit" class="btn btn-light" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
                                     </a>
                                 `;
                             }

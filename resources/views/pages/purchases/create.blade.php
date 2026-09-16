@@ -134,10 +134,10 @@
                                     <tr>
                                         <th class="text-nowrap text-start">No</th>
                                         <th class="text-nowrap text-start">Produk</th>
-                                        <th class="text-nowrap text-end">Harga Beli</th>
-                                        <th class="text-nowrap text-end">Quantity</th>
+                                        <th class="text-nowrap text-end">Harga</th>
+                                        <th class="text-nowrap text-end">Qty</th>
                                         <th class="text-nowrap text-end">Subtotal</th>
-                                        <th class="text-nowrap text-center">Opsi</th>
+                                        <th class="text-nowrap text-center"><x-icon>settings</x-icon></th>
                                     </tr>
                                 </thead>
     
@@ -146,13 +146,18 @@
                                         <tr>
                                             <td class="text-start">{{ number_format($loop->iteration) }}</td>
                                             <td class="text-nowrap text-start">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <img src="{{ storage_image($detail->product->image) }}" alt="Product image" class="rounded" width="50" height="50" />
-                                                    </div>
-                                                    
-                                                    <div class="col">
+                                                <div class="d-flex align-items-center justify-content-start gx-1">
+                                                    <img
+                                                        src="{{ storage_image($detail->product->image) }}"
+                                                        alt="Product image"
+                                                        class="rounded"
+                                                        width="50"
+                                                        height="50"
+                                                    />
+
+                                                    <div class="ms-2">
                                                         <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
+                                                        <p class="text-body-secondary fs-sm text-truncate" style="max-width: 150px;">{{ $detail->product->name }}</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -205,7 +210,7 @@
                         <div class="card-body">
                             <ul class="list-group list-group-flush m-0 p-0">
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <span class="text-body-secondary">Total Quantity</span>
+                                    <span class="text-body-secondary">Total Qty</span>
                                     <span class="fs-6 fw-bold">{{ number_format($cart->totalQuantity) }}</span>
                                 </li>
         

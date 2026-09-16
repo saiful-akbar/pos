@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Sale\Repositories;
 
-class SaleReturnRepositoryInterface
+use App\Application\Sale\DTOs\SaleReturnDTO;
+use App\Domain\Sale\Entities\SaleReturnEntity;
+
+interface SaleReturnRepositoryInterface
 {
     /**
-     * Create a new class instance.
+     * Menyimpan data pengembalian penjualan.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function create(SaleReturnDTO $dto): SaleReturnEntity;
 }

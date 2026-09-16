@@ -59,6 +59,7 @@ use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
+use App\Application\Sale\UseCases\CreateSaleReturn;
 use App\Application\Sale\UseCases\CreateSaleReturnCart;
 use App\Application\Sale\UseCases\CreateSaleReturnCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
@@ -112,6 +113,8 @@ use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleReturnCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleReturnCartRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
@@ -136,6 +139,8 @@ use App\Repositories\SaleDetailRepository;
 use App\Repositories\SaleRepository;
 use App\Repositories\SaleReturnCartDetailRepository;
 use App\Repositories\SaleReturnCartRepository;
+use App\Repositories\SaleReturnDetailRepository;
+use App\Repositories\SaleReturnRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\StockMovementRepository;
 use App\Repositories\SupplierRepository;
@@ -190,6 +195,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCartDetail::class => ErrorLogRepository::class,
             DeleteSaleReturnCartDetailById::class => ErrorLogRepository::class,
             UpdateQuantityReturnCartDetail::class => ErrorLogRepository::class,
+            CreateSaleReturn::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -227,6 +233,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSale::class => ActivityLogRepository::class,
             CreateSaleReturnCart::class => ActivityLogRepository::class,
             DeleteSaleReturnCartByCurrentUser::class => ActivityLogRepository::class,
+            CreateSaleReturn::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -299,6 +306,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateQuantitySalesCartDetailById::class => ProductRepository::class,
             CreateSale::class => ProductRepository::class,
             CreateSaleReturnCartDetail::class => ProductRepository::class,
+            CreateSaleReturn::class => ProductRepository::class,
         ],
 
         // Customer
@@ -383,6 +391,7 @@ class RepositoryServiceProvider extends ServiceProvider
         StockMovementRepositoryInterface::class => [
             SavePurchase::class => StockMovementRepository::class,
             CreateSale::class => StockMovementRepository::class,
+            CreateSaleReturn::class => StockMovementRepository::class,
         ],
 
         // Sale cart
@@ -431,6 +440,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetSaleReturnCartDetailsTable::class => SaleReturnCartRepository::class,
             DeleteSaleReturnCartDetailById::class => SaleReturnCartRepository::class,
             UpdateQuantityReturnCartDetail::class => SaleReturnCartRepository::class,
+            CreateSaleReturn::class => SaleReturnCartRepository::class,
         ],
 
         // Sale return cart detail
@@ -439,6 +449,17 @@ class RepositoryServiceProvider extends ServiceProvider
             GetSaleReturnCartDetailsTable::class => SaleReturnCartDetailRepository::class,
             DeleteSaleReturnCartDetailById::class => SaleReturnCartDetailRepository::class,
             UpdateQuantityReturnCartDetail::class => SaleReturnCartDetailRepository::class,
+            CreateSaleReturn::class => SaleReturnCartDetailRepository::class,
+        ],
+
+        // Sale return
+        SaleReturnRepositoryInterface::class => [
+            CreateSaleReturn::class => SaleReturnRepository::class,
+        ],
+
+        // Sale return Detail
+        SaleReturnDetailRepositoryInterface::class => [
+            CreateSaleReturn::class => SaleReturnDetailRepository::class,
         ],
     ];
 

@@ -8,6 +8,7 @@ use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
+use App\Application\Sale\UseCases\CreateSaleReturn;
 use App\Application\Sale\UseCases\CreateSaleReturnCart;
 use App\Application\Sale\UseCases\CreateSaleReturnCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCartById;
@@ -27,6 +28,7 @@ use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleRequest;
 use App\Http\Requests\Sales\StoreSaleReturnCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleReturnCartRequest;
+use App\Http\Requests\Sales\StoreSaleReturnRequest;
 use App\Http\Requests\Sales\UpdateQuantitySaleCartDetailRequest;
 use App\Http\Requests\Sales\UpdateSaleReturnCartDetailRequest;
 use Illuminate\Http\JsonResponse;
@@ -341,5 +343,23 @@ class SaleController extends Controller
         return $this->jsonResponse(
             message: 'Quantity produk berhasil ubah.'
         );
+    }
+
+    /**
+     * Menyimpan (insert) data pengembalian penjualan.
+     *
+     * @param StoreSaleReturnRequest $request
+     * @return RedirectResponse
+     */
+    public function storeReturn(StoreSaleReturnRequest $request): RedirectResponse
+    {
+        app(CreateSaleReturn::class)->execute(
+            notes: $request->validated('notes'),
+        );
+
+        return to_route('transactions.sales.return.carts')->with('alert', [
+            'status' => 'success',
+            'message' => 'Transaksi pengembalian penjualan berhasil disimpan.'
+        ]);
     }
 }

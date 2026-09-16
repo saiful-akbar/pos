@@ -5,7 +5,7 @@
                 <div class="row align-items-center">
                     <div class="col-auto">
                         <div class="avatar avatar-xl rounded text-primary">
-                            <span class="material-symbols-outlined fs-2 text-secondary">{{ $icon }}</span>
+                            <span class="material-symbols-outlined fs-1 fw-bold text-secondary">{{ $icon }}</span>
                         </div>
                     </div>
             

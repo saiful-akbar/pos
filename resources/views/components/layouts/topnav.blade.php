@@ -2,17 +2,8 @@
 <nav class="navbar navbar-expand-xl topnav-base bg-body shadow-sm">
     <div class="container-lg">
         <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="index-2.html">
-            @isset($setting->store_logo)
-                <img src="{{ storage_asset($setting->store_logo) }}" alt="Logo" width="25" class="me-2">
-            @else
-                <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" width="25" class="me-2">
-            @endisset
-
-            @isset($setting->appName)
-                <span>{{ $setting->appName }}</span>
-            @else
-                <span>{{ config('app.name') }}</span>
-            @endisset
+            <img src="{{ logo($setting->storeLogo) }}" alt="Logo" width="30" height="30" class="me-2">
+            <span>{{ $setting?->appName ?? config('app.name') }}</span>
         </a>
 
         {{-- User --}}

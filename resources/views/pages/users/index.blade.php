@@ -3,7 +3,7 @@
         @if($access?->create)
             <x-slot:action>
                 <div class="row justify-content-end">
-                    <div class="col-12 col-lg-6 col-xl-4">
+                    <div class="col-12 col-lg-5 col-xl-3">
                         <a role="button" href="{{ route('master.users.create') }}" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
@@ -106,9 +106,8 @@
                         render: (data) => {
                             if (updateAccess) {
                                 return `
-                                    <a href="${baseUrl}/master/users/${data}/edit" class="btn btn-sm btn-light w-100" role="button">
-                                        <span class="material-symbols-outlined me-1">edit</span>
-                                        <span>Edit</span>
+                                    <a href="${baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
+                                        <span class="material-symbols-outlined">edit</span>
                                     </a>
                                 `;
                             }

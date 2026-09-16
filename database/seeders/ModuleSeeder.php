@@ -73,26 +73,6 @@ class ModuleSeeder extends Seeder
     {
         return [
             [
-                'name' => 'Transaksi',
-                'icon' => 'shopping_cart',
-                'path' => '/transactions',
-                'route' => 'transactions',
-                'details' => [
-                    [
-                        'name' => 'Pembelian',
-                        'path' => '/transactions/purchases',
-                        'route' => 'transactions.purchases',
-                        'roles' => ['Admin', 'Kasir'],
-                    ],
-                    [
-                        'name' => 'Penjualan',
-                        'path' => '/transactions/sales',
-                        'route' => 'transactions.sales',
-                        'roles' => ['Admin', 'Kasir'],
-                    ],
-                ],
-            ],
-            [
                 'name' => 'Data Master',
                 'icon' => 'data_table',
                 'path' => '/master',
@@ -146,6 +126,26 @@ class ModuleSeeder extends Seeder
                     //     'route' => 'master.discounts',
                     //     'roles' => ['Admin', 'Kasir'],
                     // ],
+                ],
+            ],
+            [
+                'name' => 'Transaksi',
+                'icon' => 'shopping_cart',
+                'path' => '/transactions',
+                'route' => 'transactions',
+                'details' => [
+                    [
+                        'name' => 'Pembelian',
+                        'path' => '/transactions/purchases',
+                        'route' => 'transactions.purchases',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Penjualan',
+                        'path' => '/transactions/sales',
+                        'route' => 'transactions.sales',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
                 ],
             ],
             [

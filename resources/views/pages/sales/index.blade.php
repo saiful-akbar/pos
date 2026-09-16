@@ -3,20 +3,29 @@
         <x-slot:action>
             <div class="row justify-content-end">
                 @if ($access?->create ?? false)
-                    <div class="col-12 col-lg-6 col-xl-3">
-                        <a href="{{ route('transactions.sales.carts') }}" role="submit" class="btn btn-secondary w-100">
-                            <x-icon class="me-1">shopping_cart</x-icon>
-                            <span>Kasir POS</span>
-                        </a>
+                    <div class="col-12 col-lg-5 col-xl-3">
+                        <x-button
+                            type="link"
+                            href="{{ route('transactions.sales.carts') }}"
+                            start-icon="shopping_cart"
+                            full-width    
+                        >
+                            Kasir POS
+                        </x-button>
                     </div>
                 @endif
                 
                 @if ($access?->update ?? false)
-                    <div class="col-12 col-lg-6 col-xl-3">
-                        <a href="{{ route('transactions.sales.return.carts') }}" role="submit" class="btn btn-secondary w-100">
-                            <x-icon class="me-1">assignment_return</x-icon>
-                            <span>Pengembalian</span>
-                        </a>
+                    <div class="col-12 col-lg-5 col-xl-3 mt-5 mt-lg-0">
+                        <x-button
+                            type="link"
+                            href="{{ route('transactions.sales.return.carts') }}"
+                            color="danger"
+                            start-icon="assignment_return"
+                            full-width
+                        >
+                            Pengembalian
+                        </x-button>
                     </div>
                 @endif
             </div>

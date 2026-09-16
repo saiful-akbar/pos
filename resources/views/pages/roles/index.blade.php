@@ -5,7 +5,7 @@
                 @if ($access?->create)
                     <x-slot:action>
                         <div class="row justify-content-end">
-                            <div class="col-12 col-lg-6 col-xl-4">
+                            <div class="col-12 col-lg-5 col-xl-3">
                                 <a role="button" href="{{ route('master.roles.create') }}" class="btn btn-secondary w-100">
                                     <x-icon class="me-1">add</x-icon>
                                     <span>Tambah</span>
@@ -74,9 +74,8 @@
                     orderlable: false,
                     render: (data) => {
                         return `
-                            <a role="button" class="btn btn-sm btn-light" href="${baseUrl}/master/roles/${data}/edit">
-                                <span class="material-symbols-outlined me-1">edit</span>
-                                <span>Edit</span>
+                            <a role="button" class="btn btn-light" href="${baseUrl}/master/roles/${data}/edit" title="Edit">
+                                <span class="material-symbols-outlined">edit</span>
                             </a>
                         `;
                     }

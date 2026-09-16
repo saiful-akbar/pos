@@ -40,6 +40,7 @@
     
                             <div class="col-12 col-lg-6 mb-6">
                                 <x-form-floating-input
+                                    required
                                     type="text"
                                     name="phone_number"
                                     id="phone_number"

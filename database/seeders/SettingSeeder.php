@@ -15,7 +15,7 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         Setting::query()->create([
-            'app_name' => 'SMI Sembako POS',
+            'app_name' => 'SMI Sembako',
             'app_version' => '1.0.0',
             'store_name' => 'SMI Sembako',
             'store_logo' => null,

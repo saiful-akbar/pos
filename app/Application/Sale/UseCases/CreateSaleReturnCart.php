@@ -53,7 +53,7 @@ class CreateSaleReturnCart
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat sesi untuk return penjualan',
+                logName: 'Membuat transaksi pengembalian penjualan',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $returnCart->toArray(),

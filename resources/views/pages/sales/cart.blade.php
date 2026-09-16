@@ -806,7 +806,7 @@
                             @csrf @method('post')
 
                             <button type="submit" class="btn btn-secondary w-100">
-                                <x-icon class="me-1">shopping_cart</x-icon>
+                                <x-icon class="me-1">add</x-icon>
                                 <span>Mulai Transaksi</span>
                             </button>
                         </form>

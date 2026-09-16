@@ -273,15 +273,7 @@
                         searchable: false,
                         orderable: false,
                         render: (data) => {
-                            return `
-                                <img
-                                    src="${app.storageImage(data)}"
-                                    alt="Empty"
-                                    width="70"
-                                    height="70"
-                                    class="rounded border"
-                                />
-                            `;
+                            return `<img src="${app.storageImage(data)}" alt="Empty" width="70" height="70" class="rounded" />`;
                         }
                     },
                     {
@@ -303,7 +295,7 @@
                         name: 'products.name',
                         data: 'name',
                         type: 'string',
-                        width: '400px'
+                        width: '300px'
                     },
                     {
                         title: 'Kode Kategori',
@@ -334,6 +326,25 @@
                         type: 'string',
                     },
                     {
+                        title: 'Stok Tersedia',
+                        name: 'current_stock',
+                        data: 'current_stock',
+                        className: 'text-nowrap',
+                        type: 'html-num',
+                        render: (data, type, row) => {
+                            return app.numberFormat(data)
+                        }
+                    },
+                    {
+                        title: 'Minimum Stok',
+                        name: 'minimum_stock',
+                        data: 'minimum_stock',
+                        className: 'text-nowrap',
+                        render: (data, type, row) => {
+                            return app.numberFormat(data)
+                        }
+                    },
+                    {
                         title: 'Harga Beli',
                         name: 'purchase_price',
                         data: 'purchase_price',
@@ -356,25 +367,6 @@
                         className: 'text-nowrap',
                         type: 'num',
                         render: (data) => `${data}%`,
-                    },
-                    {
-                        title: 'Stok Tersedia',
-                        name: 'current_stock',
-                        data: 'current_stock',
-                        className: 'text-nowrap',
-                        type: 'html-num',
-                        render: (data, type, row) => {
-                            return `${app.numberFormat(data)} ${row.unit.code}`
-                        }
-                    },
-                    {
-                        title: 'Minimum Stok',
-                        name: 'minimum_stock',
-                        data: 'minimum_stock',
-                        className: 'text-nowrap',
-                        render: (data, type, row) => {
-                            return `${app.numberFormat(data)} ${row.unit.code}`
-                        }
                     },
                     {
                         title: 'Status',
@@ -414,9 +406,8 @@
                         render: (data) => {
                             if (updateAccess === 1) {
                                 return `
-                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-sm btn-light w-100">
-                                        <span class="material-symbols-outlined me-1">edit</span>
-                                        <span>Edit</span>    
+                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light">
+                                        <span class="material-symbols-outlined">edit</span>
                                     </a>
                                 `;
                             }
@@ -428,14 +419,10 @@
 
         {{-- Modal import --}}
         <script>
-            const modalOptions = {
-                backdrop: 'static'
-            };
-
-            const modalImport = new bootstrap.Modal('#modalImport', modalOptions);
-            const modalResetDiscount = new bootstrap.Modal('#modalResetDiscount', modalOptions);
-            const modalImportUpdateDiscount = new bootstrap.Modal('#modalImportUpdateDiscount', modalOptions);
-            const modalImportUpdateSellingPrice = new bootstrap.Modal('#modalImportUpdateSellingPrice', modalOptions);
+            const modalImport = new bootstrap.Modal('#modalImport');
+            const modalResetDiscount = new bootstrap.Modal('#modalResetDiscount');
+            const modalImportUpdateDiscount = new bootstrap.Modal('#modalImportUpdateDiscount');
+            const modalImportUpdateSellingPrice = new bootstrap.Modal('#modalImportUpdateSellingPrice');
             
             /**
              * Buka modal import excel.

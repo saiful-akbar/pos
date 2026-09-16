@@ -49,4 +49,12 @@ interface SaleReturnCartDetailRepositoryInterface
      * Menghitung total amoun (subtotal) berdasarkan id cart.
      */
     public function sumSubtotalByCartId(string $cartId): int|float;
+
+    /**
+     * Mengambil daftar berdasarkan return cart id.
+     *
+     * @param string $cartId
+     * @return SaleReturnCartDetailEntity[]
+     */
+    public function getByCartId(string $cartId): array;
 }

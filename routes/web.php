@@ -222,7 +222,7 @@ Route::middleware('auth')->group(function (): void {
                     ->prefix('/return')
                     ->middleware('module:transactions.sales,update')
                     ->group(function (): void {
-                        Route::post('/save', 'saveReturn')->name('.save');
+                        Route::post('/', 'storeReturn')->name('.store');
                         Route::get('/carts', 'returnCart')->name('.carts');
                         Route::post('/carts', 'storeReturnCart')->name('.carts.store');
                         Route::delete('/casrts', 'deleteReturnCart')->name('.carts.delete');

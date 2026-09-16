@@ -154,9 +154,8 @@
                     orderable: false,
                     render: (data) => {
                         return `
-                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-sm btn-light w-100">
-                                <span class="material-symbols-outlined me-1">edit</span>
-                                <span>Edit</span>    
+                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
+                                <span class="material-symbols-outlined">edit</span>
                             </a>
                         `;
                     },

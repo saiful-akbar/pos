@@ -133,7 +133,7 @@ class CreateSale
             // Buat catatan aktifitas
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat penjualan baru',
+                logName: 'Menyimpan transaksi penjualan',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $sale->toArray(),
