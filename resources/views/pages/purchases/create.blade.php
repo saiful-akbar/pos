@@ -157,7 +157,9 @@
 
                                                     <div class="ms-2">
                                                         <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
-                                                        <p class="text-body-secondary fs-sm text-truncate" style="max-width: 150px;">{{ $detail->product->name }}</p>
+                                                        <p class="text-body-secondary fs-sm text-truncate" style="max-width: 150px;">
+                                                            {{ $detail->product->name }}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -175,7 +177,7 @@
                                                         data-quantity="{{ $detail->quantity }}"
                                                         data-purchase-price="{{ $detail->purchasePrice }}"
                                                     >
-                                                        <x-icon>edit</x-icon>
+                                                        <x-icon class="fs-6">edit</x-icon>
                                                     </button>
                                                     
                                                     <button
@@ -185,7 +187,7 @@
                                                         data-bs-title="Hapus"
                                                         data-id="{{ $detail->id }}"
                                                     >
-                                                        <x-icon>delete</x-icon>
+                                                        <x-icon class="fs-6">delete</x-icon>
                                                     </button>
                                                 </div>
                                             </td>

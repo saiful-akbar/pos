@@ -51,7 +51,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="productTable" class="table table-hover align-middle w-100"></table>
+                    <table id="productTable" class="table table-sm table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -396,7 +396,7 @@
                         render: (data) => app.dateTimeFormat(data),
                     },
                     {
-                        title: 'Aksi',
+                        title: `<span class="material-symbols-outlined">settings</span>`,
                         name: 'products.id',
                         data: 'id',
                         className: 'text-nowrap text-center',
@@ -407,7 +407,7 @@
                             if (updateAccess === 1) {
                                 return `
                                     <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light">
-                                        <span class="material-symbols-outlined">edit</span>
+                                        <span class="material-symbols-outlined fs-6">edit</span>
                                     </a>
                                 `;
                             }

@@ -5,11 +5,12 @@
                 <div class="row justify-content-end">
                     <div class="col-6 col-lg-6">
                         <div class="btn-group w-100">
-                            <a href="{{ route('master.units.export') }}" class="btn btn-light w-100" role="button">
+                            <a href="{{ route('master.units.export') }}" class="btn btn-secondary w-100" role="button">
                                 <x-icon class="me-1">Download</x-icon>
                                 <span>Expor Excel</span>
                             </a>
-                            <button id="modalImportButton" class="btn btn-light w-100">
+
+                            <button id="modalImportButton" class="btn btn-secondary w-100">
                                 <x-icon class="me-1">upload</x-icon>
                                 <span>Impor Excel</span>
                             </button>
@@ -31,7 +32,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="unitTable" class="table table-hover align-middle w-100"></table>
+                    <table id="unitTable" class="table table-sm table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -137,17 +138,18 @@
                         render: (data) => app.dateTimeFormat(data),
                     },
                     {
-                        title: 'Aksi',
+                        title: `<span class="material-symbols-outlined">settings</span>`,
                         name: 'id',
                         data: 'id',
                         className: 'text-nowrap text-center',
                         searchable: false,
                         orderable: false,
+                        type: 'html',
                         render: (data) => {
                             if (updateAccess === 1) {
                                 return `
-                                    <a href="${app.baseUrl}/master/units/${data}/edit" class="btn btn-light">
-                                        <span class="material-symbols-outlined">edit</span>
+                                    <a href="${app.baseUrl}/master/units/${data}/edit" class="btn btn-light" title="edit">
+                                        <span class="material-symbols-outlined fs-6">edit</span>
                                     </a>
                                 `;
                             }

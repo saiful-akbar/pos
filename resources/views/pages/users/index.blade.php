@@ -18,7 +18,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="userTable" class="table table-hover align-middle w-100"></table>
+                    <table id="userTable" class="table table-sm table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -97,7 +97,7 @@
                         render: (data) => window.app.dateTimeFormat(data),
                     },
                     {
-                        title: 'Aksi',
+                        title: '<span class="material-symbols-outlined">settings</span>',
                         data: 'id',
                         className: 'text-nowrap text-center',
                         orderable: false,
@@ -107,7 +107,7 @@
                             if (updateAccess) {
                                 return `
                                     <a href="${baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
-                                        <span class="material-symbols-outlined">edit</span>
+                                        <span class="material-symbols-outlined fs-6">edit</span>
                                     </a>
                                 `;
                             }

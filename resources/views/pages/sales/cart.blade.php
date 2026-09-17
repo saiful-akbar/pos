@@ -59,7 +59,7 @@
                     <div class="col-12">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <table id="cartDetailTable" class="table table-hover table-img align-middle w-100"></table>
+                                <table id="cartDetailTable" class="table table-hover table-sm table-img align-middle w-100"></table>
                             </div>
                         </div>
                     </div>
@@ -253,7 +253,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <table id="customerTable" class="table table-hover table-sm table-img align-middle w-100"></table>
+                        <table id="customerTable" class="table table-hover table-sm align-middle w-100"></table>
                     </div>
 
                     <div class="modal-footer">
@@ -484,10 +484,10 @@
                                         return `
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-light" title="Edit" data-action="update">
-                                                    <span class="material-symbols-outlined">edit</span>
+                                                    <span class="material-symbols-outlined fs-6">edit</span>
                                                 </button>
                                                 <button type="button" class="btn btn-light" title="Hapus" onclick="deleteCartDetail(event, '${data}')">
-                                                    <span class="material-symbols-outlined">delete</span>
+                                                    <span class="material-symbols-outlined fs-6">delete</span>
                                                 </button>
                                             </div>
                                         `;

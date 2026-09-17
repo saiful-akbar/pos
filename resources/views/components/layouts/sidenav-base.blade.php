@@ -32,7 +32,7 @@
             <div class="collapse navbar-collapse" id="sidenavBaseCollapse">
                 <nav class="navbar-nav nav-pills my-4 mt-xl-0">
                     <div class="nav-item">
-                        <a class="nav-link {{ active_path('/dashboard', true) ? 'active fw-bold' : '' }}" href="{{ route('dashboard') }}">
+                        <a class="nav-link {{ active_path('/dashboard', true) ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <span class="material-symbols-outlined me-3">dashboard</span>
                             <span>Dashboard</span>
                         </a>
@@ -40,7 +40,7 @@
 
                     @foreach ($modules as $module)
                         <div class="nav-item mt-2">
-                            <a class="nav-link {{ active_path($module->path) ? 'active fw-bold' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#{{ $module->id }}" role="button" aria-expanded="{{ active_path($module->path) ? 'true' : 'false' }}" aria-controls="{{ $module->id }}">
+                            <a class="nav-link {{ active_path($module->path) ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#{{ $module->id }}" role="button" aria-expanded="{{ active_path($module->path) ? 'true' : 'false' }}" aria-controls="{{ $module->id }}">
                                 <span class="material-symbols-outlined me-3">{{ $module->icon }}</span>
                                 <span>{{ $module->name }}</span>
                             </a>
@@ -48,7 +48,7 @@
                             <div class="collapse {{ active_path($module->path) ? 'show' : '' }}" id="{{ $module->id }}">
                                 <nav class="nav nav-pills">
                                     @foreach ($module->details as $detail)
-                                        <a class="nav-link {{ active_path($detail->path) ? 'active fw-bold' : '' }}" href="{{ url($detail->path) }}">
+                                        <a class="nav-link {{ active_path($detail->path) ? 'active' : '' }}" href="{{ url($detail->path) }}">
                                             {{ $detail->name }}
                                         </a>
                                     @endforeach

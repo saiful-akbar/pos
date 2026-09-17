@@ -55,7 +55,7 @@
                     <div class="col-12">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <table id="tableCartDetail" class="table table-hover align-middle w-100"></table>
+                                <table id="tableCartDetail" class="table table-hover table-sm table-img align-middle w-100"></table>
                             </div>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <table id="tableProduct" class="table table-hover align-middle w-100"></table>
+                        <table id="tableProduct" class="table table-hover table-sm table-img align-middle w-100"></table>
                     </div>
 
                     <div class="modal-footer">
@@ -220,7 +220,9 @@
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
-                                                <img src="${app.storageImage(row.product.image)}" class="rounded avatar" alt="Produk" />
+                                                <div class="avatar">
+                                                    <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
+                                                </div>
                                                 <div class="ms-4">
                                                     <div>${row.product.code}</div>
                                                     <div class="text-body-secondary text-truncate" style="max-width: 200px;">${row.product.name}</div>
@@ -302,7 +304,10 @@
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
-                                                <img src="${app.storageImage(row.product.image)}" class="rounded avatar" alt="Produk" />
+                                                <div class="avatar">
+                                                    <img class="rounded" src="${app.storageImage(row.product.image)}" alt="Produk" />
+                                                </div>
+
                                                 <div class="ms-4">
                                                     <div>${row.product.code}</div>
                                                     <div class="text-body-secondary text-truncate" style="max-width: 100px;">${row.product.name}</div>
@@ -360,10 +365,10 @@
                                         return `
                                             <div class="btn-group w-100">
                                                 <button type="button" class="btn btn-light w-100" title="edit" data-action="edit">
-                                                    <span class="material-symbols-outlined">edit</span>
+                                                    <span class="material-symbols-outlined fs-6">edit</span>
                                                 </button>
                                                 <button type="button" class="btn btn-light w-100" title="edit" onclick="deleteCartDetail(event, '${data}')">
-                                                    <span class="material-symbols-outlined">delete</span>
+                                                    <span class="material-symbols-outlined fs-6">delete</span>
                                                 </button>
                                             </div>
                                         `;

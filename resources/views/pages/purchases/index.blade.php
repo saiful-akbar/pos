@@ -74,7 +74,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="purchaseTable" class="table table-hover align-middle w-100"></table>
+                    <table id="purchaseTable" class="table table-sm table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -141,6 +141,10 @@
              * Purchase datatable.
              */
             const purchaseTable = app.buttonDataTable('#purchaseTable', {
+                fixedColumns: {
+                    start: 0,
+                    end: 1,
+                },
                 columns: [
                     {
                         title: 'Pemasok',
@@ -166,6 +170,7 @@
                         name: 'purchases.total_quantity',
                         data: 'total_quantity',
                         className: 'text-nowrap',
+                        type: 'num',
                         render: (data) => app.numberFormat(data),
                     },
                     {
@@ -173,6 +178,7 @@
                         name: 'purchases.total_price',
                         data: 'total_price',
                         className: 'text-nowrap',
+                        type: 'num-fmt',
                         render: (data) => `Rp ${app.numberFormat(data)}`,
                     },
                     {
@@ -180,11 +186,13 @@
                         name: 'paid_amount',
                         data: 'paid_amount',
                         className: 'text-nowrap',
+                        type: 'num-fmt',
                         render: (data) => `Rp ${app.numberFormat(data)}`,
                     },
                     {
                         title: 'Kurang Bayar',
                         className: 'text-nowrap',
+                        type: 'num',
                         render: (data, type, row) => `Rp ${app.numberFormat(row.total_price - row.paid_amount)}`,
                     },
                     {
@@ -192,16 +200,30 @@
                         name: 'purchases.payment_status',
                         data: 'payment_status',
                         className: 'text-nowrap',
+                        type: 'string',
+                        render: (data) => {
+                            if (data === 'paid') return `<span class="badge bg-success-subtle text-success fw-bold">${data.toUpperCase()}</span>`;
+                            if (data === 'partial') return `<span class="badge bg-warning-subtle text-warning fw-bold">${data.toUpperCase()}</span>`;
+                            return `<span class="badge bg-danger-subtle text-danger fw-bold">${data.toUpperCase()}</span>`;
+                        }
                     },
+                    {
+                        title: `<span class="material-symbols-outlined">settings</span>`,
+                        name: 'id',
+                        data: 'id',
+                        className: 'text-center',
+                        type: 'html',
+                        orderable: false,
+                        searchable: false,
+                        render: (data) => {
+                            return `
+                                <a class="btn btn-light" href="${app.baseUrl}/transactions/purchases/${data}" role="button" title="Lihat detail" target="_blank">
+                                    <span class="material-symbols-outlined fs-6">visibility</span>
+                                </a>
+                            `;
+                        }
+                    }
                 ],
-                createdRow: (row, data, index) => {
-                    $(row).addClass('cursor-pointer');
-                    
-                    $(row).click(function (e) { 
-                        e.preventDefault();
-                        window.open(`${app.baseUrl}/transactions/purchases/${data.id}`);
-                    });
-                }
             });
 
             /**

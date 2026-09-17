@@ -69,7 +69,7 @@
             <div class="row">
                 <div class="col-12">
                     <form action="{{ route('transactions.purchases.payments.create', ['purchaseId' => $purchase->id]) }}" method="post" autocomplete="off">
-                        @csrf @method('post');
+                        @csrf @method('post')
 
                         <div class="card shadow-sm">
                             <div class="card-header">
@@ -164,7 +164,7 @@
                 <div class="col-12 mt-6">
                     <div class="card shadow-sm">
                         <div class="card-body table-responsive">
-                            <table id="paymentsTable" class="table table-hover align-middle w-100">
+                            <table id="paymentsTable" class="table table-hover table-sm align-middle w-100">
                                 <thead>
                                     <tr>
                                         <th class="text-start text-nowrap">Tanggal</th>
@@ -172,7 +172,7 @@
                                         <th class="text-start text-nowrap">Nomor Referensi</th>
                                         <th class="text-end text-nowrap">Jumlah</th>
                                         <th class="text-start text-nowrap">Catatan</th>
-                                        <th></th>
+                                        <th class="text-center"><x-icon>settings</x-icon></th>
                                     </tr>
                                 </thead>
 
@@ -185,7 +185,7 @@
                                             <td class="text-end text-nowrap">Rp {{ number_format($payment->amount) }}</td>
                                             <td class="text-start" style="width: 1000px">{{ $payment->notes }}</td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-danger btn-sm" data-action="delete" data-purchase-id="{{ $purchase->id }}" data-payment-id="{{ $payment->id }}" data-bs-toggle="tooltip" data-bs-title="Hapus">
+                                                <button type="button" class="btn btn-light" data-action="delete" data-purchase-id="{{ $purchase->id }}" data-payment-id="{{ $payment->id }}" data-bs-toggle="tooltip" data-bs-title="Hapus">
                                                     <x-icon class="fs-6">delete</x-icon>
                                                 </button>
                                             </td>

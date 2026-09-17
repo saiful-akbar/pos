@@ -22,7 +22,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="roleTable" class="table table-hover align-middle w-100"></table>
+                    <table id="roleTable" class="table table-sm table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -67,15 +67,15 @@
 
             if (updateAccess === 1) {
                 tableColumns.push({
-                    title: 'Aksi',
+                    title: '<span class="material-symbols-outlined">settings</span>',
                     data: 'id',
                     className: 'text-center text-nowrap',
                     searchable: false,
-                    orderlable: false,
+                    orderable: false,
                     render: (data) => {
                         return `
                             <a role="button" class="btn btn-light" href="${baseUrl}/master/roles/${data}/edit" title="Edit">
-                                <span class="material-symbols-outlined">edit</span>
+                                <span class="material-symbols-outlined fs-6">edit</span>
                             </a>
                         `;
                     }

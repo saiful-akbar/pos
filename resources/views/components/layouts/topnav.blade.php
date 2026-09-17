@@ -39,13 +39,13 @@
 
                 @foreach ($modules as $module)
                     <div class="nav-item dropdown ms-xl-2">
-                        <a class="nav-link dropdown-toggle {{ active_path($module->path) }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {{ active_path($module->path) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ $module->name }}
                         </a>
                         
                         <div class="dropdown-menu">
                             @foreach ($module->details as $detail)
-                                <a class="dropdown-item {{ active_path($detail->path) }}" href="{{ url($detail->path) }}">
+                                <a class="dropdown-item {{ active_path($detail->path) ? 'active' : '' }}" href="{{ url($detail->path) }}">
                                     {{ $detail->name }}
                                 </a>
                             @endforeach
