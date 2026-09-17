@@ -16,7 +16,7 @@ class SaleReturnEntity extends Entity
      */
     public function __construct(
         public readonly string $id,
-        public readonly string $saleId,
+        public readonly SaleEntity $sale,
         public readonly UserSaleValue $user,
         public readonly DateTimeInterface $transactionDate,
         public readonly int|float $totalQuantity,
@@ -35,7 +35,7 @@ class SaleReturnEntity extends Entity
     {
         return [
             'id' => $this->id,
-            'sale_id' => $this->saleId,
+            'sale' => $this->sale->toArray(),
             'user' => $this->user->toArray(),
             'transaction_date' => $this->transactionDate->format('Y-m-d'),
             'total_quantity' => $this->totalQuantity,

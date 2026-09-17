@@ -53,7 +53,6 @@ interface SaleReturnCartDetailRepositoryInterface
     /**
      * Mengambil daftar berdasarkan return cart id.
      *
-     * @param string $cartId
      * @return SaleReturnCartDetailEntity[]
      */
     public function getByCartId(string $cartId): array;

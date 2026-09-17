@@ -17,6 +17,7 @@ use App\Domain\Sale\ValueObjects\ProductSaleValue;
 use App\Domain\Sale\ValueObjects\UnitProductSaleValue;
 use App\Domain\Sale\ValueObjects\UserSaleValue;
 use App\Models\Sale;
+use DateTimeInterface;
 use Override;
 
 class SaleRepository extends Repository implements SaleRepositoryInterface
@@ -150,6 +151,32 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
             return $this->mapModelToSaleEntity(
                 model: $data,
             );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar berdasarkan rendang tanggal transaksi.
+     *
+     * @return SaleEntity[]
+     */
+    #[Override]
+    public function getByDate(DateTimeInterface $fromDate, DateTimeInterface $toDate): array
+    {
+        try {
+            return $this->model->query()
+                ->with(['user', 'customer'])
+                ->whereBetween('transaction_date', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                ->orderBy('transaction_date', 'asc')
+                ->get()
+                ->map(fn ($data) => $this->mapModelToSaleEntity($data))
+                ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

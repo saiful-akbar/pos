@@ -73,6 +73,8 @@ use App\Application\Sale\UseCases\FindSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturnsByDate;
+use App\Application\Sale\UseCases\GetSalesByDate;
 use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Application\Setting\UseCases\FindSetting;
@@ -421,6 +423,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSaleById::class => SaleRepository::class,
             CreateSaleReturnCart::class => SaleRepository::class,
             UpdateQuantityReturnCartDetail::class => SaleRepository::class,
+            GetSalesByDate::class => SaleRepository::class,
         ],
 
         // Sale detail
@@ -455,6 +458,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Sale return
         SaleReturnRepositoryInterface::class => [
             CreateSaleReturn::class => SaleReturnRepository::class,
+            GetSaleReturnsByDate::class => SaleReturnRepository::class,
         ],
 
         // Sale return Detail

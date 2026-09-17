@@ -83,6 +83,7 @@
             });
 
             $(document).ready(function() {
+                $('.flatpickr-calendar').addClass('border');
                 $('#preloader').fadeOut();
             });
         </script>

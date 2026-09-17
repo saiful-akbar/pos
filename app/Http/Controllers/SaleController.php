@@ -22,8 +22,11 @@ use App\Application\Sale\UseCases\FindSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturnsByDate;
+use App\Application\Sale\UseCases\GetSalesByDate;
 use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
+use App\Http\Requests\Sales\GetSalesByDateRequest;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\StoreSaleRequest;
 use App\Http\Requests\Sales\StoreSaleReturnCartDetailRequest;
@@ -43,14 +46,26 @@ class SaleController extends Controller
     /**
      * Menampilkan halaman POS
      */
-    public function index(): View|RedirectResponse
+    public function index(GetSalesByDateRequest $request): View|JsonResponse
     {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetSalesByDate::class)->execute(
+                    fromDate: $request->date('from_date'),
+                    toDate: $request->date('to_date'),
+                ),
+            );
+        }
+
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: 'transactions.sales',
         );
 
-        return view('pages.sales.index', compact('access'));
+        return view('pages.sales.index', [
+            'access' => $access,
+            'active' => 'sales',
+        ]);
     }
 
     /**
@@ -239,6 +254,31 @@ class SaleController extends Controller
     }
 
     /**
+     * Menampilkan halaman POS
+     */
+    public function return(GetSalesByDateRequest $request): View|JsonResponse
+    {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetSaleReturnsByDate::class)->execute(
+                    fromDate: $request->date('from_date'),
+                    toDate: $request->date('to_date'),
+                ),
+            );
+        }
+
+        $access = app(FindModuleAccessByRoute::class)->execute(
+            roleId: user()->role_id,
+            route: 'transactions.sales',
+        );
+
+        return view('pages.sales.return', [
+            'access' => $access,
+            'active' => 'return',
+        ]);
+    }
+
+    /**
      * Menampilkan halaman return cart.
      */
     public function returnCart(Request $request): View|JsonResponse
@@ -251,7 +291,7 @@ class SaleController extends Controller
             );
         }
 
-        return view('pages.sales.return', compact('cart'));
+        return view('pages.sales.return-cart', compact('cart'));
     }
 
     /**
@@ -347,9 +387,6 @@ class SaleController extends Controller
 
     /**
      * Menyimpan (insert) data pengembalian penjualan.
-     *
-     * @param StoreSaleReturnRequest $request
-     * @return RedirectResponse
      */
     public function storeReturn(StoreSaleReturnRequest $request): RedirectResponse
     {
@@ -359,7 +396,7 @@ class SaleController extends Controller
 
         return to_route('transactions.sales.return.carts')->with('alert', [
             'status' => 'success',
-            'message' => 'Transaksi pengembalian penjualan berhasil disimpan.'
+            'message' => 'Transaksi pengembalian penjualan berhasil disimpan.',
         ]);
     }
 }

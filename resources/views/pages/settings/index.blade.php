@@ -15,10 +15,10 @@
     </x-page-header>
 
     <div class="row mt-7">
-        <div class="col-12 col-lg-3">
-            <div class="card mb-7 shadow-sm">
-                <div class="card-body">
-                    <nav class="nav nav-pills position-sticky flex-column" id="settingNav" style="top: 32px">
+        <div class="col-12 col-lg-3 mb-6">
+            <div class="card shadow-sm position-sticky" style="top: 10px">
+                <div class="card-body p-3">
+                    <nav class="nav nav-pills flex-column" id="settingNav">
                         <a class="nav-link" href="#store">Toko</a>
                         <hr class="m-2">
                         <a class="nav-link" href="#application">Aplikasi</a>
@@ -30,7 +30,7 @@
         </div>
  
         <div class="col-12 col-lg-9" data-bs-spy="scroll" data-bs-target="#settingNav" data-bs-smooth-scroll="true" tabindex="0">
-            <section class="card mb-7 shadow-sm" id="store">
+            <section class="card shadow-sm mb-6" id="store">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-auto">
@@ -54,7 +54,7 @@
             </section>
 
             <!-- Application -->
-            <section class="card mb-7" id="application">
+            <section class="card mb-6 shadow-sm" id="application">
                 <div class="card-body">
                     <h2 class="fs-5 mb-1">Aplikasi</h2>
                     <p class="text-body-secondary">Informasi mengenai aplikasi</p>
@@ -80,7 +80,7 @@
             </section>
 
             <!-- Background image -->
-            <section class="card mb-7" id="application">
+            <section class="card shadow-sm" id="application">
                 <div class="card-body">
                     <h2 class="fs-5 mb-1">Gambar latar belakang</h2>
                     <p class="text-body-secondary">Gambar ini akan ditampilkan sebagai latar belakang aplikasi</p>

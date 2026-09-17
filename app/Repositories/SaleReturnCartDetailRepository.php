@@ -213,7 +213,6 @@ class SaleReturnCartDetailRepository extends Repository implements SaleReturnCar
     /**
      * Mengambil daftar berdasarkan return cart id.
      *
-     * @param string $cartId
      * @return SaleReturnCartDetailEntity[]
      */
     #[Override]
@@ -224,7 +223,7 @@ class SaleReturnCartDetailRepository extends Repository implements SaleReturnCar
                 ->with(['product', 'product.unit', 'product.category'])
                 ->where('sale_return_cart_id', $cartId)
                 ->get()
-                ->map(fn($data) => $this->mapModelToSaleReturnCartDetailEntity($data))
+                ->map(fn ($data) => $this->mapModelToSaleReturnCartDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

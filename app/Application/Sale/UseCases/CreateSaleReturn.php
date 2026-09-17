@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Sale\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
@@ -39,9 +41,6 @@ class CreateSaleReturn
 
     /**
      * Execute method.
-     *
-     * @param string $notes
-     * @return void
      */
     public function execute(?string $notes): void
     {
@@ -125,8 +124,6 @@ class CreateSaleReturn
     /**
      * Mengambil data pengembalian penjualan berdasarkan
      * user yang sedang login (aktif) saat ini.
-     *
-     * @return SaleReturnCartEntity
      */
     private function findSaleReturnCart(): SaleReturnCartEntity
     {
@@ -136,7 +133,7 @@ class CreateSaleReturn
 
         if ($result === null) {
             throw ValidationException::withMessages(messages: [
-                'message' => 'Transaksi pengembalian tidak ditemukan.'
+                'message' => 'Transaksi pengembalian tidak ditemukan.',
             ]);
         }
 

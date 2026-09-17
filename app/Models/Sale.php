@@ -97,4 +97,12 @@ class Sale extends Model
     {
         return $this->hasMany(SaleDetail::class, 'sale_id', 'id');
     }
+
+    /**
+     * Get all of the returns for the Sale
+     */
+    public function returns(): HasMany
+    {
+        return $this->hasMany(SaleReturn::class, 'sale_id', 'id');
+    }
 }

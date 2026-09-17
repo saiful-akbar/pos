@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Sales;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -17,13 +19,11 @@ class StoreSaleReturnRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'notes' => ['nullable', 'string', 'max:500']
+            'notes' => ['nullable', 'string', 'max:500'],
         ];
     }
 
@@ -31,7 +31,7 @@ class StoreSaleReturnRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'notes' => 'catatan'
+            'notes' => 'catatan',
         ];
     }
 }

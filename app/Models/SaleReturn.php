@@ -85,4 +85,12 @@ class SaleReturn extends Model
     {
         return $this->hasMany(SaleReturnDetail::class, 'sale_return_id', 'id');
     }
+
+    /**
+     * Get the sale that owns the SaleReturn
+     */
+    public function sale(): BelongsTo
+    {
+        return $this->belongsTo(Sale::class, 'sale_id', 'id');
+    }
 }

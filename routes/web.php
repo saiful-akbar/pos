@@ -201,49 +201,48 @@ Route::middleware('auth')->group(function (): void {
             ->name('.sales')
             ->prefix('sales')
             ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:transactions.sales,read');
-                Route::post('/', 'storeSale')->name('.store')->middleware('module:transactions.sales,create');
+                $module = 'module:transactions.sales';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::post('/', 'storeSale')->name('.store')->middleware("$module,create");
 
                 Route::name('.carts')
                     ->prefix('/carts')
-                    ->middleware('module:transactions.sales,create')
-                    ->group(function (): void {
-                        Route::get('/', 'carts');
-                        Route::post('/', 'storeCart')->name('.store');
-                        Route::get('/{cartId}', 'showCart')->name('.show');
-                        Route::delete('/{cartId}', 'deleteCart')->name('.delete');
-                        Route::get('/{cartId}/details', 'getCartDetailsTable')->name('.details');
-                        Route::post('/{cartId}/details', 'storeCartDetail')->name('.details.store');
-                        Route::delete('/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.details.delete');
-                        Route::patch('/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.details.update');
+                    ->group(function () use ($module): void {
+                        Route::get('/', 'carts')->middleware("$module,create");
+                        Route::post('/', 'storeCart')->name('.store')->middleware("$module,create");
+                        Route::get('/{cartId}', 'showCart')->name('.show')->middleware("$module,create");
+                        Route::delete('/{cartId}', 'deleteCart')->name('.delete')->middleware("$module,create");
+                        Route::get('/{cartId}/details', 'getCartDetailsTable')->name('.details')->middleware("$module,create");
+                        Route::post('/{cartId}/details', 'storeCartDetail')->name('.details.store')->middleware("$module,create");
+                        Route::delete('/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.details.delete')->middleware("$module,create");
+                        Route::patch('/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.details.update')->middleware("$module,create");
                     });
 
                 Route::name('.return')
                     ->prefix('/return')
-                    ->middleware('module:transactions.sales,update')
-                    ->group(function (): void {
-                        Route::post('/', 'storeReturn')->name('.store');
-                        Route::get('/carts', 'returnCart')->name('.carts');
-                        Route::post('/carts', 'storeReturnCart')->name('.carts.store');
-                        Route::delete('/casrts', 'deleteReturnCart')->name('.carts.delete');
-                        Route::get('/carts/details', 'getReturnCartDetails')->name('.carts.details');
-                        Route::post('/carts/details', 'storeReturnCartDetail')->name('.carts.details.store');
-                        Route::patch('/carts/details/{detailId}', 'updateReturnCartDetail')->name('.carts.details.update');
-                        Route::delete('/carts/details/{detailId}', 'deleteReturnCartDetail')->name('.carts.details.delete');
+                    ->group(function () use ($module): void {
+                        Route::get('/', 'return')->middleware("$module,read");
+                        Route::post('/', 'storeReturn')->name('.store')->middleware("$module,update");
+                        Route::get('/carts', 'returnCart')->name('.carts')->middleware("$module,update");
+                        Route::post('/carts', 'storeReturnCart')->name('.carts.store')->middleware("$module,update");
+                        Route::delete('/casrts', 'deleteReturnCart')->name('.carts.delete')->middleware("$module,update");
+                        Route::get('/carts/details', 'getReturnCartDetails')->name('.carts.details')->middleware("$module,update");
+                        Route::post('/carts/details', 'storeReturnCartDetail')->name('.carts.details.store')->middleware("$module,update");
+                        Route::patch('/carts/details/{detailId}', 'updateReturnCartDetail')->name('.carts.details.update')->middleware("$module,update");
+                        Route::delete('/carts/details/{detailId}', 'deleteReturnCartDetail')->name('.carts.details.delete')->middleware("$module,update");
                     });
 
                 Route::name('.receipt')
                     ->prefix('/{saleId}/receipt')
-                    ->middleware('module:transactions.sales,read')
-                    ->group(function (): void {
-                        Route::get('/', 'printReceipt')->name('.receipt');
+                    ->group(function () use ($module): void {
+                        Route::get('/', 'printReceipt')->name('.receipt')->middleware("$module,read");
                     });
 
                 Route::name('.details')
                     ->prefix('/{saleId}/details')
-                    ->middleware('module:transactions.sales,read')
-                    ->group(function (): void {
-                        Route::get('/table', 'getDetailsTable')->name('.table');
+                    ->group(function () use ($module): void {
+                        Route::get('/table', 'getDetailsTable')->name('.table')->middleware("$module,read");
                     });
             });
     });

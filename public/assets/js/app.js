@@ -293,6 +293,19 @@ class App {
       </div>
     `);
   }
+
+  /**
+   * Url
+   */
+  url(path, params = null) {
+    if (params !== null) {
+      const queryString = "?" + new URLSearchParams(data).toString();
+
+      return this.baseUrl + path + "?" + queryString;
+    }
+
+    return this.baseUrl + path;
+  }
 }
 
 window.app = new App();
