@@ -149,6 +149,58 @@ class ModuleSeeder extends Seeder
                 ],
             ],
             [
+                'name' => 'Stock Opname',
+                'icon' => 'inventory',
+                'path' => '/stock-opnames',
+                'route' => 'stockOpnames',
+                'details' => [
+                    [
+                        'name' => 'Stock Opname Harian',
+                        'path' => '/stock-opnames/daily',
+                        'route' => 'stockOpnames.daily',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Stock Opname Bulanan',
+                        'path' => '/stock-opnames/monthly',
+                        'route' => 'stockOpnames.monthly',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Laporan',
+                'icon' => 'monitoring',
+                'path' => '/reports',
+                'route' => 'reports',
+                'details' => [
+                    [
+                        'name' => 'Laporan pembelian',
+                        'path' => '/reports/purchases',
+                        'route' => 'reports.purchases',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Laporan penjualan',
+                        'path' => '/reports/sales',
+                        'route' => 'reports.sales',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Laporan pengembalian penjualan',
+                        'path' => '/reports/sales/returns',
+                        'route' => 'reports.sales.returns',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Laporan stock',
+                        'path' => '/reports/stocks',
+                        'route' => 'reports.stocks',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                ],
+            ],
+            [
                 'name' => 'Pengaturan',
                 'icon' => 'settings',
                 'path' => '/settings',

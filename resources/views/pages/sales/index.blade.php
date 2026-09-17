@@ -116,12 +116,12 @@
                                 render: (data) => {
                                     return `
                                         <a href="${app.baseUrl}/transactions/sales/${data}/receipt"
-                                            class="btn btn-sm btn-dark"
-                                            title="Cetak"
+                                            class="btn btn-light"
+                                            title="Cetak struk"
                                             target="_blank"
                                             role="button"
                                         >
-                                            <span class="material-symbols-outlined fs-6">print</span>
+                                            <span class="material-symbols-outlined fs-6">receipt</span>
                                         </a>
                                     `;
                                 },

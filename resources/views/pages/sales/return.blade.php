@@ -75,7 +75,8 @@
                             end: 1,
                         },
                         order: [
-                            [1, 'asc']
+                            [0, 'asc'],
+                            [1, 'asc'],
                         ],
                         columns: [
                             {
