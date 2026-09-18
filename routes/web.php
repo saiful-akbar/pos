@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DailyStockOpnameController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -173,7 +174,7 @@ Route::middleware('auth')->group(function (): void {
         //     });
     });
 
-    Route::name('transactions')->prefix('transactions')->group(function (): void {
+    Route::name('transactions')->prefix('/transactions')->group(function (): void {
         Route::controller(PurchaseController::class)
             ->name('.purchases')
             ->prefix('purchases')
@@ -244,6 +245,19 @@ Route::middleware('auth')->group(function (): void {
                     ->group(function () use ($module): void {
                         Route::get('/table', 'getDetailsTable')->name('.table')->middleware("$module,read");
                     });
+            });
+    });
+
+    Route::name('inventories')->prefix('/inventories')->group(function (): void {
+        Route::controller(DailyStockOpnameController::class)
+            ->name('.dailyStockOpnames')
+            ->prefix('/daily-stock-opnames')
+            ->group(function (): void {
+                $module = 'module:inventories.dailyStockOpnames';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/detail', 'detail')->name('.detail')->middleware("$module,read");
+                Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
             });
     });
 });

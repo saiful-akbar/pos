@@ -9,29 +9,22 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration
 {
     /**
-     * Database connection.
-     *
-     * @var string
-     */
-    protected $connection = 'pos';
-
-    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('stock_opname_details', function (Blueprint $table) {
+        Schema::create('monthly_stock_opname_details', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
-            $table->foreignUlid('stock_opname_id')
-                ->constrained('stock_opnames')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->foreignUlid('monthly_stock_opname_id')
+                ->constrained('monthly_stock_opnames')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
             $table->foreignUlid('product_id')
                 ->constrained('products')
-                ->restrictOnDelete()
-                ->cascadeOnUpdate();
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
             $table->integer('system_stock');
             $table->integer('physical_stock');
@@ -46,6 +39,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock_opname_details');
+        Schema::dropIfExists('monthly_stock_opname_details');
     }
 };

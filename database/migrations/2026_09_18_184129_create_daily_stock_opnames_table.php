@@ -9,27 +9,21 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration
 {
     /**
-     * Database connection.
-     *
-     * @var string
-     */
-    protected $connection = 'pos';
-
-    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('stock_opnames', function (Blueprint $table) {
+        Schema::create('daily_stock_opnames', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
             $table->foreignUlid('user_id')
-                ->constrained('users')
-                ->restrictOnDelete()
-                ->cascadeOnUpdate();
+                ->constrained('users', 'id')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-            $table->string('opname_number', 30)->unique()->comment('Format: SO2608-00001');
-            $table->dateTime('opname_date');
+            $table->date('date');
+            $table->decimal('total_item', 15, 2)->default(0);
+            $table->decimal('total_quantity', 15, 2)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -41,6 +35,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock_opnames');
+        Schema::dropIfExists('daily_stock_opnames');
     }
 };

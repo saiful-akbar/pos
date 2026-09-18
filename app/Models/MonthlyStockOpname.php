@@ -6,10 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class StockOpnameDetail extends Model
+class MonthlyStockOpname extends Model
 {
     use HasUlids, SoftDeletes;
 
@@ -39,7 +39,7 @@ class StockOpnameDetail extends Model
      *
      * @var string
      */
-    protected $table = 'stock_opname_details';
+    protected $table = 'monthly_stock_opnames';
 
     /**
      * Primary key
@@ -61,26 +61,19 @@ class StockOpnameDetail extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'stock_opname_id',
-        'product_id',
-        'system_stock',
-        'physical_stock',
-        'difference',
+        'user_id',
+        'year',
+        'month',
+        'total_item',
+        'total_quantity',
+        'notes',
     ];
 
     /**
-     * Get the stockOpname that owns the StockOpnameDetail
+     * Get all of the details for the MonthlyStockOpname
      */
-    public function stockOpname(): BelongsTo
+    public function details(): HasMany
     {
-        return $this->belongsTo(StockOpname::class, 'stock_opname_id', 'id');
-    }
-
-    /**
-     * Get the product that owns the StockOpnameDetail
-     */
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        return $this->hasMany(MonthlyStockOpname::class, 'monthly_stock_opname_id', 'id');
     }
 }
