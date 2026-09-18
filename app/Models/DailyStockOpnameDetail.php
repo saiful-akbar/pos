@@ -65,7 +65,7 @@ class DailyStockOpnameDetail extends Model
         'product_id',
         'system_stock',
         'physical_stock',
-        'different',
+        'difference',
     ];
 
     /**

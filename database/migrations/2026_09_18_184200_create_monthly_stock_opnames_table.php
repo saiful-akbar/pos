@@ -25,6 +25,7 @@ return new class() extends Migration
             $table->unsignedTinyInteger('month');
             $table->decimal('total_item', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
+            $table->decimal('total_difference', 15, 2)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

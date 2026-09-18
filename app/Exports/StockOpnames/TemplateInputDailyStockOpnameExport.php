@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports\StockOpnames;
 
 use App\Models\Product;
@@ -13,8 +15,6 @@ class TemplateInputDailyStockOpnameExport implements FromCollection, ShouldAutoS
 {
     /**
      * Heading rows
-     *
-     * @return array
      */
     #[Override]
     public function headings(): array
@@ -29,8 +29,6 @@ class TemplateInputDailyStockOpnameExport implements FromCollection, ShouldAutoS
 
     /**
      * Collections.
-     *
-     * @return Enumerable
      */
     #[Override]
     public function collection(): Enumerable

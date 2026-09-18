@@ -19,7 +19,7 @@ return new class() extends Migration
             $table->foreignUlid('monthly_stock_opname_id')
                 ->constrained('monthly_stock_opnames')
                 ->cascadeOnUpdate()
-                ->restrictOnDelete();
+                ->cascadeOnDelete();
 
             $table->foreignUlid('product_id')
                 ->constrained('products')

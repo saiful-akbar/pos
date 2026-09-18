@@ -258,6 +258,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/', 'index')->middleware("$module,read");
                 Route::get('/detail', 'detail')->name('.detail')->middleware("$module,read");
                 Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
+                Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
             });
     });
 });

@@ -19,71 +19,87 @@
         </div>
     </x-slot:header-actions>
 
-    <div class="modal" tabindex="-1" id="modalImport">
-        <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
-            <div class="modal-content border">
-                <div class="modal-header">
-                    <h5 class="modal-title">Impor Excel</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <x-button type="link" href="{{ route('inventories.dailyStockOpnames.export') }}" start-icon="download" full-width>
-                                Unduh Template Excel
-                            </x-button>
-                        </div>
-
-                        <div class="col-12 my-5">
-                            <hr>
-                        </div>
-
-                        <div class="col-12 mb-5">
-                            <x-form-input
-                                required
-                                type="text"
-                                name="date"
-                                id="date"
-                                label="Tanggal"
-                                placeholder="Tanggal"
-                                value="{{ old('date', date('Y-m-d')) }}"
-                                data-flatpickr=""
-                            />
-                        </div>
-
-                        <div class="col-12">
-                            <x-form-input
-                                required
-                                type="file"
-                                name="file"
-                                id="file"
-                                label="Unggah File"
-                                placeholder="Unggah File"
-                                accept=".xlsx"
-                            />
+    {{-- Form modal import excel --}}
+    <form id="formImport" action="{{ route('inventories.dailyStockOpnames.import') }}" method="post" autocomplete="off" enctype="multipart/form-data">
+        @csrf @method('POST')
+        
+        <div class="modal" tabindex="-1" id="modalImport">
+            <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
+                <div class="modal-content border">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Impor Excel</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+    
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <x-button type="link" href="{{ route('inventories.dailyStockOpnames.export') }}" start-icon="download" full-width>
+                                    Unduh Template Excel
+                                </x-button>
+                            </div>
+    
+                            <div class="col-12 my-5">
+                                <hr>
+                            </div>
+    
+                            <div class="col-12 mb-5">
+                                <x-form-input
+                                    required
+                                    type="text"
+                                    name="date"
+                                    id="date"
+                                    label="Tanggal"
+                                    placeholder="Tanggal"
+                                    value="{{ old('date', date('Y-m-d')) }}"
+                                    data-flatpickr=""
+                                />
+                            </div>
+    
+                            <div class="col-12 mb-5">
+                                <x-form-input
+                                    required
+                                    type="file"
+                                    name="file"
+                                    id="file"
+                                    label="File"
+                                    placeholder="File"
+                                    accept=".xlsx"
+                                />
+                            </div>
+    
+                            <div class="col-12">
+                                <x-form-input
+                                    type="textarea"
+                                    name="notes"
+                                    id="notes"
+                                    label="Catatan"
+                                    placeholder="Masukan catatan..."
+                                    value="{{ old('notes') }}"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <div class="row w-100">
-                        <div class="col-6">
-                            <x-button type="button" color="light" data-bs-dismiss="modal" start-icon="close" full-width>
-                                Close
-                            </x-button>
-                        </div>
-
-                        <div class="col-6">
-                            <x-button type="submit" color="secondary" start-icon="save" full-width>
-                                Simpan
-                            </x-button>
+                    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <x-button type="button" color="light" data-bs-dismiss="modal" start-icon="close" full-width>
+                                    Close
+                                </x-button>
+                            </div>
+    
+                            <div class="col-6">
+                                <x-button type="submit" color="secondary" start-icon="save" full-width>
+                                    Simpan
+                                </x-button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 
     <div class="row mt-6">
         <div class="col-12">
@@ -118,7 +134,8 @@
             class Service {
                 constructor() {
                     this.buttonImport = $('#buttonImport');
-                    this.modalImport = new bootstrap.Modal('#modalImport', { backdrop: 'static' });
+                    this.modalImport = new bootstrap.Modal('#modalImport');
+                    this.formImport = $('#formImport')
                 }
             }
 
@@ -132,6 +149,10 @@
                 service.modalImport.show();
                 console.log('click');
                 
+            });
+
+            service.formImport.submit(function (e) { 
+                app.showPreloader();
             });
         </script>
     </x-slot:script>
