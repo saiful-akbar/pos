@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+declare(str=1);
+
 namespace App\Domain\StockOpname\ValueObjects;
 
 use App\Base\Entity;
 use Override;
 
-class ProductStockValue extends Entity
+class UnitProductStockOpnameValue extends Entity
 {
     /**
      * Create a new class instance.
@@ -15,20 +17,21 @@ class ProductStockValue extends Entity
     public function __construct(
         public readonly string $id,
         public readonly string $code,
-        public readonly string $barcode,
-        public readonly ?string $name,
-        public readonly ?string $image,
+        public readonly string $name,
+        public readonly bool $isActive,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {
         return [
             'id' => $this->id,
             'code' => $this->code,
-            'barcode' => $this->barcode,
             'name' => $this->name,
-            'image' => $this->image,
+            'is_active' => $this->isActive,
         ];
     }
 }

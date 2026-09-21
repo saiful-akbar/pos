@@ -117,14 +117,6 @@ class Product extends Model
     }
 
     /**
-     * Get all of the stockOpnameDetails for the Product
-     */
-    public function stockOpnameDetails(): HasMany
-    {
-        return $this->hasMany(StockOpnameDetail::class, 'product_id', 'id');
-    }
-
-    /**
      * Get all of the saleCarts for the Product
      */
     public function saleCarts(): HasMany
@@ -138,5 +130,13 @@ class Product extends Model
     public function purchaseCartDetails(): HasMany
     {
         return $this->hasMany(PurchaseCartDetail::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get all of the dailyStockOpnameDetails for the Product
+     */
+    public function dailyStockOpnameDetails(): HasMany
+    {
+        return $this->hasMany(DailyStockOpnameDetail::class, 'product_id', 'id');
     }
 }

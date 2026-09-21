@@ -7,7 +7,7 @@ namespace App\Domain\StockOpname\ValueObjects;
 use App\Base\Entity;
 use Override;
 
-class UserStockValue extends Entity
+class UserStockOpnameValue extends Entity
 {
     /**
      * Create a new class instance.
@@ -20,15 +20,18 @@ class UserStockValue extends Entity
         public readonly bool $isActive,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {
         return [
             'id' => $this->id,
-            'username' => $this->username,
             'full_name' => $this->fullName,
+            'username' => $this->username,
             'photo' => $this->photo,
-            'isActive' => $this->isActive,
+            'is_active' => $this->isActive,
         ];
     }
 }

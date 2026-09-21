@@ -149,21 +149,21 @@ class ModuleSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Inventaris',
+                'name' => 'Stock Opname',
                 'icon' => 'inventory',
-                'path' => '/inventories',
-                'route' => 'inventories',
+                'path' => '/stock-opnames',
+                'route' => 'stockOpnames',
                 'details' => [
                     [
                         'name' => 'Stock Opname Harian',
-                        'path' => '/inventories/daily-stock-opnames',
-                        'route' => 'inventories.dailyStockOpnames',
+                        'path' => '/stock-opnames/daily',
+                        'route' => 'stockOpnames.daily',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
                         'name' => 'Stock Opname Bulanan',
-                        'path' => '/inventories/monthly-stock-opnames',
-                        'route' => 'inventories.monthlyStockOpnames',
+                        'path' => '/stock-opnames/monthly',
+                        'route' => 'stockOpnames.monthly',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                 ],

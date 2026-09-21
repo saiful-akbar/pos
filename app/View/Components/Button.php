@@ -22,6 +22,7 @@ class Button extends Component
         public bool $fullWidth = false,
         public bool $outline = false,
         public ?string $title = null,
+        public bool $disabled = false,
     ) {}
 
     /**

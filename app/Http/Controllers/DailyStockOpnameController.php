@@ -5,10 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
+use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
+use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
+use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
 use App\Exports\StockOpnames\TemplateInputDailyStockOpnameExport;
+use App\Http\Requests\DailyStockOpnames\GetDailyStockOpnameRequest;
 use App\Http\Requests\DailyStockOpnames\ImportDailyStockOpnameRequest;
+use App\Http\Requests\DailyStockOpnames\StoreDailyStockOpnameDetailRequest;
 use App\Imports\StockOpnames\DailyStockOpnameImport;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -18,11 +26,20 @@ class DailyStockOpnameController extends Controller
     /**
      * Menampilkan halaman utama.
      */
-    public function index(): View
+    public function index(GetDailyStockOpnameRequest $request): View|JsonResponse
     {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetDailyStockOpnameByDate::class)->execute(
+                    fromDate: $request->date('from_date'),
+                    toDate: $request->date('to_date'),
+                ),
+            );
+        }
+
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
-            route: 'inventories.dailyStockOpnames',
+            route: 'stockOpnames.daily',
         );
 
         return view('pages.daily-stock-opnames.index', compact('access'));
@@ -50,9 +67,62 @@ class DailyStockOpnameController extends Controller
             filePath: $file
         );
 
-        return to_route('inventories.dailyStockOpnames')->with('alert', [
+        return to_route('stockOpnames.daily')->with('alert', [
             'status' => 'success',
             'message' => 'Import stock opname harian berhasil.',
         ]);
+    }
+
+    /**
+     * Undocumented function
+     */
+    public function show(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return $this->jsonResponse(
+            data: app(GetDailyStockOpnameDetailByHeaderId::class)->execute(
+                headerId: $id,
+            ),
+        );
+    }
+
+    /**
+     * Menampilkan halaman edit.
+     */
+    public function edit(Request $request, string $id): View|JsonResponse
+    {
+        $dailyStockOpname = app(FindDailyStockOpnameById::class)->execute(id: $id);
+
+        if (! $dailyStockOpname) {
+            abort(404);
+        }
+
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(FindDailyStockOpnameById::class)->execute(id: $id),
+            );
+        }
+
+        return view('pages.daily-stock-opnames.edit', compact('dailyStockOpname'));
+    }
+
+    /**
+     * Menambah data daily stock opname detail.
+     */
+    public function storeDetail(StoreDailyStockOpnameDetailRequest $request, string $id): JsonResponse
+    {
+        app(CreateDailyStockOpnameDetail::class)->execute(
+            id: $id,
+            productCode: $request->validated('product_code'),
+            quantity: $request->float('quantity'),
+        );
+
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Stok produk berhasil ditambahkan.'
+        );
     }
 }

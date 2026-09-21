@@ -79,6 +79,11 @@ use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
+use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
+use App\Application\StockOpname\UseCases\ExistsDailyStockOpnameById;
+use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
+use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
+use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
 use App\Application\Supplier\UseCases\GenerateSupplierCode;
@@ -118,6 +123,8 @@ use App\Domain\Sale\Repositories\SaleReturnCartRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleReturnDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleReturnRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
+use App\Domain\StockOpname\Repositories\DailyStockOpnameDetailRepositoryInterface;
+use App\Domain\StockOpname\Repositories\DailyStockOpnameRepositoryInterface;
 use App\Domain\StockOpname\Repositories\StockMovementRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
@@ -125,6 +132,8 @@ use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Repositories\ActivityLogRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CustomerRepository;
+use App\Repositories\DailyStockOpnameDetailRepository;
+use App\Repositories\DailyStockOpnameRepository;
 use App\Repositories\DiscountRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
@@ -198,6 +207,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteSaleReturnCartDetailById::class => ErrorLogRepository::class,
             UpdateQuantityReturnCartDetail::class => ErrorLogRepository::class,
             CreateSaleReturn::class => ErrorLogRepository::class,
+            CreateDailyStockOpnameDetail::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -236,6 +246,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCart::class => ActivityLogRepository::class,
             DeleteSaleReturnCartByCurrentUser::class => ActivityLogRepository::class,
             CreateSaleReturn::class => ActivityLogRepository::class,
+            CreateDailyStockOpnameDetail::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -309,6 +320,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSale::class => ProductRepository::class,
             CreateSaleReturnCartDetail::class => ProductRepository::class,
             CreateSaleReturn::class => ProductRepository::class,
+            CreateDailyStockOpnameDetail::class => ProductRepository::class,
         ],
 
         // Customer
@@ -464,6 +476,20 @@ class RepositoryServiceProvider extends ServiceProvider
         // Sale return Detail
         SaleReturnDetailRepositoryInterface::class => [
             CreateSaleReturn::class => SaleReturnDetailRepository::class,
+        ],
+
+        // Daily stock opname
+        DailyStockOpnameRepositoryInterface::class => [
+            GetDailyStockOpnameByDate::class => DailyStockOpnameRepository::class,
+            FindDailyStockOpnameById::class => DailyStockOpnameRepository::class,
+            ExistsDailyStockOpnameById::class => DailyStockOpnameRepository::class,
+            CreateDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
+        ],
+
+        // Daily stock opname detail
+        DailyStockOpnameDetailRepositoryInterface::class => [
+            GetDailyStockOpnameDetailByHeaderId::class => DailyStockOpnameDetailRepository::class,
+            CreateDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
         ],
     ];
 

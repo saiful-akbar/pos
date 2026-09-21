@@ -22,8 +22,9 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->date('date');
-            $table->decimal('total_item', 15, 2)->default(0);
-            $table->decimal('total_quantity', 15, 2)->default(0);
+            $table->decimal('total_product', 15, 2)->default(0);
+            $table->decimal('total_system_stock', 15, 2)->default(0);
+            $table->decimal('total_physical_stock', 15, 2)->default(0);
             $table->decimal('total_difference', 15, 2)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();

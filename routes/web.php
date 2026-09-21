@@ -248,15 +248,17 @@ Route::middleware('auth')->group(function (): void {
             });
     });
 
-    Route::name('inventories')->prefix('/inventories')->group(function (): void {
+    Route::name('stockOpnames')->prefix('/stock-opnames')->group(function (): void {
         Route::controller(DailyStockOpnameController::class)
-            ->name('.dailyStockOpnames')
-            ->prefix('/daily-stock-opnames')
+            ->name('.daily')
+            ->prefix('/daily')
             ->group(function (): void {
-                $module = 'module:inventories.dailyStockOpnames';
+                $module = 'module:stockOpnames.daily';
 
                 Route::get('/', 'index')->middleware("$module,read");
-                Route::get('/detail', 'detail')->name('.detail')->middleware("$module,read");
+                Route::get('/{id}', 'show')->name('.show')->middleware("$module,read");
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$module,update");
+                Route::post('/{id}/details', 'storeDetail')->name('.details.store')->middleware("$module,update");
                 Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
                 Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
             });

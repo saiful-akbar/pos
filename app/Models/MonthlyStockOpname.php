@@ -64,8 +64,10 @@ class MonthlyStockOpname extends Model
         'user_id',
         'year',
         'month',
-        'total_item',
-        'total_quantity',
+        'total_product',
+        'total_system_stock',
+        'total_physical_stock',
+        'total_difference',
         'notes',
     ];
 

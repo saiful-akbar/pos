@@ -51,7 +51,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="productTable" class="table table-sm table-hover align-middle w-100"></table>
+                    <table id="productTable" class="table table-sm table-hover table-img align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -272,8 +272,8 @@
                         type: 'string',
                         searchable: false,
                         orderable: false,
-                        render: (data) => {
-                            return `<img src="${app.storageImage(data)}" alt="Empty" width="70" height="70" class="rounded" />`;
+                        render: (data, type, row) => {
+                            return `<img src="${app.storageImage(data)}" alt="${row.code}" class="rounded" />`;
                         }
                     },
                     {

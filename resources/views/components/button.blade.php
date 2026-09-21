@@ -21,9 +21,9 @@
     ];
 
     $merge = [
-        'type' => $type,
         'data-bs-toggle' => is_null($title) ? null : 'tooltip',
         'data-bs-title' => $title,
+        'disabled' => $disabled,
     ];
 @endphp
 
@@ -34,7 +34,7 @@
         @if ($endIcon) <x-icon class="ms-1">{{ $endIcon }}</x-icon> @endif
     </a>
 @else
-    <button {{ $attributes->class($class)->merge($merge) }}>
+    <button type="{{ $type }}" {{ $attributes->class($class)->merge($merge) }}>
         @if ($startIcon) <x-icon class="me-1">{{ $startIcon }}</x-icon> @endif
         {{ $slot }}
         @if ($endIcon) <x-icon class="ms-1">{{ $endIcon }}</x-icon> @endif

@@ -60,14 +60,23 @@ class App {
         {
           extend: "excel",
           text: `<span class="material-symbols-outlined me-1">download</span> Excel`,
+          exportOptions: {
+            columns: ":not(.no-export)",
+          },
         },
         {
           extend: "copy",
           text: `<span class="material-symbols-outlined me-1">content_copy</span> Salin`,
+          exportOptions: {
+            columns: ":not(.no-export)",
+          },
         },
         {
           extend: "print",
           text: `<span class="material-symbols-outlined me-1">print</span> Cetak`,
+          exportOptions: {
+            columns: ":not(.no-export)",
+          },
         },
       ],
       layout: {
@@ -98,7 +107,7 @@ class App {
       fixedHeader: true,
       info: false,
       scrollX: false,
-      scrollY: "400px",
+      scrollY: "450px",
       language: {
         search: "",
         searchPlaceholder: "Cari...",

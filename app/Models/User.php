@@ -123,14 +123,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all of the stockOpnames for the User
-     */
-    public function stockOpnames(): HasMany
-    {
-        return $this->hasMany(StockOpname::class, 'user_id', 'id');
-    }
-
-    /**
      * Get all of the cashTransactions for the User
      */
     public function cashTransactions(): HasMany
@@ -152,6 +144,14 @@ class User extends Authenticatable
     public function saleCarts(): HasMany
     {
         return $this->hasMany(SaleCart::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get all of the dailyStockOpnames for the User
+     */
+    public function dailyStockOpnames(): HasMany
+    {
+        return $this->hasMany(DailyStockOpname::class, 'user_id', 'id');
     }
 
     /**

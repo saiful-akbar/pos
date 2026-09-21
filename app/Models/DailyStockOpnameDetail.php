@@ -75,4 +75,12 @@ class DailyStockOpnameDetail extends Model
     {
         return $this->belongsTo(DailyStockOpname::class, 'daily_stock_opname_id', 'id');
     }
+
+    /**
+     * Get the product that owns the DailyStockOpnameDetail
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
 }

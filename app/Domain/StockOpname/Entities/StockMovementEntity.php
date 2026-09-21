@@ -6,8 +6,8 @@ namespace App\Domain\StockOpname\Entities;
 
 use App\Base\Entity;
 use App\Domain\StockOpname\Enums\TypeStockMovementEnum;
-use App\Domain\StockOpname\ValueObjects\ProductStockValue;
-use App\Domain\StockOpname\ValueObjects\UserStockValue;
+use App\Domain\StockOpname\ValueObjects\ProductStockOpnameValue;
+use App\Domain\StockOpname\ValueObjects\UserStockOpnameValue;
 use DateTimeInterface;
 use Override;
 
@@ -18,8 +18,8 @@ class StockMovementEntity extends Entity
      */
     public function __construct(
         public readonly string $id,
-        public readonly UserStockValue $user,
-        public readonly ProductStockValue $product,
+        public readonly UserStockOpnameValue $user,
+        public readonly ProductStockOpnameValue $product,
         public readonly TypeStockMovementEnum $type,
         public readonly int|float $quantity,
         public readonly int|float $stockBefore,

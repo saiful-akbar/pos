@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Imports\StockOpnames;
 
+use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
+use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\ActivityLog\UseCases\CreateActivity;
+use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Models\DailyStockOpname;
 use App\Models\DailyStockOpnameDetail;
 use App\Models\Product;
@@ -103,13 +107,16 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
         $stockOpname = DailyStockOpname::query()->create([
             'user_id' => user()->id,
             'date' => $this->date->format('Y-m-d'),
-            'total_item' => 0,
-            'total_quantity' => 0,
+            'total_product' => 0,
+            'total_system_stock' => 0,
+            'total_physical_stock' => 0,
+            'total_difference' => 0,
             'notes' => $this->notes,
         ]);
 
-        $totalItem = 0;
-        $totalQuantity = 0;
+        $totalProduct = 0;
+        $totalSystemStock = 0;
+        $totalPhysicalStock = 0;
         $totalDifference = 0;
 
         // Insert data stock opname detail
@@ -129,8 +136,9 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
                         'difference' => $difference,
                     ]);
 
-                    $totalItem += 1;
-                    $totalQuantity += $quantity;
+                    $totalProduct += 1;
+                    $totalSystemStock += $product->current_stock;
+                    $totalPhysicalStock += $quantity;
                     $totalDifference += $difference;
 
                     break;
@@ -139,12 +147,20 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
         }
 
         // Update total item dan total quantity dailt stock opname
-        DailyStockOpname::query()
-            ->where('id', $stockOpname->id)
-            ->update([
-                'total_item' => $totalItem,
-                'total_quantity' => $totalQuantity,
-                'total_difference' => $totalDifference,
-            ]);
+        $stockOpname->total_product = $totalProduct;
+        $stockOpname->total_system_stock = $totalSystemStock;
+        $stockOpname->total_physical_stock = $totalPhysicalStock;
+        $stockOpname->total_difference = $totalDifference;
+        $stockOpname->save();
+
+        // Buat catatan aktifitas
+        app(CreateActivity::class)->execute(dto: new CreateActivityDTO(
+            userId: user()->id,
+            logName: 'Import excel stock opname harian',
+            event: EventActivityEnum::CREATED,
+            attributeChanges: new AttributeActivityDTO(
+                attributes: $stockOpname->toArray(),
+            )
+        ));
     }
 }
