@@ -268,6 +268,8 @@
         </div>
     </form>
 
+
+
     {{-- Javascript --}}
     <x-slot:script>
         <script>
@@ -284,6 +286,7 @@
                     this.formMonthlyStock = $('#formMonthlyStock');
                     this.modalMonthlyStock = new bootstrap.Modal('#modalMonthlyStock');
                     this.buttonActiveStock = $('#buttonActiveStock');
+                    this.csrfToken = $('meta[name="csrf-token"]').attr('content');
                 }
 
                 /**
@@ -451,6 +454,24 @@
                     
                     window.history.pushState({}, '', url);
                 }
+
+                /**
+                 * Menjadikan daily stock sebagai stok aktif produk.
+                 */
+                setActiveStock(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "patch",
+                            url: app.url(`/stock-opnames/daily/${id}/active`),
+                            data: {
+                                _token: this.csrfToken,
+                            },
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
             }
 
             window.service = new Service();
@@ -547,10 +568,41 @@
                 const id = service.buttonEditStock.data('id');
                 window.open(`${app.baseUrl}/stock-opnames/daily/${id}/edit`);
             });
-
+            
+            /**
+             * Membuka modal untuk menjadikan daily stock sebagai monthly stock.
+             */
             service.buttonMonthlyStock.click(function (e) { 
                 e.preventDefault();
                 service.modalMonthlyStock.show();
+            });
+
+            /**
+             * Menjadikan daily stock sebagai current_stock product
+             */
+            service.buttonActiveStock.click(function (e) { 
+                e.preventDefault();
+
+                const title = 'Jadikan Stok Aktif';
+                const message = 'Stok hasil stock opname ini akan ditetapkan sebagai stok aktif produk. Nilai stok aktif saat ini akan digantikan dengan stok hasil opname.';
+                
+                app.confirm(title, message, async (result) => {
+                    if (!result) {
+                        return;
+                    }
+
+                    app.showPreloader();
+
+                    try {
+                        const response = await service.setActiveStock(service.buttonActiveStock.data('id'));
+
+                        app.alert('success', response.message);
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                })
             });
         </script>
     </x-slot:script>

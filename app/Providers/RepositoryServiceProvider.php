@@ -85,6 +85,7 @@ use App\Application\StockOpname\UseCases\ExistsDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
+use App\Application\StockOpname\UseCases\SetActiveStock;
 use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
@@ -212,6 +213,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateDailyStockOpnameDetail::class => ErrorLogRepository::class,
             DeleteDailyStockOpnameDetail::class => ErrorLogRepository::class,
             UpdateQuantityDailyStockOpnameDetail::class => ErrorLogRepository::class,
+            SetActiveStock::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -253,6 +255,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateDailyStockOpnameDetail::class => ActivityLogRepository::class,
             DeleteDailyStockOpnameDetail::class => ActivityLogRepository::class,
             UpdateQuantityDailyStockOpnameDetail::class => ActivityLogRepository::class,
+            SetActiveStock::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -327,6 +330,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCartDetail::class => ProductRepository::class,
             CreateSaleReturn::class => ProductRepository::class,
             CreateDailyStockOpnameDetail::class => ProductRepository::class,
+            SetActiveStock::class => ProductRepository::class,
         ],
 
         // Customer
@@ -492,6 +496,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
             DeleteDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
             UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
+            SetActiveStock::class => DailyStockOpnameRepository::class,
         ],
 
         // Daily stock opname detail
@@ -500,6 +505,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
             DeleteDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
             UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
+            SetActiveStock::class => DailyStockOpnameDetailRepository::class,
         ],
     ];
 

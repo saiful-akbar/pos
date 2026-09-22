@@ -38,7 +38,7 @@ class DailyStockOpnameRepository extends Repository implements DailyStockOpnameR
                 ->whereBetween('date', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                 ->orderBy('date', 'desc')
                 ->get()
-                ->map(fn($data) => $this->mapModelToDailyStockOpnameEntity($data))
+                ->map(fn ($data) => $this->mapModelToDailyStockOpnameEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

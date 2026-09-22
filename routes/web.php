@@ -260,6 +260,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
                 Route::get('/{id}', 'show')->name('.show')->middleware("$module,read");
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$module,update");
+                Route::patch('/{id}/active', 'setActiveStock')->name('.active')->middleware("$module,update");
                 Route::post('/{id}/details', 'storeDetail')->name('.details.store')->middleware("$module,update");
                 Route::delete('/{id}/details/{detailId}', 'deleteDetail')->name('.details.delete')->middleware("$module,update");
                 Route::patch('/{id}/details/{detailId}', 'updateDetail')->name('.details.update')->middleware("$module,update");

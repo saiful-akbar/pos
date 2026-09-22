@@ -40,7 +40,7 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
                 ->with(['product.category', 'product.unit'])
                 ->where('daily_stock_opname_id', '=', $headerId)
                 ->get()
-                ->map(fn($data) => $this->mapModelToDailyStockOpnameDetailEntity($data))
+                ->map(fn ($data) => $this->mapModelToDailyStockOpnameDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

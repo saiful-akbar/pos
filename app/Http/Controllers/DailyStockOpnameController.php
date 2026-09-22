@@ -10,6 +10,7 @@ use App\Application\StockOpname\UseCases\DeleteDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
+use App\Application\StockOpname\UseCases\SetActiveStock;
 use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Exports\StockOpnames\TemplateInputDailyStockOpnameExport;
 use App\Http\Requests\DailyStockOpnames\GetDailyStockOpnameRequest;
@@ -165,6 +166,22 @@ class DailyStockOpnameController extends Controller
 
         return $this->jsonResponse(
             message: 'Quantity stok berhasil diperbarui.'
+        );
+    }
+
+    /**
+     * Menjadikan daily stock sebagai stock aktif.
+     */
+    public function setActiveStock(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(SetActiveStock::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Stock opname berhasil dijadikan sebagai stok aktif produk.'
         );
     }
 }

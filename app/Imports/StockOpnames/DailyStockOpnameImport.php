@@ -72,7 +72,7 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
 
         if ($duplicateCodes->isNotEmpty()) {
             throw ValidationException::withMessages(messages: [
-                'file' => 'Terdapat duplikat kode produk: ' . $duplicateCodes->implode(', '),
+                'file' => 'Terdapat duplikat kode produk: '.$duplicateCodes->implode(', '),
             ]);
         }
 
@@ -87,7 +87,7 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
 
         if ($differenceCodes->isNotEmpty()) {
             throw ValidationException::withMessages(messages: [
-                'file' => 'Kode produk tidak terdaftar atau tidak aktif: ' . $differenceCodes->implode(', '),
+                'file' => 'Kode produk tidak terdaftar atau tidak aktif: '.$differenceCodes->implode(', '),
             ]);
         }
 

@@ -315,6 +315,36 @@ class App {
 
     return this.baseUrl + path;
   }
+
+  /**
+   * Alert confirm untuk delete.
+   */
+  confirm(title, message, callback) {
+    bootbox.confirm({
+      onEscape: true,
+      backdrop: true,
+      title: title,
+      message: message,
+      className: "modal-bootbox",
+      buttons: {
+        cancel: {
+          className: "btn btn-light",
+          label: `
+            <span class="material-symbols-outlined me-1">close</span>
+            <span>Batal</span>
+          `,
+        },
+        confirm: {
+          className: "btn btn-secondary",
+          label: `
+            <span class="material-symbols-outlined me-1">check</span>
+            <span>Ya</span>
+          `,
+        },
+      },
+      callback: (result) => callback(result),
+    });
+  }
 }
 
 window.app = new App();
