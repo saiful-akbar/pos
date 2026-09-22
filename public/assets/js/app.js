@@ -219,7 +219,7 @@ class App {
    */
   numberFormat(number) {
     const intl = new Intl.NumberFormat("id-ID", {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
 
@@ -310,7 +310,7 @@ class App {
     if (params !== null) {
       const queryString = "?" + new URLSearchParams(data).toString();
 
-      return this.baseUrl + path + "?" + queryString;
+      return this.baseUrl + path + queryString;
     }
 
     return this.baseUrl + path;

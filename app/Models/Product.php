@@ -139,4 +139,12 @@ class Product extends Model
     {
         return $this->hasMany(DailyStockOpnameDetail::class, 'product_id', 'id');
     }
+
+    /**
+     * Get all of the monthlyStockOpnamedetails for the Product
+     */
+    public function monthlyStockOpnamedetails(): HasMany
+    {
+        return $this->hasMany(MonthlyStockOpnameDetail::class, 'product_id', 'id');
+    }
 }

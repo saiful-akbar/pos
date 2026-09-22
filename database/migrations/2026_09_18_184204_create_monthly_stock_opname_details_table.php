@@ -26,9 +26,7 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-            $table->decimal('system_stock', 15, 2);
-            $table->decimal('physical_stock', 15, 2);
-            $table->decimal('difference', 15, 2);
+            $table->decimal('quantity', 15, 2);
             $table->timestamps();
             $table->softDeletes();
         });

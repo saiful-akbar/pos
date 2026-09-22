@@ -30,7 +30,7 @@
 
                         <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
                             <span class="text-body-secondary">Total Stok</span>
-                            <span class="fw-bold" id="totalPhysicalStock">{{ number_format($dailyStockOpname->totalPhysicalStock) }}</span>
+                            <span class="fw-bold" id="totalQuantity">{{ number_format($dailyStockOpname->totalQuantity) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -40,7 +40,7 @@
         <div class="col-12 col-lg-8">
             <div class="row">
                 <div class="col-12">
-                    <form action="{{ route('stockOpnames.daily.details.store', ['id' => $dailyStockOpname->id]) }}" method="POST" name="create_detail" autocomplete="off">
+                    <form action="{{ route('stockOpnames.daily.details.store', ['id' => $dailyStockOpname->id]) }}" method="POST" id="formCreateDetail" autocomplete="off">
                         @csrf @method('POST')
 
                         <div class="card shadow-sm">
@@ -138,6 +138,46 @@
         </div>
     </div>
 
+    {{-- Form modal edit quantity --}}
+    <form action="#" method="post" id="formEditDetail" autocomplete="off">
+        @csrf @method('patch')
+
+        <div class="modal" tabindex="-1" id="modalEditDetail">
+            <div class="modal-dialog">
+                <div class="modal-content border">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ubah Quantity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+    
+                    <div class="modal-body">
+                        <input type="number" name="quantity" id="editQuantity"
+                            class="form-control" min="0" data-invalid="quantity"
+                            placeholder="Masukan quantity..." required>
+
+                        <div class="invalid-feedback" data-invalid-feedback="quantity"></div>
+                    </div>
+    
+                    <div class="modal-footer">
+                        <div class="row w-100">
+                            <div class="col-6">
+                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>
+                                    Tutup
+                                </x-button>
+                            </div>
+    
+                            <div class="col-6">
+                                <x-button type="submit" color="secondary" startIcon="save" fullWidth>
+                                    Simpan
+                                </x-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     {{-- Javascript --}}
     <x-slot:script>
         <script>
@@ -149,7 +189,10 @@
                     this.productButton = $('#productButton');
                     this.productModal = new bootstrap.Modal('#productModal');
                     this.productTable = this.productTable();
-                    this.formCreateDetail = $('form[name="create_detail"]')
+                    this.formCreateDetail = $('#formCreateDetail');
+                    this.csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    this.formEditDetail = $('#formEditDetail');
+                    this.modalEditDetail = new bootstrap.Modal('#modalEditDetail');
                 }
 
                 /**
@@ -223,9 +266,8 @@
                 detailTable() {
                     return app.buttonDataTable('#detailTable', {
                         info: false,
-                        ordering: false,
                         fixedColumns: {
-                            start: 1,
+                            start: 0,
                             end: 1,
                         },
                         columns: [
@@ -233,14 +275,14 @@
                                 title: 'Kode Produk',
                                 name: 'product.code',
                                 data: 'product.code',
-                                className: 'text-nowrap text-start px-3',
+                                className: 'text-nowrap px-5',
                                 type: 'string',
                             },
                             {
-                                title: 'Stok',
-                                name: 'physical_stock',
-                                data: 'physical_stock',
-                                className: 'text-nowrap text-start px-3',
+                                title: 'Quantity',
+                                name: 'quantity',
+                                data: 'quantity',
+                                className: 'text-nowrap px-5',
                                 type: 'num',
                                 render: (data) => app.numberFormat(data),
                             },
@@ -255,10 +297,10 @@
                                 render: (data, type, row) => {
                                     return `
                                         <div class="btn-group w-100">
-                                            <button type="button" class="btn btn-light w-100" title="Edit">
+                                            <button type="button" class="btn btn-light w-100" title="Edit" data-action="edit">
                                                 <span class="material-symbols-outlined fs-6">edit</span>
                                             </button>
-                                            <button type="button" class="btn btn-light w-100" title="Hapus">
+                                            <button type="button" class="btn btn-light w-100" title="Hapus" data-action="delete">
                                                 <span class="material-symbols-outlined fs-6">delete</span>
                                             </button>
                                         </div>
@@ -266,6 +308,21 @@
                                 }
                             }
                         ],
+                        createdRow: (row, data, index) => {
+                            $(row).find('[data-action="edit"]').click((e) => {
+                                e.preventDefault();
+                                service.formEditDetail.attr('action', app.url(`/stock-opnames/daily/${this.id}/details/${data.id}`));
+                                service.formEditDetail.find('[data-invalid]').removeClass('is-invalid');
+                                service.formEditDetail.find('[data-invalid-feedback]').text('');
+                                service.formEditDetail.find('input[name="quantity"]').val(app.numberFormat(data.quantity));
+                                service.modalEditDetail.show();
+                            });
+
+                            $(row).find('[data-action="delete"]').click((e) => {
+                                e.preventDefault();
+                                deleteStockOpnameDetail(data.id);
+                            });
+                        }
                     });
                 }
 
@@ -282,14 +339,11 @@
 
                                 $('#date').text(app.dateFormat(stock.date));
                                 $('#totalProduct').text(app.numberFormat(stock.total_product));
-                                $('#totalPhysicalStock').text(app.numberFormat(stock.total_physical_stock));
+                                $('#totalQuantity').text(app.numberFormat(stock.total_quantity));
 
                                 resolve(response);
                             },
                             error: (error) => {
-                                const { message } = error.responseJSON;
-
-                                app.alert('danger', message);
                                 reject(error.responseJSON);
                             }
                         });
@@ -320,32 +374,50 @@
                 /**
                  * Create detail
                  */
-                createDetail() {
-                    this.formCreateDetail.find('[data-invalid]').removeClass('is-invalid');
-                    this.formCreateDetail.find('[data-invalid-feelback]').text('');
-
+                createStockOpnameDetail() {
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             type: "POST",
                             url: this.formCreateDetail.attr('action'),
                             data: this.formCreateDetail.serialize(),
                             dataType: "json",
-                            success: (response) => {
-                                this.formCreateDetail.trigger('reset');
-                                app.alert('success', response.message);
-                                resolve(response);
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
+                }
+
+                /**
+                 * Menghapus stock opname detail
+                 */
+                deleteStockOpnameDetail(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "DELETE",
+                            url: app.url(`/stock-opnames/daily/${this.id}/details/${id}`),
+                            data: {
+                                _token: this.csrfToken,
+                                _method: 'DELETE',
                             },
-                            error: (error) => {
-                                const { errors, message } = error.responseJSON;
-                                
-                                Object.entries(errors).forEach(([field, message]) => {
-                                    this.formCreateDetail.find(`[data-invalid="${field}"]`).addClass('is-invalid');
-                                    this.formCreateDetail.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
-                                })
-                                
-                                app.alert('danger', message);
-                                reject(error.responseJSON);
-                            },
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
+                }
+
+                /**
+                 * Update quantity daily stock opname detail.
+                 */
+                updateQuantityDailyStockOpnameDetail() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "PATCH",
+                            url: this.formEditDetail.attr('action'),
+                            data: this.formEditDetail.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
                         });
                     })
                 }
@@ -357,9 +429,17 @@
 
 
         <script>
-            $(document).ready(function () {
-                service.findStockOpname();
-                service.getStockOpnameDetails();
+            $(document).ready(async function () {
+                app.showPreloader();
+
+                try {
+                    await service.findStockOpname();
+                    await service.getStockOpnameDetails();
+                } catch (error) {
+                    app.alert('danger', error.message);
+                } finally {
+                    app.hidePreloader();
+                }
             });
 
             /**
@@ -385,13 +465,84 @@
                 e.preventDefault();
                 app.showPreloader();
 
+                service.formCreateDetail.find('[data-invalid]').removeClass('is-invalid');
+                service.formCreateDetail.find('[data-invalid-feelback]').text('');
+
                 try {
-                    await service.createDetail();
+                    const response = await service.createStockOpnameDetail();
+                    
                     await service.findStockOpname();
                     await service.getStockOpnameDetails();
+                    
+                    app.alert('success', response.message);
+                    service.formCreateDetail.trigger('reset');
+                } catch(error) {
+                    app.alert('danger', error.message);
+
+                    Object.entries(error.errors).forEach(([field, message]) => {
+                        service.formCreateDetail.find(`[data-invalid="${field}"]`).addClass('is-invalid');
+                        service.formCreateDetail.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
+                    });
                 } finally {
                     app.hidePreloader();
                 }
+            });
+
+            /**
+             * Fungsi untuk menghapus stock opname detail
+             */
+            const deleteStockOpnameDetail = (id) => {
+                app.delete('Stok', async (deleted) => {
+                    if (!deleted) {
+                        return;
+                    }
+
+                    app.showPreloader();
+
+                    try {
+                        const response = await service.deleteStockOpnameDetail(id);
+
+                        await service.findStockOpname();
+                        await service.getStockOpnameDetails();
+
+                        app.alert('success', response.message);
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                });
+            }
+
+            /**
+             * Submit form edit daily stock opname detail.
+             */
+            service.formEditDetail.submit(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+
+                service.formEditDetail.find(`[data-invalid]`).removeClass('is-invalid');
+                service.formEditDetail.find(`[data-invalid-feedback]`).text('');
+
+                try {
+                    const response = await service.updateQuantityDailyStockOpnameDetail();
+
+                    await service.findStockOpname();
+                    await service.getStockOpnameDetails();
+
+                    app.alert('success', response.message);
+                    service.modalEditDetail.hide();
+                } catch (error) {
+                    app.alert('danger', error.message);
+
+                    Object.entries(error.errors).forEach(([field, message]) => {
+                        service.formEditDetail.find(`[data-invalid="${field}"]`).addClass('is-invalid');
+                        service.formEditDetail.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
+                    });
+                } finally {
+                    app.hidePreloader();
+                }
+                
             });
         </script>
     </x-slot:script>

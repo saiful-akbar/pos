@@ -80,10 +80,12 @@ use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
+use App\Application\StockOpname\UseCases\DeleteDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\ExistsDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
+use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
 use App\Application\Supplier\UseCases\GenerateSupplierCode;
@@ -208,6 +210,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateQuantityReturnCartDetail::class => ErrorLogRepository::class,
             CreateSaleReturn::class => ErrorLogRepository::class,
             CreateDailyStockOpnameDetail::class => ErrorLogRepository::class,
+            DeleteDailyStockOpnameDetail::class => ErrorLogRepository::class,
+            UpdateQuantityDailyStockOpnameDetail::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -247,6 +251,8 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteSaleReturnCartByCurrentUser::class => ActivityLogRepository::class,
             CreateSaleReturn::class => ActivityLogRepository::class,
             CreateDailyStockOpnameDetail::class => ActivityLogRepository::class,
+            DeleteDailyStockOpnameDetail::class => ActivityLogRepository::class,
+            UpdateQuantityDailyStockOpnameDetail::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -484,12 +490,16 @@ class RepositoryServiceProvider extends ServiceProvider
             FindDailyStockOpnameById::class => DailyStockOpnameRepository::class,
             ExistsDailyStockOpnameById::class => DailyStockOpnameRepository::class,
             CreateDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
+            DeleteDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
+            UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
         ],
 
         // Daily stock opname detail
         DailyStockOpnameDetailRepositoryInterface::class => [
             GetDailyStockOpnameDetailByHeaderId::class => DailyStockOpnameDetailRepository::class,
             CreateDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
+            DeleteDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
+            UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
         ],
     ];
 

@@ -256,11 +256,13 @@ Route::middleware('auth')->group(function (): void {
                 $module = 'module:stockOpnames.daily';
 
                 Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
+                Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
                 Route::get('/{id}', 'show')->name('.show')->middleware("$module,read");
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$module,update");
                 Route::post('/{id}/details', 'storeDetail')->name('.details.store')->middleware("$module,update");
-                Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
-                Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
+                Route::delete('/{id}/details/{detailId}', 'deleteDetail')->name('.details.delete')->middleware("$module,update");
+                Route::patch('/{id}/details/{detailId}', 'updateDetail')->name('.details.update')->middleware("$module,update");
             });
     });
 });

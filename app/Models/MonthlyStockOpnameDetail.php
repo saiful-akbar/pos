@@ -63,9 +63,7 @@ class MonthlyStockOpnameDetail extends Model
     protected $fillable = [
         'monthly_stock_opname_id',
         'product_id',
-        'system_stock',
-        'physical_stock',
-        'different',
+        'quantity',
     ];
 
     /**
@@ -74,5 +72,13 @@ class MonthlyStockOpnameDetail extends Model
     public function monthlyStockOpname(): BelongsTo
     {
         return $this->belongsTo(MonthlyStockOpname::class, 'monthly_stock_opname_id', 'id');
+    }
+
+    /**
+     * Get the product that owns the MonthlyStockOpnameDetail
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

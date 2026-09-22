@@ -42,7 +42,12 @@ class CreateDailyStockOpnameDetail
         try {
             $dailyStockOpname = $this->findDailyStockOpname($id);
             $product = $this->findProduct($productCode);
-            $exists = $this->existsDailyStockOpnameDetail(headerId: $dailyStockOpname->id, productId: $product->id);
+
+            // Periksa apakah stok dengan produk yang dikirim sudah ada atau belum.
+            $exists = $this->dailyStockOpnameDetailRepository->existsByHeaderAndProduct(
+                headerId: $dailyStockOpname->id,
+                productId: $product->id,
+            );
 
             if ($exists) {
                 throw ValidationException::withMessages(messages: [
@@ -55,15 +60,13 @@ class CreateDailyStockOpnameDetail
                 value: new DailyStockOpnameDetailDTO(
                     dailyStockOpnameId: $dailyStockOpname->id,
                     productId: $product->id,
-                    systemStock: $product->currentStock,
-                    physicalStock: $quantity,
+                    quantity: $quantity,
                 ),
             );
 
             // Ambil total
-            $totalProduct = $this->dailyStockOpnameDetailRepository->countProductByHeaderId($dailyStockOpname->id);
-            $totalSystemStock = $this->dailyStockOpnameDetailRepository->sumSystemStockByHeaderId($dailyStockOpname->id);
-            $totalPhysicalStock = $this->dailyStockOpnameDetailRepository->sumPhysicalStockByHeaderId($dailyStockOpname->id);
+            $totalProduct = $this->dailyStockOpnameDetailRepository->countProductByHeader($dailyStockOpname->id);
+            $totalQuantity = $this->dailyStockOpnameDetailRepository->sumQuantityByHeader($dailyStockOpname->id);
 
             // Update daily stock opname
             $this->dailyStockOpnameRepository->update(
@@ -72,8 +75,7 @@ class CreateDailyStockOpnameDetail
                     userId: $dailyStockOpname->user->id,
                     date: $dailyStockOpname->date,
                     totalProduct: $totalProduct,
-                    totalSystemStock: $totalSystemStock,
-                    totalPhysicalStock: $totalPhysicalStock,
+                    totalQuantity: $totalQuantity,
                 ),
             );
 
@@ -133,16 +135,5 @@ class CreateDailyStockOpnameDetail
         }
 
         return $result;
-    }
-
-    /**
-     * Mengambil data daily stock opname detail berdasarkan id header dan id product.
-     */
-    private function existsDailyStockOpnameDetail(string $headerId, string $productId): bool
-    {
-        return $this->dailyStockOpnameDetailRepository->existsByHeaderAndProduct(
-            headerId: $headerId,
-            productId: $productId,
-        );
     }
 }

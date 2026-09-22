@@ -155,6 +155,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all of the monthlyStockOpnames for the User
+     */
+    public function monthlyStockOpnames(): HasMany
+    {
+        return $this->hasMany(MonthlyStockOpname::class, 'user_id', 'id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

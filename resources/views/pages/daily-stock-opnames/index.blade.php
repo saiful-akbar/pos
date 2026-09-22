@@ -237,8 +237,8 @@
                             },
                             {
                                 title: 'Total Quantity',
-                                name: 'total_physical_stock',
-                                data: 'total_physical_stock',
+                                name: 'total_quantity',
+                                data: 'total_quantity',
                                 className: 'text-nowrap px-3',
                                 type: 'num',
                                 render: (data) => app.numberFormat(data),
@@ -288,36 +288,19 @@
                                 footer: 'Total'
                             },
                             {
-                                title: 'Balance',
-                                name: 'system_stock',
-                                data: 'system_stock',
+                                title: 'Quantity',
+                                name: 'quantity',
+                                data: 'quantity',
                                 className: 'text-nowrap px-3',
                                 type: 'num',
-                            },
-                            {
-                                title: 'Stok Fisik',
-                                name: 'physical_stock',
-                                data: 'physical_stock',
-                                className: 'text-nowrap px-3',
-                                type: 'num',
-                            },
-                            {
-                                title: 'Selisih',
-                                name: 'difference',
-                                data: 'difference',
-                                className: 'text-nowrap px-3',
-                                type: 'num',
+                                render: (data) => app.numberFormat(data),
                             },
                         ],
                         footerCallback: function(row, data, start, end) {
                             const api = this.api();
-                            const totalSystemStock = api.column(1).data().reduce((a, b) => a+b, 0);
-                            const totalPhysicalStock = api.column(2).data().reduce((a, b) => a+b, 0);
-                            const totalDifference = api.column(3).data().reduce((a, b) => a+b, 0);
+                            const totalQuantity = api.column(1).data().reduce((a, b) => a + b, 0);
 
-                            $(api.column(1).footer()).text(app.numberFormat(totalSystemStock));
-                            $(api.column(2).footer()).text(app.numberFormat(totalPhysicalStock));
-                            $(api.column(3).footer()).text(app.numberFormat(totalDifference));
+                            $(api.column(1).footer()).text(app.numberFormat(totalQuantity));
                         }
                     });
                 }

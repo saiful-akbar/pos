@@ -65,9 +65,7 @@ class DailyStockOpname extends Model
         'user_id',
         'date',
         'total_product',
-        'total_system_stock',
-        'total_physical_stock',
-        'total_difference',
+        'total_quantity',
         'notes',
     ];
 

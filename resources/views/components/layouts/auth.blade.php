@@ -84,6 +84,7 @@
 
             $(document).ready(function() {
                 $('.flatpickr-calendar').addClass('border');
+                $('.modal-content').addClass('border');
                 $('#preloader').fadeOut();
             });
         </script>

@@ -6,13 +6,16 @@ namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
+use App\Application\StockOpname\UseCases\DeleteDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
+use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Exports\StockOpnames\TemplateInputDailyStockOpnameExport;
 use App\Http\Requests\DailyStockOpnames\GetDailyStockOpnameRequest;
 use App\Http\Requests\DailyStockOpnames\ImportDailyStockOpnameRequest;
 use App\Http\Requests\DailyStockOpnames\StoreDailyStockOpnameDetailRequest;
+use App\Http\Requests\DailyStockOpnames\UpdateQuantityDailyStockOpnameDetailRequest;
 use App\Imports\StockOpnames\DailyStockOpnameImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -123,6 +126,45 @@ class DailyStockOpnameController extends Controller
         return $this->jsonResponse(
             status: 201,
             message: 'Stok produk berhasil ditambahkan.'
+        );
+    }
+
+    /**
+     * Menghapus data daily stock opname detail.
+     */
+    public function deleteDetail(Request $request, string $headerId, string $detailId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(DeleteDailyStockOpnameDetail::class)->execute(
+            headerId: $headerId,
+            detailId: $detailId,
+        );
+
+        return $this->jsonResponse(
+            message: 'Stok berhasil dihapus.',
+        );
+    }
+
+    /**
+     * Update quantity daily stock opname detail.
+     */
+    public function updateDetail(UpdateQuantityDailyStockOpnameDetailRequest $request, string $headerId, string $detailId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(UpdateQuantityDailyStockOpnameDetail::class)->execute(
+            headerId: $headerId,
+            detailId: $detailId,
+            quantity: $request->float('quantity'),
+        );
+
+        return $this->jsonResponse(
+            message: 'Quantity stok berhasil diperbarui.'
         );
     }
 }

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -65,9 +66,7 @@ class MonthlyStockOpname extends Model
         'year',
         'month',
         'total_product',
-        'total_system_stock',
-        'total_physical_stock',
-        'total_difference',
+        'total_quantity',
         'notes',
     ];
 
@@ -77,5 +76,13 @@ class MonthlyStockOpname extends Model
     public function details(): HasMany
     {
         return $this->hasMany(MonthlyStockOpname::class, 'monthly_stock_opname_id', 'id');
+    }
+
+    /**
+     * Get the user that owns the MonthlyStockOpname
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
