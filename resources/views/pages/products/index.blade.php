@@ -295,7 +295,7 @@
                         name: 'products.name',
                         data: 'name',
                         type: 'string',
-                        width: '300px'
+                        width: '300px',
                     },
                     {
                         title: 'Kode Kategori',
@@ -406,7 +406,7 @@
                         render: (data) => {
                             if (updateAccess === 1) {
                                 return `
-                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light">
+                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light" title="Edit">
                                         <span class="material-symbols-outlined fs-6">edit</span>
                                     </a>
                                 `;

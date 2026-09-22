@@ -15,7 +15,9 @@ class DailyStockOpnameDetailDTO extends DTO
     public function __construct(
         public readonly string $dailyStockOpnameId,
         public readonly string $productId,
-        public readonly int|float $quantity,
+        public readonly int|float $systemStock,
+        public readonly int|float $physicalStock,
+        public readonly int|float $difference,
     ) {}
 
     /**
@@ -27,7 +29,9 @@ class DailyStockOpnameDetailDTO extends DTO
         return [
             'daily_stock_opname_id' => $this->dailyStockOpnameId,
             'product_id' => $this->productId,
-            'quantity' => $this->quantity,
+            'system_stock' => $this->systemStock,
+            'physical_stock' => $this->physicalStock,
+            'difference' => $this->difference,
         ];
     }
 }

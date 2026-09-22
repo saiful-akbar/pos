@@ -52,12 +52,12 @@ interface DailyStockOpnameDetailRepositoryInterface
     public function countProductByHeader(string $headerId): int|float;
 
     /**
-     * Menghitung total quantity.
+     * Menghitung total stok system berdasarkan id header (daily_stock_opnames)
      */
-    public function sumQuantityByHeader(string $headerId): int|float;
+    public function sumSystemStockByHeader(string $headerId): int|float;
 
     /**
-     * Update quantity
+     * Menghitung total stok fisik berdasarkan id header (daily_stock_opnames)
      */
-    public function updateQuantity(string $id, int|float $quantity): int;
+    public function sumPhysicalStockByHeader(string $headerId): int|float;
 }

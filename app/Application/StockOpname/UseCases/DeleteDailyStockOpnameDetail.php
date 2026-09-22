@@ -55,18 +55,21 @@ class DeleteDailyStockOpnameDetail
             // Hapus stock opname detail.
             $this->dailyStockDetailRepository->deleteById($detailId);
 
-            // Hitung total produk dan quantity setelah dihapus.
-            $totalProduk = $this->dailyStockDetailRepository->countProductByHeader($dailyStockDetail->dailyStockOpnameId);
-            $totalQuantity = $this->dailyStockDetailRepository->sumQuantityByHeader($dailyStockDetail->dailyStockOpnameId);
+            // Hitung total produk, stok system dan stock fisik setelah quantity dirubah.
+            $totalProduct = $this->dailyStockDetailRepository->countProductByHeader($headerId);
+            $totalSystemStock = $this->dailyStockDetailRepository->sumSystemStockByHeader($headerId);
+            $totalPhysicalStock = $this->dailyStockDetailRepository->sumPhysicalStockByHeader($headerId);
 
-            // Update total produk dan quantity pada daily stock opname.
+            // Update total produk, total stok system, total stok fisik dan total difference
             $this->dailyStockRepository->update(
-                id: $dailyStockDetail->dailyStockOpnameId,
+                id: $headerId,
                 value: new DailyStockOpnameDTO(
-                    userId: $dailyStock->user->id,
+                    userId: user()->id,
                     date: $dailyStock->date,
-                    totalProduct: $totalProduk,
-                    totalQuantity: $totalQuantity,
+                    totalProduct: $totalProduct,
+                    totalSystemStock: $totalSystemStock,
+                    totalPhysicalStock: $totalPhysicalStock,
+                    totalDifference: $totalPhysicalStock - $totalSystemStock,
                 ),
             );
 

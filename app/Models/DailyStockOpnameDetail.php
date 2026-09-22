@@ -63,7 +63,9 @@ class DailyStockOpnameDetail extends Model
     protected $fillable = [
         'daily_stock_opname_id',
         'product_id',
-        'quantity',
+        'system_stock',
+        'physical_stock',
+        'difference',
     ];
 
     /**

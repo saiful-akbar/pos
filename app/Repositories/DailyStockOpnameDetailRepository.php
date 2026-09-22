@@ -40,7 +40,7 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
                 ->with(['product.category', 'product.unit'])
                 ->where('daily_stock_opname_id', '=', $headerId)
                 ->get()
-                ->map(fn ($data) => $this->mapModelToDailyStockOpnameDetailEntity($data))
+                ->map(fn($data) => $this->mapModelToDailyStockOpnameDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -215,15 +215,15 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
     }
 
     /**
-     * Menghitung total quantity.
+     * Menghitung total stok system berdasarkan id header (daily_stock_opnames)
      */
     #[Override]
-    public function sumQuantityByHeader(string $headerId): int|float
+    public function sumSystemStockByHeader(string $headerId): int|float
     {
         try {
             return (float) $this->model->query()
                 ->where('daily_stock_opname_id', $headerId)
-                ->sum('quantity');
+                ->sum('system_stock');
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -235,15 +235,15 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
     }
 
     /**
-     * Update quantity
+     * Menghitung total stok fisik berdasarkan id header (daily_stock_opnames)
      */
     #[Override]
-    public function updateQuantity(string $id, int|float $quantity): int
+    public function sumPhysicalStockByHeader(string $headerId): int|float
     {
         try {
-            return $this->model->query()
-                ->where('id', $id)
-                ->update(['quantity' => $quantity]);
+            return (float) $this->model->query()
+                ->where('daily_stock_opname_id', $headerId)
+                ->sum('physical_stock');
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -311,7 +311,9 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
             id: $model->id,
             dailyStockOpnameId: $model->daily_stock_opname_id,
             product: $this->mapModelToProductStockOpnameValue($model->product),
-            quantity: parse_float($model->quantity),
+            systemStock: parse_float($model->system_stock),
+            physicalStock: parse_float($model->physical_stock),
+            difference: parse_float($model->difference),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

@@ -24,13 +24,23 @@
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
-                            <span class="text-body-secondary">Total Produk</span>
+                            <span class="text-body-secondary">Total produk</span>
                             <span class="fw-bold" id="totalProduct">{{ number_format($dailyStockOpname->totalProduct) }}</span>
                         </li>
 
                         <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
-                            <span class="text-body-secondary">Total Stok</span>
-                            <span class="fw-bold" id="totalQuantity">{{ number_format($dailyStockOpname->totalQuantity) }}</span>
+                            <span class="text-body-secondary">Total stock system</span>
+                            <span class="fw-bold" id="totalSystemStock">{{ number_format($dailyStockOpname->totalSystemStock) }}</span>
+                        </li>
+
+                        <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
+                            <span class="text-body-secondary">Total stock fisik</span>
+                            <span class="fw-bold" id="totalPhysicalStock">{{ number_format($dailyStockOpname->totalPhysicalStock) }}</span>
+                        </li>
+
+                        <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
+                            <span class="text-body-secondary">Total Selisih</span>
+                            <span class="fw-bold" id="totalDifference">{{ number_format($dailyStockOpname->totalDifference) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -38,75 +48,13 @@
         </div>
 
         <div class="col-12 col-lg-8">
-            <div class="row">
-                <div class="col-12">
-                    <form action="{{ route('stockOpnames.daily.details.store', ['id' => $dailyStockOpname->id]) }}" method="POST" id="formCreateDetail" autocomplete="off">
-                        @csrf @method('POST')
-
-                        <div class="card shadow-sm">
-                            <div class="card-header">
-                                <h3 class="fs-5 m-0">Tambah Stok</h3>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12 col-lg-6 mb-6 mb-lg-0">
-                                        <div class="input-group" data-invalid="product_code">
-                                            <div class="form-floating">
-                                                <input type="text" name="product_code" data-invalid="product_code" id="productCode"
-                                                    class="form-control" placeholder="Kode Produk" required>
-                                                
-                                                <label for="productCode">
-                                                    Kode Produk <span class="text-danger">*</span>
-                                                </label>
-                                            </div>
-            
-                                            <x-button type="button" data-bs-toggle="tooltip" data-bs-title="Pilih produk" id="productButton">
-                                                <x-icon class="fs-6 text-secondary">table</x-icon>
-                                            </x-button>
-                                        </div>
-            
-                                        <div class="invalid-feedback" data-invalid-feedback="product_code"></div>
-                                    </div>
-            
-                                    <div class="col-12 col-lg-6">
-                                        <div class="form-floating" data-invalid="quantity">
-                                            <input type="number" name="quantity" id="quantity" data-invalid="quantity"
-                                                class="form-control" placeholder="Quantity" required>
-                                            
-                                            <label for="quantity">
-                                                Quantity <span class="text-danger">*</span>
-                                            </label>
-                                        </div>
-            
-                                        <div class="invalid-feedback" data-invalid-feedback="quantity"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="row w-100 justify-content-end gx-0">
-                                    <div class="col-12 col-lg-4 col-xl-3">
-                                        <x-button type="submit" startIcon="add" fullWidth>Tambah</x-button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3 class="fs-5 m-0">Detail</h3>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-12 mt-6">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h3 class="fs-5 m-0">Detail</h3>
-                        </div>
-        
-                        <div class="card-body">
-                            <table id="detailTable" class="table table-hover table-sm align-middle w-100"></table>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    <table id="detailTable" class="table table-hover table-sm align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -189,7 +137,6 @@
                     this.productButton = $('#productButton');
                     this.productModal = new bootstrap.Modal('#productModal');
                     this.productTable = this.productTable();
-                    this.formCreateDetail = $('#formCreateDetail');
                     this.csrfToken = $('meta[name="csrf-token"]').attr('content');
                     this.formEditDetail = $('#formEditDetail');
                     this.modalEditDetail = new bootstrap.Modal('#modalEditDetail');
@@ -267,7 +214,7 @@
                     return app.buttonDataTable('#detailTable', {
                         info: false,
                         fixedColumns: {
-                            start: 0,
+                            start: 1,
                             end: 1,
                         },
                         columns: [
@@ -275,14 +222,30 @@
                                 title: 'Kode Produk',
                                 name: 'product.code',
                                 data: 'product.code',
-                                className: 'text-nowrap px-5',
+                                className: 'text-nowrap px-3',
                                 type: 'string',
                             },
                             {
-                                title: 'Quantity',
-                                name: 'quantity',
-                                data: 'quantity',
-                                className: 'text-nowrap px-5',
+                                title: 'Stock System',
+                                name: 'system_stock',
+                                data: 'system_stock',
+                                className: 'text-nowrap px-3',
+                                type: 'num',
+                                render: (data) => app.numberFormat(data),
+                            },
+                            {
+                                title: 'Stock Fisik',
+                                name: 'physical_stock',
+                                data: 'physical_stock',
+                                className: 'text-nowrap px-3',
+                                type: 'num',
+                                render: (data) => app.numberFormat(data),
+                            },
+                            {
+                                title: 'Selisih',
+                                name: 'difference',
+                                data: 'difference',
+                                className: 'text-nowrap px-3',
                                 type: 'num',
                                 render: (data) => app.numberFormat(data),
                             },
@@ -314,7 +277,7 @@
                                 service.formEditDetail.attr('action', app.url(`/stock-opnames/daily/${this.id}/details/${data.id}`));
                                 service.formEditDetail.find('[data-invalid]').removeClass('is-invalid');
                                 service.formEditDetail.find('[data-invalid-feedback]').text('');
-                                service.formEditDetail.find('input[name="quantity"]').val(app.numberFormat(data.quantity));
+                                service.formEditDetail.find('input[name="quantity"]').val(app.numberFormat(data.physical_stock));
                                 service.modalEditDetail.show();
                             });
 
@@ -339,7 +302,9 @@
 
                                 $('#date').text(app.dateFormat(stock.date));
                                 $('#totalProduct').text(app.numberFormat(stock.total_product));
-                                $('#totalQuantity').text(app.numberFormat(stock.total_quantity));
+                                $('#totalSystemStock').text(app.numberFormat(stock.total_system_stock));
+                                $('#totalPhysicalStock').text(app.numberFormat(stock.total_physical_stock));
+                                $('#totalDifference').text(app.numberFormat(stock.total_difference));
 
                                 resolve(response);
                             },
@@ -369,22 +334,6 @@
                             },
                         });
                     });
-                }
-
-                /**
-                 * Create detail
-                 */
-                createStockOpnameDetail() {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            type: "POST",
-                            url: this.formCreateDetail.attr('action'),
-                            data: this.formCreateDetail.serialize(),
-                            dataType: "json",
-                            success: (response) => resolve(response),
-                            error: (error) => reject(error.responseJSON),
-                        });
-                    })
                 }
 
                 /**
@@ -456,36 +405,6 @@
             service.productButton.click(function (e) { 
                 e.preventDefault();
                 service.productModal.show();
-            });
-
-            /**
-             * Submit form create detail.
-             */
-            service.formCreateDetail.submit(async function (e) { 
-                e.preventDefault();
-                app.showPreloader();
-
-                service.formCreateDetail.find('[data-invalid]').removeClass('is-invalid');
-                service.formCreateDetail.find('[data-invalid-feelback]').text('');
-
-                try {
-                    const response = await service.createStockOpnameDetail();
-                    
-                    await service.findStockOpname();
-                    await service.getStockOpnameDetails();
-                    
-                    app.alert('success', response.message);
-                    service.formCreateDetail.trigger('reset');
-                } catch(error) {
-                    app.alert('danger', error.message);
-
-                    Object.entries(error.errors).forEach(([field, message]) => {
-                        service.formCreateDetail.find(`[data-invalid="${field}"]`).addClass('is-invalid');
-                        service.formCreateDetail.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
-                    });
-                } finally {
-                    app.hidePreloader();
-                }
             });
 
             /**
