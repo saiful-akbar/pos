@@ -155,13 +155,13 @@ class ModuleSeeder extends Seeder
                 'route' => 'stockOpnames',
                 'details' => [
                     [
-                        'name' => 'Stock Opname Harian',
+                        'name' => 'Stock harian',
                         'path' => '/stock-opnames/daily',
                         'route' => 'stockOpnames.daily',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Stock Opname Bulanan',
+                        'name' => 'Stock awal bulan',
                         'path' => '/stock-opnames/monthly',
                         'route' => 'stockOpnames.monthly',
                         'roles' => ['Admin', 'Kasir'],
@@ -207,7 +207,7 @@ class ModuleSeeder extends Seeder
                 'route' => 'settings',
                 'details' => [
                     [
-                        'name' => 'Pengaturan Aplikasi',
+                        'name' => 'Pengaturan aplikasi',
                         'path' => '/settings/applications',
                         'route' => 'settings.applications',
                         'roles' => ['Admin'],

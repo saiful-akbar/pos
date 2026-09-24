@@ -15,12 +15,11 @@
     <form action="{{ route('settings.applications.update') }}" method="post" name="formUpdate" enctype="multipart/form-data">
         @csrf @method('put')
 
-        <div class="row mt-7">
+        <div class="row mt-6 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-1">Toko</h3>
-                        <p class="text-body-secondary">Perbarui data nama, alamat dan logo toko</p>
+                        <h3 class="fs-5 m-0">Toko</h3>
                     </div>
     
                     <div class="card-body">
@@ -58,7 +57,7 @@
                                     label="Logo"
                                     error="{{ $errors->has('store_logo') }}"
                                     accept="image/*"
-                                    helperText="NB: Biarkan logo tetap kosong jika tidak ingin merubahnya"
+                                    helperText="Info: Biarkan logo tetap kosong jika tidak ingin merubahnya"
                                 />
                             </div>
                         </div>
@@ -67,12 +66,11 @@
             </div>
         </div>
 
-        <div class="row mt-7">
+        <div class="row mt-6 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-1">Aplikasi</h3>
-                        <p class="text-body-secondary">Perbarui nama aplikasi</p>
+                        <h3 class="fs-5 m-0">Aplikasi</h3>
                     </div>
     
                     <div class="card-body">
@@ -107,12 +105,11 @@
             </div>
         </div>
     
-        <div class="row mt-7">
+        <div class="row mt-6 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-1">Gambar latar belakang</h3>
-                        <p class="text-body-secondary">Unggah dan ubah gambar latar belakang aplikasi</p>
+                        <h3 class="fs-5 m-0">Latar belakang</h3>
                     </div>
     
                     <div class="card-body">
@@ -121,7 +118,7 @@
                             name="background_image"
                             id="background_image"
                             error="{{ $errors->has('background_image') }}"
-                            helperText="NB: Biarkan gambar latar belakang tetap kosong jika tidak ingin merubahnya"
+                            helperText="Info: Biarkan gambar latar belakang tetap kosong jika tidak ingin merubahnya"
                         />
                     </div>
     
