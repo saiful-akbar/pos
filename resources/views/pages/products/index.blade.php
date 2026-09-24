@@ -456,5 +456,24 @@
                 modalImportUpdateSellingPrice.show();
             });
         </script>
+
+        {{-- GLobal script --}}
+        <script>
+            $('#formImport').submit(function (e) { 
+                app.showPreloader();
+            });
+
+            $('#formResetDiscount').submit(function (e) { 
+                app.showPreloader();
+            });
+
+            $('#formImportUpdateDiscount').submit(function (e) { 
+                app.showPreloader();
+            });
+
+            $('#formImportUpdateSellingPrice').submit(function (e) { 
+                app.showPreloader();
+            });
+        </script>
     </x-slot:script>
 </x-layouts.auth>

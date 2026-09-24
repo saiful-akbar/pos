@@ -16,6 +16,11 @@ return new class() extends Migration
         Schema::create('monthly_stock_opnames', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
+            $table->foreignUlid('daily_stock_opname_id')
+                ->constrained('daily_stock_opnames', 'id')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
             $table->foreignUlid('user_id')
                 ->constrained('users', 'id')
                 ->cascadeOnUpdate()
@@ -30,6 +35,10 @@ return new class() extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('year');
+            $table->index('month');
+            $table->index(['year', 'month']);
         });
     }
 

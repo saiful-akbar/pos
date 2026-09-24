@@ -63,6 +63,7 @@ class MonthlyStockOpname extends Model
      */
     protected $fillable = [
         'user_id',
+        'daily_stock_opname_id',
         'year',
         'month',
         'total_product',
@@ -86,5 +87,13 @@ class MonthlyStockOpname extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the dailyStock that owns the MonthlyStockOpname
+     */
+    public function daily(): BelongsTo
+    {
+        return $this->belongsTo(DailyStockOpname::class, 'daily_stock_opname_id', 'id');
     }
 }

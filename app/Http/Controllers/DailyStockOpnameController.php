@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
+use App\Application\StockOpname\UseCases\CreateMonthlyStockOpname;
 use App\Application\StockOpname\UseCases\DeleteDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
@@ -16,6 +17,7 @@ use App\Exports\StockOpnames\TemplateInputDailyStockOpnameExport;
 use App\Http\Requests\DailyStockOpnames\GetDailyStockOpnameRequest;
 use App\Http\Requests\DailyStockOpnames\ImportDailyStockOpnameRequest;
 use App\Http\Requests\DailyStockOpnames\StoreDailyStockOpnameDetailRequest;
+use App\Http\Requests\DailyStockOpnames\StoreMonthlyStockRequest;
 use App\Http\Requests\DailyStockOpnames\UpdateQuantityDailyStockOpnameDetailRequest;
 use App\Imports\StockOpnames\DailyStockOpnameImport;
 use Illuminate\Http\JsonResponse;
@@ -182,6 +184,28 @@ class DailyStockOpnameController extends Controller
 
         return $this->jsonResponse(
             message: 'Stock opname berhasil dijadikan sebagai stok aktif produk.'
+        );
+    }
+
+    /**
+     * Menyimpan daily stock sebagai monthly stock.
+     */
+    public function storeMonthlyStock(StoreMonthlyStockRequest $request, string $dailyStockId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(CreateMonthlyStockOpname::class)->execute(
+            dailyStockId: $dailyStockId,
+            year: $request->integer('year'),
+            month: $request->integer('month'),
+            notes: $request->validated('notes'),
+        );
+
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Stok opname berhasil dijadikan sebagai stok bulanan.'
         );
     }
 }

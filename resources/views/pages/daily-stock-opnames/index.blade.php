@@ -212,11 +212,11 @@
     
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6 mb-6 mb-lg-0">
+                            <div class="col-12 col-lg-6 mb-6">
                                 <div class="form-floating" data-invalid="year">
                                     <input type="number" name="year" id="year" class="form-control"
-                                        data-invalid="year" placeholder="Tahun"
-                                        value="{{ date('Y') }}" required>
+                                        placeholder="Tahun" value="{{ date('Y') }}"
+                                        data-invalid="year" required>
                                     
                                     <label for="year">
                                         Tahun <span class="text-danger">*</span>
@@ -226,8 +226,8 @@
                                 <div class="ivalid-feedback" data-invalid-feedback="year"></div>
                             </div>
     
-                            <div class="col-12 col-lg-6">
-                                <div class="form-floating" data-invalid="year">
+                            <div class="col-12 col-lg-6 mb-6">
+                                <div class="form-floating" data-invalid="month">
                                     <select name="month" id="month" class="form-select" data-invalid="month" required>
                                         <option value="01" @selected(date('m') == '01')>Januari</option>
                                         <option value="02" @selected(date('m') == '02')>Februari</option>
@@ -248,7 +248,16 @@
                                     </label>
                                 </div>
     
-                                <div class="ivalid-feedback" data-invalid-feedback="month"></div>
+                                <div class="invalid-feedback" data-invalid-feedback="month"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating" data-invalid="notes">
+                                    <textarea name="notes" id="monthlyNotes" class="form-control" placeholder="Catatan" data-invalid="notes"></textarea>
+                                    <label for="monthlyNotes">Catatan</label>
+                                </div>
+
+                                <div class="invalid-feedback" data-invalid-feedback="notes"></div>
                             </div>
                         </div>
                     </div>
@@ -256,7 +265,7 @@
                     <div class="modal-footer">
                         <div class="row w-100">
                             <div class="col-6">
-                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>Tutup</x-button>
+                                <x-button type="reset" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>Tutup</x-button>
                             </div>
                             <div class="col-6">
                                 <x-button type="submit" color="secondary" startIcon="save" fullWidth>Simpan</x-button>
@@ -267,8 +276,6 @@
             </div>
         </div>
     </form>
-
-
 
     {{-- Javascript --}}
     <x-slot:script>
@@ -472,6 +479,22 @@
                         });
                     });
                 }
+
+                /**
+                 * Menjadikan stok harian sebagai stok bulanan.
+                 */
+                createMonthlyStock(dailyStockId) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "POST",
+                            url: app.url(`/stock-opnames/daily/${dailyStockId}/monthly`),
+                            data: this.formMonthlyStock.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
             }
 
             window.service = new Service();
@@ -568,14 +591,6 @@
                 const id = service.buttonEditStock.data('id');
                 window.open(`${app.baseUrl}/stock-opnames/daily/${id}/edit`);
             });
-            
-            /**
-             * Membuka modal untuk menjadikan daily stock sebagai monthly stock.
-             */
-            service.buttonMonthlyStock.click(function (e) { 
-                e.preventDefault();
-                service.modalMonthlyStock.show();
-            });
 
             /**
              * Menjadikan daily stock sebagai current_stock product
@@ -584,7 +599,7 @@
                 e.preventDefault();
 
                 const title = 'Jadikan Stok Aktif';
-                const message = 'Stok hasil stock opname ini akan ditetapkan sebagai stok aktif produk. Nilai stok aktif saat ini akan digantikan dengan stok hasil opname.';
+                const message = 'Stok hasil stock opname ini akan ditetapkan sebagai stok aktif produk. Nilai stok aktif saat ini akan digantikan dengan stok hasil opname. <br>Anda yakin ingin menlanjutkan?';
                 
                 app.confirm(title, message, async (result) => {
                     if (!result) {
@@ -603,6 +618,42 @@
                         app.hidePreloader();
                     }
                 })
+            });
+            
+            /**
+             * Membuka modal untuk menjadikan daily stock sebagai monthly stock.
+             */
+            service.buttonMonthlyStock.click(function (e) { 
+                e.preventDefault();
+                service.formMonthlyStock.find('[data-invalid]').removeClass('is-invalid');
+                service.formMonthlyStock.find('[data-invalid-feedback]').text('');
+                service.modalMonthlyStock.show();
+            });
+
+            /**
+             * Submit form create monthly stock
+             */
+            service.formMonthlyStock.submit(async function (e) { 
+                e.preventDefault();
+                
+                app.showPreloader();
+                service.formMonthlyStock.find('[data-invalid]').removeClass('is-invalid');
+                service.formMonthlyStock.find('[data-invalid-feedback]').text('');
+
+                try {
+                    const response = await service.createMonthlyStock(service.buttonMonthlyStock.data('id'));
+
+                    service.formMonthlyStock.trigger('reset');
+                    service.modalMonthlyStock.hide();
+                    app.alert('success', response.message);
+                } catch (error) {
+                    Object.entries(error.errors).forEach(([field, message]) => {
+                        service.formMonthlyStock.find(`[data-invalid="${field}"]`).addClass('is-invalid');
+                        service.formMonthlyStock.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
+                    });
+                } finally {
+                    app.hidePreloader();
+                }
             });
         </script>
     </x-slot:script>

@@ -86,4 +86,12 @@ class DailyStockOpname extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    /**
+     * Get the monthlyStock that owns the DailyStockOpname
+     */
+    public function monthlyStock(): BelongsTo
+    {
+        return $this->belongsTo(MonthlyStockOpname::class, 'daily_stock_opname_id', 'id');
+    }
 }
