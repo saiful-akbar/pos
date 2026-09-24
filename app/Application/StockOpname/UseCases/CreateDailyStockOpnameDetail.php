@@ -44,8 +44,8 @@ class CreateDailyStockOpnameDetail
             $product = $this->findProduct($productCode);
 
             // Periksa apakah stok dengan produk yang dikirim sudah ada atau belum.
-            $exists = $this->dailyStockOpnameDetailRepository->existsByHeaderAndProduct(
-                headerId: $dailyStockOpname->id,
+            $exists = $this->dailyStockOpnameDetailRepository->existsByDailyStockOpnameIdAndProductId(
+                dailyStockOpnameId: $dailyStockOpname->id,
                 productId: $product->id,
             );
 
@@ -65,8 +65,8 @@ class CreateDailyStockOpnameDetail
             );
 
             // Ambil total
-            $totalProduct = $this->dailyStockOpnameDetailRepository->countProductByHeader($dailyStockOpname->id);
-            $totalQuantity = $this->dailyStockOpnameDetailRepository->sumQuantityByHeader($dailyStockOpname->id);
+            $totalProduct = $this->dailyStockOpnameDetailRepository->countProductByDailyStockOpnameId($dailyStockOpname->id);
+            $totalQuantity = $this->dailyStockOpnameDetailRepository->sumQuantityByDailyStockOpnameId($dailyStockOpname->id);
 
             // Update daily stock opname
             $this->dailyStockOpnameRepository->update(

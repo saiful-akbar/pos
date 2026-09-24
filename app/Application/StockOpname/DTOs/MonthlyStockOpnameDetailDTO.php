@@ -15,9 +15,7 @@ class MonthlyStockOpnameDetailDTO extends DTO
     public function __construct(
         public readonly string $monthlyStockOpnameId,
         public readonly string $productId,
-        public readonly int|float $systemStock,
-        public readonly int|float $physicalStock,
-        public readonly int|float $difference,
+        public readonly int|float $quantity,
     ) {}
 
     /**
@@ -29,9 +27,7 @@ class MonthlyStockOpnameDetailDTO extends DTO
         return [
             'monthly_stock_opname_id' => $this->monthlyStockOpnameId,
             'product_id' => $this->productId,
-            'system_stock' => $this->systemStock,
-            'physical_stock' => $this->physicalStock,
-            'difference' => $this->difference,
+            'quantity' => $this->quantity,
         ];
     }
 }

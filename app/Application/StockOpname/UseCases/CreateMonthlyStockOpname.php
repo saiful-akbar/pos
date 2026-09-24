@@ -14,7 +14,6 @@ use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\StockOpname\Entities\DailyStockOpnameDetailEntity;
 use App\Domain\StockOpname\Entities\DailyStockOpnameEntity;
 use App\Domain\StockOpname\Repositories\DailyStockOpnameDetailRepositoryInterface;
-use App\Domain\StockOpname\Repositories\DailyStockOpnameRepositoryInterface;
 use App\Domain\StockOpname\Repositories\MonthlyStockOpnameDetailRepositoryInterface;
 use App\Domain\StockOpname\Repositories\MonthlyStockOpnameRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +25,6 @@ class CreateMonthlyStockOpname
      * Create a new class instance.
      */
     public function __construct(
-        private DailyStockOpnameRepositoryInterface $dailyStockRepository,
         private DailyStockOpnameDetailRepositoryInterface $dailyStockDetailRepository,
         private MonthlyStockOpnameRepositoryInterface $monthlyStockRepository,
         private MonthlyStockOpnameDetailRepositoryInterface $monthlyStockDetailRepository,
@@ -37,13 +35,12 @@ class CreateMonthlyStockOpname
     /**
      * Execute method.
      */
-    public function execute(string $dailyStockId, int $year, int $month, ?string $notes): void
+    public function execute(DailyStockOpnameEntity $dailyStockOpname, int $year, int $month, ?string $notes): void
     {
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $dailyStock = $this->findDailyStock($dailyStockId);
-            $dailyStockDetails = $this->getDailyStockDetails($dailyStock->id);
+            $dailyStockDetails = $this->getDailyStockDetails($dailyStockOpname->id);
 
             // Periksa apakah stok bulanan sudah ada atu belum.
             if ($this->existsMonthlyStock($year, $month)) {
@@ -54,14 +51,12 @@ class CreateMonthlyStockOpname
 
             // Insert data stok bulanan.
             $monthlyStock = $this->monthlyStockRepository->create(new MonthlyStockOpnameDTO(
-                dailyStockOpnameId: $dailyStock->id,
+                dailyStockOpnameId: $dailyStockOpname->id,
                 userId: user()->id,
                 year: $year,
                 month: $month,
-                totalProduct: $dailyStock->totalProduct,
-                totalSystemStock: $dailyStock->totalSystemStock,
-                totalPhysicalStock: $dailyStock->totalPhysicalStock,
-                totalDifference: $dailyStock->totalDifference,
+                totalProduct: $dailyStockOpname->totalProduct,
+                totalQuantity: $dailyStockOpname->totalQuantity,
                 notes: $notes,
             ));
 
@@ -70,9 +65,7 @@ class CreateMonthlyStockOpname
                 $this->monthlyStockDetailRepository->create(new MonthlyStockOpnameDetailDTO(
                     monthlyStockOpnameId: $monthlyStock->id,
                     productId: $dailyStockDetail->product->id,
-                    systemStock: $dailyStockDetail->systemStock,
-                    physicalStock: $dailyStockDetail->physicalStock,
-                    difference: $dailyStockDetail->difference,
+                    quantity: $dailyStockDetail->quantity,
                 ));
             }
 
@@ -97,22 +90,6 @@ class CreateMonthlyStockOpname
 
             throw $e;
         }
-    }
-
-    /**
-     * Mengambil stok opname harian berdasarkan id.
-     */
-    private function findDailyStock(string $id): DailyStockOpnameEntity
-    {
-        $result = $this->dailyStockRepository->findById($id);
-
-        if ($result === null) {
-            throw ValidationException::withMessages([
-                'year' => 'Stok opname harian tidak ditemukan.',
-            ]);
-        }
-
-        return $result;
     }
 
     /**

@@ -17,9 +17,7 @@ class DailyStockOpnameDTO extends DTO
         public readonly string $userId,
         public readonly DateTimeInterface $date,
         public readonly float|int $totalProduct,
-        public readonly float|int $totalSystemStock,
-        public readonly float|int $totalPhysicalStock,
-        public readonly float|int $totalDifference,
+        public readonly float|int $totalQuantity,
     ) {}
 
     /**
@@ -32,9 +30,7 @@ class DailyStockOpnameDTO extends DTO
             'user_id' => $this->userId,
             'date' => $this->date->format('Y-m-d H:i:s'),
             'total_product' => $this->totalProduct,
-            'total_system_stock' => $this->totalSystemStock,
-            'total_physical_stock' => $this->totalPhysicalStock,
-            'total_difference' => $this->totalDifference,
+            'total_quantity' => $this->totalQuantity,
         ];
     }
 }

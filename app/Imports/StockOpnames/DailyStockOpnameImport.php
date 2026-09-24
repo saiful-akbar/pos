@@ -113,9 +113,7 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
         ]);
 
         $totalProduct = 0;
-        $totalSystemStock = 0;
-        $totalPhysicalStock = 0;
-        $totalDifference = 0;
+        $totalQuantity = 0;
 
         // Insert data stock opname detail
         foreach ($rows as $row) {
@@ -124,20 +122,14 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
 
             foreach ($products as $product) {
                 if ($product->code === $code) {
-                    $difference = $quantity - $product->current_stock;
-
                     DailyStockOpnameDetail::query()->create([
                         'daily_stock_opname_id' => $stockOpname->id,
                         'product_id' => $product->id,
-                        'system_stock' => $product->current_stock,
-                        'physical_stock' => $quantity,
-                        'difference' => $difference,
+                        'quantity' => $quantity,
                     ]);
 
                     $totalProduct += 1;
-                    $totalSystemStock += $product->current_stock;
-                    $totalPhysicalStock += $quantity;
-                    $totalDifference += $quantity;
+                    $totalQuantity += $quantity;
 
                     break;
                 }
@@ -146,9 +138,7 @@ class DailyStockOpnameImport implements ToCollection, WithStartRow, WithValidati
 
         // Update total item dan total quantity dailt stock opname
         $stockOpname->total_product = $totalProduct;
-        $stockOpname->total_system_stock = $totalSystemStock;
-        $stockOpname->total_physical_stock = $totalPhysicalStock;
-        $stockOpname->total_difference = $totalDifference;
+        $stockOpname->total_quantity = $totalQuantity;
         $stockOpname->save();
 
         // Buat catatan aktifitas

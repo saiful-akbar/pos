@@ -146,12 +146,12 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
      * Mengambil data berdasarkan id header dan id product.
      */
     #[Override]
-    public function findByHeaderAndProduct(string $headerId, string $productId): ?DailyStockOpnameDetailEntity
+    public function findByDailyStockOpnameIdAndProductId(string $dailyStockOpnameId, string $productId): ?DailyStockOpnameDetailEntity
     {
         try {
             $data = $this->model->query()
                 ->with(['product.category', 'product.unit'])
-                ->where('daily_stock_opname_id', $headerId)
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
                 ->where('product_id', $productId)
                 ->first();
 
@@ -176,11 +176,11 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
      * Memeriksa apakah data berdasarkan header id dan product id sudah ada atau belum.
      */
     #[Override]
-    public function existsByHeaderAndProduct(string $headerId, string $productId): bool
+    public function existsByDailyStockOpnameIdAndProductId(string $dailyStockOpnameId, string $productId): bool
     {
         try {
             return $this->model->query()
-                ->where('daily_stock_opname_id', $headerId)
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
                 ->where('product_id', $productId)
                 ->exists();
         } catch (\Throwable $e) {
@@ -197,11 +197,11 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
      * Menghitung total produk.
      */
     #[Override]
-    public function countProductByHeader(string $headerId): int|float
+    public function countProductByDailyStockOpnameId(string $dailyStockOpnameId): int|float
     {
         try {
             return (float) $this->model->query()
-                ->where('daily_stock_opname_id', $headerId)
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
                 ->distinct()
                 ->count('product_id');
         } catch (\Throwable $e) {
@@ -215,35 +215,15 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
     }
 
     /**
-     * Menghitung total stok system berdasarkan id header (daily_stock_opnames)
+     * Menghitung total quantity berdasarkan id header (daily_stock_opnames)
      */
     #[Override]
-    public function sumSystemStockByHeader(string $headerId): int|float
+    public function sumQuantityByDailyStockOpnameId(string $dailyStockOpnameId): int|float
     {
         try {
             return (float) $this->model->query()
-                ->where('daily_stock_opname_id', $headerId)
-                ->sum('system_stock');
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Menghitung total stok fisik berdasarkan id header (daily_stock_opnames)
-     */
-    #[Override]
-    public function sumPhysicalStockByHeader(string $headerId): int|float
-    {
-        try {
-            return (float) $this->model->query()
-                ->where('daily_stock_opname_id', $headerId)
-                ->sum('physical_stock');
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
+                ->sum('quantity');
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -311,9 +291,7 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
             id: $model->id,
             dailyStockOpnameId: $model->daily_stock_opname_id,
             product: $this->mapModelToProductStockOpnameValue($model->product),
-            systemStock: parse_float($model->system_stock),
-            physicalStock: parse_float($model->physical_stock),
-            difference: parse_float($model->difference),
+            quantity: parse_float($model->quantity),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

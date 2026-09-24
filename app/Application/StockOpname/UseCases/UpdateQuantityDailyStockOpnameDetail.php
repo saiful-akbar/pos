@@ -31,13 +31,13 @@ class UpdateQuantityDailyStockOpnameDetail
     /**
      * Execute method.
      */
-    public function execute(string $headerId, string $detailId, int|float $quantity): void
+    public function execute(string $dailyStockOpnameId, string $dailyStockOpnameDetailId, int|float $quantity): void
     {
         DB::connection(pos_connection())->beginTransaction();
 
         try {
             // Ambil dan validasi data daily_stock_opnames.
-            $dailyStock = $this->dailyStockRepository->findById($headerId);
+            $dailyStock = $this->dailyStockRepository->findById($dailyStockOpnameId);
 
             if ($dailyStock === null) {
                 throw ValidationException::withMessages([
@@ -46,7 +46,7 @@ class UpdateQuantityDailyStockOpnameDetail
             }
 
             // Ambil dan validasai data daily_stock_opname_details.
-            $dailyStockDetail = $this->dailyStockDetailRepository->findById($detailId);
+            $dailyStockDetail = $this->dailyStockDetailRepository->findById($dailyStockOpnameDetailId);
 
             if ($dailyStockDetail === null) {
                 throw ValidationException::withMessages([
@@ -60,47 +60,38 @@ class UpdateQuantityDailyStockOpnameDetail
                 value: new DailyStockOpnameDetailDTO(
                     dailyStockOpnameId: $dailyStockDetail->dailyStockOpnameId,
                     productId: $dailyStockDetail->product->id,
-                    systemStock: $dailyStockDetail->systemStock,
-                    physicalStock: $quantity,
-                    difference: $quantity - $dailyStockDetail->systemStock,
+                    quantity: $quantity,
                 )
             );
 
             // Hitung total produk, stok system dan stock fisik setelah quantity dirubah.
-            $totalProduct = $this->dailyStockDetailRepository->countProductByHeader($headerId);
-            $totalSystemStock = $this->dailyStockDetailRepository->sumSystemStockByHeader($headerId);
-            $totalPhysicalStock = $this->dailyStockDetailRepository->sumPhysicalStockByHeader($headerId);
+            $totalProduct = $this->dailyStockDetailRepository->countProductByDailyStockOpnameId($dailyStock->id);
+            $totalQuantity = $this->dailyStockDetailRepository->sumQuantityByDailyStockOpnameId($dailyStock->id);
 
             // Update total produk, total stok system, total stok fisik dan total difference
             $this->dailyStockRepository->update(
-                id: $headerId,
+                id: $dailyStock->id,
                 value: new DailyStockOpnameDTO(
                     userId: user()->id,
                     date: $dailyStock->date,
                     totalProduct: $totalProduct,
-                    totalSystemStock: $totalSystemStock,
-                    totalPhysicalStock: $totalPhysicalStock,
-                    totalDifference: $totalPhysicalStock - $totalSystemStock,
+                    totalQuantity: $totalQuantity,
                 ),
             );
 
             // Buat catatan aktifitas.
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Memperbarui quantity daily stock opname detail pada id: {$detailId}",
+                logName: "Memperbarui quantity daily stock opname detail pada id: {$dailyStock->id}",
                 event: EventActivityEnum::UPDATED,
                 attributeChanges: new AttributeActivityDTO(
                     old: [
                         'id' => $dailyStockDetail->id,
-                        'system_stock' => $dailyStockDetail->systemStock,
-                        'physical_stock' => $dailyStockDetail->physicalStock,
-                        'difference' => $dailyStockDetail->difference,
+                        'quantity' => $dailyStockDetail->quantity,
                     ],
                     attributes: [
                         'id' => $dailyStockDetail->id,
-                        'system_stock' => $dailyStockDetail->systemStock,
-                        'physical_stock' => $quantity,
-                        'difference' => $quantity - $dailyStockDetail->systemStock,
+                        'quantity' => $quantity,
                     ],
                 ),
             ));

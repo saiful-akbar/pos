@@ -2,7 +2,7 @@
     <x-page-header title="Edit daily stock opname" icon="inventory">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-12 col-lg-4 col-xl-3">
+                <div class="col-12 col-lg-4">
                     <x-button type="button" color="danger" start-icon="close" id="closeButton" full-width>Tutup</x-button>
                 </div>
             </div>
@@ -20,27 +20,17 @@
                     <ul class="list-group list-group-flush m-0">
                         <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
                             <span class="text-body-secondary">Tanggal</span>
-                            <span class="fw-bold" id="date">{{ $dailyStockOpname->date->format('d M Y') }}</span>
+                            <span class="fw-bold" id="date">{{ $dailyStock->date->format('d M Y') }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
-                            <span class="text-body-secondary">Total produk</span>
-                            <span class="fw-bold" id="totalProduct">{{ number_format($dailyStockOpname->totalProduct) }}</span>
+                            <span class="text-body-secondary">Total Produk</span>
+                            <span class="fw-bold" id="totalProduct">{{ number_format($dailyStock->totalProduct) }}</span>
                         </li>
 
                         <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
-                            <span class="text-body-secondary">Total stock system</span>
-                            <span class="fw-bold" id="totalSystemStock">{{ number_format($dailyStockOpname->totalSystemStock) }}</span>
-                        </li>
-
-                        <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
-                            <span class="text-body-secondary">Total stock fisik</span>
-                            <span class="fw-bold" id="totalPhysicalStock">{{ number_format($dailyStockOpname->totalPhysicalStock) }}</span>
-                        </li>
-
-                        <li class="list-group-item d-flex align-items-center justify-content-between bg-body px-0">
-                            <span class="text-body-secondary">Total Selisih</span>
-                            <span class="fw-bold" id="totalDifference">{{ number_format($dailyStockOpname->totalDifference) }}</span>
+                            <span class="text-body-secondary">Total Quantity</span>
+                            <span class="fw-bold" id="totalQuantity">{{ number_format($dailyStock->totalQuantity, 2) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -48,20 +38,80 @@
         </div>
 
         <div class="col-12 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h3 class="fs-5 m-0">Detail</h3>
-                </div>
+            <div class="row">
+                <div class="col-12">
+                    <form action="{{ route('stockOpnames.daily.details.store', ['id' => $dailyStock->id]) }}" method="post" autocomplete="off" id="formCreate">
+                        @csrf
 
-                <div class="card-body">
-                    <table id="detailTable" class="table table-hover table-sm align-middle w-100"></table>
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h2 class="fs-5 mb-0">Tambah</h2>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                                        <div class="input-group" data-invalid="product_code">
+                                            <div class="form-floating" data-invalid="product_code">
+                                                <input type="text" name="product_code" id="productCode" class="form-control" placeholder="Kode Produk" data-invalid="product_code" required>
+                                                
+                                                <label for="product_code">
+                                                    Kode Produk <span class="text-danger">*</span>
+                                                </label>
+                                            </div>
+
+                                            <x-button type="button" data-bs-toggle="tooltip" data-bs-title="Pilih produk" id="buttonProduct">
+                                                <x-icon class="text-secondary">table</x-icon>
+                                            </x-button>
+                                        </div>
+
+                                        <div class="invalid-feedback" data-invalid-feedback="product_code"></div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-6">
+                                        <div class="form-floating" data-invalid="quantity">
+                                            <input type="number" name="quantity" id="quantity" class="form-control" placeholder="Quantity" data-invalid="quantity" min="0" required>
+                                            
+                                            <label for="quantity">
+                                                Quantity <span class="text-danger">*</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="invalid-feedback" data-invalid-feedback="quantity"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="row justify-content-end align-items-center">
+                                    <div class="col-12 col-lg-4 col-xl-3">
+                                        <x-button type="submit" startIcon="add" fullWidth>Tambah</x-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mt-6">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h3 class="fs-5 m-0">Detail</h3>
+                        </div>
+        
+                        <div class="card-body">
+                            <table id="detailTable" class="table table-hover table-sm align-middle w-100"></table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Product modal --}}
-    <div class="modal" tabindex="-1" id="productModal">
+    <div class="modal" tabindex="-1" id="modalProduct">
         <div class="modal-dialog modal-xl modal-fullscreen-md-down">
             <div class="modal-content border">
                 <div class="modal-header">
@@ -70,7 +120,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <table id="productTable" class="table table-hover table-sm table-img align-middle w-100"></table>
+                    <table id="tableProduct" class="table table-hover table-sm table-img align-middle w-100"></table>
                 </div>
 
                 <div class="modal-footer">
@@ -99,10 +149,7 @@
                     </div>
     
                     <div class="modal-body">
-                        <input type="number" name="quantity" id="editQuantity"
-                            class="form-control" min="0" data-invalid="quantity"
-                            placeholder="Masukan quantity..." required>
-
+                        <input type="number" name="quantity" id="editQuantity" class="form-control" min="0" data-invalid="quantity" placeholder="Masukan quantity..." required>
                         <div class="invalid-feedback" data-invalid-feedback="quantity"></div>
                     </div>
     
@@ -131,13 +178,13 @@
         <script>
             class Service {
                 constructor() {
-                    this.id = "{{ $dailyStockOpname->id }}";
+                    this.id = "{{ $dailyStock->id }}";
                     this.closeButton = $('#closeButton');
                     this.detailTable = this.detailTable();
-                    this.productButton = $('#productButton');
-                    this.productModal = new bootstrap.Modal('#productModal');
-                    this.productTable = this.productTable();
-                    this.csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    this.buttonProduct = $('#buttonProduct');
+                    this.modalProduct = new bootstrap.Modal('#modalProduct');
+                    this.formCreate = $('#formCreate');
+                    this.tableProduct = this.tableProduct();
                     this.formEditDetail = $('#formEditDetail');
                     this.modalEditDetail = new bootstrap.Modal('#modalEditDetail');
                 }
@@ -145,8 +192,8 @@
                 /**
                  * Product dataTable
                  */
-                productTable() {
-                    return app.modalDataTable('#productTable', {
+                tableProduct() {
+                    return app.modalDataTable('#tableProduct', {
                         serverSide: true,
                         ajax: "{{ route('master.products.active') }}",
                         columns: [
@@ -176,22 +223,20 @@
                                 className: 'text-nowrap px-3',
                             },
                             {
-                                title: 'Stok',
+                                title: 'Satuan',
+                                name: 'unit.code',
+                                data: 'unit.code',
+                                type: 'string',
+                                className: 'text-nowrap px-3',
+                            },
+                            {
+                                title: 'Stok Tersedia',
                                 name: 'current_stock',
                                 data: 'current_stock',
                                 className: 'text-nowrap px-3',
                                 type: 'num',
                                 searching: false,
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Minimum Stok',
-                                name: 'minimum_stock',
-                                data: 'minimum_stock',
-                                className: 'text-nowrap px-3',
-                                type: 'num',
-                                searching: false,
-                                render: (data) => app.numberFormat(data),
+                                render: (data) => app.numberFormat(data, 2),
                             },
                         ],
                         createdRow: (row, data, index) => {
@@ -199,9 +244,8 @@
 
                             $(row).click((e) => {
                                 e.preventDefault();
-
-                                this.formCreateDetail.find('input[name="product_code"]').val(data.code);
-                                this.productModal.hide();
+                                this.formCreate.find('input[name="product_code"]').val(data.code);
+                                this.modalProduct.hide();
                             });
                         }
                     });
@@ -226,28 +270,19 @@
                                 type: 'string',
                             },
                             {
-                                title: 'Stock System',
-                                name: 'system_stock',
-                                data: 'system_stock',
+                                title: 'Satuan',
+                                name: 'product.unit.code',
+                                data: 'product.unit.code',
                                 className: 'text-nowrap px-3',
-                                type: 'num',
-                                render: (data) => app.numberFormat(data),
+                                type: 'string',
                             },
                             {
-                                title: 'Stock Fisik',
-                                name: 'physical_stock',
-                                data: 'physical_stock',
+                                title: 'Quantity',
+                                name: 'quantity',
+                                data: 'quantity',
                                 className: 'text-nowrap px-3',
                                 type: 'num',
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Selisih',
-                                name: 'difference',
-                                data: 'difference',
-                                className: 'text-nowrap px-3',
-                                type: 'num',
-                                render: (data) => app.numberFormat(data),
+                                render: (data) => app.numberFormat(data, 2),
                             },
                             {
                                 title: `<span class="material-symbols-outlined">settings</span>`,
@@ -277,7 +312,7 @@
                                 service.formEditDetail.attr('action', app.url(`/stock-opnames/daily/${this.id}/details/${data.id}`));
                                 service.formEditDetail.find('[data-invalid]').removeClass('is-invalid');
                                 service.formEditDetail.find('[data-invalid-feedback]').text('');
-                                service.formEditDetail.find('input[name="quantity"]').val(app.numberFormat(data.physical_stock));
+                                service.formEditDetail.find('input[name="quantity"]').val(app.numberFormat(data.quantity));
                                 service.modalEditDetail.show();
                             });
 
@@ -298,13 +333,9 @@
                             type: "GET",
                             url: `${app.baseUrl}/stock-opnames/daily/${this.id}/edit`,
                             success: (response) => {
-                                const stock = response.data;
-
-                                $('#date').text(app.dateFormat(stock.date));
-                                $('#totalProduct').text(app.numberFormat(stock.total_product));
-                                $('#totalSystemStock').text(app.numberFormat(stock.total_system_stock));
-                                $('#totalPhysicalStock').text(app.numberFormat(stock.total_physical_stock));
-                                $('#totalDifference').text(app.numberFormat(stock.total_difference));
+                                $('#date').text(app.dateFormat(response.data.date));
+                                $('#totalProduct').text(app.numberFormat(response.data.total_product));
+                                $('#totalQuantity').text(app.numberFormat(response.data.total_quantity, 2));
 
                                 resolve(response);
                             },
@@ -344,10 +375,7 @@
                         $.ajax({
                             type: "DELETE",
                             url: app.url(`/stock-opnames/daily/${this.id}/details/${id}`),
-                            data: {
-                                _token: this.csrfToken,
-                                _method: 'DELETE',
-                            },
+                            data: { _token: app.csrfToken },
                             dataType: "json",
                             success: (response) => resolve(response),
                             error: (error) => reject(error.responseJSON),
@@ -370,12 +398,26 @@
                         });
                     })
                 }
+
+                /**
+                 * Create stock opname detail
+                 */
+                createStockOpnameDetail() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "post",
+                            url: this.formCreate.attr('action'),
+                            data: this.formCreate.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
             }
 
             window.service = new Service();
         </script>
-
-
 
         <script>
             $(document).ready(async function () {
@@ -402,9 +444,9 @@
             /**
              * Menampilkan modal product
              */
-            service.productButton.click(function (e) { 
+            service.buttonProduct.click(function (e) { 
                 e.preventDefault();
-                service.productModal.show();
+                service.modalProduct.show();
             });
 
             /**
@@ -462,6 +504,36 @@
                     app.hidePreloader();
                 }
                 
+            });
+
+            /**
+             * Submit form create stock opname detail.
+             */
+            service.formCreate.submit(async function (e) { 
+                e.preventDefault();
+                
+                app.showPreloader();
+                service.formCreate.find('[data-invalid]').removeClass('is-invalid');
+                service.formCreate.find('[data-invalid-feedback]').text('');
+
+                try {
+                    const response = await service.createStockOpnameDetail();
+
+                    await service.findStockOpname();
+                    await service.getStockOpnameDetails();
+
+                    app.alert('success', response.message);
+                    service.formCreate.trigger('reset');
+                } catch (error) {
+                    app.alert('danger', error.message);
+
+                    Object.entries(error.errors).forEach(([field, message]) => {
+                        service.formCreate.find(`[data-invalid="${field}"]`).addClass('is-invalid');
+                        service.formCreate.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
+                    });
+                } finally {
+                    app.hidePreloader();
+                }
             });
         </script>
     </x-slot:script>

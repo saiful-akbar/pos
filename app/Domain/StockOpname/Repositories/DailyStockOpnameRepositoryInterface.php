@@ -31,4 +31,9 @@ interface DailyStockOpnameRepositoryInterface
      * Update data.
      */
     public function update(string $id, DailyStockOpnameDTO $value): int;
+
+    /**
+     * mengambil data berdasarkan tanggal.
+     */
+    public function findByDate(DateTimeInterface $date): ?DailyStockOpnameEntity;
 }

@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\StockOpname\UseCases\FindMonthlyStockByYearAndMonth;
+use App\Application\StockOpname\UseCases\GetMonthlyStockDetails;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class MonthlyStockOpnameController extends Controller
@@ -29,6 +32,30 @@ class MonthlyStockOpnameController extends Controller
      */
     public function index(Request $request): View|JsonResponse
     {
+        if ($request->ajax()) {
+            $stock = app(FindMonthlyStockByYearAndMonth::class)->execute(
+                year: $request->integer('year'),
+                month: $request->integer('month'),
+            );
+
+            if ($stock === null) {
+                throw ValidationException::withMessages([
+                    'year' => 'Stok tidak ditemukan.',
+                ]);
+            }
+
+            $details = app(GetMonthlyStockDetails::class)->execute(
+                monthlyStockId: $stock->id,
+            );
+
+            return $this->jsonResponse(
+                data: [
+                    'stock' => $stock,
+                    'details' => $details,
+                ],
+            );
+        }
+
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: $this->moduleRoute,

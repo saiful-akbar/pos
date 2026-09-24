@@ -102,10 +102,6 @@
                 @csrf @method('GET')
 
                 <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h3 class="fs-5 m-0">Filter</h3>
-                    </div>
-
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5 mb-lg-0">
@@ -205,7 +201,7 @@
         @csrf @method('post')
 
         <div class="modal" tabindex="-1" id="modalMonthlyStock">
-            <div class="modal-dialog modal-lg modal-fullscreen-md-down">
+            <div class="modal-dialog modal-fullscreen-md-down">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Stok Awal</h5>
@@ -214,7 +210,7 @@
     
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6 mb-6">
+                            <div class="col-12 mb-6">
                                 <div class="form-floating" data-invalid="year">
                                     <input type="number" name="year" id="year" class="form-control"
                                         placeholder="Tahun" value="{{ date('Y') }}"
@@ -228,7 +224,7 @@
                                 <div class="ivalid-feedback" data-invalid-feedback="year"></div>
                             </div>
     
-                            <div class="col-12 col-lg-6 mb-6">
+                            <div class="col-12 mb-6">
                                 <div class="form-floating" data-invalid="month">
                                     <select name="month" id="month" class="form-select" data-invalid="month" required>
                                         <option value="01" @selected(date('m') == '01')>Januari</option>
@@ -318,12 +314,12 @@
                                 render: (data) => app.dateFormat(data),
                             },
                             {
-                                title: 'Stok',
-                                name: 'total_physical_stock',
-                                data: 'total_physical_stock',
+                                title: 'Total Quantity',
+                                name: 'total_quantity',
+                                data: 'total_quantity',
                                 className: 'text-nowrap px-3',
                                 type: 'num',
-                                render: (data) => app.numberFormat(data),
+                                render: (data) => app.numberFormat(data, 2),
                             },
                         ],
                         createdRow: async (row, data, index) => {
@@ -381,42 +377,20 @@
                                 footer: '',
                             },
                             {
-                                title: 'Stok System',
-                                name: 'system_stock',
-                                data: 'system_stock',
+                                title: 'Quantity',
+                                name: 'quantity',
+                                data: 'quantity',
                                 className: 'text-nowrap px-3',
                                 type: 'num',
                                 footer: '0',
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Stok Fisik',
-                                name: 'physical_stock',
-                                data: 'physical_stock',
-                                className: 'text-nowrap px-3',
-                                type: 'num',
-                                footer: '0',
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Selisih',
-                                name: 'difference',
-                                data: 'difference',
-                                className: 'text-nowrap px-3',
-                                type: 'num',
-                                footer: '0',
-                                render: (data) => app.numberFormat(data),
+                                render: (data) => app.numberFormat(data, 2),
                             },
                         ],
                         footerCallback: function(row, data, start, end) {
                             const api = this.api();
-                            const totalSystemStock = api.column(2).data().reduce((a, b) => a + b, 0);
-                            const totalPhysicalStock = api.column(3).data().reduce((a, b) => a + b, 0);
-                            const totalDifference = api.column(4).data().reduce((a, b) => a + b, 0);
+                            const totalQuantity = api.column(2).data().reduce((a, b) => a + b, 0);
 
-                            $(api.column(2).footer()).text(app.numberFormat(totalSystemStock));
-                            $(api.column(3).footer()).text(app.numberFormat(totalPhysicalStock));
-                            $(api.column(4).footer()).text(app.numberFormat(totalDifference));
+                            $(api.column(2).footer()).text(app.numberFormat(totalQuantity, 2));
                         }
                     });
                 }

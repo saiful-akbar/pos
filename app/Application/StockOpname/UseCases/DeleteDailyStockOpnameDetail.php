@@ -30,12 +30,12 @@ class DeleteDailyStockOpnameDetail
     /**
      * Execute method.
      */
-    public function execute(string $headerId, string $detailId): void
+    public function execute(string $dailyStockOpnameId, string $dailyStockOpnameDetailId): void
     {
         DB::connection(pos_connection())->beginTransaction();
 
         try {
-            $dailyStockDetail = $this->dailyStockDetailRepository->findById($detailId);
+            $dailyStockDetail = $this->dailyStockDetailRepository->findById($dailyStockOpnameDetailId);
 
             if ($dailyStockDetail === null) {
                 throw ValidationException::withMessages(messages: [
@@ -44,7 +44,7 @@ class DeleteDailyStockOpnameDetail
             }
 
             // Ambil data stock opname.
-            $dailyStock = $this->dailyStockRepository->findById($headerId);
+            $dailyStock = $this->dailyStockRepository->findById($dailyStockOpnameId);
 
             if ($dailyStock === null) {
                 throw ValidationException::withMessages([
@@ -53,23 +53,20 @@ class DeleteDailyStockOpnameDetail
             }
 
             // Hapus stock opname detail.
-            $this->dailyStockDetailRepository->deleteById($detailId);
+            $this->dailyStockDetailRepository->deleteById($dailyStockDetail->id);
 
-            // Hitung total produk, stok system dan stock fisik setelah quantity dirubah.
-            $totalProduct = $this->dailyStockDetailRepository->countProductByHeader($headerId);
-            $totalSystemStock = $this->dailyStockDetailRepository->sumSystemStockByHeader($headerId);
-            $totalPhysicalStock = $this->dailyStockDetailRepository->sumPhysicalStockByHeader($headerId);
+            // Hitung total produk dan quantity setelah dirubah.
+            $totalProduct = $this->dailyStockDetailRepository->countProductByDailyStockOpnameId($dailyStock->id);
+            $totalQuantity = $this->dailyStockDetailRepository->sumQuantityByDailyStockOpnameId($dailyStock->id);
 
             // Update total produk, total stok system, total stok fisik dan total difference
             $this->dailyStockRepository->update(
-                id: $headerId,
+                id: $dailyStock->id,
                 value: new DailyStockOpnameDTO(
                     userId: user()->id,
                     date: $dailyStock->date,
                     totalProduct: $totalProduct,
-                    totalSystemStock: $totalSystemStock,
-                    totalPhysicalStock: $totalPhysicalStock,
-                    totalDifference: $totalPhysicalStock - $totalSystemStock,
+                    totalQuantity: $totalQuantity,
                 ),
             );
 

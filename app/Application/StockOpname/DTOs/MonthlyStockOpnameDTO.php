@@ -18,9 +18,7 @@ class MonthlyStockOpnameDTO extends DTO
         public readonly int $year,
         public readonly int $month,
         public readonly int|float $totalProduct,
-        public readonly int|float $totalSystemStock,
-        public readonly int|float $totalPhysicalStock,
-        public readonly int|float $totalDifference,
+        public readonly int|float $totalQuantity,
         public readonly ?string $notes,
     ) {}
 
@@ -36,9 +34,7 @@ class MonthlyStockOpnameDTO extends DTO
             'year' => $this->year,
             'month' => $this->month,
             'total_product' => $this->totalProduct,
-            'total_system_stock' => $this->totalSystemStock,
-            'total_physical_stock' => $this->totalPhysicalStock,
-            'total_difference' => $this->totalDifference,
+            'total_quantity' => $this->totalQuantity,
             'notes' => $this->notes,
         ];
     }

@@ -43,7 +43,7 @@ class SetActiveStock
             foreach ($details as $detail) {
                 $this->productRepository->updateCurrentStockById(
                     id: $detail->product->id,
-                    stock: $detail->physicalStock,
+                    stock: $detail->quantity,
                 );
             }
 

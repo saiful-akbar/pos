@@ -23,6 +23,7 @@ use App\Imports\StockOpnames\DailyStockOpnameImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -100,9 +101,9 @@ class DailyStockOpnameController extends Controller
      */
     public function edit(Request $request, string $id): View|JsonResponse
     {
-        $dailyStockOpname = app(FindDailyStockOpnameById::class)->execute(id: $id);
+        $dailyStock = app(FindDailyStockOpnameById::class)->execute(id: $id);
 
-        if (! $dailyStockOpname) {
+        if (! $dailyStock) {
             abort(404);
         }
 
@@ -112,7 +113,7 @@ class DailyStockOpnameController extends Controller
             );
         }
 
-        return view('pages.daily-stock-opnames.edit', compact('dailyStockOpname'));
+        return view('pages.daily-stock-opnames.edit', compact('dailyStock'));
     }
 
     /**
@@ -135,15 +136,15 @@ class DailyStockOpnameController extends Controller
     /**
      * Menghapus data daily stock opname detail.
      */
-    public function deleteDetail(Request $request, string $headerId, string $detailId): JsonResponse
+    public function deleteDetail(Request $request, string $dailyStockOpnameId, string $dailyStockOpnameDetailId): JsonResponse
     {
         if (! $request->ajax()) {
             abort(404);
         }
 
         app(DeleteDailyStockOpnameDetail::class)->execute(
-            headerId: $headerId,
-            detailId: $detailId,
+            dailyStockOpnameId: $dailyStockOpnameId,
+            dailyStockOpnameDetailId: $dailyStockOpnameDetailId,
         );
 
         return $this->jsonResponse(
@@ -154,15 +155,15 @@ class DailyStockOpnameController extends Controller
     /**
      * Update quantity daily stock opname detail.
      */
-    public function updateDetail(UpdateQuantityDailyStockOpnameDetailRequest $request, string $headerId, string $detailId): JsonResponse
+    public function updateDetail(UpdateQuantityDailyStockOpnameDetailRequest $request, string $dailyStockOpnameId, string $dailyStockOpnameDetailId): JsonResponse
     {
         if (! $request->ajax()) {
             abort(404);
         }
 
         app(UpdateQuantityDailyStockOpnameDetail::class)->execute(
-            headerId: $headerId,
-            detailId: $detailId,
+            dailyStockOpnameId: $dailyStockOpnameId,
+            dailyStockOpnameDetailId: $dailyStockOpnameDetailId,
             quantity: $request->float('quantity'),
         );
 
@@ -190,14 +191,22 @@ class DailyStockOpnameController extends Controller
     /**
      * Menyimpan daily stock sebagai monthly stock.
      */
-    public function storeMonthlyStock(StoreMonthlyStockRequest $request, string $dailyStockId): JsonResponse
+    public function storeMonthlyStock(StoreMonthlyStockRequest $request, string $dailyStockOpnameId): JsonResponse
     {
         if (! $request->ajax()) {
             abort(404);
         }
 
+        $dailyStockOpname = app(FindDailyStockOpnameById::class)->execute($dailyStockOpnameId);
+
+        if ($dailyStockOpname === null) {
+            throw ValidationException::withMessages([
+                'year' => 'Stok opname harian tidak ditemukan.',
+            ]);
+        }
+
         app(CreateMonthlyStockOpname::class)->execute(
-            dailyStockId: $dailyStockId,
+            dailyStockOpname: $dailyStockOpname,
             year: $request->integer('year'),
             month: $request->integer('month'),
             notes: $request->validated('notes'),

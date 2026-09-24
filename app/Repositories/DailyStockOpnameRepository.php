@@ -117,6 +117,29 @@ class DailyStockOpnameRepository extends Repository implements DailyStockOpnameR
     }
 
     /**
+     * mengambil data berdasarkan tanggal.
+     */
+    #[Override]
+    public function findByDate(DateTimeInterface $date): ?DailyStockOpnameEntity
+    {
+        try {
+            $result = $this->model->query()
+                ->with('user')
+                ->where('date', $date->format('Y-m-d'))
+                ->first();
+
+            return $result === null ? null : $this->mapModelToDailyStockOpnameEntity($result);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class UserStockOpnameValue
      */
     private function mapModelToUserStockOpnameValue(User $model): UserStockOpnameValue
@@ -140,9 +163,7 @@ class DailyStockOpnameRepository extends Repository implements DailyStockOpnameR
             user: $this->mapModelToUserStockOpnameValue($model->user),
             date: parse_date_time_immutable($model->date),
             totalProduct: parse_float($model->total_product),
-            totalSystemStock: parse_float($model->total_system_stock),
-            totalPhysicalStock: parse_float($model->total_physical_stock),
-            totalDifference: parse_float($model->total_difference),
+            totalQuantity: parse_float($model->total_quantity),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,

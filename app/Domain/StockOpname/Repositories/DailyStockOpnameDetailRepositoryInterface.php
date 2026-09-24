@@ -39,25 +39,20 @@ interface DailyStockOpnameDetailRepositoryInterface
     /**
      * Mengambil data berdasarkan id header dan id product.
      */
-    public function findByHeaderAndProduct(string $headerId, string $productId): ?DailyStockOpnameDetailEntity;
+    public function findByDailyStockOpnameIdAndProductId(string $dailyStockOpnameId, string $productId): ?DailyStockOpnameDetailEntity;
 
     /**
      * Memeriksa apakah data berdasarkan header id dan product id sudah ada atau belum.
      */
-    public function existsByHeaderAndProduct(string $headerId, string $productId): bool;
+    public function existsByDailyStockOpnameIdAndProductId(string $dailyStockOpnameId, string $productId): bool;
 
     /**
      * Menghitung total produk.
      */
-    public function countProductByHeader(string $headerId): int|float;
+    public function countProductByDailyStockOpnameId(string $dailyStockOpnameId): int|float;
 
     /**
-     * Menghitung total stok system berdasarkan id header (daily_stock_opnames)
+     * Menghitung total quantity berdasarkan id header (daily_stock_opnames)
      */
-    public function sumSystemStockByHeader(string $headerId): int|float;
-
-    /**
-     * Menghitung total stok fisik berdasarkan id header (daily_stock_opnames)
-     */
-    public function sumPhysicalStockByHeader(string $headerId): int|float;
+    public function sumQuantityByDailyStockOpnameId(string $dailyStockOpnameId): int|float;
 }

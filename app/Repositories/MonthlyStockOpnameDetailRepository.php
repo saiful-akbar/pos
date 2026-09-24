@@ -50,6 +50,31 @@ class MonthlyStockOpnameDetailRepository extends Repository implements MonthlySt
     }
 
     /**
+     * Mengambil daftar data berdasarkan monthly_stock_opname_id.
+     *
+     * @return MonthlyStockOpnameDetailEntity[]
+     */
+    #[Override]
+    public function getByMonthlyStockOpnameId(string $id): array
+    {
+        try {
+            return $this->model->query()
+                ->with(['product.category', 'product.unit'])
+                ->where('monthly_stock_opname_id', $id)
+                ->get()
+                ->map(fn ($data) => $this->mapModelToMonthlyStockOpnameDetailEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class CategoryProductStockOpnameValue
      */
     private function mapModelToCategoryProductStockOpnameValue(Category $model): CategoryProductStockOpnameValue
@@ -106,9 +131,7 @@ class MonthlyStockOpnameDetailRepository extends Repository implements MonthlySt
             id: $model->id,
             monthlyStockOpnameId: $model->monthly_stock_opname_id,
             product: $this->mapModelToProductStockOpnameValue($model->product),
-            systemStock: parse_float($model->system_stock),
-            physicalStock: parse_float($model->physical_stock),
-            difference: parse_float($model->difference),
+            quantity: parse_float($model->quantity),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at
