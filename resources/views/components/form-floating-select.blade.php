@@ -9,17 +9,18 @@
         'id' => $id,
         'required' => $required,
         'placeholder' => $label,
+        'data-invalid' => $name,
     ];
 @endphp
 
-<div @class(['form-floating', 'is-invalid' => $error])>
-    <select {{ $attributes->merge($merge)->class($class) }}>{{ $slot }}</select>
+<div @class(['form-floating', 'is-invalid' => $error]) data-invalid="{{ $name }}">
+    <select {{ $attributes->merge($merge)->class($class) }}>
+        {{ $slot }}
+    </select>
     
     <label for="{{ $id }}">
         {{ $label }} @if($required)<span class="text-danger">*</span>@endif
     </label>
 </div>
 
-@error($name)
-    <div class="invalid-feedback">{{ $message }}</div>
-@enderror
+<div class="invalid-feedback" data-invalid-feedback="{{ $name }}">{{ $errors->first($name) }}</div>

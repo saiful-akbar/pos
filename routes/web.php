@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyStockOpnameController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MonthlyStockOpnameController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
@@ -265,6 +266,15 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/{id}/details', 'storeDetail')->name('.details.store')->middleware("$module,update");
                 Route::delete('/{id}/details/{detailId}', 'deleteDetail')->name('.details.delete')->middleware("$module,update");
                 Route::patch('/{id}/details/{detailId}', 'updateDetail')->name('.details.update')->middleware("$module,update");
+            });
+
+        Route::controller(MonthlyStockOpnameController::class)
+            ->name('.monthly')
+            ->prefix('/monthly')
+            ->group(function (): void {
+                $module = 'module:stockOpnames.monthly';
+
+                Route::get('/', 'index')->middleware("$module,read");
             });
     });
 });

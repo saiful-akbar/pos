@@ -172,24 +172,26 @@
 
         <div class="col-12 col-lg-8">
             <div class="card shadow-sm" style="min-height: 500px;">
-                <div class="card-header">
-                    <div class="btn-group w-100">
-                        <button type="button" class="btn btn-secondary" id="buttonActiveStock" disabled>
-                            <x-icon class="me-1">check_circle</x-icon>
-                            <span>Jadikan Stok Aktif</span>
-                        </button>
+                @if ($access?->update)
+                    <div class="card-header">
+                        <div class="btn-group w-100">
+                            <button type="button" class="btn btn-secondary" id="buttonActiveStock" disabled>
+                                <x-icon class="me-1">check_circle</x-icon>
+                                <span>Jadikan Stok Aktif</span>
+                            </button>
 
-                        <button type="button" class="btn btn-secondary" id="buttonMonthlyStock" disabled>
-                            <x-icon class="me-1">inventory_2</x-icon>
-                            <span>Jadikan Stok Awal</span>
-                        </button>
+                            <button type="button" class="btn btn-secondary" id="buttonMonthlyStock" disabled>
+                                <x-icon class="me-1">inventory_2</x-icon>
+                                <span>Jadikan Stok Awal</span>
+                            </button>
 
-                        <button type="button" class="btn btn-secondary" id="buttonEditStock" disabled>
-                            <x-icon class="me-1">edit</x-icon>
-                            <span>Edit Stock</span>
-                        </button>
+                            <button type="button" class="btn btn-secondary" id="buttonEditStock" disabled>
+                                <x-icon class="me-1">edit</x-icon>
+                                <span>Edit Stock</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <div class="card-body">
                     <table id="detailTable" class="table table-hover table-sm align-middle w-100"></table>

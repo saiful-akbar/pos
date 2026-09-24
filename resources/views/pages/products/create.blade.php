@@ -15,7 +15,7 @@
     <form action="{{ route('master.products.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
         @csrf @method('post')
 
-        <div class="row mt-7">
+        <div class="row mt-6">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="row mt-7">
+        <div class="row mt-6">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        <div class="row mt-7">
+        <div class="row mt-6">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -175,7 +175,7 @@
             </div>
         </div>
 
-        <div class="row mt-7">
+        <div class="row mt-6">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -220,7 +220,7 @@
             </div>
         </div>
 
-        <div class="row mt-7">
+        <div class="row mt-6">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">

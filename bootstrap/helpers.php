@@ -211,3 +211,40 @@ if (! function_exists('logo')) {
         return asset("storage/$path");
     }
 }
+
+if (! function_exists('months')) {
+
+    /**
+     * Mengambil daftar bulan
+     */
+    function months(): array
+    {
+        return [
+            ['key' => 1, 'name' => 'Januari'],
+            ['key' => 2, 'name' => 'Februari'],
+            ['key' => 3, 'name' => 'Maret'],
+            ['key' => 4, 'name' => 'April'],
+            ['key' => 5, 'name' => 'Mei'],
+            ['key' => 6, 'name' => 'Juni'],
+            ['key' => 7, 'name' => 'Juli'],
+            ['key' => 8, 'name' => 'Agustus'],
+            ['key' => 9, 'name' => 'September'],
+            ['key' => 10, 'name' => 'Oktober'],
+            ['key' => 11, 'name' => 'November'],
+            ['key' => 12, 'name' => 'Desember'],
+        ];
+    }
+}
+
+if (! function_exists('month')) {
+
+    /**
+     * Mengambil nama bulan
+     */
+    function month(int $key): ?string
+    {
+        $months = months();
+
+        return $months[$key + 1];
+    }
+}

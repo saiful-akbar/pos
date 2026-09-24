@@ -345,6 +345,19 @@ class App {
       callback: (result) => callback(result),
     });
   }
+
+  /**
+   * Update URL query string
+   */
+  updateQueryParams(paramsObj) {
+    const url = new URL(window.location);
+
+    Object.keys(paramsObj).forEach((key) => {
+      url.searchParams.set(key, paramsObj[key]);
+    });
+
+    window.history.pushState({}, "", url);
+  }
 }
 
 window.app = new App();

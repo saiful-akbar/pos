@@ -3,7 +3,8 @@
         'name' => $name,
         'id' => $id,
         'required' => $required,
-        'placeholder' => $label
+        'placeholder' => $label,
+        'data-invalid' => $name,
     ];
 
     $class = [
@@ -12,7 +13,7 @@
     ]
 @endphp
 
-<div @class(['form-floating', 'is-invalid' => $error])>
+<div @class(['form-floating', 'is-invalid' => $error]) data-invalid="{{ $name }}">
     @if ($type == 'textarea')
         <textarea {{ $attributes->merge($merge)->class($class) }}>{{ $value }}</textarea>
     @else
@@ -28,6 +29,4 @@
     <div class="form-text">{{ $helperText }}</div>
 @endisset
 
-@error($name)
-    <div class="invalid-feedback">{{ $message }}</div>
-@enderror
+<div class="invalid-feedback" data-invalid-feedback="{{ $name }}">{{ $errors->first($name) }}</div>
