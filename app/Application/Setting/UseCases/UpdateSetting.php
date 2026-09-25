@@ -88,9 +88,9 @@ class UpdateSetting
 
             $path = $request->file('store_logo')->store('images/settings', 'public');
 
-            if (!$path) {
+            if (! $path) {
                 throw ValidationException::withMessages([
-                    'store_logo' => 'Logo gagal disimpan.'
+                    'store_logo' => 'Logo gagal disimpan.',
                 ]);
             }
 

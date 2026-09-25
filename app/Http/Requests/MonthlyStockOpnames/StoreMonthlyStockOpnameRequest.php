@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\MonthlyStockOpnames;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -17,8 +19,6 @@ class StoreMonthlyStockOpnameRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -32,8 +32,6 @@ class StoreMonthlyStockOpnameRequest extends FormRequest
 
     /**
      * Merubah nama attribute untuk pesan error.
-     *
-     * @return array
      */
     #[Override]
     public function attributes(): array

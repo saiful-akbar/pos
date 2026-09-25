@@ -137,9 +137,6 @@ class MonthlyStockOpnameRepository extends Repository implements MonthlyStockOpn
 
     /**
      * Menghapus berdasarkan id.
-     *
-     * @param string $id
-     * @return integer
      */
     #[Override]
     public function deleteById(string $id): int
@@ -160,10 +157,6 @@ class MonthlyStockOpnameRepository extends Repository implements MonthlyStockOpn
 
     /**
      * Update stock
-     *
-     * @param string $id
-     * @param MonthlyStockOpnameDTO $value
-     * @return integer
      */
     #[Override]
     public function update(string $id, MonthlyStockOpnameDTO $value): int

@@ -90,6 +90,7 @@ use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
 use App\Application\StockOpname\UseCases\GetMonthlyStockDetails;
 use App\Application\StockOpname\UseCases\SetActiveStock;
+use App\Application\StockOpname\UseCases\UpdateMonthlyStock;
 use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
@@ -223,6 +224,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateQuantityDailyStockOpnameDetail::class => ErrorLogRepository::class,
             SetActiveStock::class => ErrorLogRepository::class,
             CreateMonthlyStockOpname::class => ErrorLogRepository::class,
+            UpdateMonthlyStock::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -266,6 +268,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateQuantityDailyStockOpnameDetail::class => ActivityLogRepository::class,
             SetActiveStock::class => ActivityLogRepository::class,
             CreateMonthlyStockOpname::class => ActivityLogRepository::class,
+            UpdateMonthlyStock::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -508,6 +511,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
             UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
             SetActiveStock::class => DailyStockOpnameRepository::class,
+            UpdateMonthlyStock::class => DailyStockOpnameRepository::class,
         ],
 
         // Daily stock opname detail
@@ -518,18 +522,21 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameDetailRepository::class,
             SetActiveStock::class => DailyStockOpnameDetailRepository::class,
             CreateMonthlyStockOpname::class => DailyStockOpnameDetailRepository::class,
+            UpdateMonthlyStock::class => DailyStockOpnameDetailRepository::class,
         ],
 
         // Monthly stock opname
         MonthlyStockOpnameRepositoryInterface::class => [
             CreateMonthlyStockOpname::class => MonthlyStockOpnameRepository::class,
             FindMonthlyStockByYearAndMonth::class => MonthlyStockOpnameRepository::class,
+            UpdateMonthlyStock::class => MonthlyStockOpnameRepository::class,
         ],
 
         // Monthly stock opname detail
         MonthlyStockOpnameDetailRepositoryInterface::class => [
             CreateMonthlyStockOpname::class => MonthlyStockOpnameDetailRepository::class,
             GetMonthlyStockDetails::class => MonthlyStockOpnameDetailRepository::class,
+            UpdateMonthlyStock::class => MonthlyStockOpnameDetailRepository::class,
         ],
     ];
 

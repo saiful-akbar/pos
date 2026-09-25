@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\MonthlyStockOpnames;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -17,14 +19,12 @@ class UpdateMonthlyStockOpnameRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
             'daily_stock_opname_date' => ['required', 'date'],
-            'notes' => ['nullable', 'string', 'max:500']
+            'notes' => ['nullable', 'string', 'max:500'],
         ];
     }
 
@@ -33,7 +33,7 @@ class UpdateMonthlyStockOpnameRequest extends FormRequest
     {
         return [
             'daily_stock_opname_date' => 'tanggal stok harian',
-            'notes' => 'catatan'
+            'notes' => 'catatan',
         ];
     }
 }

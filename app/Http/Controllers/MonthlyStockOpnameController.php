@@ -71,13 +71,10 @@ class MonthlyStockOpnameController extends Controller
 
     /**
      * Menyimpan (insert) data stok opname bulanan dari stok harian.
-     *
-     * @param StoreMonthlyStockOpnameRequest $request
-     * @return JsonResponse
      */
     public function store(StoreMonthlyStockOpnameRequest $request): JsonResponse
     {
-        if (!$request->ajax()) {
+        if (! $request->ajax()) {
             abort(404);
         }
 
@@ -87,7 +84,7 @@ class MonthlyStockOpnameController extends Controller
 
         if ($dailyStockOpname === null) {
             throw ValidationException::withMessages([
-                'daily_stock_opname_date' => 'Stok opname harian tidak ditemukan.'
+                'daily_stock_opname_date' => 'Stok opname harian tidak ditemukan.',
             ]);
         }
 
@@ -106,14 +103,10 @@ class MonthlyStockOpnameController extends Controller
 
     /**
      * Update stok awal.
-     *
-     * @param UpdateMonthlyStockOpnameRequest $request
-     * @param string $id
-     * @return JsonResponse
      */
     public function update(UpdateMonthlyStockOpnameRequest $request, string $id): JsonResponse
     {
-        if (!$request->ajax()) {
+        if (! $request->ajax()) {
             abort(404);
         }
 

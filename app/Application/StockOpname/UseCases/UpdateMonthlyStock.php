@@ -108,9 +108,6 @@ class UpdateMonthlyStock
 
     /**
      * Mengambil stok opname harian berdasarkan tanggal.
-     *
-     * @param DateTimeInterface $date
-     * @return DailyStockOpnameEntity
      */
     private function findDailyStock(DateTimeInterface $date): DailyStockOpnameEntity
     {
@@ -118,7 +115,7 @@ class UpdateMonthlyStock
 
         if ($result === null) {
             throw ValidationException::withMessages([
-                'daily_stock_opname_date' => 'Stok opname harian tidak ditemukan.'
+                'daily_stock_opname_date' => 'Stok opname harian tidak ditemukan.',
             ]);
         }
 
@@ -127,9 +124,6 @@ class UpdateMonthlyStock
 
     /**
      * Mengambil stok opname bulanan berdasarkan id.
-     *
-     * @param string $id
-     * @return MonthlyStockOpnameEntity
      */
     private function findMonthlyStock(string $id): MonthlyStockOpnameEntity
     {
@@ -137,7 +131,7 @@ class UpdateMonthlyStock
 
         if ($result === null) {
             throw ValidationException::withMessages([
-                'daily_stock_opname_date' => 'Stok awal bulan tidak ditemukan.'
+                'daily_stock_opname_date' => 'Stok awal bulan tidak ditemukan.',
             ]);
         }
 

@@ -202,9 +202,43 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
-                        <div class="modal-body"></div>
+                        <div class="modal-body">
+                            <div>
+                                <x-form-floating-input
+                                    type="text"
+                                    name="daily_stock_opname_date"
+                                    id="dailyStockOpnameDateUpdate"
+                                    label="Tanggal stok harian"
+                                    data-flatpickr=""
+                                    required
+                                />
+                            </div>
 
-                        <div class="modal-footer"></div>
+                            <div class="mt-6">
+                                <x-form-floating-input
+                                    type="textarea"
+                                    name="notes"
+                                    id="notesUpdate"
+                                    label="Catatan"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <div class="row w-100">
+                                <div class="col-6">
+                                    <x-button type="reset" color="light" data-bs-dismiss="modal" startIcon="close" fullWidth>
+                                        Batal
+                                    </x-button>
+                                </div>
+
+                                <div class="col-6">
+                                    <x-button type="submit" color="secondary" startIcon="save" fullWidth>
+                                        Simpan
+                                    </x-button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -327,6 +361,22 @@
                         });
                     });
                 }
+
+                /**
+                 * Update data stok bulanan.
+                 */
+                updateMonthlyStock() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "patch",
+                            url: this.formUpdate.attr('action'),
+                            data: this.formUpdate.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
+                }
             }
 
             window.service = new Service();
@@ -359,6 +409,8 @@
                     $('#totalQuantity').text(app.numberFormat(response.data.stock.total_quantity));
 
                     service.tableDetail.rows.add(response.data.details).draw();
+                    service.buttonUpdate.removeAttr('disabled');
+                    service.formUpdate.attr('action', app.url(`/stock-opnames/monthly/${response.data.stock.id}`));
                 } catch (error) {
                     app.setFormErrors(service.formFilter, error);
                 } finally {
@@ -379,6 +431,8 @@
                 app.showPreloader();
                 app.clearFormErrors(service.formFilter);
                 service.tableDetail.clear().draw();
+                service.buttonUpdate.attr('disabled', 'disabled');
+                service.formUpdate.attr('action', '#');
 
                 try {
                     const response = await service.findMonthlyStock();
@@ -388,6 +442,8 @@
                     $('#totalQuantity').text(app.numberFormat(response.data.stock.total_quantity));
                     
                     service.tableDetail.rows.add(response.data.details).draw();
+                    service.buttonUpdate.removeAttr('disabled');
+                    service.formUpdate.attr('action', app.url(`/stock-opnames/monthly/${response.data.stock.id}`));
                 } catch (error) {
                     app.setFormErrors(service.formFilter, error);
                 } finally {
@@ -418,6 +474,43 @@
                     service.modalCreate?.hide();
                 } catch (error) {
                     app.setFormErrors(service.formCreate, error);
+                } finally {
+                    app.hidePreloader();
+                }
+            });
+
+            /**
+             * Membuka modal update stock bulanan
+             */
+            service.buttonUpdate.click(function (e) { 
+                e.preventDefault();
+                app.clearFormErrors(service.formUpdate);
+                service.formUpdate.trigger('reset');
+                service.modalUpdate?.show();
+            });
+
+            /**
+             * Submit form update stock bulanan
+             */
+            service.formUpdate.submit(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+                app.clearFormErrors(service.formUpdate);
+
+                console.log(service.formFilter.attr('action'));
+                
+
+                try {
+                    const response = await service.updateMonthlyStock();
+                    
+                    if (response.status === 200) {
+                        await service.findMonthlyStock()
+    
+                        app.alert('success', response.message);
+                        service.modalUpdate?.hide();
+                    }
+                } catch (error) {
+                    app.setFormErrors(service.formUpdate, error);                    
                 } finally {
                     app.hidePreloader();
                 }

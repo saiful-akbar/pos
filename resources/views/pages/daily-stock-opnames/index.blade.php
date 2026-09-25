@@ -104,6 +104,10 @@
                 @csrf @method('GET')
 
                 <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h2 class="fs-5 mb-0">Filter</h2>
+                    </div>
+                    
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5 mb-lg-0">

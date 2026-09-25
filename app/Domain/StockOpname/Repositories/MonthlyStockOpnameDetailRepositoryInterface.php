@@ -23,9 +23,6 @@ interface MonthlyStockOpnameDetailRepositoryInterface
 
     /**
      * Hapus stock
-     *
-     * @param string $monthlyStockOpnameId
-     * @return integer
      */
     public function deleteByMonthlyStockOpnameId(string $monthlyStockOpnameId): int;
 }
