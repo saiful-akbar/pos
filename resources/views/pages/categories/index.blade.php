@@ -3,7 +3,7 @@
         @if ($access?->create)
             <x-slot:action>
                 <div class="row justify-content-end">
-                    <div class="col-6 col-lg-8 col-xl-6">
+                    <div class="col-12 col-lg-8 col-xl-6 order-2 order-lg-1">
                         <div class="btn-group w-100">
                             <a href="{{ route('master.categories.export') }}" class="btn btn-secondary w-100" role="button">
                                 <x-icon class="me-1">download</x-icon>
@@ -16,7 +16,7 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-lg-4 col-xl-3">
+                    <div class="col-12 col-lg-4 col-xl-3 mb-5 mb-lg-0 order-1 order-lg-2">
                         <a href="{{ route('master.categories.create') }}" role="button" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
@@ -141,7 +141,7 @@
                         orderable: false,
                         type: 'html',
                         render: (data) => {
-                            if (updateAccess === 1) {
+                            if ($('html').data('update') === 1) {
                                 return `
                                     <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
                                         <span class="material-symbols-outlined fs-6">edit</span>

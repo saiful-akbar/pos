@@ -43,10 +43,6 @@
                     start: 0,
                     end: 1
                 },
-                columnDefs: [
-                    { width: '30%', targets: 3 },
-                    { width: '30%', targets: 4 },
-                ],
                 columns: [
                     {
                         title: 'Kode',
@@ -74,12 +70,14 @@
                         name: 'address',
                         data: 'address',
                         type: 'string',
+                        width: '250px',
                     },
                     {
                         title: 'Catatan',
                         name: 'notes',
                         data: 'notes',
                         type: 'string',
+                        width: '250px',
                     },
                     {
                         title: 'Status',
@@ -127,7 +125,7 @@
                                 `;
                             }
 
-                            return '';
+                            return null;
                         },
                     }
                 ],
