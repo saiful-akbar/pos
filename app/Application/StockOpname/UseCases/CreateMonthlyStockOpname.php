@@ -72,7 +72,7 @@ class CreateMonthlyStockOpname
             // Buat catatan aktifitas.
             $this->activityRepository->create(new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Menjadikan stok harian sebagai stok bulanan',
+                logName: 'Menambah stok bulanan',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     attributes: $monthlyStock->toArray(),

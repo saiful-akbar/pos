@@ -31,8 +31,8 @@
                                 <x-form-floating-input
                                     required
                                     type="text"
-                                    name="daily_date"
-                                    id="dailyDateCreate"
+                                    name="daily_stock_opname_date"
+                                    id="dailyStockOpnameDateCreate"
                                     label="Tanggal stok harian"
                                     data-flatpickr=""
                                 />
@@ -96,23 +96,28 @@
         <div class="col-12">
             <form action="{{ route('stockOpnames.monthly') }}" method="get" autocomplete="off" id="formFilter">
                 <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h2 class="fs-5 mb-0">Filter</h2>
+                    </div>
+
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                            <div class="col-12 col-lg-6 mb-6 mb-lg-0">
                                 <x-form-floating-input
                                     type="number"
                                     name="year"
                                     id="yearFilter"
                                     label="Tahun"
-                                    value="{{ request('year', date('Y')) }}"
+                                    value="{{ old('year', request('year', date('Y'))) }}"
+                                    error="{{ $errors->has('year') }}"
                                     required
                                 />
                             </div>
 
-                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
-                                <x-form-floating-select name="month" id="monthFilter" label="Bulan" required>
+                            <div class="col-12 col-lg-6">
+                                <x-form-floating-select name="month" id="monthFilter" label="Bulan" error="{{ $errors->has('month') }}" required>
                                     @foreach (months() as $month)
-                                        <option value="{{ $month['key'] }}" @selected($month['key'] == request('month', date('m')))>
+                                        <option value="{{ $month['key'] }}" @selected($month['key'] == old('month', request('month', date('m'))))>
                                             {{ $month['name'] }}
                                         </option>
                                     @endforeach
@@ -135,14 +140,76 @@
 
     {{-- Table stock opname awal bulan --}}
     <div class="row mt-6">
-        <div class="col-12">
+        <div class="col-12 col-lg-4 mb-6 mb-lg-0">
             <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="fs-5 mb-0">Summary</h2>
+                </div>
+
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-body-secondary">Tanggal stok dipilih</span>
+                            <span id="dailyStockOpnameDate" class="fw-bold">-</span>
+                        </li>
+                        
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-body-secondary">Total produk</span>
+                            <span id="totalProduct" class="fw-bold">-</span>
+                        </li>
+                        
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-body-secondary">Total quantity</span>
+                            <span id="totalQuantity" class="fw-bold">-</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-auto">
+                            <h2 class="fs-5 m-0">Detail stok</h2>
+                        </div>
+                        
+                        @if ($access?->update)
+                            <div class="col-6 col-lg-4 col-xl-3">
+                                <x-button type="button" startIcon="autorenew" id="buttonUpdate" fullWidth disabled>Perbarui Stok</x-button>
+                            </div>
+                        @endif
+                    </div>
+                </div>
                 <div class="card-body">
                     <table id="tableDetail" class="table table-hover table-sm align-middle w-100 m-0"></table>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- Form modal update stock bulanan --}}
+    @if ($access?->update)
+        <form action="#" method="post" id="formUpdate" autocomplete="off">
+            @csrf @method('patch')
+
+            <div class="modal" tabindex="-1" id="modalUpdate">
+                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Perbarui Stok</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body"></div>
+
+                        <div class="modal-footer"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    @endif
 
     {{-- Javascript --}}
     <x-slot:script>
@@ -153,8 +220,31 @@
                     this.formFilter = $('#formFilter');
                     this.tableDetail = this.detailDataTable();
                     this.buttonCreate = $('#buttonCreate');
-                    this.modalCreate = new bootstrap.Modal('#modalCreate');
+                    this.modalCreate = this.modalCreate();
                     this.formCreate = $('#formCreate');
+                    this.buttonUpdate = $('#buttonUpdate');
+                    this.formUpdate = $('#formUpdate');
+                    this.modalUpdate = this.modalUpdate();
+                }
+
+                /**
+                 * Inisialisasi modal create
+                 */
+                modalCreate() {
+                    const modal = $('#modalCreate');
+
+                    if (modal.length === 0) return null;
+                    return new bootstrap.Modal(modal);
+                }
+
+                /**
+                 * Inisialisasi modal update
+                 */
+                modalUpdate() {
+                    const modal = $('#modalUpdate');
+
+                    if (modal.length === 0) return null;
+                    return new bootstrap.Modal(modal);
                 }
 
                 /**
@@ -180,15 +270,6 @@
                                 footer: '',
                             },
                             {
-                                title: 'Nama Produk',
-                                name: 'product.name',
-                                data: 'product.name',
-                                className: 'px-3',
-                                type: 'string',
-                                width: '300px',
-                                footer: '',
-                            },
-                            {
                                 title: 'Satuan',
                                 name: 'product.unit.code',
                                 data: 'product.unit.code',
@@ -208,9 +289,9 @@
                         ],
                         footerCallback: function(row, data, start, end) {
                             const api = this.api();
-                            const totalQuantity = api.column(4).data().reduce((a, b) => a + b, 0);
+                            const totalQuantity = api.column(3).data().reduce((a, b) => a + b, 0);
 
-                            $(api.column(4).footer()).text(app.numberFormat(totalQuantity, 2));
+                            $(api.column(3).footer()).text(app.numberFormat(totalQuantity));
                         }
                     })
                 }
@@ -230,12 +311,33 @@
                         });
                     });
                 }
+
+                /**
+                 * Menyimpan (insert) data stok bulanan.
+                 */
+                createMonthlyStock() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "post",
+                            url: this.formCreate.attr('action'),
+                            data: this.formCreate.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
             }
 
             window.service = new Service();
         </script>
 
         <script>
+            "use strict"
+
+            /**
+             * Request data stock awal saat dokumen dimuat.
+             */
             $(document).ready(async function () {
                 const params = new URLSearchParams(window.location.search);
                 const year = params.get('year');
@@ -247,11 +349,15 @@
 
                 app.showPreloader();
                 app.clearFormErrors(service.formFilter);
+                service.tableDetail.clear().draw();
 
                 try {
                     const response = await service.findMonthlyStock();
                     
-                    service.tableDetail.clear().draw();
+                    $('#dailyStockOpnameDate').text(app.dateFormat(response.data.stock.daily_stock_opname.date));
+                    $('#totalProduct').text(app.numberFormat(response.data.stock.total_product));
+                    $('#totalQuantity').text(app.numberFormat(response.data.stock.total_quantity));
+
                     service.tableDetail.rows.add(response.data.details).draw();
                 } catch (error) {
                     app.setFormErrors(service.formFilter, error);
@@ -272,11 +378,15 @@
                 app.updateQueryParams(params);
                 app.showPreloader();
                 app.clearFormErrors(service.formFilter);
+                service.tableDetail.clear().draw();
 
                 try {
                     const response = await service.findMonthlyStock();
                     
-                    service.tableDetail.clear().draw();
+                    $('#dailyStockOpnameDate').text(app.dateFormat(response.data.stock.daily_stock_opname.date));
+                    $('#totalProduct').text(app.numberFormat(response.data.stock.total_product));
+                    $('#totalQuantity').text(app.numberFormat(response.data.stock.total_quantity));
+                    
                     service.tableDetail.rows.add(response.data.details).draw();
                 } catch (error) {
                     app.setFormErrors(service.formFilter, error);
@@ -290,7 +400,27 @@
              */
             service.buttonCreate.click(function (e) { 
                 e.preventDefault();
-                service.modalCreate.show();
+                service.modalCreate?.show();
+            });
+
+            /**
+             * Submit form create
+             */
+            service.formCreate.submit(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+                app.clearFormErrors(service.formCreate);
+
+                try {
+                    const response = await service.createMonthlyStock();
+
+                    app.alert('success', response.message)
+                    service.modalCreate?.hide();
+                } catch (error) {
+                    app.setFormErrors(service.formCreate, error);
+                } finally {
+                    app.hidePreloader();
+                }
             });
         </script>
     </x-slot:script>

@@ -154,7 +154,7 @@
                                 `;
                             }
 
-                            return;
+                            return null;
                         },
                     }
                 ],

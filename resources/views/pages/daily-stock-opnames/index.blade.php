@@ -1,99 +1,101 @@
 <x-layouts.auth title="Stock Opname Harian" active="summary" :access="$access">
     <x-page-header title="Stock Opname Harian" icon="inventory">
-        <x-slot:action>
-            <div class="row justify-content-end gx-0">
-                @if ($access?->create)
+        @if ($access?->create)
+            <x-slot:action>
+                <div class="row justify-content-end gx-0">
                     <div class="col-12 col-lg-6 col-xl-4">
                         <x-button type="button" start-icon="upload" id="buttonImport" full-width>
                             Import Excel
                         </x-button>
                     </div>
-                @endif
-            </div>
-        </x-slot:action>
+                </div>
+            </x-slot:action>
+        @endif
     </x-page-header>
 
     {{-- Form modal import excel --}}
-    <form id="formImport" action="{{ route('stockOpnames.daily.import') }}" method="post" autocomplete="off" enctype="multipart/form-data">
-        @csrf @method('POST')
+    @if ($access?->create)
+        <form id="formImport" action="{{ route('stockOpnames.daily.import') }}" method="post" autocomplete="off" enctype="multipart/form-data">
+            @csrf @method('POST')
+            
+            <div class="modal" tabindex="-1" id="modalImport">
+                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
+                    <div class="modal-content border">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Impor Excel</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
         
-        <div class="modal" tabindex="-1" id="modalImport">
-            <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
-                <div class="modal-content border">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Impor Excel</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-    
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <x-button type="link" href="{{ route('stockOpnames.daily.export') }}" start-icon="download" full-width>
-                                    Unduh Template Excel
-                                </x-button>
-                            </div>
-    
-                            <div class="col-12 my-5">
-                                <hr>
-                            </div>
-    
-                            <div class="col-12 mb-5">
-                                <x-form-input
-                                    required
-                                    type="text"
-                                    name="date"
-                                    id="date"
-                                    label="Tanggal"
-                                    placeholder="Tanggal"
-                                    value="{{ old('date', date('Y-m-d')) }}"
-                                    data-flatpickr=""
-                                />
-                            </div>
-    
-                            <div class="col-12 mb-5">
-                                <x-form-input
-                                    required
-                                    type="file"
-                                    name="file"
-                                    id="file"
-                                    label="File"
-                                    placeholder="File"
-                                    accept=".xlsx"
-                                />
-                            </div>
-    
-                            <div class="col-12">
-                                <x-form-input
-                                    type="textarea"
-                                    name="notes"
-                                    id="notes"
-                                    label="Catatan"
-                                    placeholder="Masukan catatan..."
-                                    value="{{ old('notes') }}"
-                                />
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <x-button type="link" href="{{ route('stockOpnames.daily.export') }}" start-icon="download" full-width>
+                                        Unduh Template Excel
+                                    </x-button>
+                                </div>
+        
+                                <div class="col-12 my-5">
+                                    <hr>
+                                </div>
+        
+                                <div class="col-12 mb-5">
+                                    <x-form-input
+                                        required
+                                        type="text"
+                                        name="date"
+                                        id="date"
+                                        label="Tanggal"
+                                        placeholder="Tanggal"
+                                        value="{{ old('date', date('Y-m-d')) }}"
+                                        data-flatpickr=""
+                                    />
+                                </div>
+        
+                                <div class="col-12 mb-5">
+                                    <x-form-input
+                                        required
+                                        type="file"
+                                        name="file"
+                                        id="file"
+                                        label="File"
+                                        placeholder="File"
+                                        accept=".xlsx"
+                                    />
+                                </div>
+        
+                                <div class="col-12">
+                                    <x-form-input
+                                        type="textarea"
+                                        name="notes"
+                                        id="notes"
+                                        label="Catatan"
+                                        placeholder="Masukan catatan..."
+                                        value="{{ old('notes') }}"
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <div class="row w-100">
-                            <div class="col-6">
-                                <x-button type="button" color="light" data-bs-dismiss="modal" start-icon="close" full-width>
-                                    Close
-                                </x-button>
-                            </div>
-    
-                            <div class="col-6">
-                                <x-button type="submit" color="secondary" start-icon="save" full-width>
-                                    Simpan
-                                </x-button>
+                        
+                        <div class="modal-footer">
+                            <div class="row w-100">
+                                <div class="col-6">
+                                    <x-button type="button" color="light" data-bs-dismiss="modal" start-icon="close" full-width>
+                                        Close
+                                    </x-button>
+                                </div>
+        
+                                <div class="col-6">
+                                    <x-button type="submit" color="secondary" start-icon="save" full-width>
+                                        Simpan
+                                    </x-button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    @endif
 
     {{-- Form filter --}}
     <div class="row mt-6">
@@ -197,83 +199,85 @@
     </div>
 
     {{-- Form modal pilih stok awal bulan --}}
-    <form action="#" method="post" id="formMonthlyStock" autocomplete="off">
-        @csrf @method('post')
+    @if ($access?->update)
+        <form action="#" method="post" id="formMonthlyStock" autocomplete="off">
+            @csrf @method('post')
 
-        <div class="modal" tabindex="-1" id="modalMonthlyStock">
-            <div class="modal-dialog modal-fullscreen-md-down">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Stok Awal</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-    
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12 mb-6">
-                                <div class="form-floating" data-invalid="year">
-                                    <input type="number" name="year" id="year" class="form-control"
-                                        placeholder="Tahun" value="{{ date('Y') }}"
-                                        data-invalid="year" required>
-                                    
-                                    <label for="year">
-                                        Tahun <span class="text-danger">*</span>
-                                    </label>
+            <div class="modal" tabindex="-1" id="modalMonthlyStock">
+                <div class="modal-dialog modal-fullscreen-md-down">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Stok Awal</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+        
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 mb-6">
+                                    <div class="form-floating" data-invalid="year">
+                                        <input type="number" name="year" id="year" class="form-control"
+                                            placeholder="Tahun" value="{{ date('Y') }}"
+                                            data-invalid="year" required>
+                                        
+                                        <label for="year">
+                                            Tahun <span class="text-danger">*</span>
+                                        </label>
+                                    </div>
+        
+                                    <div class="ivalid-feedback" data-invalid-feedback="year"></div>
                                 </div>
-    
-                                <div class="ivalid-feedback" data-invalid-feedback="year"></div>
-                            </div>
-    
-                            <div class="col-12 mb-6">
-                                <div class="form-floating" data-invalid="month">
-                                    <select name="month" id="month" class="form-select" data-invalid="month" required>
-                                        <option value="01" @selected(date('m') == '01')>Januari</option>
-                                        <option value="02" @selected(date('m') == '02')>Februari</option>
-                                        <option value="03" @selected(date('m') == '03')>Maret</option>
-                                        <option value="04" @selected(date('m') == '04')>April</option>
-                                        <option value="05" @selected(date('m') == '05')>Mei</option>
-                                        <option value="06" @selected(date('m') == '06')>Juni</option>
-                                        <option value="07" @selected(date('m') == '07')>Juli</option>
-                                        <option value="08" @selected(date('m') == '08')>Agustus</option>
-                                        <option value="09" @selected(date('m') == '09')>September</option>
-                                        <option value="10" @selected(date('m') == '10')>Oktober</option>
-                                        <option value="11" @selected(date('m') == '11')>November</option>
-                                        <option value="12" @selected(date('m') == '12')>Desember</option>
-                                    </select>
-                                    
-                                    <label for="month">
-                                        Bulan <span class="text-danger">*</span>
-                                    </label>
-                                </div>
-    
-                                <div class="invalid-feedback" data-invalid-feedback="month"></div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-floating" data-invalid="notes">
-                                    <textarea name="notes" id="monthlyNotes" class="form-control" placeholder="Catatan" data-invalid="notes"></textarea>
-                                    <label for="monthlyNotes">Catatan</label>
+        
+                                <div class="col-12 mb-6">
+                                    <div class="form-floating" data-invalid="month">
+                                        <select name="month" id="month" class="form-select" data-invalid="month" required>
+                                            <option value="01" @selected(date('m') == '01')>Januari</option>
+                                            <option value="02" @selected(date('m') == '02')>Februari</option>
+                                            <option value="03" @selected(date('m') == '03')>Maret</option>
+                                            <option value="04" @selected(date('m') == '04')>April</option>
+                                            <option value="05" @selected(date('m') == '05')>Mei</option>
+                                            <option value="06" @selected(date('m') == '06')>Juni</option>
+                                            <option value="07" @selected(date('m') == '07')>Juli</option>
+                                            <option value="08" @selected(date('m') == '08')>Agustus</option>
+                                            <option value="09" @selected(date('m') == '09')>September</option>
+                                            <option value="10" @selected(date('m') == '10')>Oktober</option>
+                                            <option value="11" @selected(date('m') == '11')>November</option>
+                                            <option value="12" @selected(date('m') == '12')>Desember</option>
+                                        </select>
+                                        
+                                        <label for="month">
+                                            Bulan <span class="text-danger">*</span>
+                                        </label>
+                                    </div>
+        
+                                    <div class="invalid-feedback" data-invalid-feedback="month"></div>
                                 </div>
 
-                                <div class="invalid-feedback" data-invalid-feedback="notes"></div>
+                                <div class="col-12">
+                                    <div class="form-floating" data-invalid="notes">
+                                        <textarea name="notes" id="monthlyNotes" class="form-control" placeholder="Catatan" data-invalid="notes"></textarea>
+                                        <label for="monthlyNotes">Catatan</label>
+                                    </div>
+
+                                    <div class="invalid-feedback" data-invalid-feedback="notes"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-    
-                    <div class="modal-footer">
-                        <div class="row w-100">
-                            <div class="col-6">
-                                <x-button type="reset" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>Tutup</x-button>
-                            </div>
-                            <div class="col-6">
-                                <x-button type="submit" color="secondary" startIcon="save" fullWidth>Simpan</x-button>
+        
+                        <div class="modal-footer">
+                            <div class="row w-100">
+                                <div class="col-6">
+                                    <x-button type="reset" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>Tutup</x-button>
+                                </div>
+                                <div class="col-6">
+                                    <x-button type="submit" color="secondary" startIcon="save" fullWidth>Simpan</x-button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    @endif
 
     {{-- Javascript --}}
     <x-slot:script>
@@ -281,7 +285,7 @@
             class Service {
                 constructor() {
                     this.buttonImport = $('#buttonImport');
-                    this.modalImport = new bootstrap.Modal('#modalImport');
+                    this.modalImport = this.modalImport();
                     this.formImport = $('#formImport');
                     this.formFilter = $('#formFilter');
                     this.summaryTable = this.summaryTable();
@@ -289,9 +293,29 @@
                     this.buttonEditStock = $('#buttonEditStock');
                     this.buttonMonthlyStock = $('#buttonMonthlyStock');
                     this.formMonthlyStock = $('#formMonthlyStock');
-                    this.modalMonthlyStock = new bootstrap.Modal('#modalMonthlyStock');
+                    this.modalMonthlyStock = this.modalMonthlyStock();
                     this.buttonActiveStock = $('#buttonActiveStock');
                     this.csrfToken = $('meta[name="csrf-token"]').attr('content');
+                }
+
+                /**
+                 * Inisialisasi modal import
+                 */
+                modalImport() {
+                    const modal = $('#modalImport');
+
+                    if (modal.length === 0) return null;
+                    return new bootstrap.Modal(modal);
+                }
+
+                /**
+                 * Inisialisasi modal monthly stock
+                 */
+                modalMonthlyStock() {
+                    const modal = $('#modalMonthlyStock');
+
+                    if (modal.length === 0) return null;
+                    return new bootstrap.Modal(modal);
                 }
 
                 /**
@@ -506,7 +530,7 @@
              */
             service.buttonImport.click(function(e) {
                 e.preventDefault();
-                service.modalImport.show();
+                service.modalImport?.show();
                 
             });
             
@@ -603,7 +627,7 @@
                 e.preventDefault();
                 service.formMonthlyStock.find('[data-invalid]').removeClass('is-invalid');
                 service.formMonthlyStock.find('[data-invalid-feedback]').text('');
-                service.modalMonthlyStock.show();
+                service.modalMonthlyStock?.show();
             });
 
             /**
@@ -620,7 +644,7 @@
                     const response = await service.createMonthlyStock(service.buttonMonthlyStock.data('id'));
 
                     service.formMonthlyStock.trigger('reset');
-                    service.modalMonthlyStock.hide();
+                    service.modalMonthlyStock?.hide();
                     app.alert('success', response.message);
                 } catch (error) {
                     Object.entries(error.errors).forEach(([field, message]) => {

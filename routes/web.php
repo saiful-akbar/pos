@@ -275,6 +275,8 @@ Route::middleware('auth')->group(function (): void {
                 $module = 'module:stockOpnames.monthly';
 
                 Route::get('/', 'index')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::patch('/{id}', 'update')->name('.update')->middleware("$module,update");
             });
     });
 });

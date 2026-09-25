@@ -36,6 +36,7 @@ class MonthlyStockOpnameEntity extends Entity
     {
         return [
             'id' => $this->id,
+            'daily_stock_opname' => $this->dailyStockOpname->toArray(),
             'user' => $this->user->toArray(),
             'year' => $this->year,
             'month' => $this->month,

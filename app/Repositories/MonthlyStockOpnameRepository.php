@@ -136,6 +136,53 @@ class MonthlyStockOpnameRepository extends Repository implements MonthlyStockOpn
     }
 
     /**
+     * Menghapus berdasarkan id.
+     *
+     * @param string $id
+     * @return integer
+     */
+    #[Override]
+    public function deleteById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->forceDelete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Update stock
+     *
+     * @param string $id
+     * @param MonthlyStockOpnameDTO $value
+     * @return integer
+     */
+    #[Override]
+    public function update(string $id, MonthlyStockOpnameDTO $value): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->update($value->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class UserStockOpnameValue
      */
     private function mapModelToUserStockOpnameValue(User $model): UserStockOpnameValue

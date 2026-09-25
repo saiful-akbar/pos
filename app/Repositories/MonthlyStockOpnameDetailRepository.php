@@ -55,15 +55,38 @@ class MonthlyStockOpnameDetailRepository extends Repository implements MonthlySt
      * @return MonthlyStockOpnameDetailEntity[]
      */
     #[Override]
-    public function getByMonthlyStockOpnameId(string $id): array
+    public function getByMonthlyStockOpnameId(string $monthlyStockOpnameId): array
     {
         try {
             return $this->model->query()
                 ->with(['product.category', 'product.unit'])
-                ->where('monthly_stock_opname_id', $id)
+                ->where('monthly_stock_opname_id', $monthlyStockOpnameId)
                 ->get()
-                ->map(fn ($data) => $this->mapModelToMonthlyStockOpnameDetailEntity($data))
+                ->map(fn($data) => $this->mapModelToMonthlyStockOpnameDetailEntity($data))
                 ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete stock
+     *
+     * @param string $monthlyStockOpnameId
+     * @return integer
+     */
+    #[Override]
+    public function deleteByMonthlyStockOpnameId(string $monthlyStockOpnameId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('monthly_stock_opname_id', $monthlyStockOpnameId)
+                ->forceDelete();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

@@ -1,5 +1,5 @@
-<x-layouts.auth title="Edit daily stock opname">
-    <x-page-header title="Edit daily stock opname" icon="inventory">
+<x-layouts.auth title="Edit stok opname">
+    <x-page-header title="Edit stok opname" icon="inventory">
         <x-slot:action>
             <div class="row justify-content-end">
                 <div class="col-12 col-lg-4">

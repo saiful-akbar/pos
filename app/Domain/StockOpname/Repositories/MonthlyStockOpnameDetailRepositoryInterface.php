@@ -19,5 +19,13 @@ interface MonthlyStockOpnameDetailRepositoryInterface
      *
      * @return MonthlyStockOpnameDetailEntity[]
      */
-    public function getByMonthlyStockOpnameId(string $id): array;
+    public function getByMonthlyStockOpnameId(string $monthlyStockOpnameId): array;
+
+    /**
+     * Hapus stock
+     *
+     * @param string $monthlyStockOpnameId
+     * @return integer
+     */
+    public function deleteByMonthlyStockOpnameId(string $monthlyStockOpnameId): int;
 }

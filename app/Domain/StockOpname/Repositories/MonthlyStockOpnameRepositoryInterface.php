@@ -33,4 +33,21 @@ interface MonthlyStockOpnameRepositoryInterface
      * Mengambil data berdasarkan id.
      */
     public function findById(string $id): ?MonthlyStockOpnameEntity;
+
+    /**
+     * Menghapus berdasarkan id.
+     *
+     * @param string $id
+     * @return integer
+     */
+    public function deleteById(string $id): int;
+
+    /**
+     * Update stock
+     *
+     * @param string $id
+     * @param MonthlyStockOpnameDTO $value
+     * @return integer
+     */
+    public function update(string $id, MonthlyStockOpnameDTO $value): int;
 }

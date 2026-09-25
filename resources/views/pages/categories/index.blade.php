@@ -89,84 +89,70 @@
 
     <x-slot:script>
         <script>
-            const tableColumns = [
-                {
-                    title: 'Kode',
-                    name: 'code',
-                    data: 'code',
-                    className: 'text-nowrap',
-                },
-                {
-                    title: 'Nama (Deskripsi)',
-                    name: 'name',
-                    data: 'name',
-                    className: 'text-nowrap',
-                },
-                {
-                    title: 'Status',
-                    name: 'is_active',
-                    data: 'is_active',
-                    className: 'text-nowrap',
-                    searchable: false,
-                    render: (data) => {
-                        if (data) {
-                            return `
-                                <span class="badge bg-success-subtle text-success">
-                                    Aktif
-                                </span>
-                            `;
-                        }
-
-                        return `
-                            <span class="badge bg-danger-subtle text-danger">
-                                Tidak Aktif
-                            </span>
-                        `;
-                    }
-                },
-                {
-                    title: 'Dibuat',
-                    name: 'created_at',
-                    data: 'created_at',
-                    className: 'text-nowrap',
-                    searchable: false,
-                    render: (data) => app.dateTimeFormat(data),
-                },
-                {
-                    title: 'Diedit',
-                    name: 'updated_at',
-                    data: 'updated_at',
-                    className: 'text-nowrap',
-                    searchable: false,
-                    render: (data) => app.dateTimeFormat(data),
-                },
-            ];
-            
-            const updateAccess = $('html').data('update');
-            
-            if (updateAccess === 1) {
-                tableColumns.push({
-                    title: '<span class="material-symbols-outlined">settings</span>',
-                    name: 'id',
-                    data: 'id',
-                    className: 'text-nowrap text-center',
-                    searchable: false,
-                    orderable: false,
-                    type: 'html',
-                    render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
-                    },
-                });
-            }
-
             const table = app.dataTable('#categoryTable', {
                 serverSide: true,
                 ajax: "{{ route('master.categories') }}",
-                columns: tableColumns,
+                columns: [
+                    {
+                        title: 'Kode',
+                        name: 'code',
+                        data: 'code',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Nama (Deskripsi)',
+                        name: 'name',
+                        data: 'name',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Status',
+                        name: 'is_active',
+                        data: 'is_active',
+                        className: 'text-nowrap',
+                        searchable: false,
+                        render: (data) => {
+                            if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
+                            return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
+                        }
+                    },
+                    {
+                        title: 'Dibuat',
+                        name: 'created_at',
+                        data: 'created_at',
+                        className: 'text-nowrap',
+                        searchable: false,
+                        render: (data) => app.dateTimeFormat(data),
+                    },
+                    {
+                        title: 'Diedit',
+                        name: 'updated_at',
+                        data: 'updated_at',
+                        className: 'text-nowrap',
+                        searchable: false,
+                        render: (data) => app.dateTimeFormat(data),
+                    },
+                    {
+                        title: '<span class="material-symbols-outlined">settings</span>',
+                        name: 'id',
+                        data: 'id',
+                        className: 'text-nowrap text-center',
+                        searchable: false,
+                        orderable: false,
+                        type: 'html',
+                        render: (data) => {
+                            if (updateAccess === 1) {
+                                return `
+                                    <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
+                                        <span class="material-symbols-outlined fs-6">edit</span>
+                                    </a>
+                                `;
+                            }
+
+                            return null;
+                        },
+                    }
+                ],
             });
         </script>
 

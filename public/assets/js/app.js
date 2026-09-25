@@ -371,8 +371,6 @@ class App {
    * Set errors
    */
   setFormErrors(form, error) {
-    this.alert("danger", error.message);
-
     Object.entries(error.errors).forEach(([field, message]) => {
       form.find(`[data-invalid="${field}"]`).addClass("is-invalid");
       form.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
