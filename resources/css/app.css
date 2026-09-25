@@ -108,3 +108,11 @@ div.dt-processing {
 div.dt-container div.dt-search input {
   margin: 0 !important;
 }
+
+div.dt-container div.dt-column-title {
+  margin: 0 5px !important;
+}
+
+div.dt-container div.dt-column-order {
+  margin: 0 5px !important;
+}

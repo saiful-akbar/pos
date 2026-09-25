@@ -120,12 +120,6 @@ class ModuleSeeder extends Seeder
                         'route' => 'master.products',
                         'roles' => ['Admin', 'Kasir'],
                     ],
-                    // [
-                    //     'name' => 'Diskon',
-                    //     'path' => 'master/discounts',
-                    //     'route' => 'master.discounts',
-                    //     'roles' => ['Admin', 'Kasir'],
-                    // ],
                 ],
             ],
             [
@@ -184,12 +178,6 @@ class ModuleSeeder extends Seeder
                         'name' => 'Laporan penjualan',
                         'path' => '/reports/sales',
                         'route' => 'reports.sales',
-                        'roles' => ['Admin', 'Kasir'],
-                    ],
-                    [
-                        'name' => 'Laporan pengembalian penjualan',
-                        'path' => '/reports/sales/returns',
-                        'route' => 'reports.sales.returns',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [

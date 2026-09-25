@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MonthlyStockOpnameController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
@@ -279,6 +280,14 @@ Route::middleware('auth')->group(function (): void {
                 Route::patch('/{id}', 'update')->name('.update')->middleware("$module,update");
             });
     });
+
+    Route::controller(ReportController::class)
+        ->name('reports')
+        ->prefix('/reports')
+        ->group(function (): void {
+            Route::get('purchases', 'purchaseSummary')->name('.purchases');
+            Route::get('purchases/details', 'purchaseDetail')->name('.purchases.details');
+        });
 });
 
 Route::redirect('/', '/dashboard');
