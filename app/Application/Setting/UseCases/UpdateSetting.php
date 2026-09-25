@@ -14,6 +14,7 @@ use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class UpdateSetting
 {
@@ -80,18 +81,22 @@ class UpdateSetting
      */
     private function updateLogo(SettingEntity $setting, Request $request): void
     {
-        $path = $setting->storeLogo;
-
         if ($request->hasFile('store_logo')) {
-            if ($path !== null && Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            if ($setting->storeLogo !== null && Storage::disk('public')->exists($setting->storeLogo)) {
+                Storage::disk('public')->delete($setting->storeLogo);
             }
 
-            $logo = $request->file('store_logo')->store('images/settings', 'public');
+            $path = $request->file('store_logo')->store('images/settings', 'public');
+
+            if (!$path) {
+                throw ValidationException::withMessages([
+                    'store_logo' => 'Logo gagal disimpan.'
+                ]);
+            }
 
             $this->settingRepository->updateLogo(
                 id: $setting->id,
-                path: $logo,
+                path: $path,
             );
         }
     }

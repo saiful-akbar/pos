@@ -8,29 +8,27 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-6 mb-lg-0">
-                                <div class="form-floating">
-                                    <input type="text" name="from_date" id="fromDate" class="form-control"
-                                        placeholder="Dari tanggal" data-flatpickr="" required />
-
-                                    <label for="fromDate">
-                                        Periode awal <span class="text-danger">*</span>
-                                    </label>
-                                </div>
-
-                                <div class="invalid-feedback"></div>
+                                <x-form-floating-input
+                                    type="text"
+                                    name="from_date"
+                                    id="fromDate"
+                                    label="Dari tanggal"
+                                    value="{{ request('from_date') }}"
+                                    data-flatpickr=""
+                                    required
+                                />
                             </div>
 
                             <div class="col-12 col-lg-6">
-                                <div class="form-floating">
-                                    <input type="text" name="to_date" id="toDate" class="form-control"
-                                        placeholder="Sampai tanggal" data-flatpickr="" required />
-
-                                    <label for="toDate">
-                                        Periode akhir <span class="text-danger">*</span>
-                                    </label>
-                                </div>
-
-                                <div class="invalid-feedback"></div>
+                                <x-form-floating-input
+                                    type="text"
+                                    name="to_date"
+                                    id="toDate"
+                                    label="Sampai tanggal"
+                                    value="{{ request('to_date') }}"
+                                    data-flatpickr=""
+                                    required
+                                />
                             </div>
                         </div>
                     </div>
@@ -51,7 +49,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="saleTable" class="table table-hover align-middle w-100"></table>
+                    <table id="tableSales" class="table table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -62,14 +60,14 @@
             class Service {
                 constructor() {
                     this.formFilter = $('#formFilter');
-                    this.saleTable = this.saleTable();
+                    this.tableSales = this.tableSales();
                 }
 
                 /**
                  * Inisialisasi datatable sales.
                  */
-                saleTable() {
-                    return app.buttonDataTable('#saleTable', {
+                tableSales() {
+                    return app.buttonDataTable('#tableSales', {
                         fixedColumns: {
                             start: 0,
                             end: 1,
@@ -80,32 +78,33 @@
                         ],
                         columns: [
                             {
-                                title: 'No. Faktur Penjualan',
+                                title: 'Nomor Faktur Penjualan',
                                 name: 'sale.invoice_number',
                                 data: 'sale.invoice_number',
-                                className: 'text-nowrap',
+                                className: 'px-3 text-nowrap',
                                 type: 'string',
                             },
                             {
                                 title: 'Tanggal',
                                 name: 'transaction_date',
                                 data: 'transaction_date',
-                                className: 'text-nowrap',
+                                className: 'px-3 text-nowrap',
                                 type: 'date',
+                                render: (data) => app.dateFormat(data),
                             },
                             {
                                 title: 'Qauntity',
                                 name: 'total_quantity',
                                 data: 'total_quantity',
-                                className: 'text-nowrap',
+                                className: 'px-3 text-nowrap',
                                 type: 'num-fmt',
-                                render: (data, type, row) => app.numberFormat(data),
+                                render: (data) => app.numberFormat(data),
                             },
                             {
                                 title: 'Total',
                                 name: 'total_amount',
                                 data: 'total_amount',
-                                className: 'text-nowrap',
+                                className: 'px-3 text-nowrap',
                                 type: 'num-fmt',
                                 render: (data) => `Rp ${app.numberFormat(data)}`,
                             },
@@ -135,29 +134,55 @@
 
         {{-- Global script --}}
         <script>
+            $(document).ready(async function () {
+                const params = new URLSearchParams(window.location.search);
+                const fromDate = params.get('from_date');
+                const toDate = params.get('to_date');
+
+                if (fromDate !== null && toDate !== null) {
+                    app.showPreloader();
+                    app.clearFormErrors(service.formFilter);
+
+                    try {
+                        const response = await service.getSales();
+                        const table = service.tableSales;
+
+                        table.clear().draw();
+                        table.rows.add(response.data).draw();
+                    } catch (error) {
+                        app.setFormErrors(service.formFilter, error);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                }
+            });
+
+            /**
+             * Submit form filter.
+             */
             service.formFilter.submit(async function (e) { 
                 e.preventDefault();
-                app.showPreloader();
                 
-                service.formFilter.find('input[name="from_date"]').removeClass('is-invalid');
-                service.formFilter.find('input[name="from_date"]').parent().removeClass('is-invalid');
-                service.formFilter.find('input[name="from_date"]').parent().next().text('');
-                service.formFilter.find('input[name="to_date"]').removeClass('is-invalid');
-                service.formFilter.find('input[name="to_date"]').parent().removeClass('is-invalid');
-                service.formFilter.find('input[name="to_date"]').parent().next().text('');
+                const fromDate = service.formFilter.find('input[name="from_date"]').val();
+                const toDate = service.formFilter.find('input[name="to_date"]').val();
+                
+                const params = {
+                    from_date: fromDate,
+                    to_date: toDate,
+                };
+                
+                app.updateQueryParams(params);
+                app.showPreloader();
+                app.clearFormErrors(service.formFilter);
 
                 try {
-                    const table = service.saleTable;
                     const response = await service.getSales();
+                    const table = service.tableSales;
 
                     table.clear().draw();
                     table.rows.add(response.data).draw();
                 } catch (error) {
-                    Object.entries(error.errors).forEach(([field, message]) => {
-                        service.formFilter.find(`input[name="${field}"]`).addClass('is-invalid');
-                        service.formFilter.find(`input[name="${field}"]`).parent().addClass('is-invalid');
-                        service.formFilter.find(`input[name="${field}"]`).parent().next().text(message[0]);
-                    });
+                    app.setFormErrors(service.formFilter, error);
                 } finally {
                     app.hidePreloader();
                 }

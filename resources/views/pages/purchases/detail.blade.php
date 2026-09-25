@@ -2,11 +2,10 @@
     <x-page-header title="Detail Pembelian" icon="add_shopping_cart">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-12 col-lg-3">
-                    <a href="{{ route('transactions.purchases') }}" class="btn btn-light w-100" role="button">
-                        <x-icon class="me-1">arrow_back</x-icon>
-                        <span>Kembali</span>
-                    </a>
+                <div class="col-12 col-lg-4">
+                    <x-button type="button" color="danger" startIcon="close" fullWidth onclick="window.close()">
+                        Tutup
+                    </x-button>
                 </div>
             </div>
         </x-slot:action>
@@ -60,7 +59,7 @@
                 <div class="col-12">
                     <div class="card shadow-sm">
                         <div class="card-header">
-                            <h3 class="fs-6 my-0">Daftar Produk</h3>
+                            <h3 class="fs-6 my-0">Produk</h3>
                         </div>
         
                         <div class="card-body">
@@ -78,9 +77,9 @@
                                     @foreach ($details as $detail)
                                         <tr>
                                             <td class="text-start">{{ $detail->product->code }}</td>
-                                            <td class="text-end">{{ number_format($detail->quantity) }}</td>
-                                            <td class="text-end">Rp {{ number_format($detail->purchasePrice) }}</td>
-                                            <td class="text-end">Rp {{ number_format($detail->subtotalPrice) }}</td>
+                                            <td class="text-end">{{ number_format($detail->quantity, 2) }}</td>
+                                            <td class="text-end">{{ number_format($detail->purchasePrice, 2) }}</td>
+                                            <td class="text-end">{{ number_format($detail->subtotalPrice, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -96,7 +95,7 @@
                         <div class="card-header">
                             <div class="row justify-content-between align-items-center">
                                 <div class="col-auto">
-                                    <div class="h3 fs-6 my-0">Pembayaran</div>
+                                    <h3 class="fs-6 my-0">Pembayaran</h3>
                                 </div>
                                 
                                 @if ($access?->create)
@@ -136,7 +135,7 @@
                                             <td class="text-start text-nowrap">{{ $payment->paymentDate->format('d M Y') }}</td>
                                             <td class="text-start text-nowrap">{{ strtoupper($payment->paymentMethod->value) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->referenceNumber }}</td>
-                                            <td class="text-end text-nowrap">Rp {{ number_format($payment->amount) }}</td>
+                                            <td class="text-end text-nowrap">{{ number_format($payment->amount) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->notes }}</td>
                                         </tr>
                                     @endforeach
@@ -145,7 +144,7 @@
                                 <tfoot>
                                     <tr>
                                         <th class="text-start text-nowrap" colspan="3">Kurang Bayar</th>
-                                        <th class="text-end text-nowrap">Rp {{ number_format($purchase->totalPrice - $totalAmount) }}</th>
+                                        <th class="text-end text-nowrap">{{ number_format($purchase->totalPrice - $totalAmount) }}</th>
                                         <th class="text-end text-nowrap"></th>
                                     </tr>
                                 </tfoot>

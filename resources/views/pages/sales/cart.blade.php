@@ -306,14 +306,10 @@
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar">
-                                                    <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
-                                                </div>
-                                                <div class="ms-4">
+                                                <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
+                                                <div class="ms-3">
                                                     <div>${row.code}</div>
-                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">
-                                                        ${row.name}
-                                                    </div>
+                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">${row.name}</div>
                                                 </div>
                                             </div>
                                         `;
@@ -801,7 +797,7 @@
         <x-page-header title="Kasir POS" icon="shopping_cart">
             <x-slot:action>
                 <div class="row justify-content-end">
-                    <div class="col-12 col-lg-4 col-xl-3 order-2 order-lg-1">
+                    <div class="col-12 col-lg-6 col-xl-4 order-2 order-lg-1">
                         <form action="{{ route('transactions.sales.carts.store') }}" method="post">
                             @csrf @method('post')
 
@@ -812,7 +808,7 @@
                         </form>
                     </div>
 
-                    <div class="col-12 col-lg-4 col-xl-3 order-1 order-lg-2 mb-5 mb-lg-0">
+                    <div class="col-12 col-lg-6 col-xl-4 order-1 order-lg-2 mb-5 mb-lg-0">
                         <a href="{{ route('transactions.sales') }}" role="submit" class="btn btn-light w-100">
                             <x-icon class="me-1">arrow_back</x-icon>
                             <span>Kembali</span>

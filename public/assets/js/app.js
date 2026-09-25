@@ -217,8 +217,8 @@ class App {
   /**
    * Format angka (numerik).
    */
-  numberFormat(number, fractionDigits = 0) {
-    const intl = new Intl.NumberFormat("id-ID", {
+  numberFormat(number, fractionDigits = 2) {
+    const intl = new Intl.NumberFormat("en-US", {
       minimumFractionDigits: fractionDigits,
       maximumFractionDigits: fractionDigits,
     });

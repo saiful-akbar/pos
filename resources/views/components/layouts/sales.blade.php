@@ -3,7 +3,7 @@
         <x-slot:action>
             <div class="row justify-content-end">
                 @if ($access?->create ?? false)
-                    <div class="col-12 col-lg-5 col-xl-3">
+                    <div class="col-12 col-lg-6 col-xl-4">
                         <x-button
                             type="link"
                             href="{{ route('transactions.sales.carts') }}"
@@ -16,7 +16,7 @@
                 @endif
                 
                 @if ($access?->update ?? false)
-                    <div class="col-12 col-lg-5 col-xl-3 mt-5 mt-lg-0">
+                    <div class="col-12 col-lg-6 col-xl-4 mt-5 mt-lg-0">
                         <x-button
                             type="link"
                             href="{{ route('transactions.sales.return.carts') }}"

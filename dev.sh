@@ -1,7 +1,7 @@
-rm -R ./node_modules
-rm -R ./vendor
-rm -R ./public/storage
-rm -R ./storage/app/public/images
+rm -rf ./node_modules
+rm -rf ./vendor
+rm -rf ./public/storage
+rm -rf ./storage/app/public/images
 
 composer install
 

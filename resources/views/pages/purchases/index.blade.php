@@ -3,7 +3,7 @@
         <x-slot:action>
             <div class="row justify-content-end align-items-center">
                 @if ($access?->create)
-                    <div class="col-12 col-lg-6 col-xl-3">
+                    <div class="col-12 col-lg-6 col-xl-4">
                         <a href="{{ route('transactions.purchases.cart') }}" class="btn btn-secondary w-100" role="button">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah Pembelian</span>
@@ -21,36 +21,62 @@
                     <div class="card-body">
                         <div class="row align-items-top">
                             <div class="col-12 col-lg-4 mb-6 mb-lg-0">
-                                <div class="form-floating">
-                                    <input type="text" name="from_date" id="from_date" placeholder="Priode awal" class="form-control" data-flatpickr="">
-                                    <label for="fromDate">Periode awal <span class="text-danger">*</span></label>
+                                <div class="form-floating" data-invalid="from_date">
+                                    <input
+                                        type="text"
+                                        name="from_date"
+                                        id="from_date"
+                                        placeholder="Priode awal"
+                                        class="form-control"
+                                        data-invalid="from_date"
+                                        value="{{ request('from_date') }}"
+                                        data-flatpickr=""
+                                    />
+
+                                    <label for="fromDate">
+                                        Periode awal <span class="text-danger">*</span>
+                                    </label>
                                 </div>
 
-                                <div class="invalid-feedback"></div>
+                                <div class="invalid-feedback" data-invalid-feedback="from_date"></div>
                             </div>
 
                             <div class="col-12 col-lg-4 mb-6 mb-lg-0">
-                                <div class="form-floating">
-                                    <input type="text" name="to_date" id="to_date" placeholder="Priode awal" class="form-control" data-flatpickr="">
-                                    <label for="toDate">Periode akhir <span class="text-danger">*</span></label>
+                                <div class="form-floating" data-invalid="to_date">
+                                    <input
+                                        type="text"
+                                        name="to_date"
+                                        id="to_date"
+                                        placeholder="Priode awal"
+                                        class="form-control"
+                                        data-invalid="to_date"
+                                        value="{{ request('to_date') }}"
+                                        data-flatpickr=""
+                                    />
+
+                                    <label for="toDate">
+                                        Periode akhir <span class="text-danger">*</span>
+                                    </label>
                                 </div>
 
-                                <div class="invalid-feedback"></div>
+                                <div class="invalid-feedback" data-invalid-feedback="to_date"></div>
                             </div>
 
                             <div class="col-12 col-lg-4">
-                                <div class="form-floating">
-                                    <select name="payment_status" id="payment_status" class="form-select">
-                                        <option value="all" selected>Semua</option>
-                                        <option value="paid">Lunas</option>
-                                        <option value="partial">Dibayar sebagian</option>
-                                        <option value="unpaid">Belum dibayar</option>
+                                <div class="form-floating" data-invalid="payment_status">
+                                    <select name="payment_status" id="payment_status" class="form-select" data-invalid="payment_status">
+                                        <option value="all" @selected(request('payment_status', 'all') == 'all')>Semua</option>
+                                        <option value="paid" @selected(request('payment_status', 'all') == 'paid')>Lunas</option>
+                                        <option value="partial" @selected(request('payment_status', 'all') == 'partial')>Dibayar sebagian</option>
+                                        <option value="unpaid" @selected(request('payment_status', 'all') == 'unpaid')>Belum dibayar</option>
                                     </select>
 
-                                    <label for="toDate">Status pembayaran <span class="text-danger">*</span></label>
+                                    <label for="toDate">
+                                        Status pembayaran <span class="text-danger">*</span>
+                                    </label>
                                 </div>
 
-                                <div class="invalid-feedback"></div>
+                                <div class="invalid-feedback" data-invalid-feedback="payment_status"></div>
                             </div>
                         </div>
                     </div>
@@ -74,7 +100,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="purchaseTable" class="table table-sm table-hover align-middle w-100"></table>
+                    <table id="tablePurchase" class="table table-sm table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -84,165 +110,178 @@
 
         {{-- CLass form filter --}}
         <script>
-            class FormFilter {
+            class Service {
                 constructor() {
-                    this.form = $('#formFilter');
+                    this.formFilter = $('#formFilter');
+                    this.tablePurchase = this.purchaseDataTable();
                 }
 
                 /**
-                 * Membersihkan pesan error pada form filter
+                 * Purchase datatable
                  */
-                clearErrors() {
-                    this.form.find('.is-invalid').removeClass('is-invalid');
-                    this.form.find('.is-invalid').parent().removeClass('is-invalid');
-                    this.form.find('.is-invalid').parent().next().text('');
-                }
-                
-                /**
-                 * Menampilkan pesan error.
-                 */
-                showErrors(errors) {
-                    Object.entries(errors).forEach(([field, messages]) => {
-                        this.form.find(`#${field}`).addClass('is-invalid');
-                        this.form.find(`#${field}`).parent().addClass('is-invalid');
-                        this.form.find(`#${field}`).parent().next().text(messages[0]);
+                purchaseDataTable() {
+                    return app.buttonDataTable('#tablePurchase', {
+                        fixedColumns: {
+                            start: 0,
+                            end: 1,
+                        },
+                        columns: [
+                            {
+                                title: 'Pemasok',
+                                name: 'suppliers.name',
+                                data: 'supplier.name',
+                                className: 'text-nowrap px-2',
+                                type: 'string',
+                            },
+                            {
+                                title: 'Nomor Invoice',
+                                name: 'purchases.invoice_number',
+                                data: 'invoice_number',
+                                className: 'text-nowrap px-2',
+                            },
+                            {
+                                title: 'Tanggal',
+                                name: 'purchases.purchase_date',
+                                data: 'purchase_date',
+                                className: 'text-nowrap px-2',
+                                render: (data) => app.dateFormat(data),
+                            },
+                            {
+                                title: 'Total Qty',
+                                name: 'purchases.total_quantity',
+                                data: 'total_quantity',
+                                className: 'text-nowrap px-2',
+                                type: 'html-num-fmt',
+                                render: (data) => app.numberFormat(data),
+                            },
+                            {
+                                title: 'Total Harga',
+                                name: 'purchases.total_price',
+                                data: 'total_price',
+                                className: 'text-nowrap px-2',
+                                type: 'num-fmt',
+                                render: (data) => app.numberFormat(data),
+                            },
+                            {
+                                title: 'Sudah Dibayar',
+                                name: 'paid_amount',
+                                data: 'paid_amount',
+                                className: 'text-nowrap px-2',
+                                type: 'num-fmt',
+                                render: (data) => app.numberFormat(data),
+                            },
+                            {
+                                title: 'Kurang Bayar',
+                                className: 'text-nowrap px-2',
+                                type: 'num',
+                                render: (data, type, row) => app.numberFormat(row.total_price - row.paid_amount),
+                            },
+                            {
+                                title: 'Status Pembayaran',
+                                name: 'purchases.payment_status',
+                                data: 'payment_status',
+                                className: 'text-nowrap px-2',
+                                type: 'html',
+                                render: (data) => {
+                                    if (data === 'paid') return `<span class="badge bg-success-subtle text-success fw-bold">${data.toUpperCase()}</span>`;
+                                    if (data === 'partial') return `<span class="badge bg-warning-subtle text-warning fw-bold">${data.toUpperCase()}</span>`;
+                                    return `<span class="badge bg-danger-subtle text-danger fw-bold">${data.toUpperCase()}</span>`;
+                                }
+                            },
+                            {
+                                title: `<span class="material-symbols-outlined">settings</span>`,
+                                name: 'id',
+                                data: 'id',
+                                className: 'text-center no-export',
+                                type: 'html',
+                                orderable: false,
+                                searchable: false,
+                                render: (data) => {
+                                    return `
+                                        <a class="btn btn-light" href="${app.baseUrl}/transactions/purchases/${data}" role="button" title="Lihat detail" target="_blank">
+                                            <span class="material-symbols-outlined fs-6">visibility</span>
+                                        </a>
+                                    `;
+                                }
+                            }
+                        ],
                     });
                 }
 
                 /**
                  * Submit form filter
                  */
-                submit(values) {
+                getPurchases() {
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             type: "get",
                             url: "{{ route('transactions.purchases') }}",
-                            data: values,
+                            data: this.formFilter.serialize(),
                             dataType: "json",
-                            success: function (response) {
-                                resolve(response);
-                            },
-                            error: function (response) {
-                                reject(response.responseJSON);
-                            },
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
                         });
                     });
                 }
             }
 
-            window.formFilter = new FormFilter();
+            window.service = new Service();
         </script>
 
         {{-- Global script --}}
         <script>
-            "use strict"
+            $(document).ready(async function () {
+                const param = new URLSearchParams(window.location.search);
+                const fromDate = param.get('from_date'); 
+                const toDate = param.get('to_date'); 
+                const paymentStatus = param.get('payment_status');
 
-            /**
-             * Purchase datatable.
-             */
-            const purchaseTable = app.buttonDataTable('#purchaseTable', {
-                fixedColumns: {
-                    start: 0,
-                    end: 1,
-                },
-                columns: [
-                    {
-                        title: 'Pemasok',
-                        name: 'suppliers.name',
-                        data: 'supplier.name',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Nomor Invoice',
-                        name: 'purchases.invoice_number',
-                        data: 'invoice_number',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Tanggal',
-                        name: 'purchases.purchase_date',
-                        data: 'purchase_date',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Total Qty',
-                        name: 'purchases.total_quantity',
-                        data: 'total_quantity',
-                        className: 'text-nowrap',
-                        type: 'num',
-                        render: (data) => app.numberFormat(data),
-                    },
-                    {
-                        title: 'Total',
-                        name: 'purchases.total_price',
-                        data: 'total_price',
-                        className: 'text-nowrap',
-                        type: 'num-fmt',
-                        render: (data) => `Rp ${app.numberFormat(data)}`,
-                    },
-                    {
-                        title: 'Sudah Dibayar',
-                        name: 'paid_amount',
-                        data: 'paid_amount',
-                        className: 'text-nowrap',
-                        type: 'num-fmt',
-                        render: (data) => `Rp ${app.numberFormat(data)}`,
-                    },
-                    {
-                        title: 'Kurang Bayar',
-                        className: 'text-nowrap',
-                        type: 'num',
-                        render: (data, type, row) => `Rp ${app.numberFormat(row.total_price - row.paid_amount)}`,
-                    },
-                    {
-                        title: 'Status Pembayaran',
-                        name: 'purchases.payment_status',
-                        data: 'payment_status',
-                        className: 'text-nowrap',
-                        type: 'string',
-                        render: (data) => {
-                            if (data === 'paid') return `<span class="badge bg-success-subtle text-success fw-bold">${data.toUpperCase()}</span>`;
-                            if (data === 'partial') return `<span class="badge bg-warning-subtle text-warning fw-bold">${data.toUpperCase()}</span>`;
-                            return `<span class="badge bg-danger-subtle text-danger fw-bold">${data.toUpperCase()}</span>`;
-                        }
-                    },
-                    {
-                        title: `<span class="material-symbols-outlined">settings</span>`,
-                        name: 'id',
-                        data: 'id',
-                        className: 'text-center',
-                        type: 'html',
-                        orderable: false,
-                        searchable: false,
-                        render: (data) => {
-                            return `
-                                <a class="btn btn-light" href="${app.baseUrl}/transactions/purchases/${data}" role="button" title="Lihat detail" target="_blank">
-                                    <span class="material-symbols-outlined fs-6">visibility</span>
-                                </a>
-                            `;
-                        }
-                    }
-                ],
+                if (fromDate === null || toDate === null || paymentStatus === null) {
+                    return;
+                }
+
+                app.clearFormErrors(service.formFilter);
+                app.showPreloader();
+
+                try {
+                    const response = await service.getPurchases();
+
+                    service.tablePurchase.clear().draw();
+                    service.tablePurchase.rows.add(response.data).draw();
+                } catch (error) {
+                    app.formErrors(service.formFilter, error);
+                } finally {
+                    app.hidePreloader();
+                }
             });
 
             /**
              * Submit form filter
              */
-            formFilter.form.submit(async (e) => {
+            service.formFilter.submit(async (e) => {
                 e.preventDefault();
 
-                formFilter.clearErrors();
+                const fromDate = service.formFilter.find('input[name="from_date"]').val();
+                const toDate = service.formFilter.find('input[name="to_date"]').val();
+                const paymentStatus = service.formFilter.find('select[name="payment_status"]').val();
+
+                const params = {
+                    from_date: fromDate,
+                    to_date: toDate,
+                    payment_status: paymentStatus,
+                };
+
+                app.updateQueryParams(params);
+                app.clearFormErrors(service.formFilter);
                 app.showPreloader();
 
                 try {
-                    const values = formFilter.form.serialize();
-                    const response = await formFilter.submit(values);
+                    const response = await service.getPurchases();
 
-                    purchaseTable.clear().draw();
-                    purchaseTable.rows.add(response.data).draw();
+                    service.tablePurchase.clear().draw();
+                    service.tablePurchase.rows.add(response.data).draw();
                 } catch (error) {
-                    formFilter.showErrors(error.errors);
+                    app.formErrors(service.formFilter, error);
                 } finally {
                     app.hidePreloader();
                 }

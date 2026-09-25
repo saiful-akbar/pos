@@ -38,27 +38,27 @@
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Total Qty</span>
-                            <span>{{ number_format($purchase->totalQuantity) }}</span>
+                            <span>{{ number_format($purchase->totalQuantity, 2) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
-                            <span class="text-body-secondary">Total</span>
-                            <span>Rp {{ number_format($purchase->totalPrice) }}</span>
+                            <span class="text-body-secondary">Total Harga</span>
+                            <span>{{ number_format($purchase->totalPrice, 2) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Sudah Dibayar</span>
-                            <span>Rp {{ number_format($totalPaymentAmount) }}</span>
+                            <span>{{ number_format($totalPaymentAmount, 2) }}</span>
                         </li>
 
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Kurang Bayar</span>
-                            <span>Rp {{ number_format($totalPaymentAmount - $purchase->totalPrice) }}</span>
+                            <span>{{ number_format($totalPaymentAmount - $purchase->totalPrice, 2) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Status Pembayaran</span>
-                            <span>{{ $purchase->paymentStatus->value }}</span>
+                            <span>{{ strtoupper($purchase->paymentStatus->value) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -182,7 +182,7 @@
                                             <td class="text-start text-nowrap">{{ $payment->paymentDate->format('d M Y') }}</td>
                                             <td class="text-start text-nowrap">{{ strtoupper($payment->paymentMethod->value) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->referenceNumber }}</td>
-                                            <td class="text-end text-nowrap">Rp {{ number_format($payment->amount) }}</td>
+                                            <td class="text-end text-nowrap">{{ number_format($payment->amount, 2) }}</td>
                                             <td class="text-start" style="width: 1000px">{{ $payment->notes }}</td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-light" data-action="delete" data-purchase-id="{{ $purchase->id }}" data-payment-id="{{ $payment->id }}" data-bs-toggle="tooltip" data-bs-title="Hapus">

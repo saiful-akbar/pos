@@ -6,7 +6,7 @@
                     <div class="col-12 col-lg-6 col-xl-4">
                         <button type="button" class="btn btn-danger w-100" id="buttonDeleteCart">
                             <x-icon class="me-1">close</x-icon>
-                            <span>Batalkan Transaksi</span>
+                            <span>Batalkan</span>
                         </button>
 
                         <form action="{{ route('transactions.sales.return.carts.delete') }}" method="post" id="formDeleteCart">
@@ -220,10 +220,8 @@
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar">
-                                                    <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
-                                                </div>
-                                                <div class="ms-4">
+                                                <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
+                                                <div class="ms-3">
                                                     <div>${row.product.code}</div>
                                                     <div class="text-body-secondary text-truncate" style="max-width: 200px;">${row.product.name}</div>
                                                 </div>
@@ -304,11 +302,8 @@
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar">
-                                                    <img class="rounded" src="${app.storageImage(row.product.image)}" alt="Produk" />
-                                                </div>
-
-                                                <div class="ms-4">
+                                                <img class="rounded" src="${app.storageImage(row.product.image)}" alt="Produk" />
+                                                <div class="ms-3">
                                                     <div>${row.product.code}</div>
                                                     <div class="text-body-secondary text-truncate" style="max-width: 100px;">${row.product.name}</div>
                                                 </div>
@@ -322,7 +317,7 @@
                                     data: 'selling_price',
                                     type: 'num',
                                     className: 'text-nowrap',
-                                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                                    render: (data) => app.numberFormat(data),
                                 },
                                 {
                                     title: 'Qty',
@@ -351,7 +346,7 @@
                                     data: 'subtotal',
                                     type: 'num',
                                     className: 'text-nowrap',
-                                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                                    render: (data) => app.numberFormat(data),
                                 },
                                 {
                                     title: `<span class="material-symbols-outlined">settings</span>`,
@@ -397,7 +392,7 @@
                                 url: "{{ route('transactions.sales.return.carts') }}",
                                 success: function (response) {
                                     $('#totalQuantity').text(app.numberFormat(response.data.total_quantity));
-                                    $('#totalAmount').text(`Rp ${app.numberFormat(response.data.total_amount)}`);
+                                    $('#totalAmount').text(app.numberFormat(response.data.total_amount));
                                 }
                             });
                         })
@@ -569,51 +564,14 @@
         <x-page-header icon="assignment_return" title="Pengembalian">
             <x-slot:action>
                 <div class="row justify-content-end align-items-center w-100">
-                    <div class="col-12 col-lg-6 col-xl-3 order-2 order-lg-1">
+                    <div class="col-12 col-lg-6 col-xl-4 order-2 order-lg-1">
                         <button type="submit" class="btn btn-secondary w-100" id="buttonCreateCart">
                             <x-icon class="me-1">add</x-icon>
                             <span>Mulai Transaksi</span>
                         </button>
-
-                        <form action="{{ route('transactions.sales.return.carts.store') }}" method="post" id="formCreateCart">
-                            @csrf @method('post')
-
-                            <div class="modal" tabindex="-1" id="modalCreateCart">
-                                <div class="modal-dialog">
-                                    <div class="modal-content border">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Nomor Invoice (Faktur)</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            <x-form-input type="text" name="invoice_number" id="invoiceNumber" class="border" placeholder="Masukan nomor invoice..." required autofocus/>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <div class="row w-100">
-                                                <div class="col-6">
-                                                    <button type="reset" class="btn btn-light w-100" data-bs-dismiss="modal">
-                                                        <x-icon class="me-1">close</x-icon>
-                                                        <span>Batal</span>
-                                                    </button>
-                                                </div>
-
-                                                <div class="col-6">
-                                                    <button type="submit" class="btn btn-secondary w-100">
-                                                        <x-icon class="me-1">send</x-icon>
-                                                        <span>Kirim</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
                     </div>
 
-                    <div class="col-12 col-lg-6 col-xl-3 mb-5 mb-lg-0 order-1 order-lg-2">
+                    <div class="col-12 col-lg-6 col-xl-4 mb-5 mb-lg-0 order-1 order-lg-2">
                         <a href="{{ route('transactions.sales') }}" class="btn btn-light w-100" role="button">
                             <x-icon class="me-1">arrow_back</x-icon>
                             <span>Kembali</span>
@@ -622,6 +580,43 @@
                 </div>
             </x-slot:action>
         </x-page-header>
+
+        <form action="{{ route('transactions.sales.return.carts.store') }}" method="post" id="formCreateCart">
+            @csrf
+
+            <div class="modal" tabindex="-1" id="modalCreateCart">
+                <div class="modal-dialog">
+                    <div class="modal-content border">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Nomor Invoice (Faktur)</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <x-form-input type="text" name="invoice_number" id="invoiceNumber" class="border" placeholder="Masukan nomor invoice..." required autofocus/>
+                        </div>
+
+                        <div class="modal-footer">
+                            <div class="row w-100">
+                                <div class="col-6">
+                                    <button type="reset" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                        <x-icon class="me-1">close</x-icon>
+                                        <span>Batal</span>
+                                    </button>
+                                </div>
+
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-secondary w-100">
+                                        <x-icon class="me-1">send</x-icon>
+                                        <span>Kirim</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
 
         <div class="empty-cart">
             <img src="{{ asset('assets/images/empty_cart.svg') }}" alt="empty cart" class="img-fluid">
