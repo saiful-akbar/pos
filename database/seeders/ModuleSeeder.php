@@ -181,6 +181,12 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
+                        'name' => 'Laporan pengembalian penjualan',
+                        'path' => '/reports/sales/returns',
+                        'route' => 'reports.sales.returns',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
                         'name' => 'Laporan stock',
                         'path' => '/reports/stocks',
                         'route' => 'reports.stocks',

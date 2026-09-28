@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\Sale\Repositories;
 
 use App\Application\Sale\DTOs\CreateSaleDTO;
+use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Domain\Sale\Entities\SaleEntity;
 use App\Domain\Sale\Entities\SaleWithDetailEntity;
-use DateTimeInterface;
 
 interface SaleRepositoryInterface
 {
@@ -36,5 +36,5 @@ interface SaleRepositoryInterface
      *
      * @return SaleEntity[]
      */
-    public function getByDate(DateTimeInterface $fromDate, DateTimeInterface $toDate): array;
+    public function getByDate(GetSalesDTO $params): array;
 }

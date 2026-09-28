@@ -23,9 +23,10 @@ class SaleDetailEntity extends Entity
         public readonly int|float $sellingPrice,
         public readonly int|float $discount,
         public readonly int|float $subtotal,
-        public readonly ?DateTimeInterface $createdAt,
-        public readonly ?DateTimeInterface $updatedAt,
-        public readonly ?DateTimeInterface $deletedAt,
+        public readonly ?DateTimeInterface $createdAt = null,
+        public readonly ?DateTimeInterface $updatedAt = null,
+        public readonly ?DateTimeInterface $deletedAt = null,
+        public readonly ?SaleEntity $sale = null,
     ) {}
 
     #[Override]
@@ -43,6 +44,7 @@ class SaleDetailEntity extends Entity
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),
+            'sale' => $this->sale?->toArray(),
         ];
     }
 }

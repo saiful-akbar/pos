@@ -83,12 +83,12 @@
                         <div class="card-body table-responsive">
                             <table class="table table-sm w-100">
                                 <thead>
-                                    <th class="text-nowrap">Nama modul</th>
-                                    <th class="text-nowrap">Read</th>
-                                    <th class="text-nowrap">Create</th>
-                                    <th class="text-nowrap">Update</th>
-                                    <th class="text-nowrap">Remove</th>
-                                    <th class="text-nowrap">Delete</th>
+                                    <th class="text-nowrap" style="width: 200px">Modul</th>
+                                    <th class="text-nowrap" style="width: 100px">Read</th>
+                                    <th class="text-nowrap" style="width: 100px">Create</th>
+                                    <th class="text-nowrap" style="width: 100px">Update</th>
+                                    <th class="text-nowrap" style="width: 100px">Remove</th>
+                                    <th class="text-nowrap" style="width: 100px">Delete</th>
                                 </thead>
 
                                 <tbody>
@@ -99,7 +99,7 @@
                                                 <div class="form-check form-switch">
                                                     <input
                                                         type="checkbox"
-                                                        class="form-check-input"
+                                                        class="form-check-input border"
                                                         value="1"
                                                         id="{{ $detail->id }}-read"
                                                         name="modules[{{ $detail->id }}][read]"

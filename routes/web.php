@@ -285,8 +285,12 @@ Route::middleware('auth')->group(function (): void {
         ->name('reports')
         ->prefix('/reports')
         ->group(function (): void {
-            Route::get('purchases', 'purchaseSummaries')->name('.purchases');
-            Route::get('purchases/details', 'purchaseDetails')->name('.purchases.details');
+            Route::get('purchases', 'purchaseSummaries')->name('.purchases')->middleware('module:reports.purchases,read');
+            Route::get('purchases/details', 'purchaseDetails')->name('.purchases.details')->middleware('module:reports.purchases,read');
+            Route::get('sales', 'saleSummaries')->name('.sales')->middleware('module:reports.sales,read');
+            Route::get('sales/details', 'saleDetails')->name('.sales.details')->middleware('module:reports.sales,read');
+            Route::get('sales/returns', 'saleReturnSummaries')->name('.sales.returns')->middleware('module:reports.sales.returns,read');
+            Route::get('sales/returns/details', 'saleReturnDetails')->name('.sales.returns.details')->middleware('module:reports.sales.returns,read');
         });
 });
 

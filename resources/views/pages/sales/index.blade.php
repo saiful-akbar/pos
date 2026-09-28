@@ -74,6 +74,13 @@
                         },
                         columns: [
                             {
+                                title: 'Tanggal',
+                                name: 'transaction_date',
+                                data: 'transaction_date',
+                                className: 'text-nowrap',
+                                type: 'date',
+                            },
+                            {
                                 title: 'Nomor Faktur',
                                 name: 'invoice_number',
                                 data: 'invoice_number',
@@ -81,15 +88,7 @@
                                 type: 'string',
                             },
                             {
-                                title: 'Tanggal',
-                                name: 'transaction_date',
-                                data: 'transaction_date',
-                                className: 'text-nowrap',
-                                type: 'date',
-                                render: (data) => app.dateFormat(data)
-                            },
-                            {
-                                title: 'Qauntity',
+                                title: 'Total Quantity',
                                 name: 'total_quantity',
                                 data: 'total_quantity',
                                 className: 'text-nowrap',

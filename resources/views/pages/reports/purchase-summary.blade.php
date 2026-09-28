@@ -132,7 +132,6 @@
                                 className: 'text-nowrap',
                                 type: 'date',
                                 footer: '',
-                                render: (data) => app.dateFormat(data),
                             },
                             {
                                 title: 'Total Quantity',

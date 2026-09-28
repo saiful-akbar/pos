@@ -304,6 +304,13 @@ class App {
   }
 
   /**
+   * Menghapus alert
+   */
+  clearAlert() {
+    $("#alert").empty();
+  }
+
+  /**
    * Url
    */
   url(path, params = null) {

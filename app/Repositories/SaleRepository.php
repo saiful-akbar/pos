@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Application\Sale\DTOs\CreateSaleDTO;
+use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
 use App\Domain\Sale\Entities\SaleDetailEntity;
@@ -16,8 +17,13 @@ use App\Domain\Sale\ValueObjects\CustomerSaleValue;
 use App\Domain\Sale\ValueObjects\ProductSaleValue;
 use App\Domain\Sale\ValueObjects\UnitProductSaleValue;
 use App\Domain\Sale\ValueObjects\UserSaleValue;
+use App\Models\Category;
+use App\Models\Customer;
+use App\Models\Product;
 use App\Models\Sale;
-use DateTimeInterface;
+use App\Models\SaleDetail;
+use App\Models\Unit;
+use App\Models\User;
 use Override;
 
 class SaleRepository extends Repository implements SaleRepositoryInterface
@@ -167,15 +173,26 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
      * @return SaleEntity[]
      */
     #[Override]
-    public function getByDate(DateTimeInterface $fromDate, DateTimeInterface $toDate): array
+    public function getByDate(GetSalesDTO $params): array
     {
         try {
-            return $this->model->query()
-                ->with(['user', 'customer'])
-                ->whereBetween('transaction_date', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-                ->orderBy('transaction_date', 'asc')
+            if ($params->allIsNull()) {
+                return [];
+            }
+
+            $query = $this->model->query()->with(['user', 'customer']);
+
+            if ($params->dateIsNotNull()) {
+                $query->whereBetween('transaction_date', [$params->fromDate->format('Y-m-d'), $params->toDate->format('Y-m-d')]);
+            }
+
+            if ($params->invoiceNumberIsNotNull()) {
+                $query->where('invoice_number', $params->invoiceNumber);
+            }
+
+            return $query->orderBy('transaction_date', 'asc')
                 ->get()
-                ->map(fn ($data) => $this->mapModelToSaleEntity($data))
+                ->map(fn (Sale $data) => $this->mapModelToSaleEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -188,24 +205,44 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
     }
 
     /**
+     * Pemetaan class Model ke class UserSaleValue.
+     */
+    private function mapModelToUserSaleValue(User $model): UserSaleValue
+    {
+        return new UserSaleValue(
+            id: $model->id,
+            username: $model->username,
+            fullName: $model->full_name,
+            photo: $model->photo,
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class CustomerSaleValue.
+     */
+    private function mapModelToCustomerSaleValue(?Customer $model): ?CustomerSaleValue
+    {
+        if ($model === null) {
+            return null;
+        }
+
+        return new CustomerSaleValue(
+            id: $model->id,
+            name: $model->name,
+            phoneNumber: $model->phone_number,
+            address: $model->address
+        );
+    }
+
+    /**
      * Pemetaan class model ke class SaleEntity
      */
     private function mapModelToSaleEntity(Sale $model): SaleEntity
     {
         return new SaleEntity(
             id: $model->id,
-            user: new UserSaleValue(
-                id: $model->user->id,
-                username: $model->user->username,
-                fullName: $model->user->full_name,
-                photo: $model->user->photo,
-            ),
-            customer: $model->customer === null ? null : new CustomerSaleValue(
-                id: $model->customer->id,
-                name: $model->customer->name,
-                phoneNumber: $model->customer->phone_number,
-                address: $model->customer->address
-            ),
+            user: $this->mapModelToUserSaleValue($model->user),
+            customer: $this->mapModelToCustomerSaleValue($model->cutomer),
             invoiceNumber: $model->invoice_number,
             transactionDate: parse_date_time_immutable($model->transaction_date),
             totalQuantity: parse_float($model->total_quantity),
@@ -221,65 +258,81 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
     }
 
     /**
+     * Pemetaan class Model ke class CategoryProductSaleValue.
+     */
+    private function mapModelToCategoryProductSaleValue(Category $model): CategoryProductSaleValue
+    {
+        return new CategoryProductSaleValue(
+            id: $model->id,
+            code: $model->code,
+            name: $model->name,
+            isActive: $model->is_active === 1
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class UnitProductSaleValue.
+     */
+    private function mapModelToUnitProductSaleValue(Unit $model): UnitProductSaleValue
+    {
+        return new UnitProductSaleValue(
+            id: $model->id,
+            code: $model->code,
+            name: $model->name,
+            isActive: $model->is_active === 1
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class ProductSaleValue.
+     */
+    private function mapModelToProductSaleValue(Product $model): ProductSaleValue
+    {
+        return new ProductSaleValue(
+            id: $model->id,
+            category: $this->mapModelToCategoryProductSaleValue($model->category),
+            unit: $this->mapModelToUnitProductSaleValue($model->unit),
+            code: $model->code,
+            barcode: $model->barcode,
+            name: $model->name,
+            image: $model->image,
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            currentStock: parse_float($model->current_stock),
+            minimumStock: parse_float($model->minimum_stock),
+        );
+    }
+
+    /**
+     * Pemetaan class model ke SaleDetailEntity.
+     */
+    private function mapModelToSaleDetailEntity(SaleDetail $model): SaleDetailEntity
+    {
+        return new SaleDetailEntity(
+            id: $model->id,
+            saleId: $model->sale_id,
+            product: $this->mapModelToProductSaleValue($model->product),
+            quantity: parse_float($model->quantity),
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            subtotal: parse_float($model->subtotal),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
+        );
+    }
+
+    /**
      * Pemetaan class model ke class SaleWithDetailEntity.
      */
     private function mapModelToSaleWithDetailEntity(Sale $model): SaleWithDetailEntity
     {
-        $details = [];
-
-        foreach ($model->details as $detail) {
-            $details[] = new SaleDetailEntity(
-                id: $detail->id,
-                saleId: $detail->sale_id,
-                product: new ProductSaleValue(
-                    id: $detail->product->id,
-                    unit: new UnitProductSaleValue(
-                        id: $detail->product->unit->id,
-                        code: $detail->product->unit->code,
-                        name: $detail->product->unit->name,
-                        isActive: $detail->product->unit->is_active === 1
-                    ),
-                    category: new CategoryProductSaleValue(
-                        id: $detail->product->unit->id,
-                        code: $detail->product->unit->code,
-                        name: $detail->product->unit->name,
-                        isActive: $detail->product->unit->is_active === 1
-                    ),
-                    code: $detail->product->code,
-                    barcode: $detail->product->barcode,
-                    name: $detail->product->name,
-                    image: $detail->product->image,
-                    purchasePrice: parse_float($detail->product->purchase_price),
-                    sellingPrice: parse_float($detail->product->selling_price),
-                    discount: parse_float($detail->product->discount),
-                    currentStock: parse_float($detail->product->current_stock),
-                    minimumStock: parse_float($detail->product->minimum_stock),
-                ),
-                quantity: parse_float($detail->quantity),
-                purchasePrice: parse_float($detail->purchase_price),
-                sellingPrice: parse_float($detail->selling_price),
-                discount: parse_float($detail->discount),
-                subtotal: parse_float($detail->subtotal),
-                createdAt: $detail->created_at,
-                updatedAt: $detail->updated_at,
-                deletedAt: $detail->deleted_at,
-            );
-        }
-
         return new SaleWithDetailEntity(
             id: $model->id,
-            user: new UserSaleValue(
-                id: $model->user->id,
-                username: $model->user->username,
-                fullName: $model->user->full_name,
-                photo: $model->user->photo
-            ),
-            customer: $model->customer === null ? null : new CustomerSaleValue(
-                id: $model->customer->id,
-                name: $model->customer->name,
-                phoneNumber: $model->customer->phone_number,
-                address: $model->customer->address,
-            ),
+            user: $this->mapModelToUserSaleValue($model->user),
+            customer: $this->mapModelToCustomerSaleValue($model->customer),
             invoiceNumber: $model->invoice_number,
             transactionDate: parse_date_time_immutable($model->transaction_date),
             totalQuantity: parse_float($model->total_quantity),
@@ -288,7 +341,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
             changeAmount: parse_float($model->change_amount),
             paymentMethod: PaymentMethodEnum::from($model->payment_method),
             notes: $model->notes,
-            details: $details,
+            details: array_map(fn ($detail) => $this->mapModelToSaleDetailEntity($detail), $model->details),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at

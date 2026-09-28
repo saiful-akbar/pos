@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
@@ -23,7 +24,7 @@ use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnsByDate;
-use App\Application\Sale\UseCases\GetSalesByDate;
+use App\Application\Sale\UseCases\GetSales;
 use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Http\Requests\Sales\GetSalesByDateRequest;
@@ -50,10 +51,10 @@ class SaleController extends Controller
     {
         if ($request->ajax()) {
             return $this->jsonResponse(
-                data: app(GetSalesByDate::class)->execute(
+                data: app(GetSales::class)->execute(new GetSalesDTO(
                     fromDate: $request->date('from_date'),
                     toDate: $request->date('to_date'),
-                ),
+                )),
             );
         }
 

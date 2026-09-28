@@ -14,7 +14,7 @@
         
                     <li class="nav-item">
                         <a href="{{ route('reports.purchases.details') }}" class="nav-link active">
-                            Detail per produk
+                            Detail
                         </a>
                     </li>
                 </ul>
@@ -112,7 +112,6 @@
                                 data: 'created_at',
                                 className: 'text-nowrap',
                                 footer: 'Total',
-                                render: (data) => app.dateFormat(data),
                             },
                             {
                                 title: 'Kode Kategori',

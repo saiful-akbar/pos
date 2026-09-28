@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Sale\Repositories;
 
 use App\Application\Sale\DTOs\CreateSaleDetailDTO;
+use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Domain\Sale\Entities\SaleDetailEntity;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -25,4 +26,11 @@ interface SaleDetailRepositoryInterface
      * Mengambil data berdasarkan id sales dan id product.
      */
     public function findBySaleIdAndProductId(string $saleId, string $productId): ?SaleDetailEntity;
+
+    /**
+     * Mengambil daftar detail penjualan.
+     *
+     * @return SaleDetailEntity[]
+     */
+    public function get(GetSalesDTO $params): array;
 }
