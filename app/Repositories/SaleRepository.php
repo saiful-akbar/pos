@@ -329,8 +329,6 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
      */
     private function mapModelToSaleWithDetailEntity(Sale $model): SaleWithDetailEntity
     {
-        dd(__METHOD__);
-
         $details = [];
 
         foreach ($model->details as $detail) {
