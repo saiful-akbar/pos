@@ -52,7 +52,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
                 ->first();
 
             if ($sale === null) {
-                return 'INV'.date('y').date('m').'-00001';
+                return 'INV' . date('y') . date('m') . '-00001';
             }
 
             $invoice = explode('-', $sale->invoice_number);
@@ -192,7 +192,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
 
             return $query->orderBy('transaction_date', 'asc')
                 ->get()
-                ->map(fn (Sale $data) => $this->mapModelToSaleEntity($data))
+                ->map(fn(Sale $data) => $this->mapModelToSaleEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -329,6 +329,14 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
      */
     private function mapModelToSaleWithDetailEntity(Sale $model): SaleWithDetailEntity
     {
+        dd(__METHOD__);
+
+        $details = [];
+
+        foreach ($model->details as $detail) {
+            $details[] = $this->mapModelToSaleDetailEntity($detail);
+        }
+
         return new SaleWithDetailEntity(
             id: $model->id,
             user: $this->mapModelToUserSaleValue($model->user),
@@ -341,7 +349,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
             changeAmount: parse_float($model->change_amount),
             paymentMethod: PaymentMethodEnum::from($model->payment_method),
             notes: $model->notes,
-            details: array_map(fn ($detail) => $this->mapModelToSaleDetailEntity($detail), $model->details),
+            details: $details,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at
