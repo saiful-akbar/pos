@@ -37,7 +37,7 @@ class GetSalesDTO extends DTO
      */
     public function allIsNull(): bool
     {
-        if ($this->fromDate === null && $this->toArray() === null && $this->invoiceNumber === null) {
+        if (($this->fromDate === null || $this->toDate === null) && $this->invoiceNumber === null) {
             return true;
         }
 
