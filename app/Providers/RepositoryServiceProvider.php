@@ -46,6 +46,7 @@ use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseIdTable;
+use App\Application\Purchase\UseCases\GetPurchaseDetailsByDate;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseIdTable;
 use App\Application\Purchase\UseCases\GetPurchases;
@@ -413,6 +414,7 @@ class RepositoryServiceProvider extends ServiceProvider
             SavePurchase::class => PurchaseDetailRepository::class,
             GetPurchaseDetailByPurchaseIdTable::class => PurchaseDetailRepository::class,
             GetPurchaseDetailByPurchaseId::class => PurchaseDetailRepository::class,
+            GetPurchaseDetailsByDate::class => PurchaseDetailRepository::class,
         ],
 
         // Purchase payment

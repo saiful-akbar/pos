@@ -285,8 +285,8 @@ Route::middleware('auth')->group(function (): void {
         ->name('reports')
         ->prefix('/reports')
         ->group(function (): void {
-            Route::get('purchases', 'purchaseSummary')->name('.purchases');
-            Route::get('purchases/details', 'purchaseDetail')->name('.purchases.details');
+            Route::get('purchases', 'purchaseSummaries')->name('.purchases');
+            Route::get('purchases/details', 'purchaseDetails')->name('.purchases.details');
         });
 });
 

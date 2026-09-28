@@ -9,7 +9,7 @@ use JsonSerializable;
 abstract class Entity implements JsonSerializable
 {
     /**
-     * Format data array.
+     * Konversi data object ke array.
      */
     abstract public function toArray(): array;
 

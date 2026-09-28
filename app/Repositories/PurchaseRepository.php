@@ -153,10 +153,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
                 ->select($columns)
                 ->with($relations)
                 ->joinSub($paymentQuery, 'payments', 'purchases.id', '=', 'payments.purchase_id')
-                ->whereBetween('purchases.purchase_date', [
-                    $dto->fromDate->format('Y-m-d 00:00:00'),
-                    $dto->toDate->format('Y-m-d 23:59:59'),
-                ]);
+                ->whereBetween('purchases.purchase_date', [$dto->fromDate->format('Y-m-d'), $dto->toDate->format('Y-m-d')]);
 
             if ($dto->paymentStatus !== null) {
                 $query->where('purchases.payment_status', $dto->paymentStatus->value);

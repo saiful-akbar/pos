@@ -16,10 +16,16 @@ class ProductPurchaseValue extends Entity
         public readonly string $id,
         public readonly string $code,
         public readonly string $barcode,
-        public readonly ?string $name,
-        public readonly ?string $image,
+        public readonly ?string $name = null,
+        public readonly ?string $image = null,
+        public readonly bool $isActive = true,
+        public readonly ?CategoryProductPurchaseValue $category = null,
+        public readonly ?UnitProductPurchaseValue $unit = null,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {
@@ -29,6 +35,9 @@ class ProductPurchaseValue extends Entity
             'barcode' => $this->barcode,
             'name' => $this->name,
             'image' => $this->image,
+            'is_active' => $this->isActive,
+            'category' => $this->category,
+            'unit' => $this->unit,
         ];
     }
 }

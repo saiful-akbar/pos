@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Purchase\Repositories;
 
 use App\Application\Purchase\DTOs\CreatePurchaseDetailDTO;
+use App\Application\Purchase\DTOs\GetPurchasesDTO;
 use App\Domain\Purchase\Entities\PurchaseDetailEntity;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -27,4 +28,9 @@ interface PurchaseDetailRepositoryInterface
      * @return PurchaseDetailEntity[]
      */
     public function getByPurchaseId(string $purchaseId): array;
+
+    /**
+     * Mengambil daftar detail pembelian berdasarkan rentang tanggal.
+     */
+    public function getByDate(GetPurchasesDTO $params): array;
 }
