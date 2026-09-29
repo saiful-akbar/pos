@@ -30,6 +30,16 @@ class MonitoringMonthlyStockEntity extends Entity
     public readonly string $productName;
 
     /**
+     * Kode satuan.
+     */
+    public readonly string $unitCode;
+
+    /**
+     * Nama satuan.
+     */
+    public readonly string $unitName;
+
+    /**
      * Stok awal.
      */
     public readonly int|float $beginningStock;
@@ -72,6 +82,8 @@ class MonitoringMonthlyStockEntity extends Entity
         string $categoryName,
         string $productCode,
         string $productName,
+        string $unitCode,
+        string $unitName,
         int|float $beginningStock,
         int|float $purchaseQuantity,
         int|float $saleReturnQuantity,
@@ -82,6 +94,8 @@ class MonitoringMonthlyStockEntity extends Entity
         $this->categoryName = $categoryName;
         $this->productCode = $productCode;
         $this->productName = $productName;
+        $this->unitCode = $unitCode;
+        $this->unitName = $unitName;
         $this->beginningStock = $beginningStock;
         $this->purchaseQuantity = $purchaseQuantity;
         $this->saleReturnQuantity = $saleReturnQuantity;
@@ -102,6 +116,8 @@ class MonitoringMonthlyStockEntity extends Entity
             'category_name' => $this->categoryName,
             'product_code' => $this->productCode,
             'product_name' => $this->productName,
+            'unit_code' => $this->unitCode,
+            'unit_name' => $this->unitName,
             'beginning_stock' => $this->beginningStock,
             'purchase_quantity' => $this->purchaseQuantity,
             'sale_return_quantity' => $this->saleReturnQuantity,

@@ -11,29 +11,21 @@ class GetMonitoringMonthlyDTO extends DTO
 {
     /**
      * Tahun saat ini
-     *
-     * @var integer
      */
     public readonly int $year;
 
     /**
      * Bulan saat ini
-     *
-     * @var integer
      */
     public readonly int $month;
 
     /**
      * Tahun untuk stok akkhir
-     *
-     * @var integer
      */
     public readonly int $endYear;
 
     /**
      * Bulan untuk stok akhir
-     *
-     * @var integer
      */
     public readonly int $endMonth;
 
@@ -52,8 +44,6 @@ class GetMonitoringMonthlyDTO extends DTO
 
     /**
      * Konversi data object ke array
-     *
-     * @return array
      */
     #[Override]
     public function toArray(): array

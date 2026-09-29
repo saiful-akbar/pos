@@ -277,6 +277,7 @@ Route::middleware('auth')->group(function (): void {
             Route::get('sales/details', 'saleDetails')->name('.sales.details')->middleware('module:reports.sales,read');
             Route::get('returns', 'returnSummaries')->name('.returns')->middleware('module:reports.returns,read');
             Route::get('returns/details', 'returnDetails')->name('.returns.details')->middleware('module:reports.returns,read');
+            Route::get('/stocks', 'monitoringMonthlyStock')->name('.stocks')->middleware('module:reports.stocks,read');
         });
 });
 

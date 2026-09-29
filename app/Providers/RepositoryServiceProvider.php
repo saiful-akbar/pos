@@ -57,6 +57,7 @@ use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
+use App\Application\Rreport\UseCases\GetMonitoringMonthlyStock;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
@@ -125,6 +126,7 @@ use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
+use App\Domain\Report\Repositories\ReportRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
@@ -159,6 +161,7 @@ use App\Repositories\PurchaseCartRepository;
 use App\Repositories\PurchaseDetailRepository;
 use App\Repositories\PurchasePaymentRepository;
 use App\Repositories\PurchaseRepository;
+use App\Repositories\ReportRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SaleCartDetailRepository;
 use App\Repositories\SaleCartRepository;
@@ -545,6 +548,11 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateMonthlyStockOpname::class => MonthlyStockOpnameDetailRepository::class,
             GetMonthlyStockDetails::class => MonthlyStockOpnameDetailRepository::class,
             UpdateMonthlyStock::class => MonthlyStockOpnameDetailRepository::class,
+        ],
+
+        // Report
+        ReportRepositoryInterface::class => [
+            GetMonitoringMonthlyStock::class => ReportRepository::class,
         ],
     ];
 

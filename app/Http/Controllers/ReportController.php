@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use App\Application\Purchase\DTOs\GetPurchasesDTO;
 use App\Application\Purchase\UseCases\GetPurchaseDetailsByDate;
 use App\Application\Purchase\UseCases\GetPurchases;
+use App\Application\Report\DTOs\GetMonitoringMonthlyDTO;
+use App\Application\Rreport\UseCases\GetMonitoringMonthlyStock;
 use App\Application\Sale\DTOs\GetSaleReturnDTO;
 use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Application\Sale\UseCases\GetSaleDetails;
@@ -14,6 +16,7 @@ use App\Application\Sale\UseCases\GetSaleReturn;
 use App\Application\Sale\UseCases\GetSaleReturnDetail;
 use App\Application\Sale\UseCases\GetSales;
 use App\Domain\Purchase\Enums\PaymentStatusEnum;
+use App\Http\Requests\Reports\GetMonitoringMonthlyStockReportRequest;
 use App\Http\Requests\Reports\GetPurchasesReportRequest;
 use App\Http\Requests\Reports\GetSaleReturnsReportRequest;
 use App\Http\Requests\Reports\GetSalesReportRequest;
@@ -130,5 +133,22 @@ class ReportController extends Controller
         }
 
         return view('pages.reports.return-detail');
+    }
+
+    /**
+     * Menampilkan halaman laporan stok.
+     */
+    public function monitoringMonthlyStock(GetMonitoringMonthlyStockReportRequest $request): View|JsonResponse
+    {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetMonitoringMonthlyStock::class)->execute(new GetMonitoringMonthlyDTO(
+                    year: $request->integer('year'),
+                    month: $request->integer('month'),
+                )),
+            );
+        }
+
+        return view('pages.reports.stocks-monthly');
     }
 }

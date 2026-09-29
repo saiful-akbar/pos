@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\PurchaseDetail;
 use App\Models\SaleDetail;
 use App\Models\SaleReturnDetail;
+use App\Models\Unit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
@@ -44,6 +45,8 @@ class ReportRepository extends Repository implements ReportRepositoryInterface
                 'categories.name as category_name',
                 'products.code as product_code',
                 'products.name as product_name',
+                'units.code as unit_code',
+                'units.name as unit_name',
                 DB::raw('coalesce(beginning_stocks.total, 0) as beginning_stock'),
                 DB::raw('coalesce(purchases.total, 0) as purchase_total'),
                 DB::raw('coalesce(sale_returns.total, 0) as sale_return_total'),
@@ -53,6 +56,9 @@ class ReportRepository extends Repository implements ReportRepositoryInterface
 
             // query kategori produk.
             $categoryQuery = Category::query()->select('id', 'code', 'name');
+
+            // Query unit
+            $unitQuery = Unit::query()->select('id', 'code', 'name');
 
             // query stock awal.
             $beginningStockQuery = MonthlyStockOpnameDetail::query()
@@ -100,11 +106,14 @@ class ReportRepository extends Repository implements ReportRepositoryInterface
                 ->groupBy('product_id');
 
             // Query monitoring.
-            $result = Product::query()
+            $result = $this->model->query()
                 ->from('products')
                 ->select($columns)
                 ->leftJoinSub($categoryQuery, 'categories', function (JoinClause $subQuery): void {
                     $subQuery->on('products.category_id', '=', 'categories.id');
+                })
+                ->leftJoinSub($unitQuery, 'units', function (JoinClause $subQuery): void {
+                    $subQuery->on('products.unit_id', '=', 'units.id');
                 })
                 ->leftJoinSub($beginningStockQuery, 'beginning_stocks', function (JoinClause $subQuery): void {
                     $subQuery->on('products.id', '=', 'beginning_stocks.product_id');
@@ -124,7 +133,7 @@ class ReportRepository extends Repository implements ReportRepositoryInterface
                 ->where('products.is_active', 1)
                 ->orderBy('products.code', 'asc')
                 ->get()
-                ->map(fn($data) => $this->mapModelToMonitoringMonthlyStockEntity($data))
+                ->map(fn ($data) => $this->mapModelToMonitoringMonthlyStockEntity($data))
                 ->toArray();
 
             return $result;
@@ -148,6 +157,8 @@ class ReportRepository extends Repository implements ReportRepositoryInterface
             categoryName: $model->category_name,
             productCode: $model->product_code,
             productName: $model->product_name,
+            unitCode: $model->unit_code,
+            unitName: $model->unit_name,
             beginningStock: parse_float($model->beginning_stock),
             purchaseQuantity: parse_float($model->purchase_total),
             saleReturnQuantity: parse_float($model->sale_return_total),
