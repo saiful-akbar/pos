@@ -109,7 +109,7 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Unit Produk',
+                        'name' => 'Satuan Produk',
                         'path' => 'master/units',
                         'route' => 'master.units',
                         'roles' => ['Admin', 'Kasir'],

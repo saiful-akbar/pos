@@ -29,12 +29,32 @@ class UnitSeeder extends Seeder
     {
         return [
             [
-                'code' => 'PCS',
-                'name' => 'Pieces',
+                'code' => 'G',
+                'name' => 'Gram',
             ],
             [
                 'code' => 'KG',
                 'name' => 'Kilogram',
+            ],
+            [
+                'code' => 'L',
+                'name' => 'Liter',
+            ],
+            [
+                'code' => 'ML',
+                'name' => 'Mililiter',
+            ],
+            [
+                'code' => 'PCS',
+                'name' => 'Pieces',
+            ],
+            [
+                'code' => 'BOX',
+                'name' => 'Box',
+            ],
+            [
+                'code' => 'RENCENG',
+                'name' => 'Renceng',
             ],
         ];
     }

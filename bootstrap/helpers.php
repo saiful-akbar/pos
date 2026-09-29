@@ -123,7 +123,7 @@ if (! function_exists('storage_image')) {
     function storage_image(?string $path, ?string $default = null, ?bool $secure = null): string
     {
         if (is_string($path)) {
-            return asset(path: 'storage/'.ltrim(trim($path), '/'), secure: $secure);
+            return asset(path: 'storage/' . ltrim(trim($path), '/'), secure: $secure);
         }
 
         if (is_string($default)) {
@@ -181,6 +181,17 @@ if (! function_exists('ulid')) {
     function ulid(): string
     {
         return strtolower((string) Str::ulid());
+    }
+}
+
+if (! function_exists('uuid')) {
+
+    /**
+     * UUID
+     */
+    function uuid(): string
+    {
+        return strtolower((string) Str::uuid());
     }
 }
 
@@ -246,5 +257,16 @@ if (! function_exists('month')) {
         $months = months();
 
         return $months[$key + 1];
+    }
+}
+
+if (! function_exists('str_random')) {
+
+    /**
+     * Random string.
+     */
+    function str_random(int $length = 32): string
+    {
+        return Str::random($length);
     }
 }

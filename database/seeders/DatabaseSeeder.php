@@ -21,8 +21,11 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             UserSeeder::class,
             SettingSeeder::class,
+            SupplierSeeder::class,
+            CustomerSeeder::class,
             CategorySeeder::class,
             UnitSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }

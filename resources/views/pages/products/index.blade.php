@@ -312,14 +312,14 @@
                         type: 'string',
                     },
                     {
-                        title: 'Kode Unit',
+                        title: 'Kode Satuan',
                         name: 'unit.code',
                         data: 'unit.code',
                         className: 'text-nowrap',
                         type: 'string',
                     },
                     {
-                        title: 'Nama Unit',
+                        title: 'Nama Satuan',
                         name: 'unit.name',
                         data: 'unit.name',
                         className: 'text-nowrap',
