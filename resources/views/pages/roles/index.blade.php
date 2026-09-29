@@ -30,9 +30,12 @@
 
     <x-slot:script>
         <script>
-            const baseUrl = $('meta[name=base-url]').attr('content');
+            const updateAccess = $('html').data('update');
 
-            const tableColumns = [
+            /**
+             * Datatable columns.
+             */
+            const columns = [
                 {
                     title: 'Nama',
                     name: 'roles.name',
@@ -63,10 +66,11 @@
                 },
             ];
 
-            const updateAccess = $('html').data('update');
-
-            if (updateAccess === 1) {
-                tableColumns.push({
+            /**
+             * Tambahkan kolom action jika user memiliki akses update.
+             */
+            if (updateAccess) {
+                columns.push({
                     title: '<span class="material-symbols-outlined">settings</span>',
                     data: 'id',
                     className: 'text-center text-nowrap',
@@ -74,7 +78,7 @@
                     orderable: false,
                     render: (data) => {
                         return `
-                            <a role="button" class="btn btn-light" href="${baseUrl}/master/roles/${data}/edit" title="Edit">
+                            <a role="button" class="btn btn-light" href="${app.baseUrl}/master/roles/${data}/edit" title="Edit">
                                 <span class="material-symbols-outlined fs-6">edit</span>
                             </a>
                         `;
@@ -83,9 +87,13 @@
             }
 
             const table = app.dataTable('#roleTable', {
+                columns,
                 serverSide: true,
                 ajax: "{{ route('master.roles') }}",
-                columns: tableColumns,
+                fixedColumns: {
+                    start: 0,
+                    end: updateAccess ? 1 : 0,
+                }
             });
         </script>
     </x-slot:script>

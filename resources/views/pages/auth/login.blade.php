@@ -50,9 +50,9 @@
     <div class="container-fluid bg-body login">
         <div class="row justify-content-center align-items-center vh-100">
             <div class="col-12 col-md-6 col-xl-4 p-lg-11 p-7">
-                <div class="row align-items-center justify-content-start gx-2">
+                <div class="row align-items-center justify-content-start gx-3">
                     <div class="col-auto">
-                        <img src="{{ logo(setting()->storeLogo) }}" alt="Logo" class="rounded" width="120" height="120">
+                        <img src="{{ logo(setting()->storeLogo) }}" alt="Logo" class="rounded" width="100" height="100">
                     </div>
 
                     <div class="col">

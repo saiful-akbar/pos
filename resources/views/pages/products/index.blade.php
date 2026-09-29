@@ -257,165 +257,172 @@
             const updateAccess = $('html').data('update');
             const baseUrl = app.baseUrl;
 
+            /**
+             * Datatable columns
+             */
+            const columns = [
+                {
+                    title: 'Gambar',
+                    name: 'products.image',
+                    data: 'image',
+                    type: 'string',
+                    searchable: false,
+                    orderable: false,
+                    render: (data, type, row) => {
+                        return `<img src="${app.storageImage(data)}" alt="${row.code}" class="rounded" />`;
+                    }
+                },
+                {
+                    title: 'Kode Produk',
+                    name: 'products.code',
+                    data: 'code',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Barcode',
+                    name: 'products.barcode',
+                    data: 'barcode',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Nama (Deskripsi)',
+                    name: 'products.name',
+                    data: 'name',
+                    type: 'string',
+                    width: '300px',
+                },
+                {
+                    title: 'Kode Kategori',
+                    name: 'category.code',
+                    data: 'category.code',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Nama Kategori',
+                    name: 'category.name',
+                    data: 'category.name',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Kode Satuan',
+                    name: 'unit.code',
+                    data: 'unit.code',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Nama Satuan',
+                    name: 'unit.name',
+                    data: 'unit.name',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Stok Tersedia',
+                    name: 'current_stock',
+                    data: 'current_stock',
+                    className: 'text-nowrap',
+                    type: 'html-num',
+                    render: (data, type, row) => {
+                        return app.numberFormat(data)
+                    }
+                },
+                {
+                    title: 'Minimum Stok',
+                    name: 'minimum_stock',
+                    data: 'minimum_stock',
+                    className: 'text-nowrap',
+                    render: (data, type, row) => {
+                        return app.numberFormat(data)
+                    }
+                },
+                {
+                    title: 'Harga Beli',
+                    name: 'purchase_price',
+                    data: 'purchase_price',
+                    className: 'text-nowrap',
+                    type: 'num',
+                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                },
+                {
+                    title: 'Harga Jual',
+                    name: 'selling_price',
+                    data: 'selling_price',
+                    className: 'text-nowrap',
+                    type: 'num',
+                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                },
+                {
+                    title: 'Diskon',
+                    name: 'discount',
+                    data: 'discount',
+                    className: 'text-nowrap',
+                    type: 'num',
+                    render: (data) => `${data}%`,
+                },
+                {
+                    title: 'Status',
+                    name: 'products.is_active',
+                    data: 'is_active',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => {
+                        if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
+                        return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
+                    }
+                },
+                {
+                    title: 'Dibuat',
+                    name: 'products.created_at',
+                    data: 'created_at',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+                {
+                    title: 'Diedit',
+                    name: 'products.updated_at',
+                    data: 'updated_at',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+            ];
+
+            /**
+             * Tambahkan kolom action jika user mmeiliki akses update
+             */
+            if (updateAccess) {
+                columns.push({
+                    title: `<span class="material-symbols-outlined">settings</span>`,
+                    name: 'products.id',
+                    data: 'id',
+                    className: 'text-nowrap text-center',
+                    type: 'html',
+                    searchable: false,
+                    orderable: false,
+                    render: (data) => {
+                        return `
+                            <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light" title="Edit">
+                                <span class="material-symbols-outlined fs-6">edit</span>
+                            </a>
+                        `;
+                    },
+                });
+            }
+
             const productTable = app.dataTable('#productTable', {
+                columns,
                 serverSide: true,
                 ajax: "{{ route('master.products') }}",
                 fixedColumns: {
                     start: 2,
-                    end: 1
+                    end: updateAccess ? 1 : 0,
                 },
-                columns: [
-                    {
-                        title: 'Gambar',
-                        name: 'products.image',
-                        data: 'image',
-                        type: 'string',
-                        searchable: false,
-                        orderable: false,
-                        render: (data, type, row) => {
-                            return `<img src="${app.storageImage(data)}" alt="${row.code}" class="rounded" />`;
-                        }
-                    },
-                    {
-                        title: 'Kode Produk',
-                        name: 'products.code',
-                        data: 'code',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Barcode',
-                        name: 'products.barcode',
-                        data: 'barcode',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Nama (Deskripsi)',
-                        name: 'products.name',
-                        data: 'name',
-                        type: 'string',
-                        width: '300px',
-                    },
-                    {
-                        title: 'Kode Kategori',
-                        name: 'category.code',
-                        data: 'category.code',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Nama Kategori',
-                        name: 'category.name',
-                        data: 'category.name',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Kode Satuan',
-                        name: 'unit.code',
-                        data: 'unit.code',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Nama Satuan',
-                        name: 'unit.name',
-                        data: 'unit.name',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Stok Tersedia',
-                        name: 'current_stock',
-                        data: 'current_stock',
-                        className: 'text-nowrap',
-                        type: 'html-num',
-                        render: (data, type, row) => {
-                            return app.numberFormat(data)
-                        }
-                    },
-                    {
-                        title: 'Minimum Stok',
-                        name: 'minimum_stock',
-                        data: 'minimum_stock',
-                        className: 'text-nowrap',
-                        render: (data, type, row) => {
-                            return app.numberFormat(data)
-                        }
-                    },
-                    {
-                        title: 'Harga Beli',
-                        name: 'purchase_price',
-                        data: 'purchase_price',
-                        className: 'text-nowrap',
-                        type: 'num',
-                        render: (data) => `Rp ${app.numberFormat(data)}`,
-                    },
-                    {
-                        title: 'Harga Jual',
-                        name: 'selling_price',
-                        data: 'selling_price',
-                        className: 'text-nowrap',
-                        type: 'num',
-                        render: (data) => `Rp ${app.numberFormat(data)}`,
-                    },
-                    {
-                        title: 'Diskon',
-                        name: 'discount',
-                        data: 'discount',
-                        className: 'text-nowrap',
-                        type: 'num',
-                        render: (data) => `${data}%`,
-                    },
-                    {
-                        title: 'Status',
-                        name: 'products.is_active',
-                        data: 'is_active',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => {
-                            if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
-                            return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
-                        }
-                    },
-                    {
-                        title: 'Dibuat',
-                        name: 'products.created_at',
-                        data: 'created_at',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: 'Diedit',
-                        name: 'products.updated_at',
-                        data: 'updated_at',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: `<span class="material-symbols-outlined">settings</span>`,
-                        name: 'products.id',
-                        data: 'id',
-                        className: 'text-nowrap text-center',
-                        type: 'html',
-                        searchable: false,
-                        orderable: false,
-                        render: (data) => {
-                            if (updateAccess === 1) {
-                                return `
-                                    <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light" title="Edit">
-                                        <span class="material-symbols-outlined fs-6">edit</span>
-                                    </a>
-                                `;
-                            }
-
-                            return null;
-                        },
-                    }
-                ],
             });
         </script>
 

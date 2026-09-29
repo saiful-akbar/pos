@@ -34,75 +34,85 @@
     <x-slot:script>
         <script>
             const updateAccess = $('html').data('update');
+
+            /**
+             * Table columns
+             */
+            const columns = [
+                {
+                    title: 'Nama',
+                    name: 'name',
+                    data: 'name',
+                    type: 'string',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Nomor Telapon',
+                    name: 'phone_number',
+                    data: 'phone_number',
+                    type: 'string',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Alamat',
+                    name: 'address',
+                    data: 'address',
+                    type: 'string',
+                    width: '300px',
+                },
+                {
+                    title: 'Dibuat',
+                    name: 'created_at',
+                    data: 'created_at',
+                    type: 'string',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+                {
+                    title: 'Diedit',
+                    name: 'updated_at',
+                    data: 'updated_at',
+                    type: 'string',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+            ];
             
+            /**
+             * /Tambahkan kolom action jika user memiliki akses update.
+             */
+            if (updateAccess) {
+                columns.push({
+                    title: '<span class="material-symbols-outlined">settings</span>',
+                    name: 'id',
+                    data: 'id',
+                    className: 'text-nowrap text-center',
+                    searchable: false,
+                    orderable: false,
+                    type: 'html',
+                    render: (data) => {
+                        return `
+                            <a href="${app.baseUrl}/master/customers/${data}/edit" class="btn btn-light">
+                                <span class="material-symbols-outlined fs-6">edit</span>
+                            </a>
+                        `;
+                    },
+                });
+            }
+            
+            /**
+             * Inisialisasi datatable.
+             */
             const customerTable = app.dataTable('#customerTable', {
+                columns,
                 serverSide: true,
                 ajax: "{{ route('master.customers') }}",
                 fixedColumns: {
                     start: 0,
-                    end: 1
+                    end: updateAccess ? 1 : 0,
                 },
-                columns: [
-                    {
-                        title: 'Nama',
-                        name: 'name',
-                        data: 'name',
-                        type: 'string',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Nomor Telapon',
-                        name: 'phone_number',
-                        data: 'phone_number',
-                        type: 'string',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Alamat',
-                        name: 'address',
-                        data: 'address',
-                        type: 'string',
-                        width: '300px',
-                    },
-                    {
-                        title: 'Dibuat',
-                        name: 'created_at',
-                        data: 'created_at',
-                        type: 'string',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: 'Diedit',
-                        name: 'updated_at',
-                        data: 'updated_at',
-                        type: 'string',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: '<span class="material-symbols-outlined">settings</span>',
-                        name: 'id',
-                        data: 'id',
-                        className: 'text-nowrap text-center',
-                        searchable: false,
-                        orderable: false,
-                        type: 'html',
-                        render: (data) => {
-                            if (updateAccess === 1) {
-                                return `
-                                    <a href="${app.baseUrl}/master/customers/${data}/edit" class="btn btn-light">
-                                        <span class="material-symbols-outlined fs-6">edit</span>
-                                    </a>
-                                `;
-                            }
-
-                            return;
-                        },
-                    }
-                ],
             });
         </script>
     </x-slot:script>

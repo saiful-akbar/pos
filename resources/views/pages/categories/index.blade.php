@@ -89,76 +89,92 @@
 
     <x-slot:script>
         <script>
+            const updateAccess = $('html').data('update');
+
+            /**
+             * Datatable columns
+             */
+            const columns = [
+                {
+                    title: 'Kode',
+                    name: 'code',
+                    data: 'code',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Nama (Deskripsi)',
+                    name: 'name',
+                    data: 'name',
+                    className: 'text-nowrap',
+                    type: 'string',
+                },
+                {
+                    title: 'Status',
+                    name: 'is_active',
+                    data: 'is_active',
+                    className: 'text-nowrap',
+                    type: 'string',
+                    searchable: false,
+                    render: (data) => {
+                        if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
+                        return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
+                    }
+                },
+                {
+                    title: 'Dibuat',
+                    name: 'created_at',
+                    data: 'created_at',
+                    className: 'text-nowrap',
+                    type: 'date',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+                {
+                    title: 'Diedit',
+                    name: 'updated_at',
+                    data: 'updated_at',
+                    className: 'text-nowrap',
+                    type: 'date',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+            ];
+
+            /**
+             * Tambahkan kolom action jika user memiliki akses update
+             */
+            if (updateAccess) {
+                columns.push({
+                    title: '<span class="material-symbols-outlined">settings</span>',
+                    name: 'id',
+                    data: 'id',
+                    className: 'text-nowrap text-center',
+                    type: 'date',
+                    searchable: false,
+                    orderable: false,
+                    type: 'html',
+                    render: (data) => {
+                        return `
+                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
+                                <span class="material-symbols-outlined fs-6">edit</span>
+                            </a>
+                        `;
+                    },
+                });
+            }
+
+            /**
+             * Inisialisasi datatable
+             */
             const table = app.dataTable('#categoryTable', {
+                columns,
                 serverSide: true,
                 ajax: "{{ route('master.categories') }}",
-                columns: [
-                    {
-                        title: 'Kode',
-                        name: 'code',
-                        data: 'code',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Nama (Deskripsi)',
-                        name: 'name',
-                        data: 'name',
-                        className: 'text-nowrap',
-                        type: 'string',
-                    },
-                    {
-                        title: 'Status',
-                        name: 'is_active',
-                        data: 'is_active',
-                        className: 'text-nowrap',
-                        type: 'string',
-                        searchable: false,
-                        render: (data) => {
-                            if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
-                            return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
-                        }
-                    },
-                    {
-                        title: 'Dibuat',
-                        name: 'created_at',
-                        data: 'created_at',
-                        className: 'text-nowrap',
-                        type: 'date',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: 'Diedit',
-                        name: 'updated_at',
-                        data: 'updated_at',
-                        className: 'text-nowrap',
-                        type: 'date',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: '<span class="material-symbols-outlined">settings</span>',
-                        name: 'id',
-                        data: 'id',
-                        className: 'text-nowrap text-center',
-                        type: 'date',
-                        searchable: false,
-                        orderable: false,
-                        type: 'html',
-                        render: (data) => {
-                            if ($('html').data('update') === 1) {
-                                return `
-                                    <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
-                                        <span class="material-symbols-outlined fs-6">edit</span>
-                                    </a>
-                                `;
-                            }
-
-                            return null;
-                        },
-                    }
-                ],
+                fixedColumns: {
+                    start: 0,
+                    end: updateAccess ? 1 : 0,
+                }
             });
         </script>
 

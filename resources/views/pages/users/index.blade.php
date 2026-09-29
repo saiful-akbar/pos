@@ -26,96 +26,102 @@
 
     <x-slot:script>
         <script>
-            const baseUrl = $('meta[name=base-url]').attr('content');
             const updateAccess = $('html').data('update');
             const removeAccess = $('html').data('remove');
 
+            /**
+             * Datatable columns
+             */
+            const columns = [
+                {
+                    title: 'Nama',
+                    name: 'users.full_name',
+                    data: 'full_name',
+                    className: 'text-nowrap',
+                    render: (data, type, row) => {
+                        return `
+                            <div class="d-flex align-items-center">
+                                <div class="avatar">
+                                    <img class="avatar-img" src="${app.userPhoto(row.photo)}" alt="${row.full_name}" />
+                                </div>
+                                <div class="ms-4">${row.full_name}</div>
+                            </div>
+                        `;
+                    }
+                },
+                {
+                    title: 'Role',
+                    name: 'roles.name',
+                    data: 'role_name',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Username',
+                    name: 'users.username',
+                    data: 'username',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Status',
+                    name: 'users.is_active',
+                    data: 'is_active',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => {
+                        if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
+                        return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
+                    }
+                },
+                {
+                    title: 'Dibuat',
+                    name: 'users.created_at',
+                    data: 'created_at',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => window.app.dateTimeFormat(data),
+                },
+                {
+                    title: 'Diedit',
+                    name: 'users.updated_at',
+                    data: 'updated_at',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => window.app.dateTimeFormat(data),
+                },
+            ];
 
-            const userTable = window.app.dataTable('#userTable', {
+            /**
+             * Tambahkan kolom action jika user memiliki akses update
+             */
+            if (updateAccess) {
+                columns.push({
+                    title: '<span class="material-symbols-outlined">settings</span>',
+                    data: 'id',
+                    className: 'text-nowrap text-center',
+                    orderable: false,
+                    searchable: false,
+                    type: 'html',
+                    render: (data) => {
+                        return `
+                            <a href="${app.baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
+                                <span class="material-symbols-outlined fs-6">edit</span>
+                            </a>
+                        `;
+                    }
+                });
+            }
+
+            /**
+             * Inisialisasi datatable.
+             */
+            window.app.dataTable('#userTable', {
+                columns,
                 serverSide: true,
                 ajax: "{{ route('master.users') }}",
                 fixedColumns: {
                     start: 0,
-                    end: 1,
+                    end: updateAccess ? 1 : 0,
                 },
-                columns: [
-                    {
-                        title: 'Nama',
-                        name: 'users.full_name',
-                        data: 'full_name',
-                        className: 'text-nowrap',
-                        render: (data, type, row) => {
-                            return `
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar">
-                                        <img class="avatar-img" src="${app.userPhoto(row.photo)}" alt="${row.full_name}" />
-                                    </div>
-                                    <div class="ms-4">
-                                        <div>${row.full_name}</div>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    },
-                    {
-                        title: 'Role',
-                        name: 'roles.name',
-                        data: 'role_name',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Username',
-                        name: 'users.username',
-                        data: 'username',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Status',
-                        name: 'users.is_active',
-                        data: 'is_active',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => {
-                            if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
-                            return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
-                        }
-                    },
-                    {
-                        title: 'Dibuat',
-                        name: 'users.created_at',
-                        data: 'created_at',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => window.app.dateTimeFormat(data),
-                    },
-                    {
-                        title: 'Diedit',
-                        name: 'users.updated_at',
-                        data: 'updated_at',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => window.app.dateTimeFormat(data),
-                    },
-                    {
-                        title: '<span class="material-symbols-outlined">settings</span>',
-                        data: 'id',
-                        className: 'text-nowrap text-center',
-                        orderable: false,
-                        searchable: false,
-                        type: 'html',
-                        render: (data) => {
-                            if (updateAccess) {
-                                return `
-                                    <a href="${baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
-                                        <span class="material-symbols-outlined fs-6">edit</span>
-                                    </a>
-                                `;
-                            }
-
-                            return '';
-                        }
-                    }
-                ],
             });
         </script>
     </x-slot:script>

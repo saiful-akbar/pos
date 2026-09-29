@@ -37,18 +37,76 @@ class ModuleSeeder extends Seeder
                     if (in_array($role->name, $detail['roles'], true)) {
                         $now = now();
 
-                        if ($role->name === 'Kasir' && $moduleDetail->name === 'Diskon') {
-                            $role->modules()->attach($moduleDetail->id, [
-                                'read' => true,
-                                'create' => true,
-                                'update' => true,
-                                'remove' => false,
-                                'delete' => false,
-                                'created_at' => $now,
-                                'updated_at' => $now,
-                            ]);
+                        if ($role->name === 'Kasir') {
+                            if ($moduleDetail->name === 'Diskon') {
+                                $role->modules()->attach($moduleDetail->id, [
+                                    'read' => true,
+                                    'create' => true,
+                                    'update' => true,
+                                    'remove' => false,
+                                    'delete' => false,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ]);
 
-                            continue;
+                                continue;
+                            }
+
+                            if ($moduleDetail->route === 'transactions.purchases') {
+                                $role->modules()->attach($moduleDetail->id, [
+                                    'read' => true,
+                                    'create' => true,
+                                    'update' => true,
+                                    'remove' => false,
+                                    'delete' => false,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ]);
+
+                                continue;
+                            }
+
+                            if ($moduleDetail->route === 'transactions.sales') {
+                                $role->modules()->attach($moduleDetail->id, [
+                                    'read' => true,
+                                    'create' => true,
+                                    'update' => true,
+                                    'remove' => false,
+                                    'delete' => false,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ]);
+
+                                continue;
+                            }
+
+                            if ($moduleDetail->route === 'stockOpnames.daily') {
+                                $role->modules()->attach($moduleDetail->id, [
+                                    'read' => true,
+                                    'create' => true,
+                                    'update' => true,
+                                    'remove' => false,
+                                    'delete' => false,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ]);
+
+                                continue;
+                            }
+
+                            if ($moduleDetail->route === 'stockOpnames.monthly') {
+                                $role->modules()->attach($moduleDetail->id, [
+                                    'read' => true,
+                                    'create' => true,
+                                    'update' => true,
+                                    'remove' => false,
+                                    'delete' => false,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ]);
+
+                                continue;
+                            }
                         }
 
                         $role->modules()->attach($moduleDetail->id, [
@@ -204,7 +262,7 @@ class ModuleSeeder extends Seeder
                         'name' => 'Pengaturan aplikasi',
                         'path' => '/settings/applications',
                         'route' => 'settings.applications',
-                        'roles' => ['Admin'],
+                        'roles' => ['Admin', 'Kasir'],
                     ],
                 ],
             ],

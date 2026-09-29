@@ -419,7 +419,7 @@
                             ajax: "{{ route('transactions.sales.carts.details', ['cartId' => $cart->id]) }}",
                             ordering: false,
                             fixedColumns: {
-                                start: 0,
+                                start: 1,
                                 end: 1,
                             },
                             columns: [
@@ -432,14 +432,10 @@
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar">
-                                                    <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
-                                                </div>
+                                                <img src="${app.storageImage(row.product.image)}" class="rounded" alt="Produk" />
                                                 <div class="ms-4">
                                                     <div>${row.product.code}</div>
-                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 100px;">
-                                                        ${row.product.name}
-                                                    </div>
+                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">${row.product.name}</div>
                                                 </div>
                                             </div>
                                         `;

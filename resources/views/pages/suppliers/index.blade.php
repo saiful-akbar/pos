@@ -34,101 +34,110 @@
     <x-slot:script>
         <script>
             const updateAccess = $('html').data('update');
-            const removeAccess = $('html').data('remove');
             
+            /**
+             * Datatable columns
+             */
+            const columns = [
+                {
+                    title: 'Kode',
+                    name: 'code',
+                    data: 'code',
+                    type: 'string',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Nama',
+                    name: 'name',
+                    data: 'name',
+                    type: 'string',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Nomor Telapon',
+                    name: 'phone_number',
+                    data: 'phone_number',
+                    type: 'string',
+                    className: 'text-nowrap',
+                },
+                {
+                    title: 'Alamat',
+                    name: 'address',
+                    data: 'address',
+                    type: 'string',
+                    width: '250px',
+                },
+                {
+                    title: 'Catatan',
+                    name: 'notes',
+                    data: 'notes',
+                    type: 'string',
+                    width: '250px',
+                },
+                {
+                    title: 'Status',
+                    name: 'is_active',
+                    data: 'is_active',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => {
+                        if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
+                        return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
+                    }
+                },
+                {
+                    title: 'Dibuat',
+                    name: 'created_at',
+                    data: 'created_at',
+                    type: 'string',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+                {
+                    title: 'Diedit',
+                    name: 'updated_at',
+                    data: 'updated_at',
+                    type: 'string',
+                    className: 'text-nowrap',
+                    searchable: false,
+                    render: (data) => app.dateTimeFormat(data),
+                },
+            ];
+
+            /**
+             * Tambahkan kolom action jika user mmeiliki akses update
+             */
+            if (updateAccess) {
+                columns.push({
+                    title: `<span class="material-symbols-outlined">settings</span>`,
+                    name: 'id',
+                    data: 'id',
+                    className: 'text-nowrap text-center',
+                    searchable: false,
+                    orderable: false,
+                    type: 'html',
+                    render: (data) => {
+                        return `
+                            <a href="${app.baseUrl}/master/suppliers/${data}/edit" class="btn btn-light" title="Edit">
+                                <span class="material-symbols-outlined fs-6">edit</span>
+                            </a>
+                        `;
+                    },
+                });
+            }
+
+            /**
+             * Inisialisasi datatable.
+             */
             const supplierTable = app.dataTable('#supplierTable', {
+                columns,
                 serverSide: true,
                 ajax: "{{ route('master.suppliers') }}",
                 fixedColumns: {
                     start: 0,
-                    end: 1
+                    end: updateAccess ? 1 : 0,
                 },
-                columns: [
-                    {
-                        title: 'Kode',
-                        name: 'code',
-                        data: 'code',
-                        type: 'string',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Nama',
-                        name: 'name',
-                        data: 'name',
-                        type: 'string',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Nomor Telapon',
-                        name: 'phone_number',
-                        data: 'phone_number',
-                        type: 'string',
-                        className: 'text-nowrap',
-                    },
-                    {
-                        title: 'Alamat',
-                        name: 'address',
-                        data: 'address',
-                        type: 'string',
-                        width: '250px',
-                    },
-                    {
-                        title: 'Catatan',
-                        name: 'notes',
-                        data: 'notes',
-                        type: 'string',
-                        width: '250px',
-                    },
-                    {
-                        title: 'Status',
-                        name: 'is_active',
-                        data: 'is_active',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => {
-                            if (data) return `<span class="badge bg-success-subtle text-success">Aktif</span>`;
-                            return `<span class="badge bg-danger-subtle text-danger">Tidak Aktif</span>`;
-                        }
-                    },
-                    {
-                        title: 'Dibuat',
-                        name: 'created_at',
-                        data: 'created_at',
-                        type: 'string',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: 'Diedit',
-                        name: 'updated_at',
-                        data: 'updated_at',
-                        type: 'string',
-                        className: 'text-nowrap',
-                        searchable: false,
-                        render: (data) => app.dateTimeFormat(data),
-                    },
-                    {
-                        title: `<span class="material-symbols-outlined">settings</span>`,
-                        name: 'id',
-                        data: 'id',
-                        className: 'text-nowrap text-center',
-                        searchable: false,
-                        orderable: false,
-                        type: 'html',
-                        render: (data) => {
-                            if (updateAccess === 1) {
-                                return `
-                                    <a href="${app.baseUrl}/master/suppliers/${data}/edit" class="btn btn-light" title="Edit">
-                                        <span class="material-symbols-outlined fs-6">edit</span>
-                                    </a>
-                                `;
-                            }
-
-                            return null;
-                        },
-                    }
-                ],
             });
         </script>
     </x-slot:script>
