@@ -289,8 +289,8 @@ Route::middleware('auth')->group(function (): void {
             Route::get('purchases/details', 'purchaseDetails')->name('.purchases.details')->middleware('module:reports.purchases,read');
             Route::get('sales', 'saleSummaries')->name('.sales')->middleware('module:reports.sales,read');
             Route::get('sales/details', 'saleDetails')->name('.sales.details')->middleware('module:reports.sales,read');
-            Route::get('sales/returns', 'saleReturnSummaries')->name('.sales.returns')->middleware('module:reports.sales.returns,read');
-            Route::get('sales/returns/details', 'saleReturnDetails')->name('.sales.returns.details')->middleware('module:reports.sales.returns,read');
+            Route::get('returns', 'returnSummaries')->name('.returns')->middleware('module:reports.returns,read');
+            Route::get('returns/details', 'returnDetails')->name('.returns.details')->middleware('module:reports.returns,read');
         });
 });
 

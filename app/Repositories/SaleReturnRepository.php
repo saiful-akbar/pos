@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Application\Sale\DTOs\GetSaleReturnDTO;
 use App\Application\Sale\DTOs\SaleReturnDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
@@ -13,7 +14,7 @@ use App\Domain\Sale\Repositories\SaleReturnRepositoryInterface;
 use App\Domain\Sale\ValueObjects\CustomerSaleValue;
 use App\Domain\Sale\ValueObjects\UserSaleValue;
 use App\Models\SaleReturn;
-use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Override;
 
@@ -50,18 +51,42 @@ class SaleReturnRepository extends Repository implements SaleReturnRepositoryInt
     }
 
     /**
-     * Mengambil daftar berdasarkan tanggal.
+     * Mengmabil daftar pengembalian penjualan
      *
      * @return SaleReturnEntity[]
      */
     #[Override]
-    public function getByDate(DateTimeInterface $fromDate, DateTimeInterface $toDate): array
+    public function get(GetSaleReturnDTO $params): array
     {
         try {
-            return $this->model->query()
-                ->with(['user', 'sale.user', 'sale.customer'])
-                ->whereBetween('transaction_date', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-                ->orderBy('transaction_date', 'asc')
+            if ($params->allAttributesIsNull()) {
+                return [];
+            }
+
+            $query = $this->model->query()->with([
+                'user',
+                'sale.user',
+                'sale.customer',
+            ]);
+
+            if ($params->datesIsNotNull()) {
+                $query->whereBetween('transaction_date', [
+                    $params->fromDate->format('Y-m-d'),
+                    $params->toDate->format('Y-m-d'),
+                ]);
+            }
+
+            if ($params->returnNumberIsNotNull()) {
+                $query->where('return_number', $params->returnNumber);
+            }
+
+            if ($params->invoiceNumberIsNotNull()) {
+                $query->whereHas('sale', function (Builder $subQuery) use ($params): void {
+                    $subQuery->where('invoice_number', $params->invoiceNumber);
+                });
+            }
+
+            return $query->orderBy('transaction_date', 'asc')
                 ->get()
                 ->map(fn ($data) => $this->mapModelToSaleReturnEntity($data))
                 ->toArray();
@@ -76,22 +101,49 @@ class SaleReturnRepository extends Repository implements SaleReturnRepositoryInt
     }
 
     /**
-     * Pemetaan class model ke class SaleReturnEntity
+     * Generate nomor return.
      */
-    private function mapModelToSaleReturnEntity(SaleReturn $model): SaleReturnEntity
+    #[Override]
+    public function generateReturnNumber(): string
     {
-        return new SaleReturnEntity(
-            id: $model->id,
-            sale: $this->mapModelToSaleEntity($model->sale),
-            user: $this->mapModelToUserSaleValue($model->user),
-            transactionDate: parse_date_time_immutable($model->transaction_date),
-            totalQuantity: parse_float($model->total_quantity),
-            totalAmount: parse_float($model->total_amount),
-            notes: $model->notes,
-            createdAt: $model->created_at,
-            updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
-        );
+        try {
+            $return = $this->model->query()
+                ->select('return_number')
+                ->whereYear('created_at', date('Y'))
+                ->whereMonth('created_at', date('m'))
+                ->orderBy('created_at', 'desc')
+                ->lockForUpdate()
+                ->first();
+
+            if ($return === null) {
+                return 'RTN'.date('y').date('m').'-00001';
+            }
+
+            $invoice = explode('-', $return->return_number);
+            $code = $invoice[0];
+            $number = parse_int($invoice[1]) + 1;
+
+            if ($number <= 9) {
+                $result = "{$code}-0000{$number}";
+            } elseif ($number <= 99) {
+                $result = "{$code}-000{$number}";
+            } elseif ($number <= 999) {
+                $result = "{$code}-00{$number}";
+            } elseif ($number <= 9999) {
+                $result = "{$code}-0{$number}";
+            } else {
+                $result = "{$code}-{$number}";
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
     }
 
     /**
@@ -104,10 +156,10 @@ class SaleReturnRepository extends Repository implements SaleReturnRepositoryInt
         }
 
         return new CustomerSaleValue(
-            id: $model->customer->id,
-            name: $model->customer->name,
-            phoneNumber: $model->customer->phone_number,
-            address: $model->customer->address
+            id: $model->id,
+            name: $model->name,
+            phoneNumber: $model->phone_number,
+            address: $model->address
         );
     }
 
@@ -140,6 +192,26 @@ class SaleReturnRepository extends Repository implements SaleReturnRepositoryInt
             paidAmount: parse_float($model->paid_amount),
             changeAmount: parse_float($model->change_amount),
             paymentMethod: PaymentMethodEnum::from($model->payment_method),
+            notes: $model->notes,
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
+        );
+    }
+
+    /**
+     * Pemetaan class model ke class SaleReturnEntity
+     */
+    private function mapModelToSaleReturnEntity(SaleReturn $model): SaleReturnEntity
+    {
+        return new SaleReturnEntity(
+            id: $model->id,
+            sale: $this->mapModelToSaleEntity($model->sale),
+            user: $this->mapModelToUserSaleValue($model->user),
+            returnNumber: $model->return_number,
+            transactionDate: parse_date_time_immutable($model->transaction_date),
+            totalQuantity: parse_float($model->total_quantity),
+            totalAmount: parse_float($model->total_amount),
             notes: $model->notes,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

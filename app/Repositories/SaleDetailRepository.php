@@ -143,7 +143,7 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
                     }
                 })
                 ->get()
-                ->map(fn($data) => $this->mapModelToSaleDetailEntity($data))
+                ->map(fn ($data) => $this->mapModelToSaleDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

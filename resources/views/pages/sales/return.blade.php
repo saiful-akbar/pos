@@ -72,11 +72,15 @@
                             start: 0,
                             end: 1,
                         },
-                        order: [
-                            [0, 'asc'],
-                            [1, 'asc'],
-                        ],
+                        order: [[2, 'asc']],
                         columns: [
+                            {
+                                title: 'Nomor Pengembalian',
+                                name: 'return_number',
+                                data: 'return_number',
+                                className: 'px-3 text-nowrap',
+                                type: 'string',
+                            },
                             {
                                 title: 'Nomor Faktur Penjualan',
                                 name: 'sale.invoice_number',

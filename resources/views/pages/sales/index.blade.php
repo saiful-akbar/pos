@@ -72,20 +72,21 @@
                             start: 0,
                             end: 1,
                         },
+                        order: [[1, 'asc']],
                         columns: [
-                            {
-                                title: 'Tanggal',
-                                name: 'transaction_date',
-                                data: 'transaction_date',
-                                className: 'text-nowrap',
-                                type: 'date',
-                            },
                             {
                                 title: 'Nomor Faktur',
                                 name: 'invoice_number',
                                 data: 'invoice_number',
                                 className: 'text-nowrap',
                                 type: 'string',
+                            },
+                            {
+                                title: 'Tanggal',
+                                name: 'transaction_date',
+                                data: 'transaction_date',
+                                className: 'text-nowrap',
+                                type: 'date',
                             },
                             {
                                 title: 'Total Quantity',

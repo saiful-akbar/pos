@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Sale\UseCases;
 
+use App\Application\Sale\DTOs\GetSaleReturnDTO;
 use App\Domain\Sale\Entities\SaleReturnEntity;
 use App\Domain\Sale\Repositories\SaleReturnRepositoryInterface;
 use DateTimeInterface;
@@ -29,9 +30,9 @@ class GetSaleReturnsByDate
             ]);
         }
 
-        return $this->returnRepository->getByDate(
+        return $this->returnRepository->get(new GetSaleReturnDTO(
             fromDate: $fromDate,
             toDate: $toDate,
-        );
+        ));
     }
 }

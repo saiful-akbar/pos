@@ -34,7 +34,7 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-            $table->string('invoice_number', 50)->unique()->comment('format: INV2608-00001');
+            $table->char('invoice_number', 13)->unique()->comment('format: INV2608-00001');
             $table->date('transaction_date');
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);

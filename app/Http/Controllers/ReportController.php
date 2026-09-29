@@ -7,11 +7,15 @@ namespace App\Http\Controllers;
 use App\Application\Purchase\DTOs\GetPurchasesDTO;
 use App\Application\Purchase\UseCases\GetPurchaseDetailsByDate;
 use App\Application\Purchase\UseCases\GetPurchases;
+use App\Application\Sale\DTOs\GetSaleReturnDTO;
 use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Application\Sale\UseCases\GetSaleDetails;
+use App\Application\Sale\UseCases\GetSaleReturn;
+use App\Application\Sale\UseCases\GetSaleReturnDetail;
 use App\Application\Sale\UseCases\GetSales;
 use App\Domain\Purchase\Enums\PaymentStatusEnum;
 use App\Http\Requests\Reports\GetPurchasesReportRequest;
+use App\Http\Requests\Reports\GetSaleReturnsReportRequest;
 use App\Http\Requests\Reports\GetSalesReportRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -88,5 +92,43 @@ class ReportController extends Controller
         }
 
         return view('pages.reports.sale-detail');
+    }
+
+    /**
+     * Menmpilkan halaman summaries laporan pengembalian penjualan.
+     */
+    public function returnSummaries(GetSaleReturnsReportRequest $request): View|JsonResponse
+    {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetSaleReturn::class)->execute(new GetSaleReturnDTO(
+                    fromDate: $request->date('from_date'),
+                    toDate: $request->date('to_date'),
+                    returnNumber: $request->validated('return_number'),
+                    invoiceNumber: $request->validated('invoice_number'),
+                )),
+            );
+        }
+
+        return view('pages.reports.return-summary');
+    }
+
+    /**
+     * Menmpilkan halaman details laporan pengembalian penjualan.
+     */
+    public function returnDetails(GetSaleReturnsReportRequest $request): View|JsonResponse
+    {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetSaleReturnDetail::class)->execute(new GetSaleReturnDTO(
+                    fromDate: $request->date('from_date'),
+                    toDate: $request->date('to_date'),
+                    returnNumber: $request->validated('return_number'),
+                    invoiceNumber: $request->validated('invoice_number'),
+                )),
+            );
+        }
+
+        return view('pages.reports.return-detail');
     }
 }

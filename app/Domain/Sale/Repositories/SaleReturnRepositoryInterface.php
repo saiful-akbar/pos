@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Sale\Repositories;
 
+use App\Application\Sale\DTOs\GetSaleReturnDTO;
 use App\Application\Sale\DTOs\SaleReturnDTO;
 use App\Domain\Sale\Entities\SaleReturnEntity;
-use DateTimeInterface;
 
 interface SaleReturnRepositoryInterface
 {
@@ -16,9 +16,14 @@ interface SaleReturnRepositoryInterface
     public function create(SaleReturnDTO $dto): SaleReturnEntity;
 
     /**
-     * Mengambil daftar berdasarkan tanggal.
+     * Mengmabil daftar pengembalian penjualan
      *
      * @return SaleReturnEntity[]
      */
-    public function getByDate(DateTimeInterface $fromDate, DateTimeInterface $toDate): array;
+    public function get(GetSaleReturnDTO $params): array;
+
+    /**
+     * Generate nomor return.
+     */
+    public function generateReturnNumber(): string;
 }

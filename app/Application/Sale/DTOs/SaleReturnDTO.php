@@ -16,6 +16,7 @@ class SaleReturnDTO extends DTO
     public function __construct(
         public readonly string $saleId,
         public readonly string $userId,
+        public readonly string $returnNumber,
         public readonly DateTimeInterface $transactionDate,
         public readonly int|float $totalQuantity,
         public readonly int|float $totalAmount,
@@ -31,6 +32,7 @@ class SaleReturnDTO extends DTO
         return [
             'sale_id' => $this->saleId,
             'user_id' => $this->userId,
+            'return_number' => $this->returnNumber,
             'transaction_date' => $this->transactionDate->format('Y-m-d'),
             'total_quantity' => $this->totalQuantity,
             'total_amount' => $this->totalAmount,

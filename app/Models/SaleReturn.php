@@ -64,6 +64,7 @@ class SaleReturn extends Model
     protected $fillable = [
         'user_id',
         'sale_id',
+        'return_number',
         'transaction_date',
         'total_quantity',
         'total_amount',

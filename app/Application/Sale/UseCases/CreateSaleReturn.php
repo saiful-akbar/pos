@@ -50,10 +50,14 @@ class CreateSaleReturn
             $returnCart = $this->findSaleReturnCart();
             $returnCartDetails = $this->returnCartDetailRepository->getByCartId(cartId: $returnCart->id);
 
+            // Buat nomor return.
+            $returnNumber = $this->returnRepository->generateReturnNumber();
+
             // Insert data sale return
             $return = $this->returnRepository->create(dto: new SaleReturnDTO(
                 saleId: $returnCart->saleId,
                 userId: user()->id,
+                returnNumber: $returnNumber,
                 transactionDate: $returnCart->transactionDate,
                 totalQuantity: $returnCart->totalQuantity,
                 totalAmount: $returnCart->totalAmount,

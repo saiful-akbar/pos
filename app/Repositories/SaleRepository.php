@@ -52,7 +52,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
                 ->first();
 
             if ($sale === null) {
-                return 'INV' . date('y') . date('m') . '-00001';
+                return 'INV'.date('y').date('m').'-00001';
             }
 
             $invoice = explode('-', $sale->invoice_number);
@@ -192,7 +192,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
 
             return $query->orderBy('transaction_date', 'asc')
                 ->get()
-                ->map(fn(Sale $data) => $this->mapModelToSaleEntity($data))
+                ->map(fn (Sale $data) => $this->mapModelToSaleEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(

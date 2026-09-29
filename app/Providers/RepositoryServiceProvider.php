@@ -74,7 +74,9 @@ use App\Application\Sale\UseCases\FindSaleReturnCartByCurrentUser;
 use App\Application\Sale\UseCases\GetSaleCartDetailsByCartIdTable;
 use App\Application\Sale\UseCases\GetSaleDetails;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturn;
 use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturnDetail;
 use App\Application\Sale\UseCases\GetSaleReturnsByDate;
 use App\Application\Sale\UseCases\GetSales;
 use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
@@ -498,11 +500,13 @@ class RepositoryServiceProvider extends ServiceProvider
         SaleReturnRepositoryInterface::class => [
             CreateSaleReturn::class => SaleReturnRepository::class,
             GetSaleReturnsByDate::class => SaleReturnRepository::class,
+            GetSaleReturn::class => SaleReturnRepository::class,
         ],
 
         // Sale return Detail
         SaleReturnDetailRepositoryInterface::class => [
             CreateSaleReturn::class => SaleReturnDetailRepository::class,
+            GetSaleReturnDetail::class => SaleReturnDetailRepository::class,
         ],
 
         // Daily stock opname
