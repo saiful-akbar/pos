@@ -34,7 +34,7 @@ class ProductSeeder extends Seeder
                 'discount' => $data['discount'],
                 'minimum_stock' => $data['minimum_stock'],
                 'current_stock' => $data['current_stock'],
-                'is_active' => $data['is_active']
+                'is_active' => $data['is_active'],
             ]);
         }
     }
@@ -56,7 +56,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -69,7 +69,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -82,7 +82,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0004',
@@ -95,7 +95,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -108,7 +108,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -121,7 +121,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -134,7 +134,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -147,7 +147,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -160,7 +160,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -173,7 +173,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -186,7 +186,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -199,7 +199,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0001',
@@ -212,7 +212,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -225,7 +225,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -238,7 +238,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -251,7 +251,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -264,7 +264,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -277,7 +277,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -290,7 +290,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -303,7 +303,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -316,7 +316,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0006',
@@ -329,7 +329,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -342,7 +342,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -355,7 +355,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -368,7 +368,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
             [
                 'category_code' => '0003',
@@ -381,7 +381,7 @@ class ProductSeeder extends Seeder
                 'discount' => 0,
                 'minimum_stock' => 0,
                 'current_stock' => 0,
-                'is_active' => true
+                'is_active' => true,
             ],
         ];
     }

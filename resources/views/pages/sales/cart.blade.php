@@ -295,7 +295,6 @@
                         return app.modalDataTable('#productTable', {
                             serverSide: true,
                             ajax: "{{ route('master.products.active') }}",
-                            ordering: false,
                             columns: [
                                 {
                                     title: 'Kode',
@@ -303,13 +302,14 @@
                                     data: 'code',
                                     className: 'text-nowrap',
                                     type: 'string',
+                                    width: '200px',
                                     render: (data, type, row) => {
                                         return `
                                             <div class="d-flex align-items-center">
                                                 <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
                                                 <div class="ms-3">
                                                     <div>${row.code}</div>
-                                                    <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">${row.name}</div>
+                                                    <div class="fs-sm text-body-secondary text-truncate" style="width: 150px;">${row.name}</div>
                                                 </div>
                                             </div>
                                         `;
@@ -320,10 +320,17 @@
                                     name: 'barcode',
                                     data: 'barcode',
                                     type: 'string',
-                                    className: 'text-nowrap',
+                                    width: '200px',
                                 },
                                 {
-                                    title: 'Stok',
+                                    title: 'Satuan',
+                                    name: 'unit.code',
+                                    data: 'unit.code',
+                                    className: 'text-nowrap',
+                                    type: 'string',
+                                },
+                                {
+                                    title: 'Stok (Qty)',
                                     name: 'current_stock',
                                     data: 'current_stock',
                                     className: 'text-nowrap',

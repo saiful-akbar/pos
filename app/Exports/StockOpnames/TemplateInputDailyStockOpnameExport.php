@@ -23,7 +23,7 @@ class TemplateInputDailyStockOpnameExport implements FromCollection, ShouldAutoS
             'Kode Produk',
             'Nama (Deskripsi)',
             'Satuan',
-            'Qty',
+            'Quantity (Stok)',
         ];
     }
 

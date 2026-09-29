@@ -57,7 +57,7 @@ class DailyStockOpnameController extends Controller
      */
     public function exportTemplateInput(): BinaryFileResponse
     {
-        return Excel::download(new TemplateInputDailyStockOpnameExport(), 'template_input_daily_stock_opname.xlsx');
+        return Excel::download(new TemplateInputDailyStockOpnameExport(), 'template_input_stock_opname_harian.xlsx');
     }
 
     /**

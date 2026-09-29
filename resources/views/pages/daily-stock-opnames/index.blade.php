@@ -34,7 +34,7 @@
                                     </x-button>
                                 </div>
         
-                                <div class="col-12 my-5">
+                                <div class="col-12 my-2">
                                     <hr>
                                 </div>
         

@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <table id="productTable" class="table table-hover align-middle w-100"></table>
+                    <table id="productTable" class="table table-hover table-img align-middle w-100"></table>
                 </div>
 
                 <div class="modal-footer">
@@ -413,49 +413,34 @@
                         },
                         columns: [
                             {
-                                title: 'Gambar',
-                                name: 'image',
-                                data: 'image',
-                                className: 'text-center',
-                                type: 'html',
-                                searchable: false,
-                                orderable: false,
-                                render: (data) => {
-                                    return `<img src="${app.storageImage(data)}" class="rounded" width="50" height="50" alt="Produk"/>`;
-                                }
-                            },
-                            {
-                                title: 'Kode Produk',
+                                title: 'Kode',
                                 name: 'code',
                                 data: 'code',
-                                type: 'string',
                                 className: 'text-nowrap',
+                                type: 'string',
+                                render: (data, type, row) => {
+                                    return `
+                                        <div class="d-flex align-items-center">
+                                            <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
+                                            <div class="ms-3">
+                                                <div>${row.code}</div>
+                                                <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">${row.name}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
                             },
                             {
                                 title: 'Barcode',
                                 name: 'barcode',
                                 data: 'barcode',
                                 type: 'string',
-                                className: 'text-nowrap',
+                                width: '200px',
                             },
                             {
-                                title: 'Nama (Deskripsi)',
-                                name: 'name',
-                                data: 'name',
-                                type: 'string',
-                                width: '300px',
-                            },
-                            {
-                                title: 'Kategori',
-                                name: 'category.name',
-                                data: 'category.name',
-                                type: 'string',
-                                className: 'text-nowrap',
-                            },
-                            {
-                                title: 'Unit',
-                                name: 'unit.name',
-                                data: 'unit.name',
+                                title: 'Satuan',
+                                name: 'unit.code',
+                                data: 'unit.code',
                                 type: 'string',
                                 className: 'text-nowrap',
                             },
