@@ -21,6 +21,7 @@ use App\Http\Requests\Reports\GetPurchasesReportRequest;
 use App\Http\Requests\Reports\GetSaleReturnsReportRequest;
 use App\Http\Requests\Reports\GetSalesReportRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ReportController extends Controller
@@ -141,10 +142,19 @@ class ReportController extends Controller
     public function monitoringMonthlyStock(GetMonitoringMonthlyStockReportRequest $request): View|JsonResponse
     {
         if ($request->ajax()) {
+            $year = $request->integer('year');
+            $month = $request->integer('month');
+
+            if ($month > 12) {
+                throw ValidationException::withMessages([
+                    'month' => 'bulan yang anda pilih tidak valid'
+                ]);
+            }
+
             return $this->jsonResponse(
                 data: app(GetMonitoringMonthlyStock::class)->execute(new GetMonitoringMonthlyDTO(
-                    year: $request->integer('year'),
-                    month: $request->integer('month'),
+                    year: $year,
+                    month: $month,
                 )),
             );
         }
