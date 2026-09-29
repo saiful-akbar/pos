@@ -147,7 +147,7 @@ class ReportController extends Controller
 
             if ($month > 12) {
                 throw ValidationException::withMessages([
-                    'month' => 'bulan yang anda pilih tidak valid'
+                    'month' => 'bulan yang anda pilih tidak valid',
                 ]);
             }
 
