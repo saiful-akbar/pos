@@ -111,6 +111,7 @@ use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
 use App\Application\Unit\UseCases\GetAllUnits;
 use App\Application\Unit\UseCases\GetUnitsTable;
+use App\Application\Unit\UseCases\RemoveUnit;
 use App\Application\Unit\UseCases\UpdateUnit;
 use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
@@ -240,6 +241,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveSupplier::class => ErrorLogRepository::class,
             RemoveCustomer::class => ErrorLogRepository::class,
             RemoveCategory::class => ErrorLogRepository::class,
+            RemoveUnit::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -288,6 +290,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveSupplier::class => ActivityLogRepository::class,
             RemoveCustomer::class => ActivityLogRepository::class,
             RemoveCategory::class => ActivityLogRepository::class,
+            RemoveUnit::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -345,6 +348,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateUnit::class => UnitRepository::class,
             UpdateUnit::class => UnitRepository::class,
             GetAllUnits::class => UnitRepository::class,
+            RemoveUnit::class => UnitRepository::class,
         ],
 
         // Product

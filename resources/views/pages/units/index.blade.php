@@ -88,7 +88,9 @@
 
     <x-slot:script>
         <script>
-            const updateAccess = $('html').data('update');
+            const update = $('html').data('update');
+            const remove = $('html').data('remove');
+            const access = update === 1 || remove === 1;
 
             /**
              * Datatable columns
@@ -138,7 +140,7 @@
             /**
              * Tambahkan kolom action jika user memiliki akses update
              */
-            if (updateAccess) {
+            if (access) {
                 columns.push({
                     title: `<span class="material-symbols-outlined">settings</span>`,
                     name: 'id',
@@ -148,11 +150,25 @@
                     orderable: false,
                     type: 'html',
                     render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/units/${data}/edit" class="btn btn-light" title="edit">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
+                        let html = '';
+
+                        if (update) {
+                            html += `
+                                <a href="${app.baseUrl}/master/units/${data}/edit" class="btn btn-light" title="edit">
+                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                </a>
+                            `;
+                        }
+
+                        if (remove) {
+                            html += `
+                                <button type="button" class="btn btn-light" title="Hapus" onclick="removeUnit(event, '${data}')">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                </button>
+                            `;
+                        }
+
+                        return html;
                     },
                 });
             }
@@ -160,15 +176,43 @@
             /**
              * Inisialisasi datatable.
              */
-            const table = app.dataTable('#unitTable', {
+            const unitTable = app.dataTable('#unitTable', {
                 columns,
                 serverSide: true,
                 ajax: "{{ route('master.units') }}",
                 fixedColumns: {
                     start: 0,
-                    end: updateAccess ? 1 : 0,
+                    end: access ? 1 : 0,
                 },
             });
+
+            /**
+             * Fungsi soft delete unit.
+             */
+            const removeUnit = (e, id) => {
+                e.preventDefault();
+
+                app.delete('Unit Produk', (removed) => {
+                    if (!removed) return;
+
+                    $.ajax({
+                        type: "delete",
+                        url: app.url(`/master/units/${id}`),
+                        data: {
+                            _method: 'delete',
+                            _token: app.csrfToken,
+                        },
+                        dataType: "json",
+                        success: (response) => {
+                            unitTable.ajax.reload();
+                            app.alert('success', response.message);
+                        },
+                        error: (error) => {
+                            app.alert('danger', error.responseJSON.message);
+                        }
+                    }); 
+                });
+            }
         </script>
 
         {{-- Modal import --}}

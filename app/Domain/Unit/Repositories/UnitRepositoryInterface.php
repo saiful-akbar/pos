@@ -37,4 +37,9 @@ interface UnitRepositoryInterface
      * @return UnitEntity[]
      */
     public function getAll(): array;
+
+    /**
+     * Soft delete by id
+     */
+    public function removeById(string $id): int;
 }

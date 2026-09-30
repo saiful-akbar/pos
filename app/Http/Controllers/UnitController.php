@@ -10,6 +10,7 @@ use App\Application\Unit\DTOs\UpdateUnitDTO;
 use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
 use App\Application\Unit\UseCases\GetUnitsTable;
+use App\Application\Unit\UseCases\RemoveUnit;
 use App\Application\Unit\UseCases\UpdateUnit;
 use App\Exports\Units\TemplateUnitExport;
 use App\Exports\Units\UnitExport;
@@ -133,5 +134,21 @@ class UnitController extends Controller
     public function exportExcel(): BinaryFileResponse
     {
         return Excel::download(new UnitExport(), 'unit_produk.xlsx');
+    }
+
+    /**
+     * Soft delete.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveUnit::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Unit produk berhasil dihapus.'
+        );
     }
 }

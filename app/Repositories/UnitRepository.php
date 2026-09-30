@@ -125,6 +125,26 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
+     * Soft delete by id.
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke UnitEntity.
      */
     private function mapModelToUnitEntity(Unit $model): UnitEntity

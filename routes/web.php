@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.units,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.units,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.units,update');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.units,remove');
             });
 
         Route::controller(ProductController::class)
