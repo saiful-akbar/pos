@@ -37,4 +37,9 @@ interface SaleRepositoryInterface
      * @return SaleEntity[]
      */
     public function getByDate(GetSalesDTO $params): array;
+
+    /**
+     * Soft delete by id.
+     */
+    public function removeById(string $id): int;
 }

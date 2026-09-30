@@ -26,4 +26,14 @@ interface SaleReturnRepositoryInterface
      * Generate nomor return.
      */
     public function generateReturnNumber(): string;
+
+    /**
+     * Soft delete by id.
+     */
+    public function removeById(string $id): int;
+
+    /**
+     * Mengambil data berdasarkan id.
+     */
+    public function findById(string $id): ?SaleReturnEntity;
 }

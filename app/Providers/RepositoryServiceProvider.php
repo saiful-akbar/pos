@@ -84,6 +84,8 @@ use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnDetail;
 use App\Application\Sale\UseCases\GetSaleReturnsByDate;
 use App\Application\Sale\UseCases\GetSales;
+use App\Application\Sale\UseCases\RemoveSale;
+use App\Application\Sale\UseCases\RemoveSaleReturn;
 use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Application\Setting\UseCases\FindSetting;
@@ -246,6 +248,8 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveUnit::class => ErrorLogRepository::class,
             RemoveProduct::class => ErrorLogRepository::class,
             RemovePurchase::class => ErrorLogRepository::class,
+            RemoveSale::class => ErrorLogRepository::class,
+            RemoveSaleReturn::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -297,6 +301,8 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveUnit::class => ActivityLogRepository::class,
             RemoveProduct::class => ActivityLogRepository::class,
             RemovePurchase::class => ActivityLogRepository::class,
+            RemoveSale::class => ActivityLogRepository::class,
+            RemoveSaleReturn::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -377,6 +383,8 @@ class RepositoryServiceProvider extends ServiceProvider
             SetActiveStock::class => ProductRepository::class,
             RemoveProduct::class => ProductRepository::class,
             RemovePurchase::class => ProductRepository::class,
+            RemoveSale::class => ProductRepository::class,
+            RemoveSaleReturn::class => ProductRepository::class,
         ],
 
         // Customer
@@ -497,6 +505,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCart::class => SaleRepository::class,
             UpdateQuantityReturnCartDetail::class => SaleRepository::class,
             GetSales::class => SaleRepository::class,
+            RemoveSale::class => SaleRepository::class,
         ],
 
         // Sale detail
@@ -506,6 +515,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCartDetail::class => SaleDetailRepository::class,
             UpdateQuantityReturnCartDetail::class => SaleDetailRepository::class,
             GetSaleDetails::class => SaleDetailRepository::class,
+            RemoveSale::class => SaleDetailRepository::class,
         ],
 
         // Sale return cart
@@ -534,12 +544,14 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturn::class => SaleReturnRepository::class,
             GetSaleReturnsByDate::class => SaleReturnRepository::class,
             GetSaleReturn::class => SaleReturnRepository::class,
+            RemoveSaleReturn::class => SaleReturnRepository::class,
         ],
 
         // Sale return Detail
         SaleReturnDetailRepositoryInterface::class => [
             CreateSaleReturn::class => SaleReturnDetailRepository::class,
             GetSaleReturnDetail::class => SaleReturnDetailRepository::class,
+            RemoveSaleReturn::class => SaleReturnDetailRepository::class,
         ],
 
         // Daily stock opname

@@ -108,6 +108,7 @@ class SaleReturnRepository extends Repository implements SaleReturnRepositoryInt
     {
         try {
             $return = $this->model->query()
+                ->withTrashed()
                 ->select('return_number')
                 ->whereYear('created_at', date('Y'))
                 ->whereMonth('created_at', date('m'))
@@ -136,6 +137,50 @@ class SaleReturnRepository extends Repository implements SaleReturnRepositoryInt
             }
 
             return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Soft delete by id.
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?SaleReturnEntity
+    {
+        try {
+            $data = $this->model->query()->find($id);
+
+            if ($data === null) {
+                return null;
+            }
+
+            return $this->mapModelToSaleReturnEntity($data);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

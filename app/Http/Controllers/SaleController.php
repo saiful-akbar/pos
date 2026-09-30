@@ -25,6 +25,8 @@ use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnCartDetailsTable;
 use App\Application\Sale\UseCases\GetSaleReturnsByDate;
 use App\Application\Sale\UseCases\GetSales;
+use App\Application\Sale\UseCases\RemoveSale;
+use App\Application\Sale\UseCases\RemoveSaleReturn;
 use App\Application\Sale\UseCases\UpdateQuantityReturnCartDetail;
 use App\Application\Sale\UseCases\UpdateQuantitySalesCartDetailById;
 use App\Http\Requests\Sales\GetSalesByDateRequest;
@@ -243,7 +245,7 @@ class SaleController extends Controller
     /**
      * Mengambil daftar detail sales dalam format json berdasarkan id sales.
      */
-    public function getDetailsTable(Request $request, string $saleId): JsonResponse
+    public function getDetails(Request $request, string $saleId): JsonResponse
     {
         if (! $request->ajax()) {
             abort(404);
@@ -399,5 +401,37 @@ class SaleController extends Controller
             'status' => 'success',
             'message' => 'Transaksi pengembalian penjualan berhasil disimpan.',
         ]);
+    }
+
+    /**
+     * Soft delete penjualan.
+     */
+    public function removeSale(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveSale::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Transaksi penjualan berhasil dihapus.'
+        );
+    }
+
+    /**
+     * Soft delete sale return.
+     */
+    public function removeSaleReturn(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveSaleReturn::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Transaksi pengembalian penjualan berhasil dihapus.'
+        );
     }
 }

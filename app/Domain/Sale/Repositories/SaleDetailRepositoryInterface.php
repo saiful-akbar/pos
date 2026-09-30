@@ -33,4 +33,16 @@ interface SaleDetailRepositoryInterface
      * @return SaleDetailEntity[]
      */
     public function get(GetSalesDTO $params): array;
+
+    /**
+     * Soft delete by sale id
+     */
+    public function removeBySaleId(string $saleId): int;
+
+    /**
+     * Mengambil daftar berdasarkan sale id
+     *
+     * @return SaleDetailEntity[]
+     */
+    public function getBySaleId(string $saleId): array;
 }

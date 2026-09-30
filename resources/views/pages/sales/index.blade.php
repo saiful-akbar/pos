@@ -61,6 +61,20 @@
                 constructor() {
                     this.formFilter = $('#formFilter');
                     this.saleTable = this.saleTable();
+                    this.access = this.getAccess();
+                }
+
+                /**
+                 * Mengambil akses izin user
+                 */
+                getAccess() {
+                    return {
+                        create: $('html').data('create') === 1,
+                        read: $('html').data('read') === 1,
+                        update: $('html').data('update') === 1,
+                        remove: $('html').data('remove') === 1,
+                        delete: $('html').data('delete') === 1,
+                    }
                 }
 
                 /**
@@ -87,6 +101,7 @@
                                 data: 'transaction_date',
                                 className: 'text-nowrap',
                                 type: 'date',
+                                render: (data) => app.dateFormat(data),
                             },
                             {
                                 title: 'Total Quantity',
@@ -94,7 +109,7 @@
                                 data: 'total_quantity',
                                 className: 'text-nowrap',
                                 type: 'num-fmt',
-                                render: (data, type, row) => app.numberFormat(data),
+                                render: (data) => app.numberFormat(data),
                             },
                             {
                                 title: 'Total Harga',
@@ -113,11 +128,21 @@
                                 orderable: false,
                                 searchable: false,
                                 render: (data) => {
-                                    return `
-                                        <a href="${app.baseUrl}/transactions/sales/${data}/receipt" class="btn btn-light" title="Cetak struk" target="_blank" role="button">
+                                    let html = `
+                                        <a href="${app.baseUrl}/transactions/sales/${data}/receipt" class="btn btn-light" title="Cetak struk" target="_blank">
                                             <span class="material-symbols-outlined fs-6">receipt</span>
                                         </a>
                                     `;
+
+                                    if (this.access.remove) {
+                                        html += `
+                                            <button type="button" class="btn btn-light" title="Hapus" onclick="removeSale(event, '${data}')">
+                                                <span class="material-symbols-outlined fs-6">delete</span>
+                                            </button>
+                                        `;
+                                    }
+
+                                    return html;
                                 },
                             },
                         ],
@@ -139,6 +164,25 @@
                         });
                     });
                 }
+
+                /**
+                 * Hapus sales
+                 */
+                removeSale(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "delete",
+                            url: app.url(`/transactions/sales/${id}`),
+                            data: {
+                                _method: 'delete',
+                                _token: app.csrfToken,
+                            },
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
+                }
             }
 
             window.service = new Service();
@@ -146,6 +190,11 @@
 
         {{-- Global script --}}
         <script>
+            "use strict"
+
+            /**
+             * Request data sales setelah document seleci dimuat.
+             */
             $(document).ready(async function () {
                 const params = new URLSearchParams(window.location.search);
                 const fromDate = params.get('from_date');                
@@ -197,6 +246,32 @@
                     app.hidePreloader();
                 }
             });
+
+            /**
+             * Fungsi untuk remove sales
+             */
+            const removeSale = (event, id) => {
+                event.preventDefault();
+
+                app.delete('Transaksi Penjualan', async (deleted) => {
+                    if (!deleted) return;
+
+                    app.showPreloader();
+    
+                    try {
+                        const removed = await service.removeSale(id);
+                        const sales = await service.getSales();
+    
+                        app.alert('success', removed.message);
+                        service.saleTable.clear().draw();
+                        service.saleTable.rows.add(sales.data).draw();
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                });
+            }
         </script>
     </x-slot:script>
 </x-layouts.sales>

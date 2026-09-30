@@ -156,6 +156,51 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
     }
 
     /**
+     * Soft delete by sale id
+     */
+    #[Override]
+    public function removeBySaleId(string $saleId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('sale_id', $saleId)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar berdasarkan sale id
+     *
+     * @return SaleDetailEntity[]
+     */
+    #[Override]
+    public function getBySaleId(string $saleId): array
+    {
+        try {
+            return $this->model->query()
+                ->with(['product.category', 'product.unit'])
+                ->where('sale_id', $saleId)
+                ->get()
+                ->map(fn ($data) => $this->mapModelToSaleDetailEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class CategoryProductSaleValue.
      */
     private function mapModelToCategoryProductSaleValue(Category $model): CategoryProductSaleValue

@@ -114,6 +114,52 @@ class SaleReturnDetailRepository extends Repository implements SaleReturnDetailR
     }
 
     /**
+     * Soft delete by sale return id
+     */
+    #[Override]
+    public function removeBySaleReturnId(string $saleReturnId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('sale_return_id', $saleReturnId)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar data detail pengembalian pembelian
+     * berdasarkan sale reutrn id.
+     *
+     * @return SaleReturnDetailEntity[]
+     */
+    #[Override]
+    public function getBySaleReturnId(string $saleReturnId): array
+    {
+        try {
+            return $this->model->query()
+                ->with(['product.category', 'product.unit'])
+                ->where('sale_return_id', $saleReturnId)
+                ->get()
+                ->map(fn ($data) => $this->mapModelToSaleReturnDetailEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class CategoryProductSaleValue.
      */
     private function mapModelToCategoryProductSaleValue(Category $model): CategoryProductSaleValue

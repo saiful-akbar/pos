@@ -49,7 +49,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table id="tableSales" class="table table-hover align-middle w-100"></table>
+                    <table id="tableSaleReturn" class="table table-hover align-middle w-100"></table>
                 </div>
             </div>
         </div>
@@ -59,67 +59,110 @@
         <script>
             class Service {
                 constructor() {
+                    this.access = this.getAccess();
                     this.formFilter = $('#formFilter');
-                    this.tableSales = this.tableSales();
+                    this.tableSaleReturn = this.tableSaleReturn();
+                }
+
+                /**
+                 * Mengambil akses izin user
+                 */
+                getAccess() {
+                    return {
+                        create: $('html').data('create') === 1,
+                        read: $('html').data('read') === 1,
+                        update: $('html').data('update') === 1,
+                        remove: $('html').data('remove') === 1,
+                        delete: $('html').data('delete') === 1,
+                    }
+                }
+
+                /**
+                 * Kolom untuk tabel sales
+                 */
+                tableSaleReturnColumns() {
+                    const columns = [
+                        {
+                            title: 'Nomor Pengembalian',
+                            name: 'return_number',
+                            data: 'return_number',
+                            className: 'px-3 text-nowrap',
+                            type: 'string',
+                        },
+                        {
+                            title: 'Nomor Faktur Penjualan',
+                            name: 'sale.invoice_number',
+                            data: 'sale.invoice_number',
+                            className: 'px-3 text-nowrap',
+                            type: 'string',
+                        },
+                        {
+                            title: 'Tanggal',
+                            name: 'transaction_date',
+                            data: 'transaction_date',
+                            className: 'px-3 text-nowrap',
+                            type: 'date',
+                            render: (data) => app.dateFormat(data),
+                        },
+                        {
+                            title: 'Quantity',
+                            name: 'total_quantity',
+                            data: 'total_quantity',
+                            className: 'px-3 text-nowrap',
+                            type: 'num-fmt',
+                            render: (data) => app.numberFormat(data),
+                        },
+                        {
+                            title: 'Total',
+                            name: 'total_amount',
+                            data: 'total_amount',
+                            className: 'px-3 text-nowrap',
+                            type: 'num-fmt',
+                            render: (data) => app.numberFormat(data),
+                        },
+                    ];
+
+
+                    if (this.access.remove) {
+                        columns.push({
+                            title: `<span class="material-symbols-outlined">settings</span>`,
+                            name: 'id',
+                            data: 'id',
+                            className: 'text-nowrap text-center no-export',
+                            type: 'html',
+                            orderable: false,
+                            searchable: false,
+                            render: (data) => {
+                                return `
+                                    <button type="button" class="btn btn-light" title="Hapus" onclick="removeSaleReturn(event, '${data}')">
+                                        <span class="material-symbols-outlined fs-6">delete</span>
+                                    </button>
+                                `;
+                            },
+                        });
+                    }
+
+                    return columns;
                 }
 
                 /**
                  * Inisialisasi datatable sales.
                  */
-                tableSales() {
-                    return app.buttonDataTable('#tableSales', {
+                tableSaleReturn() {
+                    return app.buttonDataTable('#tableSaleReturn', {
                         fixedColumns: {
                             start: 0,
                             end: 1,
                         },
                         order: [[2, 'asc']],
-                        columns: [
-                            {
-                                title: 'Nomor Pengembalian',
-                                name: 'return_number',
-                                data: 'return_number',
-                                className: 'px-3 text-nowrap',
-                                type: 'string',
-                            },
-                            {
-                                title: 'Nomor Faktur Penjualan',
-                                name: 'sale.invoice_number',
-                                data: 'sale.invoice_number',
-                                className: 'px-3 text-nowrap',
-                                type: 'string',
-                            },
-                            {
-                                title: 'Tanggal',
-                                name: 'transaction_date',
-                                data: 'transaction_date',
-                                className: 'px-3 text-nowrap',
-                                type: 'date',
-                                render: (data) => app.dateFormat(data),
-                            },
-                            {
-                                title: 'Qauntity',
-                                name: 'total_quantity',
-                                data: 'total_quantity',
-                                className: 'px-3 text-nowrap',
-                                type: 'num-fmt',
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Total',
-                                name: 'total_amount',
-                                data: 'total_amount',
-                                className: 'px-3 text-nowrap',
-                                type: 'num-fmt',
-                                render: (data) => `Rp ${app.numberFormat(data)}`,
-                            },
-                        ],
+                        columns: this.tableSaleReturnColumns(),
                     });
                 }
 
                 /**
                  * Request data sales
                  */
-                getSales() {
+                getSaleReturns() {
                     return new Promise((resollve, reject) => {
                         $.ajax({
                             type: "get",
@@ -130,6 +173,25 @@
                             error: (error) => reject(error.responseJSON),
                         });
                     });
+                }
+
+                /**
+                 * Hapus sales
+                 */
+                removeSaleReturn(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "delete",
+                            url: app.url(`/transactions/sales/return/${id}`),
+                            data: {
+                                _method: 'delete',
+                                _token: app.csrfToken,
+                            },
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
                 }
             }
 
@@ -148,8 +210,8 @@
                     app.clearFormErrors(service.formFilter);
 
                     try {
-                        const response = await service.getSales();
-                        const table = service.tableSales;
+                        const response = await service.getSaleReturns();
+                        const table = service.tableSaleReturn;
 
                         table.clear().draw();
                         table.rows.add(response.data).draw();
@@ -180,8 +242,8 @@
                 app.clearFormErrors(service.formFilter);
 
                 try {
-                    const response = await service.getSales();
-                    const table = service.tableSales;
+                    const response = await service.getSaleReturns();
+                    const table = service.tableSaleReturn;
 
                     table.clear().draw();
                     table.rows.add(response.data).draw();
@@ -191,6 +253,32 @@
                     app.hidePreloader();
                 }
             });
+
+            /**
+             * Fungsi untuk remove sales
+             */
+            const removeSaleReturn = (event, id) => {
+                event.preventDefault();
+
+                app.delete('Transaksi Pengembalian', async (deleted) => {
+                    if (!deleted) return;
+
+                    app.showPreloader();
+    
+                    try {
+                        const removed = await service.removeSaleReturn(id);
+                        const sales = await service.getSaleReturns();
+    
+                        app.alert('success', removed.message);
+                        service.tableSaleReturn.clear().draw();
+                        service.tableSaleReturn.rows.add(sales.data).draw();
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                });
+            }
         </script>
     </x-slot:script>
 </x-layouts.sales>

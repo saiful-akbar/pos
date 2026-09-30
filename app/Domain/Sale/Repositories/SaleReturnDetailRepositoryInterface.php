@@ -21,4 +21,17 @@ interface SaleReturnDetailRepositoryInterface
      * @return SaleReturnDetailEntity[]
      */
     public function get(GetSaleReturnDTO $params): array;
+
+    /**
+     * Soft delete by sale return id
+     */
+    public function removeBySaleReturnId(string $saleReturnId): int;
+
+    /**
+     * Mengambil daftar data detail pengembalian pembelian
+     * berdasarkan sale reutrn id.
+     *
+     * @return SaleReturnDetailEntity[]
+     */
+    public function getBySaleReturnId(string $saleReturnId): array;
 }

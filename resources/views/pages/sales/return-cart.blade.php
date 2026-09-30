@@ -209,7 +209,7 @@
                     tableProduct() {
                         return app.modalDataTable('#tableProduct', {
                             serverSide: true,
-                            ajax: "{{ route('transactions.sales.details.table', ['saleId' => $cart->saleId]) }}",
+                            ajax: "{{ route('transactions.sales.details', ['saleId' => $cart->saleId]) }}",
                             columns: [
                                 {
                                     title: 'Kode',
@@ -572,7 +572,7 @@
                     </div>
 
                     <div class="col-12 col-lg-6 col-xl-4 mb-5 mb-lg-0 order-1 order-lg-2">
-                        <a href="{{ route('transactions.sales') }}" class="btn btn-light w-100" role="button">
+                        <a href="{{ route('transactions.sales.return') }}" class="btn btn-light w-100" role="button">
                             <x-icon class="me-1">arrow_back</x-icon>
                             <span>Kembali</span>
                         </a>

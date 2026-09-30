@@ -44,6 +44,7 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
     {
         try {
             $sale = $this->model->query()
+                ->withTrashed()
                 ->select('invoice_number')
                 ->whereYear('created_at', date('Y'))
                 ->whereMonth('created_at', date('m'))
@@ -194,6 +195,26 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
                 ->get()
                 ->map(fn (Sale $data) => $this->mapModelToSaleEntity($data))
                 ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Soft delete by id
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
