@@ -47,7 +47,8 @@
         </x-slot:action>
     </x-page-header>
 
-    <div class="row mt-7">
+    {{-- Product table --}}
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -254,8 +255,9 @@
 
     <x-slot:script>
         <script>
-            const updateAccess = $('html').data('update');
-            const baseUrl = app.baseUrl;
+            const update = $('html').data('update');
+            const remove = $('html').data('remove');
+            const access = update === 1 || remove === 1;
 
             /**
              * Datatable columns
@@ -268,9 +270,7 @@
                     type: 'string',
                     searchable: false,
                     orderable: false,
-                    render: (data, type, row) => {
-                        return `<img src="${app.storageImage(data)}" alt="${row.code}" class="rounded" />`;
-                    }
+                    render: (data) => `<img src="${app.storageImage(data)}" alt="Product" class="rounded" />`
                 },
                 {
                     title: 'Kode Produk',
@@ -346,7 +346,7 @@
                     data: 'purchase_price',
                     className: 'text-nowrap',
                     type: 'num',
-                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                    render: (data) => app.numberFormat(data),
                 },
                 {
                     title: 'Harga Jual',
@@ -354,15 +354,15 @@
                     data: 'selling_price',
                     className: 'text-nowrap',
                     type: 'num',
-                    render: (data) => `Rp ${app.numberFormat(data)}`,
+                    render: (data) => app.numberFormat(data),
                 },
                 {
-                    title: 'Diskon',
+                    title: 'Diskon (%)',
                     name: 'discount',
                     data: 'discount',
                     className: 'text-nowrap',
                     type: 'num',
-                    render: (data) => `${data}%`,
+                    render: (data) => app.numberFormat(data),
                 },
                 {
                     title: 'Status',
@@ -396,7 +396,7 @@
             /**
              * Tambahkan kolom action jika user mmeiliki akses update
              */
-            if (updateAccess) {
+            if (access) {
                 columns.push({
                     title: `<span class="material-symbols-outlined">settings</span>`,
                     name: 'products.id',
@@ -406,24 +406,69 @@
                     searchable: false,
                     orderable: false,
                     render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light" title="Edit">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
+                        let html = '';
+
+                        if (update) {
+                            html += `
+                                <a href="${app.baseUrl}/master/products/${data}/edit" class="btn btn-light" title="Edit">
+                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                </a>
+                            `;
+                        }
+
+                        if (remove) {
+                            html += `
+                                <button type="button" class="btn btn-light" title="Hapus" onclick="removeProduct(event, '${data}')">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                </button>
+                            `;
+                        }
+
+                        return html;
                     },
                 });
             }
 
+            /**
+             * Inisialisasi datatable.
+             */
             const productTable = app.dataTable('#productTable', {
                 columns,
                 serverSide: true,
                 ajax: "{{ route('master.products') }}",
                 fixedColumns: {
                     start: 2,
-                    end: updateAccess ? 1 : 0,
+                    end: access ? 1 : 0,
                 },
             });
+
+            /**
+             * Fungsi soft delete product.
+             */
+            const removeProduct = (e, id) => {
+                e.preventDefault();
+
+                app.delete('Produk', (removed) => {
+                    if (!removed) return;
+
+                    $.ajax({
+                        type: "delete",
+                        url: app.url(`/master/products/${id}`),
+                        data: {
+                            _method: 'delete',
+                            _token: app.csrfToken,
+                        },
+                        dataType: "json",
+                        success: (response) => {
+                            productTable.ajax.reload();
+                            app.alert('success', response.message);
+                        },
+                        error: (error) => {
+                            app.alert('danger', error.responseJSON.message);
+                        }
+                    }); 
+                });
+            }
         </script>
 
         {{-- Modal import --}}

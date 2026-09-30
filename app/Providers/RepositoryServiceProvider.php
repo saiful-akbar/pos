@@ -34,6 +34,7 @@ use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetActiveProductsTable;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\RemoveProduct;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
@@ -242,6 +243,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCustomer::class => ErrorLogRepository::class,
             RemoveCategory::class => ErrorLogRepository::class,
             RemoveUnit::class => ErrorLogRepository::class,
+            RemoveProduct::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -291,6 +293,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCustomer::class => ActivityLogRepository::class,
             RemoveCategory::class => ActivityLogRepository::class,
             RemoveUnit::class => ActivityLogRepository::class,
+            RemoveProduct::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -369,6 +372,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturn::class => ProductRepository::class,
             CreateDailyStockOpnameDetail::class => ProductRepository::class,
             SetActiveStock::class => ProductRepository::class,
+            RemoveProduct::class => ProductRepository::class,
         ],
 
         // Customer

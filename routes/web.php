@@ -134,8 +134,9 @@ Route::middleware('auth')->group(function (): void {
                 Route::patch('/import/discount', 'importUpdateDiscount')->name('.import.discount')->middleware('module:master.products,update');
                 Route::patch('/import/selling-price', 'importUpdateSellingPrice')->name('.import.sellingPrice')->middleware('module:master.products,update');
                 Route::patch('/reset-discount', 'resetDiscount')->name('.resetDiscount')->middleware('module:master.products,update');
-                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
+                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.products,remove');
             });
 
         Route::controller(CustomerController::class)

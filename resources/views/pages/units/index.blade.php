@@ -28,7 +28,7 @@
         @endif
     </x-page-header>
 
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">

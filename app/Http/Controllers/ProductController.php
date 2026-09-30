@@ -10,6 +10,7 @@ use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetActiveProductsTable;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\RemoveProduct;
 use App\Application\Product\UseCases\ResetDiscountProduct;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
@@ -200,5 +201,21 @@ class ProductController extends Controller
         }
 
         return app(GetActiveProductsTable::class)->execute();
+    }
+
+    /**
+     * Soft delete.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveProduct::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Produk berhasil dihapus.'
+        );
     }
 }
