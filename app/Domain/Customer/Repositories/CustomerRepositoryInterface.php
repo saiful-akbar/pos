@@ -37,4 +37,9 @@ interface CustomerRepositoryInterface
      * @return CustomerEntity[]
      */
     public function getAll(): array;
+
+    /**
+     * Soft delete
+     */
+    public function removeById(string $id): int;
 }

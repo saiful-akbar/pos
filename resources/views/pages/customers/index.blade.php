@@ -21,7 +21,7 @@
         </x-slot:action>
     </x-page-header>
 
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -33,7 +33,9 @@
 
     <x-slot:script>
         <script>
-            const updateAccess = $('html').data('update');
+            const update = $('html').data('update');
+            const remove = $('html').data('remove');
+            const access = update === 1 || remove === 1;
 
             /**
              * Table columns
@@ -83,7 +85,7 @@
             /**
              * /Tambahkan kolom action jika user memiliki akses update.
              */
-            if (updateAccess) {
+            if (access) {
                 columns.push({
                     title: '<span class="material-symbols-outlined">settings</span>',
                     name: 'id',
@@ -93,11 +95,25 @@
                     orderable: false,
                     type: 'html',
                     render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/customers/${data}/edit" class="btn btn-light">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
+                        let html = '';
+
+                        if (update) {
+                            html += `
+                                <a href="${app.baseUrl}/master/customers/${data}/edit" class="btn btn-light">
+                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                </a>
+                            `;
+                        }
+
+                        if (remove) {
+                            html += `
+                                <button type="button" class="btn btn-light" title="Hapus" onclick="removeCustomer(event, '${data}')">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                </button>
+                            `;
+                        }
+
+                        return html;
                     },
                 });
             }
@@ -111,9 +127,42 @@
                 ajax: "{{ route('master.customers') }}",
                 fixedColumns: {
                     start: 0,
-                    end: updateAccess ? 1 : 0,
+                    end: access ? 1 : 0,
                 },
             });
+
+            /**
+             * Fungsi soft delete customer.
+             */
+            const removeCustomer = (e, id) => {
+                e.preventDefault();
+
+                app.delete('Pelanggan', (removed) => {
+                    if (!removed) return;
+
+                    app.showPreloader();
+
+                   $.ajax({
+                    type: "delete",
+                    url: app.url(`/master/customers/${id}`),
+                    data: {
+                        _method: 'delete',
+                        _token: app.csrfToken,
+                    },
+                    dataType: "json",
+                    success: (response) => {
+                        customerTable.ajax.reload();
+                        app.alert('success', response.message);
+                    },
+                    error: (error) => {
+                        app.alert('danger', error.responseJSON.message);
+                    },
+                    complete: () => {
+                        app.hidePreloader();
+                    }
+                   }); 
+                });
+            }
         </script>
     </x-slot:script>
 </x-layouts.auth>

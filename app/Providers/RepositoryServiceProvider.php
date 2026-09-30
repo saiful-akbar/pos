@@ -14,6 +14,7 @@ use App\Application\Customer\UseCases\CreateCustomer;
 use App\Application\Customer\UseCases\FindCustomerById;
 use App\Application\Customer\UseCases\GetAllCustomers;
 use App\Application\Customer\UseCases\GetCustomersTable;
+use App\Application\Customer\UseCases\RemoveCustomer;
 use App\Application\Customer\UseCases\UpdateCustomer;
 use App\Application\Discount\UseCases\CreateDiscount;
 use App\Application\Discount\UseCases\FindDiscountById;
@@ -236,6 +237,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateMonthlyStock::class => ErrorLogRepository::class,
             RemoveUser::class => ErrorLogRepository::class,
             RemoveSupplier::class => ErrorLogRepository::class,
+            RemoveCustomer::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -282,6 +284,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateMonthlyStock::class => ActivityLogRepository::class,
             RemoveUser::class => ActivityLogRepository::class,
             RemoveSupplier::class => ActivityLogRepository::class,
+            RemoveCustomer::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -368,6 +371,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindCustomerById::class => CustomerRepository::class,
             GetAllCustomers::class => CustomerRepository::class,
             CreateSale::class => CustomerRepository::class,
+            RemoveCustomer::class => CustomerRepository::class,
         ],
 
         // Supplier

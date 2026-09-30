@@ -9,6 +9,7 @@ use App\Application\Customer\DTOs\UpdateCustomerDTO;
 use App\Application\Customer\UseCases\CreateCustomer;
 use App\Application\Customer\UseCases\FindCustomerById;
 use App\Application\Customer\UseCases\GetCustomersTable;
+use App\Application\Customer\UseCases\RemoveCustomer;
 use App\Application\Customer\UseCases\UpdateCustomer;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Exports\Customers\CustomerExport;
@@ -107,5 +108,21 @@ class CustomerController extends Controller
     public function exportExcel(): BinaryFileResponse
     {
         return Excel::download(new CustomerExport(), 'pelanggan.xlsx');
+    }
+
+    /**
+     * Soft delete.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveCustomer::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Data pelanggan berhasil dihapus.'
+        );
     }
 }

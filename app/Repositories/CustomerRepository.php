@@ -137,6 +137,26 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
+     * Soft delete
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke CustomerEntity.
      */
     private function mapModelToCustomerEntity(Customer $model): CustomerEntity

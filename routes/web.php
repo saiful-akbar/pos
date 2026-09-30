@@ -147,6 +147,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.customers,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.customers,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.customers,update');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.customers,remove');
             });
 
         Route::controller(SupplierController::class)
