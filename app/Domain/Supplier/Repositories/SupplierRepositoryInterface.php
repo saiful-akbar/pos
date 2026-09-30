@@ -49,4 +49,9 @@ interface SupplierRepositoryInterface
      * @return SupplierEntity[]
      */
     public function getActive(): array;
+
+    /**
+     * Soft delete supplier.
+     */
+    public function removeById(string $id): int;
 }

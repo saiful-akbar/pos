@@ -103,6 +103,7 @@ use App\Application\Supplier\UseCases\GenerateSupplierCode;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
 use App\Application\Supplier\UseCases\GetAllSuppliers;
 use App\Application\Supplier\UseCases\GetSuppliersTable;
+use App\Application\Supplier\UseCases\RemoveSupplier;
 use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
@@ -234,6 +235,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateMonthlyStockOpname::class => ErrorLogRepository::class,
             UpdateMonthlyStock::class => ErrorLogRepository::class,
             RemoveUser::class => ErrorLogRepository::class,
+            RemoveSupplier::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -279,6 +281,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateMonthlyStockOpname::class => ActivityLogRepository::class,
             UpdateMonthlyStock::class => ActivityLogRepository::class,
             RemoveUser::class => ActivityLogRepository::class,
+            RemoveSupplier::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -376,6 +379,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetAllSuppliers::class => SupplierRepository::class,
             GenerateSupplierCode::class => SupplierRepository::class,
             GetActiveSuppliers::class => SupplierRepository::class,
+            RemoveSupplier::class => SupplierRepository::class,
         ],
 
         // Discount

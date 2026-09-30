@@ -10,6 +10,7 @@ use App\Application\Supplier\DTOs\UpdateSupplierDTO;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
 use App\Application\Supplier\UseCases\GetSuppliersTable;
+use App\Application\Supplier\UseCases\RemoveSupplier;
 use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Exports\Suppliers\SupplierExport;
 use App\Http\Requests\Suppliers\StoreSupplierRequest;
@@ -65,7 +66,7 @@ class SupplierController extends Controller
 
         return to_route('master.suppliers.create')->with('alert', [
             'status' => 'success',
-            'message' => 'Supplier baru berhasil ditambahkan.',
+            'message' => 'Data pemasok baru berhasil ditambahkan.',
         ]);
     }
 
@@ -101,7 +102,7 @@ class SupplierController extends Controller
 
         return to_route('master.suppliers.edit', ['id' => $id])->with('alert', [
             'status' => 'success',
-            'message' => 'Supplier berhasil diperbarui.',
+            'message' => 'Data pemasok berhasil diperbarui.',
         ]);
     }
 
@@ -111,5 +112,21 @@ class SupplierController extends Controller
     public function exportExcel(): BinaryFileResponse
     {
         return Excel::download(new SupplierExport(), 'pemasok.xlsx');
+    }
+
+    /**
+     * Soft delete supplier.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveSupplier::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Data pemasok berhasil dihapus.'
+        );
     }
 }

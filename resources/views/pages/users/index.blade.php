@@ -153,7 +153,7 @@
 
                    $.ajax({
                     type: "delete",
-                    url: app.url(`/master/users/${id}/remove`),
+                    url: app.url(`/master/users/${id}`),
                     data: {
                         _method: 'delete',
                         _token: app.csrfToken,

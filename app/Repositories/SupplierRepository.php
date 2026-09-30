@@ -177,6 +177,26 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
+     * Soft delete supplier.
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke SupplierEntity.
      */
     private function mapModelToSupplierEntity(Supplier $model): SupplierEntity

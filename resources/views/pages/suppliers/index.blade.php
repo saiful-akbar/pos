@@ -21,7 +21,7 @@
         </x-slot:action>
     </x-page-header>
 
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -33,7 +33,9 @@
 
     <x-slot:script>
         <script>
-            const updateAccess = $('html').data('update');
+            const update = $('html').data('update');
+            const remove = $('html').data('remove');
+            const access = update === 1 || remove === 1;
             
             /**
              * Datatable columns
@@ -108,7 +110,7 @@
             /**
              * Tambahkan kolom action jika user mmeiliki akses update
              */
-            if (updateAccess) {
+            if (access) {
                 columns.push({
                     title: `<span class="material-symbols-outlined">settings</span>`,
                     name: 'id',
@@ -118,11 +120,25 @@
                     orderable: false,
                     type: 'html',
                     render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/suppliers/${data}/edit" class="btn btn-light" title="Edit">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
+                        let html = '';
+
+                        if (update) {
+                            html += `
+                                <a href="${app.baseUrl}/master/suppliers/${data}/edit" class="btn btn-light" title="Edit">
+                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                </a>
+                            `;
+                        }
+
+                        if (remove) {
+                            html += `
+                                <button type="button" class="btn btn-light" title="Hapus" onclick="removeSupplier(event, '${data}')">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                </button>
+                            `;
+                        }
+
+                        return html;
                     },
                 });
             }
@@ -136,9 +152,42 @@
                 ajax: "{{ route('master.suppliers') }}",
                 fixedColumns: {
                     start: 0,
-                    end: updateAccess ? 1 : 0,
+                    end: access ? 1 : 0,
                 },
             });
+
+            /**
+             * Fungsi untuk soft delete supplier
+             */
+            const removeSupplier = (e, id) => {
+                e.preventDefault();
+
+                app.delete('Pemasok', (removed) => {
+                    if (!removed) return;
+
+                    app.showPreloader();
+
+                    $.ajax({
+                        type: "DELETE",
+                        url: app.url(`/master/suppliers/${id}`),
+                        data: {
+                            _method: 'delete',
+                            _token: app.csrfToken,
+                        },
+                        dataType: "json",
+                        success: (response) => {
+                            supplierTable.ajax.reload();
+                            app.alert('success', response.message);
+                        },
+                        error: (error) => {
+                            app.alert('danger', error.responseJSON.message);
+                        },
+                        complete: () => {
+                            app.hidePreloader();
+                        }
+                    });
+                })
+            }
         </script>
     </x-slot:script>
 </x-layouts.auth>

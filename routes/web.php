@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->name('.store')->middleware('module:master.users,create');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.users,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.users,update');
-                Route::delete('/{id}/remove', 'remove')->name('.remove')->middleware('module:master.users,remove');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.users,remove');
             });
 
         Route::controller(CategoryController::class)
@@ -160,6 +160,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.suppliers,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.suppliers,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.suppliers,update');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.suppliers,remove');
             });
     });
 
