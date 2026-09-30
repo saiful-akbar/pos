@@ -44,13 +44,13 @@
                             
                             <div class="row justify-content-between">
                                 <div class="col-auto">
-                                    <div class="fs-sm">Nota: {{ $sale->invoiceNumber }}</div>
-                                    <div class="fs-sm">Kasir: {{ $sale->user->fullName }}</div>
+                                    <div class="fs-sm fw-bold">Nota: {{ $sale->invoiceNumber }}</div>
+                                    <div class="fs-sm fw-bold">Kasir: {{ $sale->user->fullName }}</div>
                                 </div>
 
                                 <div class="col-auto text-end">
-                                    <div class="fs-sm">{{ $sale->createdAt->format('d M Y') }}</div>
-                                    <div class="fs-sm">{{ $sale->createdAt->format('H:i:s') }}</div>
+                                    <div class="fs-sm fw-bold">{{ $sale->createdAt->format('d M Y') }}</div>
+                                    <div class="fs-sm fw-bold">{{ $sale->createdAt->format('H:i:s') }}</div>
                                 </div>
                             </div>
         
@@ -63,21 +63,21 @@
                             </div>
         
                             @foreach ($sale->details as $detail)
-                                <div class="row justify-content-between align-items-start mt-3">
+                                <div class="row justify-content-between align-items-start gx-2 mt-3">
                                     <div class="col-8">
-                                        <div class="text-start text-body-primary fs-sm text-truncate" style="max-width: auto;">
+                                        <div class="text-start text-body-primary text-truncate fs-6" style="max-width: auto;">
                                             <span class="fw-bold">{{ $detail->product->code }}</span>
                                             @isset($detail->product->name) <span> - {{ $detail->product->name }}</span> @endisset
                                         </div>
                                         
-                                        <div class="text-body-primary fs-sm">
+                                        <div class="text-body-primary fs-6">
                                             <span>{{ $detail->quantity }} {{ strtolower($detail->product->unit->code) }} X {{ number_format($detail->sellingPrice, 2) }}</span>
                                             <span>{{ $detail->discount > 0 ? "$detail->discount%" : '' }}</span>
                                         </div>
                                     </div>
         
-                                    <div class="col-4 text-end">
-                                        <div class="text-body-primary fs-sm">{{ number_format($detail->subtotal, 2) }}</div>
+                                    <div class="col-4 text-end fs-6">
+                                        <div class="text-body-primary">{{ number_format($detail->subtotal, 2) }}</div>
                                     </div>
                                 </div>
                             @endforeach
@@ -85,24 +85,24 @@
                             <hr class="my-5">
         
                             <div class="row justify-content-between">
-                                <div class="col-auto fs-6 fw-bold">Total</div>
-                                <div class="col-auto fs-6 fw-bold">{{ number_format($sale->totalAmount, 2) }}</div>
+                                <div class="col-auto fs-5 fw-bold">Total</div>
+                                <div class="col-auto fs-5 fw-bold">{{ number_format($sale->totalAmount, 2) }}</div>
                             </div>
         
                             <hr class="my-5">
         
                             <div class="row justify-content-between mb-3">
-                                <div class="col-12 fs-6 fw-bold m-0">Pembayaran:</div>
+                                <div class="col-12 fs-5 fw-bold m-0">Pembayaran:</div>
                             </div>
         
                             <div class="row justify-content-between">
-                                <div class="col fw-bold">{{ payment_method($sale->paymentMethod->value) }}</div>
-                                <div class="col-auto fw-bold">{{ number_format($sale->paidAmount, 2) }}</div>
+                                <div class="col fw-bold fs-6">{{ payment_method($sale->paymentMethod->value) }}</div>
+                                <div class="col-auto fw-bold fs-6">{{ number_format($sale->paidAmount, 2) }}</div>
                             </div>
         
                             <div class="row justify-content-between">
-                                <div class="col fw-bold">Kembalian</div>
-                                <div class="col-auto fw-bold">{{ number_format($sale->changeAmount, 2) }}</div>
+                                <div class="col fw-bold fs-6">Kembalian</div>
+                                <div class="col-auto fw-bold fs-6">{{ number_format($sale->changeAmount, 2) }}</div>
                             </div>
         
                             <div class="row justify-content-center mt-7">
@@ -137,8 +137,9 @@
                 #print-area,
                 #print-area * {
                     visibility: visible;
-                    background: white;
+                    background: #fff;
                     box-shadow: none !important;
+                    color: #000 !important;
                 }
 
                 #print-area {
@@ -148,12 +149,7 @@
                     width: 100%;
                     border: none;
                 }
-
-                #print-area hr {
-                    color: #000 !important;
-                }
             }
-
         </style>
     </x-slot:style>
 
