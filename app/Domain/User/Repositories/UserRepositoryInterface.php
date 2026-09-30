@@ -30,10 +30,10 @@ interface UserRepositoryInterface
     /**
      * Update user
      */
-    public function update(UpdateUserDTO $dto): void;
+    public function update(UpdateUserDTO $dto): int;
 
     /**
      * Remove user berdasarkan id.
      */
-    public function removeById(string $id): void;
+    public function removeById(string $id): int;
 }

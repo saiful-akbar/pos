@@ -106,10 +106,10 @@ class UserRepository extends Repository implements UserRepositoryInterface
      * Update user
      */
     #[Override]
-    public function update(UpdateUserDTO $dto): void
+    public function update(UpdateUserDTO $dto): int
     {
         try {
-            $this->model->query()
+            return $this->model->query()
                 ->where('id', '=', $dto->id)
                 ->update($dto->toArray());
         } catch (\Throwable $e) {
@@ -126,10 +126,10 @@ class UserRepository extends Repository implements UserRepositoryInterface
      * Remove user berdasarkan id.
      */
     #[Override]
-    public function removeById(string $id): void
+    public function removeById(string $id): int
     {
         try {
-            $this->model->query()
+            return $this->model->query()
                 ->where('id', '=', $id)
                 ->delete();
         } catch (\Throwable $e) {

@@ -10,6 +10,7 @@ use App\Application\User\DTOs\CreateUserDTO;
 use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
 use App\Application\User\UseCases\GetUsersTable;
+use App\Application\User\UseCases\RemoveUser;
 use App\Application\User\UseCases\UpdateUser;
 use App\Http\Requests\Users\CreateUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
@@ -112,5 +113,21 @@ class UserController extends Controller
             'status' => 'success',
             'message' => 'User berhasil diperbarui.',
         ]);
+    }
+
+    /**
+     * Soft delete user.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveUser::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Data user berhasil dihapus.'
+        );
     }
 }

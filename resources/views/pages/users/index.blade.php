@@ -28,6 +28,8 @@
         <script>
             const updateAccess = $('html').data('update');
             const removeAccess = $('html').data('remove');
+            const access = (updateAccess || removeAccess) ? true : false;
+            
 
             /**
              * Datatable columns
@@ -93,7 +95,7 @@
             /**
              * Tambahkan kolom action jika user memiliki akses update
              */
-            if (updateAccess) {
+            if (access) {
                 columns.push({
                     title: '<span class="material-symbols-outlined">settings</span>',
                     data: 'id',
@@ -102,11 +104,25 @@
                     searchable: false,
                     type: 'html',
                     render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
+                        let html = '';
+
+                        if (updateAccess) {
+                            html += `
+                                <a href="${app.baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
+                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                </a>
+                            `;
+                        }
+
+                        if (removeAccess) {
+                            html += `
+                                <button type="button" class="btn btn-light" title="Hapus" onclick="removeUser(event, '${data}')">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                </button>
+                            `;
+                        }
+
+                        return html;
                     }
                 });
             }
@@ -114,15 +130,48 @@
             /**
              * Inisialisasi datatable.
              */
-            window.app.dataTable('#userTable', {
+            const userTable = window.app.dataTable('#userTable', {
                 columns,
                 serverSide: true,
                 ajax: "{{ route('master.users') }}",
                 fixedColumns: {
                     start: 0,
-                    end: updateAccess ? 1 : 0,
+                    end: access ? 1 : 0,
                 },
             });
+
+            /**
+             * Fungsi untuk menghapus user
+             */
+            const removeUser = (e, id) => {
+                e.preventDefault();
+
+                app.delete('User', (removed) => {
+                    if (!removed) return;
+
+                    app.showPreloader();
+
+                   $.ajax({
+                    type: "delete",
+                    url: app.url(`/master/users/${id}/remove`),
+                    data: {
+                        _method: 'delete',
+                        _token: app.csrfToken,
+                    },
+                    dataType: "json",
+                    success: (response) => {
+                        userTable.ajax.reload();
+                        app.alert('success', response.message);
+                    },
+                    error: (error) => {
+                        app.alert('danger', error.responseJSON.message);
+                    },
+                    complete: () => {
+                        app.hidePreloader();
+                    }
+                   }); 
+                });
+            }
         </script>
     </x-slot:script>
 </x-layouts.auth>

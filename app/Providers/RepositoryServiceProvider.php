@@ -112,6 +112,7 @@ use App\Application\Unit\UseCases\UpdateUnit;
 use App\Application\User\UseCases\CreateUser;
 use App\Application\User\UseCases\FindUserById;
 use App\Application\User\UseCases\GetUsersTable;
+use App\Application\User\UseCases\RemoveUser;
 use App\Application\User\UseCases\UpdateUser;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
@@ -232,6 +233,7 @@ class RepositoryServiceProvider extends ServiceProvider
             SetActiveStock::class => ErrorLogRepository::class,
             CreateMonthlyStockOpname::class => ErrorLogRepository::class,
             UpdateMonthlyStock::class => ErrorLogRepository::class,
+            RemoveUser::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -276,6 +278,7 @@ class RepositoryServiceProvider extends ServiceProvider
             SetActiveStock::class => ActivityLogRepository::class,
             CreateMonthlyStockOpname::class => ActivityLogRepository::class,
             UpdateMonthlyStock::class => ActivityLogRepository::class,
+            RemoveUser::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -313,6 +316,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindUserById::class => UserRepository::class,
             CreateUser::class => UserRepository::class,
             UpdateUser::class => UserRepository::class,
+            RemoveUser::class => UserRepository::class,
         ],
 
         // Category

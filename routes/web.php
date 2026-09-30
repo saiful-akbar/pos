@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->name('.store')->middleware('module:master.users,create');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.users,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.users,update');
+                Route::delete('/{id}/remove', 'remove')->name('.remove')->middleware('module:master.users,remove');
             });
 
         Route::controller(CategoryController::class)
