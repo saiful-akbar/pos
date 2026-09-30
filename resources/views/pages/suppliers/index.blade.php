@@ -165,8 +165,6 @@
                 app.delete('Pemasok', (removed) => {
                     if (!removed) return;
 
-                    app.showPreloader();
-
                     $.ajax({
                         type: "DELETE",
                         url: app.url(`/master/suppliers/${id}`),
@@ -181,9 +179,6 @@
                         },
                         error: (error) => {
                             app.alert('danger', error.responseJSON.message);
-                        },
-                        complete: () => {
-                            app.hidePreloader();
                         }
                     });
                 })

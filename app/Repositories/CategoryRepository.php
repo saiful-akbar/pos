@@ -125,6 +125,26 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     }
 
     /**
+     * Soft delete by id.
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke CategoryEntity.
      */
     private function mapModelToCategoryEntity(Category $model): CategoryEntity

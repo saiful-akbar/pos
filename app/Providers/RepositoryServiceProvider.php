@@ -9,6 +9,7 @@ use App\Application\Category\UseCases\CreateCategory;
 use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Category\UseCases\GetCategoriesTable;
+use App\Application\Category\UseCases\RemoveCategory;
 use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Customer\UseCases\CreateCustomer;
 use App\Application\Customer\UseCases\FindCustomerById;
@@ -238,6 +239,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveUser::class => ErrorLogRepository::class,
             RemoveSupplier::class => ErrorLogRepository::class,
             RemoveCustomer::class => ErrorLogRepository::class,
+            RemoveCategory::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -285,6 +287,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveUser::class => ActivityLogRepository::class,
             RemoveSupplier::class => ActivityLogRepository::class,
             RemoveCustomer::class => ActivityLogRepository::class,
+            RemoveCategory::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -332,6 +335,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateCategory::class => CategoryRepository::class,
             UpdateCategory::class => CategoryRepository::class,
             GetAllCategories::class => CategoryRepository::class,
+            RemoveCategory::class => CategoryRepository::class,
         ],
 
         // Unit

@@ -9,6 +9,7 @@ use App\Application\Category\DTOs\UpdateCategoryDTO;
 use App\Application\Category\UseCases\CreateCategory;
 use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetCategoriesTable;
+use App\Application\Category\UseCases\RemoveCategory;
 use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Exports\Categories\TemplateCategoryExport;
@@ -133,5 +134,21 @@ class CategoryController extends Controller
     public function exportExcel(): BinaryFileResponse
     {
         return Excel::download(new CategoryExport(), 'kategori_produk.xlsx');
+    }
+
+    /**
+     * Soft delete.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemoveCategory::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Kategori produk berhasil dihapus.'
+        );
     }
 }

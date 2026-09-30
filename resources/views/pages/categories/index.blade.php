@@ -27,7 +27,8 @@
         @endif
     </x-page-header>
 
-    <div class="row mt-7">
+    {{-- Category table --}}
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -87,9 +88,12 @@
         </div>
     </form>
 
+    {{-- Javascript --}}
     <x-slot:script>
         <script>
-            const updateAccess = $('html').data('update');
+            const update = $('html').data('update');
+            const remove = $('html').data('remove');
+            const access = update === 1 || remove === 1;
 
             /**
              * Datatable columns
@@ -144,7 +148,7 @@
             /**
              * Tambahkan kolom action jika user memiliki akses update
              */
-            if (updateAccess) {
+            if (access) {
                 columns.push({
                     title: '<span class="material-symbols-outlined">settings</span>',
                     name: 'id',
@@ -155,11 +159,25 @@
                     orderable: false,
                     type: 'html',
                     render: (data) => {
-                        return `
-                            <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
-                                <span class="material-symbols-outlined fs-6">edit</span>
-                            </a>
-                        `;
+                        let html = '';
+
+                        if (update) {
+                            html += `
+                                <a href="${app.baseUrl}/master/categories/${data}/edit" class="btn btn-light">
+                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                </a>
+                            `;
+                        }
+
+                        if (remove) {
+                            html += `
+                                <button type="button" class="btn btn-light" title="Hapus" onclick="removeCategory(event, '${data}')">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                </button>
+                            `;
+                        }
+
+                        return html;
                     },
                 });
             }
@@ -167,15 +185,43 @@
             /**
              * Inisialisasi datatable
              */
-            const table = app.dataTable('#categoryTable', {
+            const categoryTable = app.dataTable('#categoryTable', {
                 columns,
                 serverSide: true,
                 ajax: "{{ route('master.categories') }}",
                 fixedColumns: {
                     start: 0,
-                    end: updateAccess ? 1 : 0,
+                    end: access ? 1 : 0,
                 }
             });
+
+            /**
+             * Fungsi soft delete category.
+             */
+            const removeCategory = (e, id) => {
+                e.preventDefault();
+
+                app.delete('Kategori Produk', (removed) => {
+                    if (!removed) return;
+
+                    $.ajax({
+                        type: "delete",
+                        url: app.url(`/master/categories/${id}`),
+                        data: {
+                            _method: 'delete',
+                            _token: app.csrfToken,
+                        },
+                        dataType: "json",
+                        success: (response) => {
+                            categoryTable.ajax.reload();
+                            app.alert('success', response.message);
+                        },
+                        error: (error) => {
+                            app.alert('danger', error.responseJSON.message);
+                        }
+                    }); 
+                });
+            }
         </script>
 
         {{-- Modal import --}}

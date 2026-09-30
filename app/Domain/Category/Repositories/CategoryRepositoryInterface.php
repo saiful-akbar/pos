@@ -37,4 +37,9 @@ interface CategoryRepositoryInterface
      * @return CategoryEntity[]
      */
     public function getAll(): array;
+
+    /**
+     * Soft delete by id.
+     */
+    public function removeById(string $id): int;
 }

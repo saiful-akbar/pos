@@ -140,27 +140,22 @@
                 app.delete('Pelanggan', (removed) => {
                     if (!removed) return;
 
-                    app.showPreloader();
-
-                   $.ajax({
-                    type: "delete",
-                    url: app.url(`/master/customers/${id}`),
-                    data: {
-                        _method: 'delete',
-                        _token: app.csrfToken,
-                    },
-                    dataType: "json",
-                    success: (response) => {
-                        customerTable.ajax.reload();
-                        app.alert('success', response.message);
-                    },
-                    error: (error) => {
-                        app.alert('danger', error.responseJSON.message);
-                    },
-                    complete: () => {
-                        app.hidePreloader();
-                    }
-                   }); 
+                    $.ajax({
+                        type: "delete",
+                        url: app.url(`/master/customers/${id}`),
+                        data: {
+                            _method: 'delete',
+                            _token: app.csrfToken,
+                        },
+                        dataType: "json",
+                        success: (response) => {
+                            customerTable.ajax.reload();
+                            app.alert('success', response.message);
+                        },
+                        error: (error) => {
+                            app.alert('danger', error.responseJSON.message);
+                        }
+                    }); 
                 });
             }
         </script>

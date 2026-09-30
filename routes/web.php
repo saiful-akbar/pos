@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.categories,read');
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.categories,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.categories,update');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.categories,remove');
             });
 
         Route::controller(UnitController::class)
