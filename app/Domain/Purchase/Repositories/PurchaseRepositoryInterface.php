@@ -40,4 +40,9 @@ interface PurchaseRepositoryInterface
      * @return PurchaseEntity[]
      */
     public function get(GetPurchasesDTO $dto): array;
+
+    /**
+     * Soft delete
+     */
+    public function removeById(string $id): int;
 }

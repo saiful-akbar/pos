@@ -123,14 +123,23 @@ if (! function_exists('storage_image')) {
     function storage_image(?string $path, ?string $default = null, ?bool $secure = null): string
     {
         if (is_string($path)) {
-            return asset(path: 'storage/'.ltrim(trim($path), '/'), secure: $secure);
+            return asset(
+                path: 'storage/'.ltrim(trim($path), '/'),
+                secure: $secure
+            );
         }
 
         if (is_string($default)) {
-            return asset(path: $default, secure: $secure);
+            return asset(
+                path: $default,
+                secure: $secure,
+            );
         }
 
-        return asset(path: 'assets/images/empty.jpg', secure: $secure);
+        return asset(
+            path: 'assets/images/empty.jpg',
+            secure: $secure,
+        );
     }
 }
 

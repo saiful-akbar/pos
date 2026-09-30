@@ -2,7 +2,7 @@
     <x-page-header title="Detail Pembelian" icon="add_shopping_cart">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-6 col-xl-4">
                     <x-button type="button" color="danger" startIcon="close" fullWidth onclick="window.close()">
                         Tutup
                     </x-button>
@@ -15,7 +15,7 @@
         <div class="col-12 col-lg-6 col-xl-4 mb-6">
             <div class="card shadow-sm position-sticky" style="top: 20px;">
                 <div class="card-header">
-                    <h3 class="fs-6 my-0">Pembelian</h3>
+                    <h3 class="fs-5 my-0">Ringkasan</h3>
                 </div>
 
                 <div class="card-body">
@@ -36,18 +36,18 @@
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
-                            <span class="text-body-secondary">Total Qty</span>
-                            <span>{{ number_format($purchase->totalQuantity) }}</span>
+                            <span class="text-body-secondary">Total Quantity</span>
+                            <span>{{ number_format($purchase->totalQuantity, 2) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
-                            <span class="text-body-secondary">Total</span>
-                            <span>Rp {{ number_format($purchase->totalPrice) }}</span>
+                            <span class="text-body-secondary">Grand Harga</span>
+                            <span>{{ number_format($purchase->totalPrice, 2) }}</span>
                         </li>
                         
                         <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                             <span class="text-body-secondary">Status Pembayaran</span>
-                            <span>{{ $purchase->paymentStatus->value }}</span>
+                            <span>{{ strtoupper($purchase->paymentStatus->value) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -59,15 +59,15 @@
                 <div class="col-12">
                     <div class="card shadow-sm">
                         <div class="card-header">
-                            <h3 class="fs-6 my-0">Produk</h3>
+                            <h3 class="fs-5 my-0">Produk</h3>
                         </div>
         
                         <div class="card-body">
-                            <table id="detailTable" class="table table-hover w-100 align-middle">
+                            <table id="detailTable" class="table table-hover table-sm table-img w-100 align-middle">
                                 <thead>
                                     <tr>
                                         <th class="text-start text-nowrap">Produk</th>
-                                        <th class="text-end text-nowrap">Qty</th>
+                                        <th class="text-end text-nowrap">Quantity</th>
                                         <th class="text-end text-nowrap">Harga Beli</th>
                                         <th class="text-end text-nowrap">Subtotal</th>
                                     </tr>
@@ -76,7 +76,16 @@
                                 <tbody>
                                     @foreach ($details as $detail)
                                         <tr>
-                                            <td class="text-start">{{ $detail->product->code }}</td>
+                                            <td class="text-start text-nowrap">
+                                                <div class="d-flex align-items-center justify-content-start">
+                                                    <img src="{{ storage_image($detail->product->image) }}" alt="{{ $detail->product->code }}" class="rounded">
+                                                    
+                                                    <div class="ms-3">
+                                                        {{ $detail->product->code }}
+                                                        <p class="text-body-secondary text-truncate mb-0" style="width: 150px;">{{ $detail->product->name }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td class="text-end">{{ number_format($detail->quantity, 2) }}</td>
                                             <td class="text-end">{{ number_format($detail->purchasePrice, 2) }}</td>
                                             <td class="text-end">{{ number_format($detail->subtotalPrice, 2) }}</td>
@@ -95,14 +104,14 @@
                         <div class="card-header">
                             <div class="row justify-content-between align-items-center">
                                 <div class="col-auto">
-                                    <h3 class="fs-6 my-0">Pembayaran</h3>
+                                    <h3 class="fs-5 my-0">Pembayaran</h3>
                                 </div>
                                 
                                 @if ($access?->create)
-                                    <div class="col-12 col-lg-4 mt-5 mt-lg-0">
-                                        <a href="{{ route('transactions.purchases.payments', ['purchaseId' => $purchase->id]) }}" class="btn btn-secondary w-100" role="button">
+                                    <div class="col-12 col-lg-6 col-xl-3 mt-5 mt-lg-0">
+                                        <a href="{{ route('transactions.purchases.payments', ['id' => $purchase->id]) }}" class="btn btn-secondary w-100" role="button" target="_blank">
                                             <x-icon class="me-1">add</x-icon>
-                                            <span>Tambah Pembayaran</span>
+                                            <span>Tambah</span>
                                         </a>
                                     </div>
                                 @endif

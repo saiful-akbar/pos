@@ -9,8 +9,13 @@ use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Entities\PurchaseCartDetailEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
+use App\Domain\Purchase\ValueObjects\CategoryProductPurchaseValue;
 use App\Domain\Purchase\ValueObjects\ProductPurchaseValue;
+use App\Domain\Purchase\ValueObjects\UnitProductPurchaseValue;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\PurchaseCartDetail;
+use App\Models\Unit;
 use Override;
 
 class PurchaseCartDetailRepository extends Repository implements PurchaseCartDetailRepositoryInterface
@@ -158,7 +163,7 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     {
         try {
             return $this->model->query()
-                ->with('product')
+                ->with(['product.unit', 'product.category'])
                 ->where('purchase_cart_id', $cartId)
                 ->orderBy('created_at', 'desc')
                 ->get()
@@ -175,6 +180,60 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
+     * Pemetaan class Model ke class CategoryProductPurchaseValue
+     */
+    private function mapModelToCategoryProductPurchaseValue(?Category $model): ?CategoryProductPurchaseValue
+    {
+        if ($model === null) {
+            return null;
+        }
+
+        return new CategoryProductPurchaseValue(
+            id: $model->id,
+            code: $model->code,
+            name: $model->name,
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class UnitProductPurchaseValue
+     */
+    private function mapModelToUnitProductPurchaseValue(?Unit $model): ?UnitProductPurchaseValue
+    {
+        if ($model === null) {
+            return null;
+        }
+
+        return new UnitProductPurchaseValue(
+            id: $model->id,
+            code: $model->code,
+            name: $model->name,
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class ProductPurchaseValue
+     */
+    private function mapModelToProductPurchaseValue(Product $model): ProductPurchaseValue
+    {
+        return new ProductPurchaseValue(
+            id: $model->id,
+            code: $model->code,
+            barcode: $model->barcode,
+            name: $model->name,
+            image: $model->image,
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            minimumStock: parse_float($model->minimum_stock),
+            currentStock: parse_float($model->current_stock),
+            isActive: $model->is_active === 1,
+            category: $this->mapModelToCategoryProductPurchaseValue($model->category),
+            unit: $this->mapModelToUnitProductPurchaseValue($model->unit),
+        );
+    }
+
+    /**
      * Pemetaan model ke PurchaseCartDetailEntity.
      */
     private function mapModelToPurchaseCartDetailEntity(PurchaseCartDetail $model): PurchaseCartDetailEntity
@@ -182,13 +241,7 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
         return new PurchaseCartDetailEntity(
             id: $model->id,
             purchaseCartId: $model->purchase_cart_id,
-            product: new ProductPurchaseValue(
-                id: $model->product->id,
-                code: $model->product->code,
-                barcode: $model->product->barcode,
-                name: $model->product->name,
-                image: $model->product->image
-            ),
+            product: $this->mapModelToProductPurchaseValue($model->product),
             quantity: parse_float($model->quantity),
             purchasePrice: parse_float($model->purchase_price),
             subtotalPrice: parse_float($model->subtotal_price),

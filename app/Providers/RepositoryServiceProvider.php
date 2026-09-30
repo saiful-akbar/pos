@@ -53,6 +53,7 @@ use App\Application\Purchase\UseCases\GetPurchaseDetailsByDate;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseIdTable;
 use App\Application\Purchase\UseCases\GetPurchases;
+use App\Application\Purchase\UseCases\RemovePurchase;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
@@ -244,6 +245,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCategory::class => ErrorLogRepository::class,
             RemoveUnit::class => ErrorLogRepository::class,
             RemoveProduct::class => ErrorLogRepository::class,
+            RemovePurchase::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -294,6 +296,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCategory::class => ActivityLogRepository::class,
             RemoveUnit::class => ActivityLogRepository::class,
             RemoveProduct::class => ActivityLogRepository::class,
+            RemovePurchase::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -373,6 +376,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateDailyStockOpnameDetail::class => ProductRepository::class,
             SetActiveStock::class => ProductRepository::class,
             RemoveProduct::class => ProductRepository::class,
+            RemovePurchase::class => ProductRepository::class,
         ],
 
         // Customer
@@ -437,6 +441,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchasePayment::class => PurchaseRepository::class,
             DeletePurchasePaymentById::class => PurchaseRepository::class,
             GetPurchases::class => PurchaseRepository::class,
+            RemovePurchase::class => PurchaseRepository::class,
         ],
 
         // Purchase Detail
@@ -445,6 +450,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetPurchaseDetailByPurchaseIdTable::class => PurchaseDetailRepository::class,
             GetPurchaseDetailByPurchaseId::class => PurchaseDetailRepository::class,
             GetPurchaseDetailsByDate::class => PurchaseDetailRepository::class,
+            RemovePurchase::class => PurchaseDetailRepository::class,
         ],
 
         // Purchase payment

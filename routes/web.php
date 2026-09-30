@@ -180,10 +180,11 @@ Route::middleware('auth')->group(function (): void {
                 Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
                 Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
                 Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
-                Route::get('/{purchaseId}', 'detail')->name('.detail')->middleware('module:transactions.purchases,read');
+                Route::get('/{id}', 'detail')->name('.detail')->middleware('module:transactions.purchases,read');
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:transactions.purchases,remove');
 
                 Route::name('.payments')
-                    ->prefix('/{purchaseId}/payments')
+                    ->prefix('/{id}/payments')
                     ->middleware('module:transactions.purchases,create')
                     ->group(function (): void {
                         Route::get('/', 'payment');

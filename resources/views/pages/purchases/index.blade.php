@@ -6,7 +6,7 @@
                     <div class="col-12 col-lg-6 col-xl-4">
                         <a href="{{ route('transactions.purchases.cart') }}" class="btn btn-secondary w-100" role="button">
                             <x-icon class="me-1">add</x-icon>
-                            <span>Tambah Pembelian</span>
+                            <span>Tambah</span>
                         </a>
                     </div>
                 @endif
@@ -14,10 +14,14 @@
         </x-slot:action>
     </x-page-header>
 
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <form action="{{ route('transactions.purchases') }}" method="get" autocomplete="off" id="formFilter">
                 <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h2 class="fs-5 mb-0">Filter</h2>
+                    </div>
+
                     <div class="card-body">
                         <div class="row align-items-top">
                             <div class="col-12 col-lg-4 mb-6 mb-lg-0">
@@ -26,7 +30,7 @@
                                         type="text"
                                         name="from_date"
                                         id="from_date"
-                                        placeholder="Priode awal"
+                                        placeholder="Dari tanggal"
                                         class="form-control"
                                         data-invalid="from_date"
                                         value="{{ request('from_date') }}"
@@ -34,7 +38,7 @@
                                     />
 
                                     <label for="fromDate">
-                                        Periode awal <span class="text-danger">*</span>
+                                        Dari tanggal <span class="text-danger">*</span>
                                     </label>
                                 </div>
 
@@ -47,7 +51,7 @@
                                         type="text"
                                         name="to_date"
                                         id="to_date"
-                                        placeholder="Priode awal"
+                                        placeholder="Sampai tanggal"
                                         class="form-control"
                                         data-invalid="to_date"
                                         value="{{ request('to_date') }}"
@@ -55,7 +59,7 @@
                                     />
 
                                     <label for="toDate">
-                                        Periode akhir <span class="text-danger">*</span>
+                                        Sampai tanggal <span class="text-danger">*</span>
                                     </label>
                                 </div>
 
@@ -86,7 +90,7 @@
                             <div class="col-12 col-lg-4 col-xl-2">
                                 <button type="submit" class="btn btn-secondary w-100">
                                     <x-icon class="me-1">filter_list</x-icon>
-                                    <span>Filter</span>
+                                    <span>Submit</span>
                                 </button>
                             </div>
                         </div>
@@ -96,7 +100,7 @@
         </div>
     </div>
 
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -114,6 +118,20 @@
                 constructor() {
                     this.formFilter = $('#formFilter');
                     this.tablePurchase = this.purchaseDataTable();
+                    this.access = this.getAccess();
+                }
+
+                /**
+                 * Mengabil akses user.
+                 */
+                getAccess() {
+                    return {
+                        create: $('html').data('create') === 1,
+                        read: $('html').data('read') === 1,
+                        update: $('html').data('update') === 1,
+                        remove: $('html').data('remove') === 1,
+                        delete: $('html').data('delete') === 1,
+                    };
                 }
 
                 /**
@@ -151,7 +169,7 @@
                                 name: 'purchases.total_quantity',
                                 data: 'total_quantity',
                                 className: 'text-nowrap',
-                                type: 'html-num-fmt',
+                                type: 'num',
                                 render: (data) => app.numberFormat(data),
                             },
                             {
@@ -159,7 +177,7 @@
                                 name: 'purchases.total_price',
                                 data: 'total_price',
                                 className: 'text-nowrap',
-                                type: 'num-fmt',
+                                type: 'num',
                                 render: (data) => app.numberFormat(data),
                             },
                             {
@@ -167,7 +185,7 @@
                                 name: 'paid_amount',
                                 data: 'paid_amount',
                                 className: 'text-nowrap',
-                                type: 'num-fmt',
+                                type: 'num',
                                 render: (data) => app.numberFormat(data),
                             },
                             {
@@ -181,7 +199,6 @@
                                 name: 'purchases.payment_status',
                                 data: 'payment_status',
                                 className: 'text-nowrap',
-                                type: 'html',
                                 render: (data) => {
                                     if (data === 'paid') return `<span class="badge bg-success-subtle text-success fw-bold">${data.toUpperCase()}</span>`;
                                     if (data === 'partial') return `<span class="badge bg-warning-subtle text-warning fw-bold">${data.toUpperCase()}</span>`;
@@ -192,16 +209,37 @@
                                 title: `<span class="material-symbols-outlined">settings</span>`,
                                 name: 'id',
                                 data: 'id',
-                                className: 'text-center no-export',
-                                type: 'html',
+                                className: 'text-center text-nowrap no-export',
                                 orderable: false,
                                 searchable: false,
-                                render: (data) => {
-                                    return `
-                                        <a class="btn btn-light" href="${app.baseUrl}/transactions/purchases/${data}" role="button" title="Lihat detail" target="_blank">
-                                            <span class="material-symbols-outlined fs-6">visibility</span>
-                                        </a>
-                                    `;
+                                render: (data, type, row) => {
+                                    let html = '';
+
+                                    if (this.access.read) {
+                                        html += `
+                                            <a class="btn btn-light" href="${app.baseUrl}/transactions/purchases/${data}" title="Detail" target="_blank">
+                                                <span class="material-symbols-outlined fs-6">visibility</span>
+                                            </a>
+                                        `;
+                                    }
+
+                                    if (this.access.create) {
+                                        html += `
+                                            <a class="btn btn-light" href="${app.baseUrl}/transactions/purchases/${data}/payments" title="Pembayaran" target="_blank">
+                                                <span class="material-symbols-outlined fs-6">payments</span>
+                                            </a>
+                                        `;
+                                    }
+
+                                    if (this.access.remove) {
+                                        html += `
+                                            <button type="button" class="btn btn-light" title="Hapus" onclick="removePurchase(event, '${data}')">
+                                                <span class="material-symbols-outlined fs-6">delete</span>
+                                            </button>
+                                        `;
+                                    }
+
+                                    return html;
                                 }
                             }
                         ],
@@ -222,6 +260,25 @@
                             error: (error) => reject(error.responseJSON),
                         });
                     });
+                }
+
+                /**
+                 * Hapus pembelian
+                 */
+                remove(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "delete",
+                            url: app.url(`/transactions/purchases/${id}`),
+                            data: {
+                                _method: 'delete',
+                                _token: app.csrfToken,
+                            },
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
                 }
             }
 
@@ -285,7 +342,33 @@
                 } finally {
                     app.hidePreloader();
                 }
-            })
+            });
+
+            /**
+             * Fungsi untuk menghapus pembelian
+             */
+            const removePurchase = (event, id) => {
+                event.preventDefault();
+
+                app.delete('Transaksi Pembelian', async (removed) => {
+                    if (!removed) return;
+
+                    app.showPreloader();
+
+                    try {
+                        const removed = await service.remove(id);
+                        const purchases = await service.getPurchases();
+
+                        app.alert('success', removed.message);
+                        service.tablePurchase.clear().draw();
+                        service.tablePurchase.rows.add(purchases.data).draw();
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                })
+            }
         </script>
     
     </x-slot:script>

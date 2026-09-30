@@ -20,6 +20,7 @@ use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
 use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchases;
+use App\Application\Purchase\UseCases\RemovePurchase;
 use App\Application\Purchase\UseCases\SavePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetActiveSuppliers;
@@ -33,6 +34,7 @@ use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
 use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PurchaseController extends Controller
@@ -183,6 +185,11 @@ class PurchaseController extends Controller
     public function payment(string $purchaseId): View|JsonResponse
     {
         $purchase = app(FindPurchaseById::class)->execute(id: $purchaseId);
+
+        if ($purchase === null) {
+            abort(404);
+        }
+
         $payments = app(GetPurchasePaymentByPurchaseId::class)->execute(purchaseId: $purchaseId);
         $totalPaymentAmount = 0;
 
@@ -208,7 +215,7 @@ class PurchaseController extends Controller
             notes: $request->validated('reference_number'),
         ));
 
-        return to_route('transactions.purchases.payments', ['purchaseId' => $purchaseId])->with('alert', [
+        return to_route('transactions.purchases.payments', ['id' => $purchaseId])->with('alert', [
             'status' => 'success',
             'message' => 'Pembayaran berhasil ditambahkan.',
         ]);
@@ -221,9 +228,25 @@ class PurchaseController extends Controller
     {
         app(DeletePurchasePaymentById::class)->execute(id: $paymentId);
 
-        return to_route('transactions.purchases.payments', ['purchaseId' => $purchaseId])->with('alert', [
+        return to_route('transactions.purchases.payments', ['id' => $purchaseId])->with('alert', [
             'status' => 'success',
             'message' => 'Pembayaran berhasil dihapus.',
         ]);
+    }
+
+    /**
+     * Soft delete
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemovePurchase::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Transaksi pembelian berhasil dihapus.'
+        );
     }
 }

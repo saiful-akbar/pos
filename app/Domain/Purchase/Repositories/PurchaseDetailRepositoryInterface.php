@@ -33,4 +33,9 @@ interface PurchaseDetailRepositoryInterface
      * Mengambil daftar detail pembelian berdasarkan rentang tanggal.
      */
     public function getByDate(GetPurchasesDTO $params): array;
+
+    /**
+     * Soft delete by purchase id
+     */
+    public function removeByPurchaseId(string $purchaseId): int;
 }

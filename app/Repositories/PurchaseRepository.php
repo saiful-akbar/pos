@@ -174,6 +174,26 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
     }
 
     /**
+     * Soft delete
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke PurchaseEntity.
      */
     private function mapModelToPurchaseEntity(Purchase $model): PurchaseEntity

@@ -1,12 +1,11 @@
-<x-layouts.auth title="Pembayaran Pembelian">
-    <x-page-header title="Pembayaran Pembelian" icon="payments">
+<x-layouts.auth title="Pembayaran">
+    <x-page-header title="Pembayaran" icon="payments">
         <x-slot:action>
             <div class="row justify-content-end align-items-center">
-                <div class="col-12 col-lg-3">
-                    <a href="{{ route('transactions.purchases.detail', ['purchaseId' => $purchase->id]) }}" class="btn btn-light w-100" role="button">
-                        <x-icon class="me-1">arrow_back</x-icon>
-                        <span>Kembali</span>
-                    </a>
+                <div class="col-12 col-lg-6 col-xl-4">
+                    <x-button type="button" color="danger" startIcon="close" fullWidth onclick="window.close()">
+                        Tutup
+                    </x-button>
                 </div>
             </div>
         </x-slot:action>
@@ -16,7 +15,7 @@
         <div class="col-12 col-lg-6 col-xl-4">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 m-0">Informasi Pembelian</h3>
+                    <h3 class="fs-5 m-0">Ringkasan</h3>
                 </div>
 
                 <div class="card-body">
@@ -68,12 +67,12 @@
         <div class="col-12 col-lg-6 col-xl-8 mt-6 mt-lg-0">
             <div class="row">
                 <div class="col-12">
-                    <form action="{{ route('transactions.purchases.payments.create', ['purchaseId' => $purchase->id]) }}" method="post" autocomplete="off">
+                    <form action="{{ route('transactions.purchases.payments.create', ['id' => $purchase->id]) }}" method="post" autocomplete="off">
                         @csrf @method('post')
 
                         <div class="card shadow-sm">
                             <div class="card-header">
-                                <h3 class="fs-6 m-0">Tambah Pembayaran</h3>
+                                <h3 class="fs-5 m-0">Tambah Pembayaran</h3>
                             </div>
 
                             <div class="card-body">
@@ -152,10 +151,11 @@
                             </div>
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">add</x-icon>
-                                    <span>Tambah</span>
-                                </button>
+                                <div class="row justify-content-end">
+                                    <div class="col-12 col-lg-6 col-xl-3">
+                                        <x-button type="submit" startIcon="save" fullWidth>Simpan</x-button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -163,6 +163,10 @@
 
                 <div class="col-12 mt-6">
                     <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="fs-5 mb-0">Riwayat Pembayaran</h2>
+                        </div>
+
                         <div class="card-body table-responsive">
                             <table id="paymentsTable" class="table table-hover table-sm align-middle w-100">
                                 <thead>
@@ -170,8 +174,8 @@
                                         <th class="text-start text-nowrap">Tanggal</th>
                                         <th class="text-start text-nowrap">Metode Pembayaran</th>
                                         <th class="text-start text-nowrap">Nomor Referensi</th>
-                                        <th class="text-end text-nowrap">Jumlah</th>
                                         <th class="text-start text-nowrap">Catatan</th>
+                                        <th class="text-end text-nowrap">Nominal</th>
                                         <th class="text-center"><x-icon>settings</x-icon></th>
                                     </tr>
                                 </thead>
@@ -182,8 +186,8 @@
                                             <td class="text-start text-nowrap">{{ $payment->paymentDate->format('d M Y') }}</td>
                                             <td class="text-start text-nowrap">{{ strtoupper($payment->paymentMethod->value) }}</td>
                                             <td class="text-start text-nowrap">{{ $payment->referenceNumber }}</td>
-                                            <td class="text-end text-nowrap">{{ number_format($payment->amount, 2) }}</td>
                                             <td class="text-start" style="width: 1000px">{{ $payment->notes }}</td>
+                                            <td class="text-end text-nowrap">{{ number_format($payment->amount, 2) }}</td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-light" data-action="delete" data-purchase-id="{{ $purchase->id }}" data-payment-id="{{ $payment->id }}" data-bs-toggle="tooltip" data-bs-title="Hapus">
                                                     <x-icon class="fs-6">delete</x-icon>
@@ -208,7 +212,6 @@
     <x-slot:script>
         <script>
             const paymentsTable = app.dataTable('#paymentsTable', {
-                ordering: false,
                 lengthChange: false,
                 info: false,
                 searching: false,
@@ -222,6 +225,40 @@
                     bottomStart: null,
                     bottomEnd: "paging",
                 },
+                columns: [
+                    {
+                        title: 'Tanggal',
+                        type: 'date',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Metode Pembayaran',
+                        type: 'string',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Nomor Referensi',
+                        type: 'string',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Catatan',
+                        type: 'string',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Nominal',
+                        type: 'num',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: `<span class="material-symbols-outlined fs-6">settings</span>`,
+                        type: 'html',
+                        className: 'text-nowrap',
+                        orderable: false,
+                        searchable: false,
+                    },
+                ],
             });
 
             $("button[data-action='delete']").click(function (e) { 

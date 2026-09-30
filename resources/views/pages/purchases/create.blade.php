@@ -125,6 +125,7 @@
                 </div>
             </div>
 
+            {{-- Table cart detail --}}
             <div class="row mb-6 mb-lg-0">
                 <div class="col-12">
                     <div class="card shadow-sm">
@@ -132,10 +133,10 @@
                             <table id="cartDetailTable" class="table table-hover table-sm table-img align-middle w-100">
                                 <thead>
                                     <tr>
-                                        <th class="text-nowrap text-start">No</th>
                                         <th class="text-nowrap text-start">Produk</th>
+                                        <th class="text-nowrap text-start">Satuan</th>
+                                        <th class="text-nowrap text-end">Quantity</th>
                                         <th class="text-nowrap text-end">Harga</th>
-                                        <th class="text-nowrap text-end">Qty</th>
                                         <th class="text-nowrap text-end">Subtotal</th>
                                         <th class="text-nowrap text-center"><x-icon>settings</x-icon></th>
                                     </tr>
@@ -144,22 +145,20 @@
                                 <tbody>
                                     @foreach ($details as $detail)
                                         <tr>
-                                            <td class="text-start">{{ number_format($loop->iteration) }}</td>
                                             <td class="text-nowrap text-start">
                                                 <div class="d-flex align-items-center justify-content-start gx-1">
                                                     <img src="{{ storage_image($detail->product->image) }}" alt="Product image" class="rounded" />
 
                                                     <div class="ms-3">
                                                         <h4 class="fs-6 mb-1">{{ $detail->product->code }}</h4>
-                                                        <p class="text-body-secondary fs-sm text-truncate" style="max-width: 150px;">
-                                                            {{ $detail->product->name }}
-                                                        </p>
+                                                        <p class="text-body-secondary fs-sm text-truncate" style="max-width: 100px;">{{ $detail->product->name }}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->purchasePrice, 2) }}</td>
+                                            <td class="text-nowrap text-start">{{ $detail->product->unit->code }}</td>
                                             <td class="text-nowrap text-end">{{ number_format($detail->quantity, 2) }}</td>
-                                            <td class="text-nowrap text-end">Rp {{ number_format($detail->subtotalPrice, 2) }}</td>
+                                            <td class="text-nowrap text-end">{{ number_format($detail->purchasePrice, 2) }}</td>
+                                            <td class="text-nowrap text-end">{{ number_format($detail->subtotalPrice, 2) }}</td>
                                             <td class="text-center">
                                                 <div class="btn-group w-100">
                                                     <button
@@ -206,13 +205,13 @@
                         <div class="card-body">
                             <ul class="list-group list-group-flush m-0 p-0">
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <span class="text-body-secondary">Total Qty</span>
+                                    <span class="text-body-secondary">Total Quantity</span>
                                     <span class="fs-6 fw-bold">{{ number_format($cart->totalQuantity, 2) }}</span>
                                 </li>
         
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <span class="text-body-secondary">Total Harga</span>
-                                    <span class="fs-6 fw-bold">Rp {{ number_format($cart->totalPrice, 2) }}</span>
+                                    <span class="text-body-secondary">Grand Total</span>
+                                    <span class="fs-6 fw-bold">{{ number_format($cart->totalPrice, 2) }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -386,6 +385,7 @@
     </form>
 
     <x-slot:script>
+
         {{-- Modal product table --}}
         <script>
             const modalProductTable = new bootstrap.Modal('#modalProductTable');
@@ -526,5 +526,6 @@
                 });
             });
         </script>
+
     </x-slot:script>
 </x-layouts.auth>

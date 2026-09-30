@@ -130,6 +130,26 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
     }
 
     /**
+     * Soft delete by purchase id.
+     */
+    #[Override]
+    public function removeByPurchaseId(string $purchaseId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('purchase_id', $purchaseId)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan model ke PurchaseDetailEntity.
      */
     private function mapModelToPurchaseDetailEntity(PurchaseDetail $model): PurchaseDetailEntity
@@ -150,8 +170,12 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
     /**
      * Pemetaan class Model ke class CategoryProductPurchaseValue
      */
-    private function mapModelToCategoryProductPurchaseValue(Category $model): CategoryProductPurchaseValue
+    private function mapModelToCategoryProductPurchaseValue(?Category $model): ?CategoryProductPurchaseValue
     {
+        if ($model === null) {
+            return null;
+        }
+
         return new CategoryProductPurchaseValue(
             id: $model->id,
             code: $model->code,
@@ -162,8 +186,12 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
     /**
      * Pemetaan class Model ke class UnitProductPurchaseValue
      */
-    private function mapModelToUnitProductPurchaseValue(Unit $model): UnitProductPurchaseValue
+    private function mapModelToUnitProductPurchaseValue(?Unit $model): ?UnitProductPurchaseValue
     {
+        if ($model === null) {
+            return null;
+        }
+
         return new UnitProductPurchaseValue(
             id: $model->id,
             code: $model->code,
@@ -182,8 +210,14 @@ class PurchaseDetailRepository extends Repository implements PurchaseDetailRepos
             barcode: $model->barcode,
             name: $model->name,
             image: $model->image,
-            category: $model->category === null ? null : $this->mapModelToCategoryProductPurchaseValue($model->category),
-            unit: $model->unit === null ? null : $this->mapModelToUnitProductPurchaseValue($model->unit),
+            purchasePrice: parse_float($model->purchase_price),
+            sellingPrice: parse_float($model->selling_price),
+            discount: parse_float($model->discount),
+            minimumStock: parse_float($model->minimum_stock),
+            currentStock: parse_float($model->current_stock),
+            isActive: $model->is_active === 1,
+            category: $this->mapModelToCategoryProductPurchaseValue($model->category),
+            unit: $this->mapModelToUnitProductPurchaseValue($model->unit),
         );
     }
 }
