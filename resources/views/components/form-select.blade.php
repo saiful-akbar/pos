@@ -10,6 +10,7 @@
         'name' => $name,
         'id' => $id,
         'required' => $required,
+        'data-invalid' => $name
     ];
 @endphp
 
@@ -23,6 +24,6 @@
     {{ $slot }}
 </select>
 
-@error($name)
-    <div class="invalid-feedback">{{ $message }}</div>
-@enderror
+<div class="invalid-feedback" data-invalid-feedback="{{ $name }}">
+    {{ $errors->first($name) }}
+</div>

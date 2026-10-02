@@ -35,6 +35,8 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->char('invoice_number', 13)->unique()->comment('format: INV2608-00001');
+            $table->year('transaction_year');
+            $table->unsignedTinyInteger('transaction_month');
             $table->date('transaction_date');
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);
@@ -44,6 +46,11 @@ return new class() extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('transaction_year');
+            $table->index('transaction_month');
+            $table->index('transaction_date');
+            $table->index(['transaction_year', 'transaction_month']);
         });
     }
 

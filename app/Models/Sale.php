@@ -65,6 +65,8 @@ class Sale extends Model
         'user_id',
         'customer_id',
         'invoice_number',
+        'transaction_year',
+        'transaction_month',
         'transaction_date',
         'total_quantity',
         'total_amount',

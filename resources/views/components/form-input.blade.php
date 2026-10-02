@@ -11,6 +11,7 @@
         'name' => $name,
         'id' => $id,
         'value' => $value,
+        'data-invalid' => $name,
     ];
 @endphp
 
@@ -30,6 +31,6 @@
     <div class="form-text">{{ $helperText }}</div>
 @endif
 
-@error($name)
-    <div class="invalid-feedback" data-error="{{ $name }}">{{ $message }}</div>
-@enderror
+<div class="invalid-feedback" data-invalid-feedback="{{ $name }}">
+    {{ $errors->first($name) }}
+</div>

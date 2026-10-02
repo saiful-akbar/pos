@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function (): void {
         ->prefix('dashboard')
         ->group(function (): void {
             Route::get('/', 'index');
+            Route::get('/sales', 'monthlySaleSummary')->name('.sales');
+            Route::get('/sales/products/best', 'getBestSellingProduct')->name('.products.best');
         });
 
     Route::name('settings')->prefix('settings')->group(function (): void {

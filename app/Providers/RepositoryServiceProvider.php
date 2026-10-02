@@ -17,6 +17,8 @@ use App\Application\Customer\UseCases\GetAllCustomers;
 use App\Application\Customer\UseCases\GetCustomersTable;
 use App\Application\Customer\UseCases\RemoveCustomer;
 use App\Application\Customer\UseCases\UpdateCustomer;
+use App\Application\Dashboard\UseCases\GetBestSellingProduct;
+use App\Application\Dashboard\UseCases\GetMonthlySalesSummary;
 use App\Application\Discount\UseCases\CreateDiscount;
 use App\Application\Discount\UseCases\FindDiscountById;
 use App\Application\Discount\UseCases\GetActiveDiscountsTable;
@@ -127,6 +129,7 @@ use App\Application\User\UseCases\UpdateUser;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
+use App\Domain\Dashboard\Repositories\SaleDashboardRepositoryInterface;
 use App\Domain\Discount\Repositories\DiscountRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
@@ -606,6 +609,12 @@ class RepositoryServiceProvider extends ServiceProvider
         // Report
         ReportRepositoryInterface::class => [
             GetMonitoringMonthlyStock::class => ReportRepository::class,
+        ],
+
+        // Dashboard
+        SaleDashboardRepositoryInterface::class => [
+            GetMonthlySalesSummary::class => SaleRepository::class,
+            GetBestSellingProduct::class => SaleRepository::class,
         ],
     ];
 

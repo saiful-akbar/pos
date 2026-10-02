@@ -7,6 +7,8 @@ namespace App\Repositories;
 use App\Application\Sale\DTOs\CreateSaleDTO;
 use App\Application\Sale\DTOs\GetSalesDTO;
 use App\Base\Repository;
+use App\Domain\Dashboard\Entities\MonthlySummaryEntity;
+use App\Domain\Dashboard\Repositories\SaleDashboardRepositoryInterface;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
 use App\Domain\Sale\Entities\SaleDetailEntity;
 use App\Domain\Sale\Entities\SaleEntity;
@@ -24,9 +26,12 @@ use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Unit;
 use App\Models\User;
+use DateTimeInterface;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Override;
 
-class SaleRepository extends Repository implements SaleRepositoryInterface
+class SaleRepository extends Repository implements SaleDashboardRepositoryInterface, SaleRepositoryInterface
 {
     /**
      * Create a new class instance.
@@ -215,6 +220,112 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
             return $this->model->query()
                 ->where('id', $id)
                 ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil summary data perbulan
+     *
+     * @return MonthlySummaryEntity[]
+     */
+    #[Override]
+    public function getMonthlySummary(int $year): array
+    {
+        try {
+            $months = DB::query()
+                ->selectRaw("1 AS number, 'Januari' AS name")
+                ->unionAll(DB::query()->selectRaw("2 AS number, 'Februari' AS name"))
+                ->unionAll(DB::query()->selectRaw("3 AS number, 'Maret' AS name"))
+                ->unionAll(DB::query()->selectRaw("4 AS number, 'April' AS name"))
+                ->unionAll(DB::query()->selectRaw("5 AS number, 'Mei' AS name"))
+                ->unionAll(DB::query()->selectRaw("6 AS number, 'Juni' AS name"))
+                ->unionAll(DB::query()->selectRaw("7 AS number, 'Juli' AS name"))
+                ->unionAll(DB::query()->selectRaw("8 AS number, 'Agustus' AS name"))
+                ->unionAll(DB::query()->selectRaw("9 AS number, 'September' AS name"))
+                ->unionAll(DB::query()->selectRaw("10 AS number, 'Oktober' AS name"))
+                ->unionAll(DB::query()->selectRaw("11 AS number, 'November' AS name"))
+                ->unionAll(DB::query()->selectRaw("12 AS number, 'Desember' AS name"));
+
+            $salesColumns = [
+                'transaction_month',
+                DB::raw('SUM(total_quantity) AS total_quantity'),
+                DB::raw('SUM(total_amount) AS total_amount'),
+            ];
+
+            $sales = DB::table('sales')
+                ->select($salesColumns)
+                ->where('transaction_year', $year)
+                ->groupBy('transaction_month');
+
+            $summaryColumns = [
+                'month.number AS month',
+                DB::raw('COALESCE(sales.total_quantity, 0) AS quantity'),
+                DB::raw('COALESCE(sales.total_amount, 0) AS amount'),
+            ];
+
+            $summaries = DB::query()
+                ->fromSub($months, 'month')
+                ->select($summaryColumns)
+                ->leftJoinSub($sales, 'sales', fn ($join) => $join->on('month.number', '=', 'sales.transaction_month'))
+                ->orderBy('month.number')
+                ->get();
+
+            $result = [];
+
+            foreach ($summaries as $summary) {
+                $result[] = new MonthlySummaryEntity(
+                    year: $year,
+                    month: $summary->month,
+                    quantity: parse_float($summary->quantity),
+                    amount: parse_float($summary->amount),
+                );
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil produk terlaris
+     */
+    #[Override]
+    public function getBestSellingProduct(DateTimeInterface $fromDate, DateTimeInterface $toDate): Collection
+    {
+        try {
+            $dateRange = [
+                $fromDate->format('Y-m-d'),
+                $toDate->format('Y-m-d'),
+            ];
+
+            $columns = [
+                'product_id',
+                DB::raw('coalesce(sum(quantity), 0) as total_quantity'),
+                DB::raw('coalesce(sum(selling_price), 0) as total_selling_price'),
+            ];
+
+            return $this->model->query()
+                ->select($columns)
+                ->with('product:id,code,name,image')
+                ->whereBetween('transaction_date', $dateRange)
+                ->groupBy('product_id')
+                ->orderBy('total_quantity', 'desc')
+                ->limit(10)
+                ->offset(0)
+                ->get();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
