@@ -176,6 +176,26 @@ class MonthlyStockOpnameRepository extends Repository implements MonthlyStockOpn
     }
 
     /**
+     * Memeriksa apakah ada stok bulanan berdasarkan id dari stock harian yang dikirim.
+     */
+    #[Override]
+    public function existsByDailyStockOpnameId(string $dailyStockOpnameId): bool
+    {
+        try {
+            return $this->model->query()
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
+                ->exists();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class UserStockOpnameValue
      */
     private function mapModelToUserStockOpnameValue(User $model): UserStockOpnameValue

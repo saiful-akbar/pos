@@ -294,14 +294,12 @@
                                 orderable: false,
                                 render: (data, type, row) => {
                                     return `
-                                        <div class="btn-group w-100">
-                                            <button type="button" class="btn btn-light w-100" title="Edit" data-action="edit">
-                                                <span class="material-symbols-outlined fs-6">edit</span>
-                                            </button>
-                                            <button type="button" class="btn btn-light w-100" title="Hapus" data-action="delete">
-                                                <span class="material-symbols-outlined fs-6">delete</span>
-                                            </button>
-                                        </div>
+                                    <button type="button" class="btn btn-light" title="Edit" data-action="edit">
+                                        <span class="material-symbols-outlined fs-6">edit</span>
+                                    </button>
+                                    <button type="button" class="btn btn-light" title="Hapus" data-action="delete">
+                                        <span class="material-symbols-outlined fs-6">delete</span>
+                                    </button>
                                     `;
                                 }
                             }

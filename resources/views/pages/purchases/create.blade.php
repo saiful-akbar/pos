@@ -16,29 +16,6 @@
         </x-slot:action>
     </x-page-header>
 
-    {{-- Modal product table --}}
-    <div class="modal" tabindex="-1" id="modalProductTable">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Produk</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <table id="productTable" class="table table-hover table-img align-middle w-100"></table>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        <x-icon class="me-1">close</x-icon>
-                        <span>Batal</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- Form tambah produk dan daftar cart detail --}}
     <div class="row mt-6">
         <div class="col-12 col-lg-6 col-xl-8">
@@ -319,6 +296,33 @@
         </div>
     </div>
 
+    {{-- Modal product table --}}
+    <div class="modal" tabindex="-1" id="modalProductTable">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <table id="productTable" class="table table-hover table-img align-middle w-100"></table>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="row justify-content-end w-100">
+                        <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                            <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                <x-icon class="me-1">close</x-icon>
+                                <span>Batal</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Modal edit cart detail --}}
     <form action="#" method="post" id="formEditCartDetail" autocomplete="off">
         @csrf @method('patch')
@@ -424,7 +428,7 @@
                                             <img src="${app.storageImage(row.image)}" class="rounded" alt="Produk" />
                                             <div class="ms-3">
                                                 <div>${row.code}</div>
-                                                <div class="fs-sm text-body-secondary text-truncate" style="max-width: 150px;">${row.name}</div>
+                                                <div class="fs-sm text-body-secondary text-truncate" style="max-width: 200px;">${row.name}</div>
                                             </div>
                                         </div>
                                     `;
@@ -435,7 +439,7 @@
                                 name: 'barcode',
                                 data: 'barcode',
                                 type: 'string',
-                                width: '200px',
+                                width: '300px',
                             },
                             {
                                 title: 'Satuan',

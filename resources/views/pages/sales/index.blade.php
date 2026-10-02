@@ -1,10 +1,14 @@
 <x-layouts.sales :active="$active" :access="$access">
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <form action="{{ route('transactions.sales') }}" method="get" id="formFilter">
                 @csrf @method('GET')
 
                 <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h2 class="fs-5 mb-0">Filter</h2>
+                    </div>
+                    
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-6 mb-lg-0">
@@ -36,7 +40,7 @@
                     <div class="card-footer">
                         <div class="row justify-content-end">
                             <div class="col-12 col-lg-4 col-xl-2">
-                                <x-button type="submit" start-icon="filter_list" full-width>Filter</x-button>
+                                <x-button type="submit" start-icon="filter_list" full-width>Submit</x-button>
                             </div>
                         </div>
                     </div>
@@ -45,7 +49,7 @@
         </div>
     </div>
 
-    <div class="row mt-7">
+    <div class="row mt-6">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">

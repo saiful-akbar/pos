@@ -235,6 +235,46 @@ class DailyStockOpnameDetailRepository extends Repository implements DailyStockO
     }
 
     /**
+     * Soft delete berdasarkan saily stock opname id.
+     */
+    #[Override]
+    public function removeByDailyStockOpnameId(string $dailyStockOpnameId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Hapus permanen berdasarkan daily stock opname id.
+     */
+    #[Override]
+    public function deleteByDailyStockOpnameId(string $dailyStockOpnameId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('daily_stock_opname_id', $dailyStockOpnameId)
+                ->forceDelete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class CategoryProductStockOpnameValue
      */
     private function mapModelToCategoryProductStockOpnameValue(Category $model): CategoryProductStockOpnameValue

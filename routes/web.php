@@ -247,8 +247,10 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
                 Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
                 Route::get('/{id}', 'show')->name('.show')->middleware("$module,read");
-                Route::patch('/{id}/active', 'setActiveStock')->name('.active')->middleware("$module,update");
-                Route::post('/{id}/monthly', 'storeMonthlyStock')->name('.monthly')->middleware("$module,update");
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
+                Route::delete('/{id}/delete', 'delete')->name('.delete')->middleware("$module,delete");
+                Route::patch('/{id}/active', 'setActiveStock')->name('.active')->middleware("$module,create");
+                Route::post('/{id}/monthly', 'storeMonthlyStock')->name('.monthly')->middleware("$module,create");
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$module,update");
                 Route::post('/{id}/details', 'storeDetail')->name('.details.store')->middleware("$module,update");
                 Route::delete('/{id}/details/{detailId}', 'deleteDetail')->name('.details.delete')->middleware("$module,update");

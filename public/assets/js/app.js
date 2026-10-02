@@ -21,6 +21,11 @@ class App {
         search: "",
         searchPlaceholder: "Cari...",
         lengthMenu: "_MENU_",
+        info: "Baris _START_ - _END_ dari _TOTAL_",
+        infoEmpty: "Baris 0 - 0 dari 0",
+        infoFiltered: "",
+        zeroRecords: "Tidak ditemukan data yang sesuai",
+        emptyTable: "Tidak ada data yang tersedia",
       },
       lengthMenu: [
         [10, 25, 50, 100, 200],
@@ -55,6 +60,12 @@ class App {
       language: {
         search: "",
         searchPlaceholder: "Cari...",
+        lengthMenu: "_MENU_",
+        info: "_START_ - _END_ dari _TOTAL_",
+        infoEmpty: "0 - 0 dari 0",
+        infoFiltered: "",
+        zeroRecords: "Tidak ditemukan data yang sesuai",
+        emptyTable: "Tidak ada data yang tersedia",
       },
       buttons: [
         {
@@ -112,6 +123,11 @@ class App {
         search: "",
         searchPlaceholder: "Cari...",
         lengthMenu: "_MENU_",
+        info: "_START_ - _END_ dari _TOTAL_",
+        infoEmpty: "0 - 0 dari 0",
+        infoFiltered: "",
+        zeroRecords: "Tidak ditemukan data yang sesuai",
+        emptyTable: "Tidak ada data yang tersedia",
       },
       lengthMenu: [
         [10, 25, 50, 100, 200],

@@ -36,4 +36,14 @@ interface DailyStockOpnameRepositoryInterface
      * mengambil data berdasarkan tanggal.
      */
     public function findByDate(DateTimeInterface $date): ?DailyStockOpnameEntity;
+
+    /**
+     * Soft delete by id.
+     */
+    public function removeById(string $id): int;
+
+    /**
+     * Hapus permanen berdasarkan id.
+     */
+    public function deleteById(string $id): int;
 }

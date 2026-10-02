@@ -39,7 +39,7 @@
                         <div class="row justify-content-end align-items-center">
                             <div class="col-12 col-lg-4 col-xl-2">
                                 <x-button type="submit" color="secondary" startIcon="filter_list" fullWidth>
-                                    Filter
+                                    Submit
                                 </x-button>
                             </div>
                         </div>
@@ -73,30 +73,29 @@
                 monitoringDataTable() {
                     return app.buttonDataTable('#tableMonitoring', {
                         fixedColumns: {
-                            start: 2,
+                            start: 1,
                         },
-                        order: [[1, 'asc']],
                         columns: [
-                            {
-                                title: 'Kategori Produk',
-                                name: 'category_name',
-                                data: 'category_name',
-                                type: 'string',
-                                className: 'text-nowrap',
-                                footer: 'Total',
-                            },
                             {
                                 title: 'Kode Produk',
                                 name: 'product_code',
                                 data: 'product_code',
                                 type: 'string',
                                 className: 'text-nowrap',
-                                footer: '',
+                                footer: 'Total',
                             },
                             {
                                 title: 'Nama Produk',
                                 name: 'product_name',
                                 data: 'product_name',
+                                type: 'string',
+                                className: 'text-nowrap',
+                                footer: '',
+                            },
+                            {
+                                title: 'Kategori Produk',
+                                name: 'category_name',
+                                data: 'category_name',
                                 type: 'string',
                                 className: 'text-nowrap',
                                 footer: '',
@@ -113,75 +112,147 @@
                                 title: 'Stok Awal',
                                 name: 'beginning_stock',
                                 data: 'beginning_stock',
-                                type: 'num',
-                                className: 'text-nowrap',
-                                footer: app.numberFormat(0),
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Pembelian',
-                                name: 'purchase_quantity',
-                                data: 'purchase_quantity',
-                                type: 'num',
-                                className: 'text-nowrap',
-                                footer: app.numberFormat(0),
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Pengembalian',
-                                name: 'sale_return_quantity',
-                                data: 'sale_return_quantity',
-                                type: 'num',
-                                className: 'text-nowrap',
-                                footer: app.numberFormat(0),
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Penjualan',
-                                name: 'sale_quantity',
-                                data: 'sale_quantity',
-                                type: 'num',
-                                className: 'text-nowrap',
-                                footer: app.numberFormat(0),
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Book Balance',
-                                name: 'book_balance_quantity',
-                                data: 'book_balance_quantity',
-                                type: 'num',
-                                className: 'text-nowrap',
-                                footer: app.numberFormat(0),
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Stock Akhir',
-                                name: 'ending_stock',
-                                data: 'ending_stock',
-                                type: 'num',
-                                className: 'text-nowrap',
-                                footer: app.numberFormat(0),
-                                render: (data) => app.numberFormat(data),
-                            },
-                            {
-                                title: 'Selisih',
-                                name: 'difference_quantity',
-                                data: 'difference_quantity',
-                                type: 'num',
+                                type: 'html-num',
                                 className: 'text-nowrap',
                                 footer: app.numberFormat(0),
                                 render: (data) => {
                                     let textColor = 'text-body-primary';
 
                                     if (data < 0) {
-                                        textColor = 'text-danger';
+                                        textColor = 'text-danger fw-bold';
                                     }
 
                                     if (data > 0) {
-                                        textColor = 'text-success';
+                                        textColor = 'text-success fw-bold';
                                     }
 
-                                    return `<span class="${textColor} fw-bold">${app.numberFormat(data)}</span>`
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
+                                },
+                            },
+                            {
+                                title: 'Pembelian',
+                                name: 'purchase_quantity',
+                                data: 'purchase_quantity',
+                                type: 'html-num',
+                                className: 'text-nowrap',
+                                footer: app.numberFormat(0),
+                                render: (data) => {
+                                    let textColor = 'text-body-primary';
+
+                                    if (data < 0) {
+                                        textColor = 'text-danger fw-bold';
+                                    }
+
+                                    if (data > 0) {
+                                        textColor = 'text-success fw-bold';
+                                    }
+
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
+                                },
+                            },
+                            {
+                                title: 'Pengembalian',
+                                name: 'sale_return_quantity',
+                                data: 'sale_return_quantity',
+                                type: 'html-num',
+                                className: 'text-nowrap',
+                                footer: app.numberFormat(0),
+                                render: (data) => {
+                                    let textColor = 'text-body-primary';
+
+                                    if (data < 0) {
+                                        textColor = 'text-danger fw-bold';
+                                    }
+
+                                    if (data > 0) {
+                                        textColor = 'text-success fw-bold';
+                                    }
+
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
+                                },
+                            },
+                            {
+                                title: 'Penjualan',
+                                name: 'sale_quantity',
+                                data: 'sale_quantity',
+                                type: 'html-num',
+                                className: 'text-nowrap',
+                                footer: app.numberFormat(0),
+                                render: (data) => {
+                                    let textColor = 'text-body-primary';
+
+                                    if (data < 0) {
+                                        textColor = 'text-danger fw-bold';
+                                    }
+
+                                    if (data > 0) {
+                                        textColor = 'text-success fw-bold';
+                                    }
+
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
+                                },
+                            },
+                            {
+                                title: 'Book Balance',
+                                name: 'book_balance_quantity',
+                                data: 'book_balance_quantity',
+                                type: 'html-num',
+                                className: 'text-nowrap',
+                                footer: app.numberFormat(0),
+                                render: (data) => {
+                                    let textColor = 'text-body-primary';
+
+                                    if (data < 0) {
+                                        textColor = 'text-danger fw-bold';
+                                    }
+
+                                    if (data > 0) {
+                                        textColor = 'text-success fw-bold';
+                                    }
+
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
+                                },
+                            },
+                            {
+                                title: 'Stock Akhir',
+                                name: 'ending_stock',
+                                data: 'ending_stock',
+                                type: 'html-num',
+                                className: 'text-nowrap',
+                                footer: app.numberFormat(0),
+                                render: (data) => {
+                                    let textColor = 'text-body-primary';
+
+                                    if (data < 0) {
+                                        textColor = 'text-danger fw-bold';
+                                    }
+
+                                    if (data > 0) {
+                                        textColor = 'text-success fw-bold';
+                                    }
+
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
+                                },
+                            },
+                            {
+                                title: 'Selisih',
+                                name: 'difference_quantity',
+                                data: 'difference_quantity',
+                                type: 'html-num',
+                                className: 'text-nowrap',
+                                footer: app.numberFormat(0),
+                                render: (data) => {
+                                    let textColor = 'text-body-primary';
+
+                                    if (data < 0) {
+                                        textColor = 'text-danger fw-bold';
+                                    }
+
+                                    if (data > 0) {
+                                        textColor = 'text-success fw-bold';
+                                    }
+
+                                    return `<span class="${textColor}">${app.numberFormat(data)}</span>`
                                 },
                             },
                         ],

@@ -43,4 +43,9 @@ interface MonthlyStockOpnameRepositoryInterface
      * Update stock
      */
     public function update(string $id, MonthlyStockOpnameDTO $value): int;
+
+    /**
+     * Memeriksa apakah ada stok bulanan berdasarkan id dari stock harian yang dikirim.
+     */
+    public function existsByDailyStockOpnameId(string $dailyStockOpnameId): bool;
 }

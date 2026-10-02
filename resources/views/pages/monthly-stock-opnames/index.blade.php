@@ -129,7 +129,7 @@
                     <div class="card-footer">
                         <div class="row justify-content-end">
                             <div class="col-12 col-lg-3 col-xl-2">
-                                <x-button type="submit" startIcon="filter_list" fullWidth>Filter</x-button>
+                                <x-button type="submit" startIcon="filter_list" fullWidth>Submit</x-button>
                             </div>
                         </div>
                     </div>

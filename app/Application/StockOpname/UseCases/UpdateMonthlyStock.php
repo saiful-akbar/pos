@@ -64,7 +64,7 @@ class UpdateMonthlyStock
             // Hapus monthly stock detail
             $this->monthlyStockDetailRepository->deleteByMonthlyStockOpnameId($monthlyStock->id);
 
-            // Insert data baru monthly stock detail.
+            // Insert data baru monthly stock detail baru.
             foreach ($dailyStockDetails as $dailyStockDetail) {
                 $this->monthlyStockDetailRepository->create(new MonthlyStockOpnameDetailDTO(
                     monthlyStockOpnameId: $monthlyStock->id,

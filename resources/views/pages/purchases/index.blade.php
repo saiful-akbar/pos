@@ -139,6 +139,7 @@
                  */
                 purchaseDataTable() {
                     return app.buttonDataTable('#tablePurchase', {
+                        order: [[2, 'asc']],
                         fixedColumns: {
                             start: 0,
                             end: 1,

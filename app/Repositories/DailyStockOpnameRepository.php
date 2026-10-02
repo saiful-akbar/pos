@@ -140,6 +140,46 @@ class DailyStockOpnameRepository extends Repository implements DailyStockOpnameR
     }
 
     /**
+     * Soft delete by id.
+     */
+    #[Override]
+    public function removeById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Hapus permanen berdasarkan id.
+     */
+    #[Override]
+    public function deleteById(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->forceDelete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class UserStockOpnameValue
      */
     private function mapModelToUserStockOpnameValue(User $model): UserStockOpnameValue

@@ -92,6 +92,7 @@ use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\CreateMonthlyStockOpname;
+use App\Application\StockOpname\UseCases\DeleteDailyStockOpname;
 use App\Application\StockOpname\UseCases\DeleteDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\ExistsDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameByDate;
@@ -100,6 +101,7 @@ use App\Application\StockOpname\UseCases\FindMonthlyStockByYearAndMonth;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
 use App\Application\StockOpname\UseCases\GetMonthlyStockDetails;
+use App\Application\StockOpname\UseCases\RemoveDailyStockOpname;
 use App\Application\StockOpname\UseCases\SetActiveStock;
 use App\Application\StockOpname\UseCases\UpdateMonthlyStock;
 use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
@@ -250,6 +252,8 @@ class RepositoryServiceProvider extends ServiceProvider
             RemovePurchase::class => ErrorLogRepository::class,
             RemoveSale::class => ErrorLogRepository::class,
             RemoveSaleReturn::class => ErrorLogRepository::class,
+            RemoveDailyStockOpname::class => ErrorLogRepository::class,
+            DeleteDailyStockOpname::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -303,6 +307,8 @@ class RepositoryServiceProvider extends ServiceProvider
             RemovePurchase::class => ActivityLogRepository::class,
             RemoveSale::class => ActivityLogRepository::class,
             RemoveSaleReturn::class => ActivityLogRepository::class,
+            RemoveDailyStockOpname::class => ActivityLogRepository::class,
+            DeleteDailyStockOpname::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -565,6 +571,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateQuantityDailyStockOpnameDetail::class => DailyStockOpnameRepository::class,
             SetActiveStock::class => DailyStockOpnameRepository::class,
             UpdateMonthlyStock::class => DailyStockOpnameRepository::class,
+            RemoveDailyStockOpname::class => DailyStockOpnameRepository::class,
+            DeleteDailyStockOpname::class => DailyStockOpnameRepository::class,
         ],
 
         // Daily stock opname detail
@@ -576,6 +584,8 @@ class RepositoryServiceProvider extends ServiceProvider
             SetActiveStock::class => DailyStockOpnameDetailRepository::class,
             CreateMonthlyStockOpname::class => DailyStockOpnameDetailRepository::class,
             UpdateMonthlyStock::class => DailyStockOpnameDetailRepository::class,
+            RemoveDailyStockOpname::class => DailyStockOpnameDetailRepository::class,
+            DeleteDailyStockOpname::class => DailyStockOpnameDetailRepository::class,
         ],
 
         // Monthly stock opname
@@ -583,6 +593,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateMonthlyStockOpname::class => MonthlyStockOpnameRepository::class,
             FindMonthlyStockByYearAndMonth::class => MonthlyStockOpnameRepository::class,
             UpdateMonthlyStock::class => MonthlyStockOpnameRepository::class,
+            DeleteDailyStockOpname::class => MonthlyStockOpnameRepository::class,
         ],
 
         // Monthly stock opname detail

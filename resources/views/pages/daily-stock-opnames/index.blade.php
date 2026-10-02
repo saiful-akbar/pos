@@ -101,7 +101,7 @@
     <div class="row mt-6">
         <div class="col-12">
             <form action="{{ route('stockOpnames.daily') }}" method="GET" id="formFilter" autocomplete="off">
-                @csrf @method('GET')
+                @csrf
 
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -147,9 +147,9 @@
                     </div>
 
                     <div class="card-footer">
-                        <div class="row justify-content-end w-100 gx-0">
+                        <div class="row justify-content-end">
                             <div class="col-12 col-lg-2">
-                                <x-button type="submit" start-icon="filter_list" full-width>Filter</x-button>
+                                <x-button type="submit" start-icon="filter_list" full-width>Submit</x-button>
                             </div>
                         </div>
                     </div>
@@ -158,10 +158,10 @@
         </div>
     </div>
 
-    {{-- Table --}}
+    {{-- Table summary dan detail --}}
     <div class="row mt-6">
-        <div class="col-12 col-lg-4 mb-6 mb-lg-0">
-            <div class="card shadow-sm" style="min-height: 500px;">
+        <div class="col-12 col-xl-4 mb-6 mb-xl-0">
+            <div class="card shadow-sm">
                 <div class="card-header">
                     <h3 class="fs-5 m-0">Summary</h3>
                 </div>
@@ -172,25 +172,38 @@
             </div>
         </div>
 
-        <div class="col-12 col-lg-8">
-            <div class="card shadow-sm" style="min-height: 500px;">
-                @if ($access?->update)
+        <div class="col-12 col-xl-8">
+            <div class="card shadow-sm">
+                @if ($access?->create || $access?->update || $access?->remove)
                     <div class="card-header">
-                        <div class="btn-group w-100">
-                            <button type="button" class="btn btn-secondary" id="buttonActiveStock" disabled>
-                                <x-icon class="me-1">check_circle</x-icon>
-                                <span>Jadikan Stok Aktif</span>
-                            </button>
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col">
+                                <h2 class="fs-5 mb-0">Detail</h2>
+                            </div>
 
-                            <button type="button" class="btn btn-secondary" id="buttonMonthlyStock" disabled>
-                                <x-icon class="me-1">inventory_2</x-icon>
-                                <span>Jadikan Stok Awal</span>
-                            </button>
+                            <div class="col-auto">
+                                @if ($access?->create)
+                                    <x-button type="button" color="light" id="buttonActiveStock" data-bs-toggle="tooltip" data-bs-title="Jadikan stok aktif" disabled>
+                                        <x-icon class="fs-6">check_circle</x-icon>
+                                    </x-button>
 
-                            <button type="button" class="btn btn-secondary" id="buttonEditStock" disabled>
-                                <x-icon class="me-1">edit</x-icon>
-                                <span>Edit Stock</span>
-                            </button>
+                                    <x-button type="button" color="light" id="buttonMonthlyStock" data-bs-toggle="tooltip" data-bs-title="Jadikan stok awal" disabled>
+                                        <x-icon class="fs-6">inventory_2</x-icon>
+                                    </x-button>
+                                @endif
+
+                                @if ($access?->update)
+                                    <x-button type="button" color="light" id="buttonEditStock" data-bs-toggle="tooltip" data-bs-title="Edit stok" disabled>
+                                        <x-icon class="fs-6">edit</x-icon>
+                                    </x-button>
+                                @endif
+
+                                @if ($access?->remove || $access?->delete)
+                                    <x-button type="button" color="light" id="buttonDeleteStock" data-bs-toggle="tooltip" data-bs-title="Hapus stok" disabled>
+                                        <x-icon class="fs-6">delete</x-icon>
+                                    </x-button>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endif
@@ -283,6 +296,13 @@
         </form>
     @endif
 
+    {{-- Form delete --}}
+    @if ($access?->remove || $access?->delete)
+        <form action="#" method="post" id="formDelete">
+            @csrf @method('delete')
+        </form>
+    @endif
+
     {{-- Javascript --}}
     <x-slot:script>
         <script>
@@ -294,12 +314,13 @@
                     this.formFilter = $('#formFilter');
                     this.summaryTable = this.summaryTable();
                     this.detailTable = this.detailTable();
+                    this.buttonActiveStock = $('#buttonActiveStock');
                     this.buttonEditStock = $('#buttonEditStock');
                     this.buttonMonthlyStock = $('#buttonMonthlyStock');
                     this.formMonthlyStock = $('#formMonthlyStock');
                     this.modalMonthlyStock = this.modalMonthlyStock();
-                    this.buttonActiveStock = $('#buttonActiveStock');
-                    this.csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    this.buttonDeleteStock = $('#buttonDeleteStock');
+                    this.formDelete = $('#formDelete');
                 }
 
                 /**
@@ -327,11 +348,9 @@
                  */
                 summaryTable() {
                     return app.dataTable('#summaryTable', {
-                        scrollY: '625px',
                         lengthChange: false,
                         searching: false,
                         info: false,
-                        paging: false,
                         columns: [
                             {
                                 title: 'Tanggal',
@@ -364,6 +383,9 @@
                                 this.buttonActiveStock.removeAttr('disabled');
                                 this.buttonActiveStock.data('id', data.id);
 
+                                this.buttonDeleteStock.removeAttr('disabled');
+                                this.formDelete.attr('action', app.url(`/stock-opnames/daily/${data.id}/delete`));
+
                                 try {
                                     const response = await this.getDetails(data.id);
 
@@ -385,8 +407,6 @@
                 detailTable() {
                     return app.buttonDataTable('#detailTable', {
                         info: false,
-                        scrollX: false,
-                        scrollY: '460px',
                         columns: [
                             {
                                 title: 'Kode Produk',
@@ -475,7 +495,7 @@
                             type: "patch",
                             url: app.url(`/stock-opnames/daily/${id}/active`),
                             data: {
-                                _token: this.csrfToken,
+                                _token: app.csrfToken,
                             },
                             dataType: "json",
                             success: (response) => resolve(response),
@@ -499,6 +519,22 @@
                         });
                     });
                 }
+
+                /**
+                 * Hapus permanen stok harian.
+                 */
+                deleteStock() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "delete",
+                            url: this.formDelete.attr('action'),
+                            data: this.formDelete.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
             }
 
             window.service = new Service();
@@ -506,6 +542,11 @@
 
         {{-- Global script --}}
         <script>
+            "use strict"
+
+            /**
+             * Request data stok harian setelah dokumen selesai dimuat.
+             */
             $(document).ready(async function () {
                 const params = new URLSearchParams(window.location.search);
                 const fromDate = params.get('from_date');
@@ -550,9 +591,7 @@
              */
             service.formFilter.submit(async function (e) { 
                 e.preventDefault();
-
                 app.showPreloader();
-
                 service.detailTable.clear().draw();
                 service.buttonEditStock.attr('disabled', 'disabled');
                 service.buttonEditStock.data('id', '');
@@ -602,8 +641,8 @@
             service.buttonActiveStock.click(function (e) { 
                 e.preventDefault();
 
-                const title = 'Jadikan Stok Aktif';
-                const message = 'Stok hasil stock opname ini akan ditetapkan sebagai stok aktif produk. Nilai stok aktif saat ini akan digantikan dengan stok hasil opname. <br>Anda yakin ingin menlanjutkan?';
+                const title = 'Jadikan Stok Aktif Produk';
+                const message = 'Hasil stock opname ini akan ditetapkan sebagai stok aktif produk. Nilai stok aktif saat ini akan digantikan dengan hasil stok opname ini. <br>Anda yakin ingin menlanjutkan?';
                 
                 app.confirm(title, message, async (result) => {
                     if (!result) {
@@ -658,6 +697,38 @@
                 } finally {
                     app.hidePreloader();
                 }
+            });
+
+            /**
+             * Hapus permanen stok harian
+             */
+            service.buttonDeleteStock.click(function (e) { 
+                e.preventDefault();
+                
+                app.delete('Stok', async (deleted) => {
+                    if (!deleted) return;
+
+                    app.showPreloader();
+                    
+                    try {
+                        const response = await service.deleteStock();
+
+                        if (response.status === 200) {
+                            const summaries = await service.getSummaries();
+
+                            service.detailTable.clear().draw();
+                            service.summaryTable.clear().draw();
+                            service.summaryTable.rows.add(summaries.data).draw();
+
+                            app.alert('success', response.message);
+                        }
+                    } catch (error) {
+                        app.allert('danger', error.message);
+                    } {
+                        scrollTo({ top: 0, behavior: 'smooth' });
+                        app.hidePreloader();
+                    }
+                });
             });
         </script>
     </x-slot:script>

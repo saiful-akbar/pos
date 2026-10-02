@@ -55,4 +55,14 @@ interface DailyStockOpnameDetailRepositoryInterface
      * Menghitung total quantity berdasarkan id header (daily_stock_opnames)
      */
     public function sumQuantityByDailyStockOpnameId(string $dailyStockOpnameId): int|float;
+
+    /**
+     * Soft delete by daily stock opname id.
+     */
+    public function removeByDailyStockOpnameId(string $dailyStockOpnameId): int;
+
+    /**
+     * Hapus permanen berdasarkan daily stock opname id.
+     */
+    public function deleteByDailyStockOpnameId(string $dailyStockOpnameId): int;
 }

@@ -7,10 +7,12 @@ namespace App\Http\Controllers;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\StockOpname\UseCases\CreateDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\CreateMonthlyStockOpname;
+use App\Application\StockOpname\UseCases\DeleteDailyStockOpname;
 use App\Application\StockOpname\UseCases\DeleteDailyStockOpnameDetail;
 use App\Application\StockOpname\UseCases\FindDailyStockOpnameById;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameByDate;
 use App\Application\StockOpname\UseCases\GetDailyStockOpnameDetailByHeaderId;
+use App\Application\StockOpname\UseCases\RemoveDailyStockOpname;
 use App\Application\StockOpname\UseCases\SetActiveStock;
 use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Exports\StockOpnames\TemplateInputDailyStockOpnameExport;
@@ -74,7 +76,7 @@ class DailyStockOpnameController extends Controller
             filePath: $file
         );
 
-        return to_route('stockOpnames.daily')->with('alert', [
+        return to_route('stockOpnames.daily', $request->query())->with('alert', [
             'status' => 'success',
             'message' => 'Import stock opname harian berhasil.',
         ]);
@@ -216,5 +218,40 @@ class DailyStockOpnameController extends Controller
             status: 201,
             message: 'Stok opname berhasil dijadikan sebagai stok bulanan.'
         );
+    }
+
+    /**
+     * Soft delete.
+     */
+    public function remove(Request $request, string $id): JsonResponse
+    {
+        if (! $request->ajax()) {
+            return abort(404);
+        }
+
+        app(RemoveDailyStockOpname::class)->execute($id);
+
+        return $this->jsonResponse(
+            message: 'Stok opname harian berhasil dihapus.'
+        );
+    }
+
+    /**
+     * Permanently delete.
+     */
+    public function delete(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        app(DeleteDailyStockOpname::class)->execute($id);
+
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                message: 'Stok opname harian berhasil dihapus permanen.'
+            );
+        }
+
+        return to_route('stockOpnames.daily', $request->query())->with('alert', [
+            'status' => 'success',
+            'message' => 'Stok opname harian berhasil dihapus permanen.',
+        ]);
     }
 }
