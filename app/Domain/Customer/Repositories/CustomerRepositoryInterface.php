@@ -4,42 +4,34 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Repositories;
 
-use App\Application\Customer\DTOs\CreateCustomerDTO;
-use App\Application\Customer\DTOs\UpdateCustomerDTO;
+use App\Application\Customer\DTOs\CustomerDTO;
 use App\Domain\Customer\Entities\CustomerEntity;
 use Illuminate\Database\Eloquent\Builder;
 
 interface CustomerRepositoryInterface
 {
     /**
-     * Mengambil daftar customer dalam format query builder.
+     * Mengambil daftar dalam format query builder.
      */
-    public function getQuery(?bool $active = null): Builder;
+    public function getQuery(): Builder;
 
     /**
-     * Mengambil data customer berdasarkan id.
+     * Mengambil data berdasarkan id
      */
     public function findById(string $id): ?CustomerEntity;
 
     /**
-     * Membuat customer baru
+     * Menambah (create)
      */
-    public function create(CreateCustomerDTO $dto): CustomerEntity;
+    public function create(CustomerDTO $value): CustomerEntity;
 
     /**
-     * Update customer.
+     * Update
      */
-    public function update(UpdateCustomerDTO $dto): void;
+    public function update(string $id, CustomerDTO $value): int;
 
     /**
-     * Mengambil semua data customer
-     *
-     * @return CustomerEntity[]
+     * Remove (soft delete).
      */
-    public function getAll(): array;
-
-    /**
-     * Soft delete
-     */
-    public function removeById(string $id): int;
+    public function remove(string $id): int;
 }

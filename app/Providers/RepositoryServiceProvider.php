@@ -13,7 +13,6 @@ use App\Application\Category\UseCases\RemoveCategory;
 use App\Application\Category\UseCases\UpdateCategory;
 use App\Application\Customer\UseCases\CreateCustomer;
 use App\Application\Customer\UseCases\FindCustomerById;
-use App\Application\Customer\UseCases\GetAllCustomers;
 use App\Application\Customer\UseCases\GetCustomersTable;
 use App\Application\Customer\UseCases\RemoveCustomer;
 use App\Application\Customer\UseCases\UpdateCustomer;
@@ -389,13 +388,12 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Customer
         CustomerRepositoryInterface::class => [
-            CreateCustomer::class => CustomerRepository::class,
-            UpdateCustomer::class => CustomerRepository::class,
             GetCustomersTable::class => CustomerRepository::class,
             FindCustomerById::class => CustomerRepository::class,
-            GetAllCustomers::class => CustomerRepository::class,
-            CreateSale::class => CustomerRepository::class,
+            CreateCustomer::class => CustomerRepository::class,
+            UpdateCustomer::class => CustomerRepository::class,
             RemoveCustomer::class => CustomerRepository::class,
+            CreateSale::class => CustomerRepository::class,
         ],
 
         // Supplier

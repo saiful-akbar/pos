@@ -8,10 +8,10 @@ use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Customer\Entities\CustomerEntity;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class RemoveCustomer
 {
@@ -25,37 +25,29 @@ class RemoveCustomer
     ) {}
 
     /**
-     * Execute method.
+     * Execute.
      */
-    public function execute(string $id): int
+    public function execute(CustomerEntity $customer): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $customer = $this->customerRepository->findById($id);
+            $this->customerRepository->remove(
+                id: $customer->id,
+            );
 
-            if ($customer === null) {
-                throw ValidationException::withMessages([
-                    'message' => 'Data pelanggan tidak ditemukan.',
-                ]);
-            }
-
-            $removed = $this->customerRepository->removeById($customer->id);
-
-            $this->activityRepository->create(new CreateActivityDTO(
+            $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Menghapus pelanggan (customer)',
+                logName: 'Menghapus (soft delete) data pelanggan',
                 event: EventActivityEnum::REMOVED,
                 attributeChanges: new AttributeActivityDTO(
                     old: $customer->toArray(),
                 )
             ));
 
-            DB::connection(pos_connection())->commit();
-
-            return $removed;
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

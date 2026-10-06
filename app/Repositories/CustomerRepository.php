@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Customer\DTOs\CreateCustomerDTO;
-use App\Application\Customer\DTOs\UpdateCustomerDTO;
+use App\Application\Customer\DTOs\CustomerDTO;
 use App\Base\Repository;
 use App\Domain\Customer\Entities\CustomerEntity;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
@@ -24,23 +23,13 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
-     * Mengambil daftar customer dalam format query builder.
+     * Mengambil daftar dalam format query builder.
      */
     #[Override]
-    public function getQuery(?bool $active = null): Builder
+    public function getQuery(): Builder
     {
         try {
-            $query = $this->model->query();
-
-            if ($active === true) {
-                $query->whereNotNull('deleted_at');
-            }
-
-            if ($active === false) {
-                $query->whereNull('deleted_at');
-            }
-
-            return $query;
+            return $this->model->query();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -52,36 +41,20 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
-     * Mengambil data customer berdasarkan id.
+     * Mengambil data berdasarkan id
      */
     #[Override]
     public function findById(string $id): ?CustomerEntity
     {
         try {
-            $data = $this->model->query()->find($id);
+            $result = $this->model->query()->find($id);
 
-            return $data === null ? null : $this->mapModelToCustomerEntity($data);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
+            if ($result === null) {
+                return null;
+            }
 
-            throw $e;
-        }
-    }
-
-    /**
-     * Membuat customer baru
-     */
-    #[Override]
-    public function create(CreateCustomerDTO $dto): CustomerEntity
-    {
-        try {
             return $this->mapModelToCustomerEntity(
-                model: $this->model->query()->create(
-                    attributes: $dto->toArray()
-                )
+                model: $result,
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -94,15 +67,17 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
-     * Update customer.
+     * Menambah (create)
      */
     #[Override]
-    public function update(UpdateCustomerDTO $dto): void
+    public function create(CustomerDTO $value): CustomerEntity
     {
         try {
-            $this->model->query()
-                ->where('id', '=', $dto->id)
-                ->update($dto->toArray());
+            $result = $this->model->query()->create($value->toArray());
+
+            return $this->mapModelToCustomerEntity(
+                model: $result,
+            );
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -114,18 +89,15 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
-     * Mengambil semua data unit
-     *
-     * @return CustomerEntity[]
+     * Update
      */
     #[Override]
-    public function getAll(): array
+    public function update(string $id, CustomerDTO $value): int
     {
         try {
             return $this->model->query()
-                ->get()
-                ->map(fn ($customer) => $this->mapModelToCustomerEntity($customer))
-                ->toArray();
+                ->where('id', $id)
+                ->update($value->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -137,10 +109,10 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
-     * Soft delete
+     * Remove (soft delete).
      */
     #[Override]
-    public function removeById(string $id): int
+    public function remove(string $id): int
     {
         try {
             return $this->model->query()
@@ -157,7 +129,7 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
     }
 
     /**
-     * Pemetaan model ke CustomerEntity.
+     * Pemetaan class Modal ke class CustomerEntity.
      */
     private function mapModelToCustomerEntity(Customer $model): CustomerEntity
     {
@@ -166,9 +138,11 @@ class CustomerRepository extends Repository implements CustomerRepositoryInterfa
             name: $model->name,
             phoneNumber: $model->phone_number,
             address: $model->address,
+            discount: parse_float($model->discount),
+            isActive: $model->is_active === 1,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
+            deletedAt: $model->deleted_at
         );
     }
 }

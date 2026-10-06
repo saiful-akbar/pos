@@ -12,13 +12,17 @@ class FindCustomerById
     /**
      * Create a new class instance.
      */
-    public function __construct(private CustomerRepositoryInterface $repository) {}
+    public function __construct(
+        private CustomerRepositoryInterface $customerRepository
+    ) {}
 
     /**
-     * Execute method.
+     * Execute.
      */
     public function execute(string $id): ?CustomerEntity
     {
-        return $this->repository->findById($id);
+        return $this->customerRepository->findById(
+            id: $id,
+        );
     }
 }

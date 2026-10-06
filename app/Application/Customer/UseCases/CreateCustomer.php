@@ -6,7 +6,7 @@ namespace App\Application\Customer\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Customer\DTOs\CreateCustomerDTO;
+use App\Application\Customer\DTOs\CustomerDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Customer\Entities\CustomerEntity;
@@ -26,29 +26,27 @@ class CreateCustomer
     ) {}
 
     /**
-     * Execute method.
+     * Execute.
      */
-    public function execute(CreateCustomerDTO $dto): CustomerEntity
+    public function execute(CustomerDTO $value): CustomerEntity
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $customer = $this->customerRepository->create($dto);
+            $created = $this->customerRepository->create(value: $value);
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat customer baru',
+                logName: 'Membuat (insert) pelanggan baru',
                 event: EventActivityEnum::CREATED,
-                attributeChanges: new AttributeActivityDTO(
-                    attributes: $customer->toArray(),
-                ),
+                attributeChanges: new AttributeActivityDTO(attributes: $created->toArray())
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
 
-            return $customer;
+            return $created;
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

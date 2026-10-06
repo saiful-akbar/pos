@@ -23,7 +23,7 @@ class UpdateSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:200', "unique:suppliers,name,{$this->id},id"],
+            'name' => ['required', 'string', 'max:100', "unique:suppliers,name,{$this->id},id"],
             'phone_number' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:500'],
             'is_active' => ['required', 'boolean'],

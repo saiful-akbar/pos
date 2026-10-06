@@ -105,6 +105,20 @@ Route::middleware('auth')->group(function (): void {
                 Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
             });
 
+        Route::controller(CustomerController::class)
+            ->middleware('throttle:global')
+            ->name('.customers')
+            ->prefix('customers')
+            ->group(function (): void {
+                $module = 'module:masters.customers';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/export', 'export')->name('.export')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::patch('/{id}', 'update')->name('.update')->middleware("$module,update");
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
+            });
+
         Route::controller(CategoryController::class)
             ->middleware('throttle:global')
             ->name('.categories')
@@ -157,20 +171,6 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
                 Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.products,remove');
-            });
-
-        Route::controller(CustomerController::class)
-            ->middleware('throttle:global')
-            ->name('.customers')
-            ->prefix('customers')
-            ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.customers,read');
-                Route::post('/', 'store')->name('.store')->middleware('module:master.customers,create');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.customers,create');
-                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.customers,read');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.customers,update');
-                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.customers,update');
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.customers,remove');
             });
     });
 

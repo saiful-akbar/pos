@@ -22,18 +22,17 @@ class UpdateCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $connection = pos_connection();
-        $id = $this->id;
-
         return [
             'name' => ['required', 'string', 'max:100'],
-            'phone_number' => ['required', 'string', 'max:20', "unique:$connection.customers,phone_number,$id,id"],
-            'address' => ['nullable', 'string', 'max:1000'],
+            'phone_number' => ['nullable', 'string', 'max:20', "unique:customers,phone_number,{$this->id},id"],
+            'address' => ['nullable', 'string', 'max:500'],
+            'discount' => ['nullable', 'numeric', 'min:0', 'max:999'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 
     /**
-     * Merubah nama attribut untuk pesan error.
+     * Mengganti nama attribute untuk pesan error.
      */
     #[Override]
     public function attributes(): array
@@ -42,6 +41,8 @@ class UpdateCustomerRequest extends FormRequest
             'name' => 'name',
             'phone_number' => 'nomor telepon',
             'address' => 'alamat',
+            'discount' => 'diskon',
+            'is_active' => 'status keaktifan',
         ];
     }
 }

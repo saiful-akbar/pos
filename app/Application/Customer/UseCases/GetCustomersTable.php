@@ -13,13 +13,15 @@ class GetCustomersTable
     /**
      * Create a new class instance.
      */
-    public function __construct(private CustomerRepositoryInterface $repository) {}
+    public function __construct(
+        private CustomerRepositoryInterface $customerRepository
+    ) {}
 
     /**
-     * Execute method.
+     * Execute method
      */
     public function execute(): JsonResponse
     {
-        return DataTables::eloquent($this->repository->getQuery())->toJson();
+        return DataTables::eloquent($this->customerRepository->getQuery())->toJson();
     }
 }

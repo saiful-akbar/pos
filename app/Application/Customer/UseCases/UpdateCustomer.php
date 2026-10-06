@@ -6,9 +6,10 @@ namespace App\Application\Customer\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Customer\DTOs\UpdateCustomerDTO;
+use App\Application\Customer\DTOs\CustomerDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Customer\Entities\CustomerEntity;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -25,34 +26,31 @@ class UpdateCustomer
     ) {}
 
     /**
-     * Execute method.
+     * Execute.
      */
-    public function execute(UpdateCustomerDTO $dto): void
+    public function execute(CustomerEntity $customer, CustomerDTO $value): void
     {
-        $customer = app(FindCustomerById::class)->execute(id: $dto->id);
-
-        if ($customer === null) {
-            abort(404);
-        }
-
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $this->customerRepository->update(dto: $dto);
+            $this->customerRepository->update(
+                id: $customer->id,
+                value: $value,
+            );
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Memperbarui customer produk pada id: {$dto->id}",
+                logName: 'Memperbarui (update) data pelanggan',
                 event: EventActivityEnum::UPDATED,
                 attributeChanges: new AttributeActivityDTO(
                     old: $customer->toArray(),
-                    attributes: $dto->toArray(),
-                ),
+                    attributes: $value->toArray(),
+                )
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,
