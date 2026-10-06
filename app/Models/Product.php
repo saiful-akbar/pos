@@ -147,4 +147,14 @@ class Product extends Model
     {
         return $this->hasMany(MonthlyStockOpnameDetail::class, 'product_id', 'id');
     }
+
+    /**
+     * Get all of the prices for the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function prices(): HasMany
+    {
+        return $this->hasMany(Price::class, 'product_id', 'id');
+    }
 }

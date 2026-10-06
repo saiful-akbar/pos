@@ -73,4 +73,14 @@ class Unit extends Model
     {
         return $this->hasMany(Product::class, 'product_id', 'id');
     }
+
+    /**
+     * Get all of the prices for the Unit
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function prices(): HasMany
+    {
+        return $this->hasMany(Price::class, 'unit_id', 'id');
+    }
 }
