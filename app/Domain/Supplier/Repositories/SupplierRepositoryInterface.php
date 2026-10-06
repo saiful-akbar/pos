@@ -4,54 +4,34 @@ declare(strict_types=1);
 
 namespace App\Domain\Supplier\Repositories;
 
-use App\Application\Supplier\DTOs\CreateSupplierDTO;
-use App\Application\Supplier\DTOs\UpdateSupplierDTO;
+use App\Application\Supplier\DTOs\SupplierDTO;
 use App\Domain\Supplier\Entities\SupplierEntity;
 use Illuminate\Database\Eloquent\Builder;
 
 interface SupplierRepositoryInterface
 {
     /**
-     * Mengambil daftar supplier dalam format query builder.
+     * Mengambil daftar dengan response query builder.
      */
     public function getQuery(): Builder;
 
     /**
-     * Mengambil data supplier berdasarkan id.
+     * Mengambil data berdasarkan id.
      */
     public function findById(string $id): ?SupplierEntity;
 
     /**
-     * Membuat supplier baru
+     * Insert data
      */
-    public function create(string $code, CreateSupplierDTO $dto): SupplierEntity;
+    public function create(SupplierDTO $value): SupplierEntity;
 
     /**
-     * Update supplier.
+     * Update data
      */
-    public function update(UpdateSupplierDTO $dto): void;
+    public function update(string $id, SupplierDTO $value): int;
 
     /**
-     * Mengambil semua data supplier
-     *
-     * @return SupplierEntity[]
+     * Soft delete
      */
-    public function getAll(): array;
-
-    /**
-     * Mengambil nilai code tertinggi.
-     */
-    public function findMaxCode(): ?string;
-
-    /**
-     * Mengambil daftar supplier yang masih aktif.
-     *
-     * @return SupplierEntity[]
-     */
-    public function getActive(): array;
-
-    /**
-     * Soft delete supplier.
-     */
-    public function removeById(string $id): int;
+    public function remove(string $id): int;
 }

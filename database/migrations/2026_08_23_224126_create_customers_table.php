@@ -22,14 +22,13 @@ return new class() extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('name', 100);
-            $table->string('phone_number', 20)->nullable();
+            $table->string('name', 100)->index();
+            $table->string('phone_number', 20)->unique()->nullable();
             $table->text('address')->nullable();
+            $table->decimal('discount', 5, 2)->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-
-            $table->index('name');
-            $table->unique('phone_number');
         });
     }
 

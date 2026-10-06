@@ -109,10 +109,7 @@ use App\Application\StockOpname\UseCases\UpdateMonthlyStock;
 use App\Application\StockOpname\UseCases\UpdateQuantityDailyStockOpnameDetail;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
-use App\Application\Supplier\UseCases\GenerateSupplierCode;
-use App\Application\Supplier\UseCases\GetActiveSuppliers;
-use App\Application\Supplier\UseCases\GetAllSuppliers;
-use App\Application\Supplier\UseCases\GetSuppliersTable;
+use App\Application\Supplier\UseCases\GetSupplierTable;
 use App\Application\Supplier\UseCases\RemoveSupplier;
 use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Application\Unit\UseCases\CreateUnit;
@@ -212,11 +209,6 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateCustomer::class => ErrorLogRepository::class,
             GetCustomersTable::class => ErrorLogRepository::class,
             FindCustomerById::class => ErrorLogRepository::class,
-            GetSuppliersTable::class => ErrorLogRepository::class,
-            CreateSupplier::class => ErrorLogRepository::class,
-            UpdateSupplier::class => ErrorLogRepository::class,
-            FindSupplierById::class => ErrorLogRepository::class,
-            GetAllSuppliers::class => ErrorLogRepository::class,
             UpdateSetting::class => ErrorLogRepository::class,
             CreatePurchaseCart::class => ErrorLogRepository::class,
             CreatePurchaseCartDetail::class => ErrorLogRepository::class,
@@ -247,7 +239,6 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateMonthlyStockOpname::class => ErrorLogRepository::class,
             UpdateMonthlyStock::class => ErrorLogRepository::class,
             RemoveUser::class => ErrorLogRepository::class,
-            RemoveSupplier::class => ErrorLogRepository::class,
             RemoveCustomer::class => ErrorLogRepository::class,
             RemoveCategory::class => ErrorLogRepository::class,
             RemoveUnit::class => ErrorLogRepository::class,
@@ -257,6 +248,9 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveSaleReturn::class => ErrorLogRepository::class,
             RemoveDailyStockOpname::class => ErrorLogRepository::class,
             DeleteDailyStockOpname::class => ErrorLogRepository::class,
+            CreateSupplier::class => ErrorLogRepository::class,
+            UpdateSupplier::class => ErrorLogRepository::class,
+            RemoveSupplier::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -276,11 +270,6 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateCustomer::class => ActivityLogRepository::class,
             GetCustomersTable::class => ActivityLogRepository::class,
             FindCustomerById::class => ActivityLogRepository::class,
-            GetSuppliersTable::class => ActivityLogRepository::class,
-            CreateSupplier::class => ActivityLogRepository::class,
-            UpdateSupplier::class => ActivityLogRepository::class,
-            FindSupplierById::class => ActivityLogRepository::class,
-            GetAllSuppliers::class => ActivityLogRepository::class,
             UpdateSetting::class => ActivityLogRepository::class,
             CreatePurchaseCart::class => ActivityLogRepository::class,
             SavePurchase::class => ActivityLogRepository::class,
@@ -302,7 +291,6 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateMonthlyStockOpname::class => ActivityLogRepository::class,
             UpdateMonthlyStock::class => ActivityLogRepository::class,
             RemoveUser::class => ActivityLogRepository::class,
-            RemoveSupplier::class => ActivityLogRepository::class,
             RemoveCustomer::class => ActivityLogRepository::class,
             RemoveCategory::class => ActivityLogRepository::class,
             RemoveUnit::class => ActivityLogRepository::class,
@@ -312,6 +300,9 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveSaleReturn::class => ActivityLogRepository::class,
             RemoveDailyStockOpname::class => ActivityLogRepository::class,
             DeleteDailyStockOpname::class => ActivityLogRepository::class,
+            CreateSupplier::class => ActivityLogRepository::class,
+            UpdateSupplier::class => ActivityLogRepository::class,
+            RemoveSupplier::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -409,14 +400,11 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Supplier
         SupplierRepositoryInterface::class => [
-            GetSuppliersTable::class => SupplierRepository::class,
+            GetSupplierTable::class => SupplierRepository::class,
             CreateSupplier::class => SupplierRepository::class,
             UpdateSupplier::class => SupplierRepository::class,
-            FindSupplierById::class => SupplierRepository::class,
-            GetAllSuppliers::class => SupplierRepository::class,
-            GenerateSupplierCode::class => SupplierRepository::class,
-            GetActiveSuppliers::class => SupplierRepository::class,
             RemoveSupplier::class => SupplierRepository::class,
+            FindSupplierById::class => SupplierRepository::class,
         ],
 
         // Discount

@@ -63,14 +63,11 @@ class Product extends Model
      */
     protected $fillable = [
         'category_id',
-        'unit_id',
         'code',
-        'barcode',
         'name',
         'image',
         'purchase_price',
         'selling_price',
-        'discount',
         'minimum_stock',
         'current_stock',
         'is_active',
@@ -82,14 +79,6 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
-    }
-
-    /**
-     * Get the unit that owns the Product
-     */
-    public function unit(): BelongsTo
-    {
-        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 
     /**
@@ -150,8 +139,6 @@ class Product extends Model
 
     /**
      * Get all of the prices for the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function prices(): HasMany
     {

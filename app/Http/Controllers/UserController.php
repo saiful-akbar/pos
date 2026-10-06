@@ -32,7 +32,7 @@ class UserController extends Controller
 
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
-            route: 'master.users',
+            route: 'masters.users',
         );
 
         return view('pages.users.index', compact('access'));
@@ -69,7 +69,7 @@ class UserController extends Controller
             ),
         );
 
-        return to_route('master.users.create')->with('alert', [
+        return to_route('masters.users.create')->with('alert', [
             'status' => 'success',
             'message' => 'User berhasil ditambahkan.',
         ]);
@@ -109,7 +109,7 @@ class UserController extends Controller
             user: $user,
         );
 
-        return to_route('master.users.edit', ['id' => $user->id])->with('alert', [
+        return to_route('masters.users.edit', ['id' => $user->id])->with('alert', [
             'status' => 'success',
             'message' => 'User berhasil diperbarui.',
         ]);

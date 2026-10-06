@@ -6,7 +6,7 @@
                     <x-slot:action>
                         <div class="row justify-content-end">
                             <div class="col-12 col-lg-5 col-xl-3">
-                                <a role="button" href="{{ route('master.roles.create') }}" class="btn btn-secondary w-100">
+                                <a role="button" href="{{ route('masters.roles.create') }}" class="btn btn-secondary w-100">
                                     <x-icon class="me-1">add</x-icon>
                                     <span>Tambah</span>
                                 </a>
@@ -77,8 +77,10 @@
                     searchable: false,
                     orderable: false,
                     render: (data) => {
+                        const url = app.url(`/masters/roles/${data}/edit`);
+
                         return `
-                            <a role="button" class="btn btn-light" href="${app.baseUrl}/master/roles/${data}/edit" title="Edit">
+                            <a role="button" class="btn btn-light" href="${url}" title="Edit">
                                 <span class="material-symbols-outlined fs-6">edit</span>
                             </a>
                         `;
@@ -89,7 +91,7 @@
             const table = app.dataTable('#roleTable', {
                 columns,
                 serverSide: true,
-                ajax: "{{ route('master.roles') }}",
+                ajax: "{{ route('masters.roles') }}",
                 fixedColumns: {
                     start: 0,
                     end: updateAccess ? 1 : 0,

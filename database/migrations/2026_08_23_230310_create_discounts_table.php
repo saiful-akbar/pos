@@ -22,10 +22,10 @@ return new class() extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->decimal('discount', 5, 0);
-            $table->string('name');
+            $table->decimal('discount', 5, 2);
             $table->date('effective_date');
             $table->date('expiration_date')->nullable();
+            $table->text('description');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
-use App\Application\Supplier\DTOs\CreateSupplierDTO;
-use App\Application\Supplier\DTOs\UpdateSupplierDTO;
+use App\Application\Supplier\DTOs\SupplierDTO;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
-use App\Application\Supplier\UseCases\GetSuppliersTable;
+use App\Application\Supplier\UseCases\GetSupplierTable;
 use App\Application\Supplier\UseCases\RemoveSupplier;
 use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Exports\Suppliers\SupplierExport;
 use App\Http\Requests\Suppliers\StoreSupplierRequest;
 use App\Http\Requests\Suppliers\UpdateSupplierRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -25,97 +24,91 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class SupplierController extends Controller
 {
     /**
-     * Menampilkan halaman daftar supplier.
+     * module route
+     */
+    private string $moduleRoute = 'masters.suppliers';
+
+    /**
+     * Menampilkan halaman utama.
      */
     public function index(Request $request): JsonResponse|View
     {
         if ($request->ajax()) {
-            return app(GetSuppliersTable::class)->execute();
+            return app(GetSupplierTable::class)->execute();
         }
 
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
-            route: 'master.suppliers',
+            route: $this->moduleRoute,
         );
 
-        return view('pages.suppliers.index', compact('access'));
-    }
-
-    /**
-     * Menampilkan halaman tambah data supplier
-     */
-    public function create(): View
-    {
-        return view('pages.suppliers.create');
-    }
-
-    /**
-     * Membuat (menyimpan) data supplier baru
-     */
-    public function store(StoreSupplierRequest $request): RedirectResponse
-    {
-        app(CreateSupplier::class)->execute(
-            dto: new CreateSupplierDTO(
-                name: $request->validated('name'),
-                phoneNumber: $request->validated('phone_number'),
-                address: $request->validated('address'),
-                notes: $request->validated('notes'),
-                isActive: $request->boolean('status'),
-            ),
+        return view(
+            view: 'pages.suppliers.index',
+            data: compact('access'),
         );
-
-        return to_route('master.suppliers.create')->with('alert', [
-            'status' => 'success',
-            'message' => 'Data pemasok baru berhasil ditambahkan.',
-        ]);
     }
 
     /**
-     * Menampilkan halaman edit data supplier.
+     * Membuat (menambah data)
      */
-    public function edit(string $id): View
+    public function store(StoreSupplierRequest $request): JsonResponse
     {
-        $supplier = app(FindSupplierById::class)->execute(id: $id);
-
-        if ($supplier === null) {
+        if (! $request->ajax()) {
             abort(404);
         }
 
-        return view('pages.suppliers.edit', compact('supplier'));
-    }
-
-    /**
-     * Memperbarui data supplier.
-     */
-    public function update(UpdateSupplierRequest $request, string $id): RedirectResponse
-    {
-        app(UpdateSupplier::class)->execute(
-            dto: new UpdateSupplierDTO(
-                id: $id,
+        app(CreateSupplier::class)->execute(
+            value: new SupplierDTO(
                 name: $request->validated('name'),
                 phoneNumber: $request->validated('phone_number'),
                 address: $request->validated('address'),
-                notes: $request->validated('notes'),
-                isActive: $request->boolean('status'),
+                isActive: $request->boolean('is_active'),
             ),
         );
 
-        return to_route('master.suppliers.edit', ['id' => $id])->with('alert', [
-            'status' => 'success',
-            'message' => 'Data pemasok berhasil diperbarui.',
-        ]);
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Data pemasok berhasil ditambahkan.',
+        );
     }
 
     /**
-     * Download template import excel
+     * Memperbarui (update) data
      */
-    public function exportExcel(): BinaryFileResponse
+    public function update(UpdateSupplierRequest $request, string $id): JsonResponse
     {
-        return Excel::download(new SupplierExport(), 'pemasok.xlsx');
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $supplier = app(FindSupplierById::class)->execute(
+            id: $id,
+        );
+
+        if ($supplier === null) {
+            throw ValidationException::withMessages(messages: [
+                'name' => 'Data pemasok tidak ditemukan.',
+            ]);
+        }
+
+        app(UpdateSupplier::class)->execute(
+            supplier: $supplier,
+            value: new SupplierDTO(
+                name: $request->validated('name'),
+                phoneNumber: $request->validated('phone_number'),
+                address: $request->validated('address'),
+                isActive: $request->boolean('is_active'),
+            ),
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Data pemasok berhasil diperbarui.',
+        );
     }
 
     /**
-     * Soft delete supplier.
+     * Hapus data (soft delete).
      */
     public function remove(Request $request, string $id): JsonResponse
     {
@@ -123,10 +116,29 @@ class SupplierController extends Controller
             abort(404);
         }
 
-        app(RemoveSupplier::class)->execute($id);
+        $supplier = app(FindSupplierById::class)->execute(
+            id: $id,
+        );
+
+        if ($supplier === null) {
+            abort(404);
+        }
+
+        app(RemoveSupplier::class)->execute(
+            supplier: $supplier,
+        );
 
         return $this->jsonResponse(
+            status: 200,
             message: 'Data pemasok berhasil dihapus.'
         );
+    }
+
+    /**
+     * Export excel
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new SupplierExport(), 'pemasok.xlsx');
     }
 }

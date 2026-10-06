@@ -65,12 +65,14 @@ class Customer extends Model
         'name',
         'phone_number',
         'address',
+        'discount',
+        'is_active',
     ];
 
     /**
      * Get all of the comments for the Customer
      */
-    public function comments(): HasMany
+    public function sales(): HasMany
     {
         return $this->hasMany(Sale::class, 'customer_id', 'id');
     }

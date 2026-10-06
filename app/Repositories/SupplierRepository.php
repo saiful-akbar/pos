@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Supplier\DTOs\CreateSupplierDTO;
-use App\Application\Supplier\DTOs\UpdateSupplierDTO;
+use App\Application\Supplier\DTOs\SupplierDTO;
 use App\Base\Repository;
 use App\Domain\Supplier\Entities\SupplierEntity;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Override;
 
 class SupplierRepository extends Repository implements SupplierRepositoryInterface
@@ -25,7 +23,7 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
-     * Mengambil daftar supplier dalam format query builder.
+     * Mengambil daftar dengan response query builder.
      */
     #[Override]
     public function getQuery(): Builder
@@ -43,15 +41,19 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
-     * Mengambil data supplier berdasarkan id.
+     * Mengambil data berdasarkan id.
      */
     #[Override]
     public function findById(string $id): ?SupplierEntity
     {
         try {
-            $data = $this->model->query()->find($id);
+            $result = $this->model->query()->find($id);
 
-            return $data === null ? null : $this->mapModelToSupplierEntity($data);
+            if ($result === null) {
+                return null;
+            }
+
+            return $this->mapModelToSupplierEntity(model: $result);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -63,18 +65,17 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
-     * Membuat supplier baru
+     * Insert data
      */
     #[Override]
-    public function create(string $code, CreateSupplierDTO $dto): SupplierEntity
+    public function create(SupplierDTO $value): SupplierEntity
     {
         try {
-            $data = $this->model->query()->create([
-                'code' => $code,
-                ...$dto->toArray(),
-            ]);
+            $result = $this->model->query()->create($value->toArray());
 
-            return $this->mapModelToSupplierEntity($data);
+            return $this->mapModelToSupplierEntity(
+                model: $result
+            );
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -86,38 +87,15 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
-     * Update Supplier.
+     * Update data
      */
     #[Override]
-    public function update(UpdateSupplierDTO $dto): void
-    {
-        try {
-            $this->model->query()
-                ->where('id', '=', $dto->id)
-                ->update($dto->toArray());
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Mengambil semua data supplier
-     *
-     * @return SupplierEntity[]
-     */
-    #[Override]
-    public function getAll(): array
+    public function update(string $id, SupplierDTO $value): int
     {
         try {
             return $this->model->query()
-                ->get()
-                ->map(fn ($supplier) => $this->mapModelToSupplierEntity($supplier))
-                ->toArray();
+                ->where('id', $id)
+                ->update($value->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -129,58 +107,10 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
-     * Mengambil nilai code tertinggi.
+     * Soft delete
      */
     #[Override]
-    public function findMaxCode(): ?string
-    {
-        try {
-            return $this->model->query()
-                ->withTrashed()
-                ->whereYear('created_at', '=', DB::raw('year(current_date)'))
-                ->orderBy('code', 'desc')
-                ->lockForUpdate()
-                ->value('code');
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Mengambil daftar supplier yang masih aktif.
-     *
-     * @return SupplierEntity[]
-     */
-    #[Override]
-    public function getActive(): array
-    {
-        try {
-            return $this->model->query()
-                ->where('is_active', 1)
-                ->orderBy('name', 'asc')
-                ->get()
-                ->map(fn ($supplier) => $this->mapModelToSupplierEntity($supplier))
-                ->toArray();
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Soft delete supplier.
-     */
-    #[Override]
-    public function removeById(string $id): int
+    public function remove(string $id): int
     {
         try {
             return $this->model->query()
@@ -197,21 +127,19 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
-     * Pemetaan model ke SupplierEntity.
+     * Pemetaan class Model ke class SupplierEntity.
      */
     private function mapModelToSupplierEntity(Supplier $model): SupplierEntity
     {
         return new SupplierEntity(
             id: $model->id,
-            code: $model->code,
             name: $model->name,
             phoneNumber: $model->phone_number,
             address: $model->address,
-            notes: $model->notes,
             isActive: $model->is_active === 1,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
+            deletedAt: $model->deleted_at
         );
     }
 }

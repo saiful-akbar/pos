@@ -10,6 +10,8 @@
     $class = [
         'form-control',
         'is-invalid' => $error,
+        'form-control-lg' => $size === 'lg',
+        'form-control-sm' => $size === 'sm',
     ]
 @endphp
 

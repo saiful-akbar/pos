@@ -22,11 +22,9 @@ return new class() extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('code', 10)->unique();
-            $table->string('name', 100);
+            $table->string('name', 100)->unique();
             $table->string('phone_number', 20)->nullable();
             $table->text('address')->nullable();
-            $table->text('notes')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

@@ -21,8 +21,8 @@ class App {
         search: "",
         searchPlaceholder: "Cari...",
         lengthMenu: "_MENU_",
-        info: "Baris _START_ - _END_ dari _TOTAL_",
-        infoEmpty: "Baris 0 - 0 dari 0",
+        info: "_START_ - _END_ dari _TOTAL_",
+        infoEmpty: "0 - 0 dari 0",
         infoFiltered: "",
         zeroRecords: "Tidak ditemukan data yang sesuai",
         emptyTable: "Tidak ada data yang tersedia",
@@ -162,10 +162,10 @@ class App {
    */
   dateTimeFormat(timestamp) {
     const now = new Date(timestamp);
-    const day = now.getDate();
-    const month = now.getMonth();
-    const year = now.getFullYear();
 
+    let day = now.getDate();
+    let month = now.getMonth();
+    let year = now.getFullYear();
     let hours = now.getHours();
     let minutes = now.getMinutes();
     let seconds = now.getSeconds();
@@ -185,11 +185,13 @@ class App {
       "Des",
     ];
 
+    month = month < 10 ? `0${month}` : month;
+    day = day < 10 ? `0${day}` : day;
     hours = hours < 10 ? `0${hours}` : hours;
     minutes = minutes < 10 ? `0${minutes}` : minutes;
     seconds = seconds < 10 ? `0${seconds}` : seconds;
 
-    return `${day} ${months[month]} ${year}, ${hours}:${minutes}:${seconds}`;
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
   /**
@@ -272,6 +274,36 @@ class App {
   }
 
   /**
+   * Alert confirm untuk delete.
+   */
+  confirm(title, message, callback) {
+    bootbox.confirm({
+      onEscape: true,
+      backdrop: true,
+      title: title,
+      message: message,
+      className: "modal-bootbox",
+      buttons: {
+        cancel: {
+          className: "btn btn-light",
+          label: `
+            <span class="material-symbols-outlined me-1">close</span>
+            <span>Batal</span>
+          `,
+        },
+        confirm: {
+          className: "btn btn-secondary",
+          label: `
+            <span class="material-symbols-outlined me-1">check</span>
+            <span>Ya</span>
+          `,
+        },
+      },
+      callback: (result) => callback(result),
+    });
+  }
+
+  /**
    * Link storage image
    */
   storageImage(path, defaultPath = null) {
@@ -340,36 +372,6 @@ class App {
   }
 
   /**
-   * Alert confirm untuk delete.
-   */
-  confirm(title, message, callback) {
-    bootbox.confirm({
-      onEscape: true,
-      backdrop: true,
-      title: title,
-      message: message,
-      className: "modal-bootbox",
-      buttons: {
-        cancel: {
-          className: "btn btn-light",
-          label: `
-            <span class="material-symbols-outlined me-1">close</span>
-            <span>Batal</span>
-          `,
-        },
-        confirm: {
-          className: "btn btn-secondary",
-          label: `
-            <span class="material-symbols-outlined me-1">check</span>
-            <span>Ya</span>
-          `,
-        },
-      },
-      callback: (result) => callback(result),
-    });
-  }
-
-  /**
    * Update URL query string
    */
   updateQueryParams(paramsObj) {
@@ -405,6 +407,17 @@ class App {
    */
   resetForm(form) {
     form.trigger("reset");
+  }
+
+  /**
+   * Icon
+   */
+  icon(icon, size = null) {
+    if (size !== null) {
+      return `<span class="material-symbols-outlined ${size}">${icon}</span>`;
+    }
+
+    return `<span class="material-symbols-outlined">${icon}</span>`;
   }
 }
 

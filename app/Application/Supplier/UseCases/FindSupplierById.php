@@ -12,13 +12,15 @@ class FindSupplierById
     /**
      * Create a new class instance.
      */
-    public function __construct(private SupplierRepositoryInterface $repository) {}
+    public function __construct(private SupplierRepositoryInterface $supplierRepository) {}
 
     /**
      * Execute method.
      */
     public function execute(string $id): ?SupplierEntity
     {
-        return $this->repository->findById($id);
+        return $this->supplierRepository->findById(
+            id: $id,
+        );
     }
 }

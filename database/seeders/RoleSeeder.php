@@ -27,7 +27,7 @@ class RoleSeeder extends Seeder
         return [
             [
                 'name' => 'Admin',
-                'description' => null,
+                'description' => 'Full access',
             ],
             [
                 'name' => 'Kasir',

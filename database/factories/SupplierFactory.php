@@ -27,11 +27,10 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => strtoupper(str_random(8)),
             'name' => fake()->name(),
             'phone_number' => fake()->phoneNumber(),
             'address' => fake()->address(),
-            'notes' => 'Seeder factory',
+            'is_active' => true,
         ];
     }
 }

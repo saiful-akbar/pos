@@ -6,7 +6,7 @@ namespace App\Application\Supplier\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Supplier\DTOs\CreateSupplierDTO;
+use App\Application\Supplier\DTOs\SupplierDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
@@ -26,32 +26,33 @@ class CreateSupplier
     ) {}
 
     /**
-     * Execute method.
+     * execute method.
      */
-    public function execute(CreateSupplierDTO $dto): SupplierEntity
+    public function execute(SupplierDTO $value): SupplierEntity
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $supplier = $this->supplierRepository->create(
-                code: app(GenerateSupplierCode::class)->execute(),
-                dto: $dto,
+            $created = $this->supplierRepository->create(
+                value: $value
             );
 
-            $this->activityRepository->create(dto: new CreateActivityDTO(
-                userId: user()->id,
-                logName: 'Membuat supplier baru',
-                event: EventActivityEnum::CREATED,
-                attributeChanges: new AttributeActivityDTO(
-                    attributes: $supplier->toArray(),
-                ),
-            ));
+            $this->activityRepository->create(
+                dto: new CreateActivityDTO(
+                    userId: user()->id,
+                    logName: 'Membuat (insert) data supplier baru',
+                    event: EventActivityEnum::CREATED,
+                    attributeChanges: new AttributeActivityDTO(
+                        attributes: $created->toArray(),
+                    )
+                )
+            );
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
 
-            return $supplier;
+            return $created;
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

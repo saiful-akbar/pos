@@ -61,17 +61,19 @@ Route::middleware('auth')->group(function (): void {
             });
     });
 
-    Route::name('master')->prefix('master')->group(function (): void {
+    Route::name('masters')->prefix('masters')->group(function (): void {
         Route::controller(RoleController::class)
             ->middleware('throttle:global')
             ->name('.roles')
             ->prefix('roles')
             ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.roles,read');
-                Route::get('/create', 'create')->middleware('module:master.roles,create')->name('.create');
-                Route::post('/', 'store')->middleware('module:master.roles,create')->name('.store');
-                Route::get('/{id}/edit', 'edit')->middleware('module:master.roles,update')->name('.edit');
-                Route::put('/{id}', 'update')->middleware('module:master.roles,update')->name('.update');
+                $modules = 'module:masters.roles';
+
+                Route::get('/', 'index')->middleware("$modules,read");
+                Route::get('/create', 'create')->name('.create')->middleware("$modules,create");
+                Route::post('/', 'store')->name('.store')->middleware("$modules,create");
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$modules,update");
+                Route::put('/{id}', 'update')->name('.update')->middleware("$modules,update");
             });
 
         Route::controller(UserController::class)
@@ -79,12 +81,28 @@ Route::middleware('auth')->group(function (): void {
             ->name('.users')
             ->prefix('users')
             ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.users,read');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.users,create');
-                Route::post('/', 'store')->name('.store')->middleware('module:master.users,create');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.users,update');
-                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.users,update');
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.users,remove');
+                $modules = 'module:masters.users';
+
+                Route::get('/', 'index')->middleware("$modules,read");
+                Route::get('/create', 'create')->name('.create')->middleware("$modules,create");
+                Route::post('/', 'store')->name('.store')->middleware("$modules,create");
+                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$modules,update");
+                Route::put('/{id}', 'update')->name('.update')->middleware("$modules,update");
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware("$modules,remove");
+            });
+
+        Route::controller(SupplierController::class)
+            ->middleware('throttle:global')
+            ->name('.suppliers')
+            ->prefix('suppliers')
+            ->group(function (): void {
+                $module = 'module:masters.suppliers';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::put('/{id}', 'update')->name('.update')->middleware("$module,update");
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
             });
 
         Route::controller(CategoryController::class)
@@ -153,20 +171,6 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.customers,update');
                 Route::put('/{id}', 'update')->name('.update')->middleware('module:master.customers,update');
                 Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.customers,remove');
-            });
-
-        Route::controller(SupplierController::class)
-            ->middleware('throttle:global')
-            ->name('.suppliers')
-            ->prefix('suppliers')
-            ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.suppliers,read');
-                Route::post('/', 'store')->name('.store')->middleware('module:master.suppliers,create');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.suppliers,create');
-                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.suppliers,read');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.suppliers,update');
-                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.suppliers,update');
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.suppliers,remove');
             });
     });
 

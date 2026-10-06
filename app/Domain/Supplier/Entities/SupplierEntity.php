@@ -15,27 +15,26 @@ class SupplierEntity extends Entity
      */
     public function __construct(
         public readonly string $id,
-        public readonly string $code,
         public readonly string $name,
-        public readonly ?string $phoneNumber = null,
-        public readonly ?string $address = null,
-        public readonly ?string $notes = null,
-        public readonly bool $isActive = true,
-        public readonly ?DateTimeInterface $createdAt = null,
-        public readonly ?DateTimeInterface $updatedAt = null,
-        public readonly ?DateTimeInterface $deletedAt = null,
+        public readonly ?string $phoneNumber,
+        public readonly ?string $address,
+        public readonly bool $isActive,
+        public readonly ?DateTimeInterface $createdAt,
+        public readonly ?DateTimeInterface $updatedAt,
+        public readonly ?DateTimeInterface $deletedAt,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {
         return [
             'id' => $this->id,
-            'code' => $this->code,
             'name' => $this->name,
             'phone_number' => $this->phoneNumber,
             'address' => $this->address,
-            'notes' => $this->notes,
             'is_active' => $this->isActive,
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),

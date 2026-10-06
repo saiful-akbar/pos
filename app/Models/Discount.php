@@ -62,9 +62,9 @@ class Discount extends Model
      */
     protected $fillable = [
         'discount',
-        'name',
         'effective_date',
         'expiration_date',
+        'description',
     ];
 
     /**

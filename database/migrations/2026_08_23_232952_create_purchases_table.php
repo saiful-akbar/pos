@@ -33,8 +33,8 @@ return new class() extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->date('purchase_date');
-            $table->string('invoice_number', 100)->nullable()->comment('Supplier invoice number');
+            $table->date('transaction_date');
+            $table->string('invoice_number', 100)->nullable();
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_price', 15, 2)->default(0);
             $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
@@ -42,7 +42,7 @@ return new class() extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('purchase_date');
+            $table->index('transaction_date');
         });
     }
 

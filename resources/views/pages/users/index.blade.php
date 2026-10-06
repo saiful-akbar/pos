@@ -4,7 +4,7 @@
             <x-slot:action>
                 <div class="row justify-content-end">
                     <div class="col-12 col-lg-5 col-xl-3">
-                        <a role="button" href="{{ route('master.users.create') }}" class="btn btn-secondary w-100">
+                        <a role="button" href="{{ route('masters.users.create') }}" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
                         </a>
@@ -108,7 +108,7 @@
 
                         if (updateAccess) {
                             html += `
-                                <a href="${app.baseUrl}/master/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
+                                <a href="${app.baseUrl}/masters/users/${data}/edit" class="btn btn-light" role="button" title="Edit">
                                     <span class="material-symbols-outlined fs-6">edit</span>
                                 </a>
                             `;
@@ -133,7 +133,7 @@
             const userTable = window.app.dataTable('#userTable', {
                 columns,
                 serverSide: true,
-                ajax: "{{ route('master.users') }}",
+                ajax: "{{ route('masters.users') }}",
                 fixedColumns: {
                     start: 0,
                     end: access ? 1 : 0,
@@ -151,7 +151,7 @@
 
                     $.ajax({
                         type: "delete",
-                        url: app.url(`/master/users/${id}`),
+                        url: app.url(`/masters/users/${id}`),
                         data: {
                             _method: 'delete',
                             _token: app.csrfToken,

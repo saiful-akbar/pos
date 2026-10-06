@@ -25,6 +25,13 @@ use Illuminate\View\View;
 class RoleController extends Controller
 {
     /**
+     * Route module
+     *
+     * @var string
+     */
+    private $moduleRoute = 'masters.roles';
+
+    /**
      * Menampilkan halaman daftar role user.
      */
     public function index(Request $request): JsonResponse|View
@@ -35,7 +42,7 @@ class RoleController extends Controller
 
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
-            route: 'master.roles',
+            route: $this->moduleRoute,
         );
 
         return view('pages.roles.index', compact('access'));
@@ -76,7 +83,7 @@ class RoleController extends Controller
             )
         );
 
-        return redirect()->route('master.roles.create')->with('alert', [
+        return to_route('masters.roles.create')->with('alert', [
             'status' => 'success',
             'message' => 'Role baru berhasil ditambahkan.',
         ]);
@@ -126,7 +133,7 @@ class RoleController extends Controller
             );
         });
 
-        return to_route('master.roles.edit', ['id' => $id])->with('alert', [
+        return to_route('masters.roles.edit', ['id' => $id])->with('alert', [
             'status' => 'success',
             'message' => 'Role berhasil diperbarui.',
         ]);

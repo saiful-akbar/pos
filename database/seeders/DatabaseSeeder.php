@@ -22,10 +22,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             SettingSeeder::class,
             SupplierSeeder::class,
-            CustomerSeeder::class,
-            CategorySeeder::class,
-            UnitSeeder::class,
-            ProductSeeder::class,
+            // CustomerSeeder::class,
+            // CategorySeeder::class,
+            // UnitSeeder::class,
+            // ProductSeeder::class,
         ]);
     }
 }

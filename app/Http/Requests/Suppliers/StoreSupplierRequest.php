@@ -23,28 +23,24 @@ class StoreSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:200', 'unique:suppliers,name'],
             'phone_number' => ['nullable', 'string', 'max:20'],
-            'address' => ['nullable', 'string', 'max:1000'],
-            'notes' => ['nullable', 'string', 'max:1000'],
-            'status' => ['required', 'boolean'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 
     /**
-     * Mengganti nama atribut
-     *
-     * @return void
+     * Mengganti nama attribute untuk pesan error.
      */
     #[Override]
-    public function attributes()
+    public function attributes(): array
     {
         return [
-            'name' => 'nama',
+            'name' => 'name',
             'phone_number' => 'nomor telepon',
             'address' => 'alamat',
-            'notes' => 'catatan',
-            'status' => 'status',
+            'is_active' => 'status keaktifan',
         ];
     }
 }

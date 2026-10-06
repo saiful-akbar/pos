@@ -6,10 +6,11 @@ namespace App\Application\Supplier\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Supplier\DTOs\UpdateSupplierDTO;
+use App\Application\Supplier\DTOs\SupplierDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Domain\Supplier\Entities\SupplierEntity;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -25,34 +26,33 @@ class UpdateSupplier
     ) {}
 
     /**
-     * Execute method.
+     * execute method.
      */
-    public function execute(UpdateSupplierDTO $dto): void
+    public function execute(SupplierEntity $supplier, SupplierDTO $value): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $supplier = app(FindSupplierById::class)->execute(id: $dto->id);
+            $this->supplierRepository->update(
+                id: $supplier->id,
+                value: $value,
+            );
 
-            if ($supplier === null) {
-                abort(404);
-            }
+            $this->activityRepository->create(
+                dto: new CreateActivityDTO(
+                    userId: user()->id,
+                    logName: 'Memperbarui (update) data supplier',
+                    event: EventActivityEnum::UPDATED,
+                    attributeChanges: new AttributeActivityDTO(
+                        old: $supplier->toArray(),
+                        attributes: $value->toArray(),
+                    )
+                )
+            );
 
-            $this->supplierRepository->update(dto: $dto);
-
-            $this->activityRepository->create(dto: new CreateActivityDTO(
-                userId: user()->id,
-                logName: "Memperbarui supplier pada id: {$dto->id}",
-                event: EventActivityEnum::UPDATED,
-                attributeChanges: new AttributeActivityDTO(
-                    old: $supplier->toArray(),
-                    attributes: $dto->toArray(),
-                ),
-            ));
-
-            DB::connection(pos_connection())->commit();
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

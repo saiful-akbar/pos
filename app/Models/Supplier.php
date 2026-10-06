@@ -62,11 +62,9 @@ class Supplier extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'code',
         'name',
         'phone_number',
         'address',
-        'notes',
         'is_active',
     ];
 

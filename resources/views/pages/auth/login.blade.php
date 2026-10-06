@@ -67,51 +67,38 @@
                             @csrf @method('POST')
         
                             <div class="mb-5">
-                                <div class="input-group @error('username')is-invalid @enderror">
-                                    <span class="input-group-text material-symbols-outlined fs-6">person</span>
-        
-                                    <div class="form-floating">
-                                        <input type="text" id="username" name="username"
-                                            class="form-control @error('username')is-invalid @enderror" placeholder="Username"
-                                            value="{{ old('username') }}" required autofocus>
-        
-                                        <label for="username">Username</label>
-                                    </div>
-                                </div>
-        
-                                @error('username')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                                <x-form-floating-input
+                                    autofocus
+                                    required
+                                    type="text"
+                                    name="username"
+                                    id="username"
+                                    label="Username"
+                                    placeholder="Masukan username..."
+                                    size="lg"
+                                    error="{{ $errors->has('username') }}"
+                                    value="{{ old('username') }}"
+                                />
                             </div>
         
                             <div class="mb-5">
-                                <div class="input-group">
-                                    <span class="input-group-text material-symbols-outlined fs-6">lock</span>
-        
-                                    <div class="form-floating @error('password')is-invalid @enderror">
-                                        <input type="password" id="password" name="password"
-                                            class="form-control @error('password')is-invalid @enderror" placeholder="password"
-                                            required>
-        
-                                        <label for="password">Kata Sandi</label>
-                                    </div>
-                                </div>
-        
-                                @error('password')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                                <x-form-floating-input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    label="Kata sandi"
+                                    placeholder="Masukan kata sandi..."
+                                    size="lg"
+                                    error="{{ $errors->has('password') }}"
+                                    value="{{ old('password') }}"
+                                    required
+                                />
                             </div>
         
                             <div class="mb-7">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="togglePassword">
-                                    <label class="form-check-label" for="togglePassword">
-                                        Tampilkan kata sandi
-                                    </label>
+                                    <label class="form-check-label" for="togglePassword">Tampilkan kata sandi</label>
                                 </div>
                             </div>
         

@@ -28,18 +28,9 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-            $table->foreignUlid('unit_id')
-                ->constrained('units', 'id')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
-
             $table->string('code', 50)->unique();
-            $table->string('barcode', 50)->unique();
-            $table->text('name')->nullable()->fulltext()->comment('product name or description');
+            $table->text('name')->nullable()->fulltext();
             $table->string('image', 100)->nullable();
-            $table->decimal('purchase_price', 15, 2)->default(0);
-            $table->decimal('selling_price', 15, 2)->default(0);
-            $table->decimal('discount', 5, 2)->default(0)->comment('as a percentage (%)');
             $table->decimal('minimum_stock', 15, 2)->default(0);
             $table->decimal('current_stock', 15, 2)->default(0);
             $table->boolean('is_active')->default(true);

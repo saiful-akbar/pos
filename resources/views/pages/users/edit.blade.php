@@ -3,7 +3,7 @@
         <x-slot:action>
             <div class="row justify-content-end">
                 <div class="col-12 col-lg-4">
-                    <a href="{{ route('master.users') }}" role="button" class="btn btn-light w-100">
+                    <a href="{{ route('masters.users') }}" role="button" class="btn btn-light w-100">
                         <x-icon class="me-1">arrow_back</x-icon>
                         <span>Kembali</span>
                     </a>
@@ -12,21 +12,20 @@
         </x-slot:action>
     </x-page-header>
 
-    <form action="{{ route('master.users.update', ['id' => $user->id]) }}" method="post" autocomplete="off" enctype="multipart/form-data">
+    <form action="{{ route('masters.users.update', ['id' => $user->id]) }}" method="post" autocomplete="off" enctype="multipart/form-data">
         @csrf @method('put')
 
-        <div class="row mt-7 justify-content-center">
+        <div class="row mt-6 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5">User Data</h3>
-                        <p class="text-body-secondary">Form dengan tanda * wajib diisi</p>
+                        <h3 class="fs-5 mb-0">User Data</h3>
                     </div>
 
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-input
+                                <x-form-input
                                     required
                                     type="text"
                                     name="full_name"
@@ -39,20 +38,20 @@
                             </div>
 
                             <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-select required name="role" id="role" label="Role" error="{{ $errors->has('role') }}">
+                                <x-form-select required name="role" id="role" label="Role" error="{{ $errors->has('role') }}">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}" @selected(old('role', $user->role->id) == $role->id)>
                                             {{ $role->name }}
                                         </option>
                                     @endforeach
-                                </x-form-floating-select>
+                                </x-form-select>
                             </div>
 
                             <div class="col-12 col-lg-6">
-                                <x-form-floating-select required name="status" id="status" label="Status" error="{{ $errors->has('status') }}">
+                                <x-form-select required name="status" id="status" label="Status" error="{{ $errors->has('status') }}">
                                     <option value="1" @selected(old('status', $user->isActive) == 1)>Aktif</option>
                                     <option value="0" @selected(old('status', $user->isActive) == 0)>Tidak Aktif</option>
-                                </x-form-floating-select>
+                                </x-form-select>
                             </div>
                         </div>
                     </div>
@@ -60,18 +59,17 @@
             </div>
         </div>
         
-        <div class="row mt-7 justify-content-center">
+        <div class="row mt-6 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5">Autentikasi</h3>
-                        <p class="text-body-secondary">Isikan data username dan kata sandi untuk masuk aplikasi.</p>
+                        <h3 class="fs-5 mb-0">Autentikasi</h3>
                     </div>
 
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5 mb-lg-0">
-                                <x-form-floating-input
+                                <x-form-input
                                     required
                                     type="text"
                                     name="username"
@@ -84,7 +82,7 @@
                             </div>
 
                             <div class="col-12 col-lg-6">
-                                <x-form-floating-input
+                                <x-form-input
                                     type="password"
                                     name="password"
                                     id="password"
@@ -94,8 +92,6 @@
                                     value="{{ old('password') }}"
                                     helper-text="NB: kosongkan kata sandi jika tidak ingin merubahnya"
                                 />
-
-                                <div class="form-text"></div>
                             </div>
                         </div>
                     </div>
@@ -103,12 +99,11 @@
             </div>
         </div>
 
-        <div class="row mt-7 justify-content-center">
+        <div class="row mt-6 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5">Foto</h3>
-                        <p class="text-body-secondary">Unggah foto user</p>
+                        <h3 class="fs-5 mb-0">Foto</h3>
                     </div>
 
                     <div class="card-body">

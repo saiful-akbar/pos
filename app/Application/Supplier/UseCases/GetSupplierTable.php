@@ -8,18 +8,20 @@ use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
-class GetSuppliersTable
+class GetSupplierTable
 {
     /**
      * Create a new class instance.
      */
-    public function __construct(private SupplierRepositoryInterface $repository) {}
+    public function __construct(
+        private SupplierRepositoryInterface $supplierRepository
+    ) {}
 
     /**
-     * Execute method.
+     * Execute method
      */
     public function execute(): JsonResponse
     {
-        return DataTables::eloquent($this->repository->getQuery())->toJson();
+        return DataTables::eloquent($this->supplierRepository->getQuery())->toJson();
     }
 }

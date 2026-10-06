@@ -21,14 +21,12 @@ class SupplierExport implements FromCollection, ShouldAutoSize, WithHeadings
     public function headings(): array
     {
         return [
-            'Kode Supplier',
             'Nama',
-            'Nomor Telepon',
+            'Telepon',
             'Alamat',
-            'Catatan',
             'Status',
-            'Waktu Dibuat',
-            'Waktu Diperbarui',
+            'Dibuat',
+            'Diperbarui',
         ];
     }
 
@@ -39,19 +37,17 @@ class SupplierExport implements FromCollection, ShouldAutoSize, WithHeadings
     public function collection(): Enumerable
     {
         $columns = [
-            'code',
             'name',
             'phone_number',
             'address',
-            'notes',
-            DB::raw("CASE WHEN is_active THEN 'Aktif' ELSE 'Tidak Aktif' END"),
+            DB::raw("CASE WHEN is_active THEN 'Aktif' ELSE 'Tidak aktif' END"),
             DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s')"),
             DB::raw("DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s')"),
         ];
 
         return Supplier::query()
             ->select($columns)
-            ->orderBy('code', 'ASC')
+            ->orderBy('name', 'ASC')
             ->get();
     }
 }
