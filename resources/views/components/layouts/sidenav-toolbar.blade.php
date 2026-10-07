@@ -11,11 +11,11 @@
                 <div class="nav-item dropend mt-auto">
                     <a href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
                         <div class="nav-link">
-                            <span class="material-symbols-outlined">settings</span>
+                            <span class="material-symbols-outlined">settings_night_sight</span>
                         </div>
                     </a>
 
-                    <div class="dropdown-menu top-auto bottom-0 ms-xl-3 border">
+                    <div class="dropdown-menu top-auto bottom-0 ms-xl-3 border-xl">
                         <h6 class="dropdown-header">Tema</h6>
                         <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button">
                             <span class="material-symbols-outlined me-2">light_mode</span>

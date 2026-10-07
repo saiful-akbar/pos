@@ -65,8 +65,8 @@
                 <nav class="navbar-nav nav-pills d-xl-none">
                     <div class="nav-item dropdown">
                         <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
-                            <span class="material-symbols-outlined me-3">settings</span>
-                            <span>Pengaturan</span>
+                            <span class="material-symbols-outlined me-3">settings_night_sight</span>
+                            <span>Tampilan</span>
                         </a>
 
                         <div class="dropdown-menu shadow border">

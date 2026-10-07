@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand-xl topnav-base bg-body shadow-sm">
     <div class="container-lg">
         <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="index-2.html">
-            <img src="{{ logo($setting->storeLogo) }}" alt="Logo" width="30" height="30" class="me-2">
+            <img src="{{ logo($setting->storeLogo) }}" alt="Logo" width="30" height="30" class="me-3 rounded">
             <span>{{ $setting?->appName ?? config('app.name') }}</span>
         </a>
 
@@ -33,17 +33,19 @@
             <nav class="navbar-nav nav-pills mx-auto mt-4 mt-xl-0">
                 <div class="nav-item">
                     <a class="nav-link {{ active_path('/dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}" role="button">
-                        Dashboard
+                        <x-icon class="me-2">dashboard</x-icon>
+                        <span>Dashboard</span>
                     </a>
                 </div>
 
                 @foreach ($modules as $module)
-                    <div class="nav-item dropdown ms-xl-2">
+                    <div class="nav-item dropdown ms-xl-3 mt-2 mt-xl-0">
                         <a class="nav-link dropdown-toggle {{ active_path($module->path) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ $module->name }}
+                            <x-icon class="me-3">{{ $module->icon }}</x-icon>
+                            <span>{{ $module->name }}</span>
                         </a>
                         
-                        <div class="dropdown-menu">
+                        <div class="dropdown-menu border-xl">
                             @foreach ($module->details as $detail)
                                 <a class="dropdown-item {{ active_path($detail->path) ? 'active' : '' }}" href="{{ url($detail->path) }}">
                                     {{ $detail->name }}
@@ -58,14 +60,14 @@
             <hr class="my-4 d-xl-none" />
 
             {{-- Nav --}}
-            <nav class="navbar-nav nav-pills">
+            <nav class="navbar-nav nav-pills d-flex align-items-xl-center">
                 <div class="nav-item dropdown">
                     <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
-                        <span class="material-symbols-outlined">settings</span>
-                        <span class="d-xl-none ms-3">Settings</span>
+                        <span class="material-symbols-outlined">settings_night_sight</span>
+                        <span class="d-xl-none ms-3">Tampilan</span>
                     </a>
 
-                    <div class="dropdown-menu border">
+                    <div class="dropdown-menu border-xl">
                         <h6 class="dropdown-header">Tema</h6>
                         <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button">
                             <span class="material-symbols-outlined me-2">light_mode</span>

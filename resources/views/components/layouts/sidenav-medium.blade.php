@@ -44,7 +44,9 @@
                                 <span class="ms-3 ms-xl-0 mt-xl-1 d-xl-block align-self-stretch fs-xl-sm text-xl-center text-truncate">{{ $module->name }}</span>
                             </a>
 
-                            <div class="dropdown-menu ms-xl-3">
+                            <div class="dropdown-menu ms-xl-3 border-xl">
+                                <h6 class="dropdown-header d-none d-xl-block">{{ $module->name }}</h6>
+
                                 @foreach ($module->details as $detail)
                                     <a class="dropdown-item {{ active_path($detail->path) ? 'active' : '' }}" href="{{ url($detail->path) }}">{{ $detail->name }}</a>
                                 @endforeach
@@ -60,11 +62,11 @@
                 <nav class="navbar-nav nav-pills mt-auto">
                     <div class="nav-item dropend">
                         <a class="nav-link flex-xl-column" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
-                            <span class="material-symbols-outlined">settings</span>
-                            <span class="d-xl-none ms-3">Settings</span>
+                            <span class="material-symbols-outlined">settings_night_sight</span>
+                            <span class="d-xl-none ms-3">Tampilan</span>
                         </a>
 
-                        <div class="dropdown-menu top-auto bottom-0 ms-xl-3 border">
+                        <div class="dropdown-menu top-auto bottom-0 ms-xl-3 border-xl">
                             <h6 class="dropdown-header">Tema</h6>
                             <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button">
                                 <span class="material-symbols-outlined me-2">light_mode</span>
