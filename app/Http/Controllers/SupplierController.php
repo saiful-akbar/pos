@@ -139,6 +139,6 @@ class SupplierController extends Controller
      */
     public function exportExcel(): BinaryFileResponse
     {
-        return Excel::download(new SupplierExport(), 'pemasok.xlsx');
+        return Excel::download(new SupplierExport(), 'Master_Pemasok.xlsx');
     }
 }

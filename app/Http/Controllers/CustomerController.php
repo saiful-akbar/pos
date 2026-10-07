@@ -11,11 +11,14 @@ use App\Application\Customer\UseCases\GetCustomersTable;
 use App\Application\Customer\UseCases\RemoveCustomer;
 use App\Application\Customer\UseCases\UpdateCustomer;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Exports\Customers\CustomerExport;
 use App\Http\Requests\Customers\StoreCustomerRequest;
 use App\Http\Requests\Customers\UpdateCustomerRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CustomerController extends Controller
 {
@@ -126,5 +129,13 @@ class CustomerController extends Controller
             status: 200,
             message: 'Data pelanggan berhasil dihapus.',
         );
+    }
+
+    /**
+     * Export excel
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new CustomerExport(), 'Master_Pelanggan.xlsx');
     }
 }

@@ -155,7 +155,7 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Pelanggan',
+                        'name' => 'Pelanggan (Member)',
                         'path' => '/masters/customers',
                         'route' => 'masters.customers',
                         'roles' => ['Admin', 'Kasir'],

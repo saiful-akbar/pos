@@ -16,7 +16,7 @@ class CustomerEntity extends Entity
     public function __construct(
         public readonly string $id,
         public readonly string $name,
-        public readonly ?string $phoneNumber,
+        public readonly string $phoneNumber,
         public readonly ?string $address,
         public readonly float $discount,
         public readonly bool $isActive,

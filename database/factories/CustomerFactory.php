@@ -33,6 +33,8 @@ class CustomerFactory extends Factory
             'name' => fake()->name(),
             'phone_number' => fake()->phoneNumber(),
             'address' => fake()->address(),
+            'discount' => 10.0,
+            'is_active' => true,
         ];
     }
 }

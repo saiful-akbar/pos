@@ -40,9 +40,9 @@ class SupplierExport implements FromCollection, ShouldAutoSize, WithHeadings
             'name',
             'phone_number',
             'address',
-            DB::raw("CASE WHEN is_active THEN 'Aktif' ELSE 'Tidak aktif' END"),
-            DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s')"),
-            DB::raw("DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s')"),
+            DB::raw("CASE WHEN is_active THEN 'Aktif' ELSE 'Tidak aktif' END AS status"),
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created"),
+            DB::raw("DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s') AS updated"),
         ];
 
         return Supplier::query()

@@ -14,7 +14,7 @@ class CustomerDTO extends DTO
      */
     public function __construct(
         public readonly string $name,
-        public readonly ?string $phoneNumber = null,
+        public readonly string $phoneNumber,
         public readonly ?string $address = null,
         public readonly float $discount = 0.00,
         public readonly bool $isActive = true,

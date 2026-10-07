@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Exports\Customers;
 
-use App\Application\Customer\UseCases\GetAllCustomers;
-use Maatwebsite\Excel\Concerns\FromArray;
+use App\Models\Customer;
+use Illuminate\Support\Enumerable;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Override;
 
-class CustomerExport implements FromArray, ShouldAutoSize, WithHeadings
+class CustomerExport implements FromCollection, ShouldAutoSize, WithHeadings
 {
     /**
      * Header row.
@@ -20,29 +22,34 @@ class CustomerExport implements FromArray, ShouldAutoSize, WithHeadings
     {
         return [
             'Nama',
-            'Nomor Telepon',
+            'Telepon',
             'Alamat',
+            'Diskon (%)',
+            'Status',
             'Waktu Dibuat',
+            'Waktu Diedit',
         ];
     }
 
     /**
-     * Export from array.
+     * Export from collection
      */
     #[Override]
-    public function array(): array
+    public function collection(): Enumerable
     {
-        $customers = [];
+        $columns = [
+            'name',
+            'phone_number',
+            'address',
+            'discount',
+            DB::raw("CASE WHEN is_active = 1 THEN 'Aktif' ELSE 'Tidak aktif' END AS status"),
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created"),
+            DB::raw("DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s') AS updated"),
+        ];
 
-        foreach (app(GetAllCustomers::class)->execute() as $customer) {
-            $customers[] = [
-                'name' => $customer->name,
-                'phone_number' => $customer->phoneNumber,
-                'address' => $customer->address,
-                'created_at' => $customer->createdAt?->format('Y-m-d H:i:s'),
-            ];
-        }
-
-        return $customers;
+        return Customer::query()
+            ->select($columns)
+            ->orderBy('name', 'asc')
+            ->cursor();
     }
 }

@@ -113,7 +113,7 @@ Route::middleware('auth')->group(function (): void {
                 $module = 'module:masters.customers';
 
                 Route::get('/', 'index')->middleware("$module,read");
-                Route::get('/export', 'export')->name('.export')->middleware("$module,read");
+                Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::patch('/{id}', 'update')->name('.update')->middleware("$module,update");
                 Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
