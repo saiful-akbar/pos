@@ -25,8 +25,8 @@ class SupplierExport implements FromCollection, ShouldAutoSize, WithHeadings
             'Telepon',
             'Alamat',
             'Status',
-            'Dibuat',
-            'Diperbarui',
+            'Waktu Dibuat',
+            'Waktu Diedit',
         ];
     }
 

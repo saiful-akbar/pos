@@ -15,7 +15,7 @@
     <form action="{{ route('masters.users.update', ['id' => $user->id]) }}" method="post" autocomplete="off" enctype="multipart/form-data">
         @csrf @method('put')
 
-        <div class="row mt-6 justify-content-center">
+        <div class="row mt-7 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -59,7 +59,7 @@
             </div>
         </div>
         
-        <div class="row mt-6 justify-content-center">
+        <div class="row mt-7 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -99,7 +99,7 @@
             </div>
         </div>
 
-        <div class="row mt-6 justify-content-center">
+        <div class="row mt-7 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">

@@ -116,6 +116,9 @@ class CategoryImport implements ToCollection, WithStartRow, WithValidation
         ];
     }
 
+    /**
+     * Awal baris dimulai.
+     */
     #[Override]
     public function startRow(): int
     {

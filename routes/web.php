@@ -124,15 +124,15 @@ Route::middleware('auth')->group(function (): void {
             ->name('.categories')
             ->prefix('categories')
             ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.categories,read');
-                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.categories,create');
-                Route::get('/export/template', 'templateExport')->name('.export.template')->middleware('module:master.categories,create');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.categories,create');
-                Route::post('/', 'store')->name('.store')->middleware('module:master.categories,create');
-                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.categories,read');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.categories,update');
-                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.categories,update');
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.categories,remove');
+                $module = 'module:masters.categories';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
+                Route::post('/import', 'importExcel')->name('.import')->middleware("$module,create");
+                Route::get('/import/template', 'templateImportExcel')->name('.import.template')->middleware("$module,create");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::patch('/{id}', 'update')->name('.update')->middleware("$module,update");
+                Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
             });
 
         Route::controller(UnitController::class)

@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Application\Category\DTOs\CreateCategoryDTO;
 use App\Application\Category\DTOs\UpdateCategoryDTO;
 use App\Application\Category\UseCases\CreateCategory;
-use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetCategoriesTable;
 use App\Application\Category\UseCases\RemoveCategory;
 use App\Application\Category\UseCases\UpdateCategory;
@@ -38,81 +37,57 @@ class CategoryController extends Controller
 
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
-            route: 'master.categories',
+            route: 'masters.categories',
         );
 
         return view('pages.categories.index', compact('access'));
     }
 
     /**
-     * Menampilkan halaman tambah data kategori.
-     */
-    public function create(): View
-    {
-        return view('pages.categories.create');
-    }
-
-    /**
      * Membuat (menyimpan) data kategori baru
      */
-    public function store(StoreCategoryRequest $request): RedirectResponse
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
         app(CreateCategory::class)->execute(
             dto: new CreateCategoryDTO(
                 code: $request->validated('code'),
                 name: $request->validated('name'),
-                isActive: $request->boolean('status'),
+                isActive: $request->boolean('is_active'),
             ),
         );
 
-        return to_route('master.categories.create')->with('alert', [
-            'status' => 'success',
-            'message' => 'Kategori produk baru berhasil ditambahkan.',
-        ]);
-    }
-
-    /**
-     * Menampilkan halaman edit data kategori.
-     */
-    public function edit(string $id): View
-    {
-        $category = app(FindCategoryById::class)->execute(
-            id: $id,
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Kategori produk berhasil ditambahkan.',
         );
-
-        if ($category === null) {
-            abort(404);
-        }
-
-        return view('pages.categories.edit', compact('category'));
     }
 
     /**
      * Memperbarui data kategori.
      */
-    public function update(UpdateCategoryRequest $request, string $id): RedirectResponse
+    public function update(UpdateCategoryRequest $request, string $id): JsonResponse
     {
         app(UpdateCategory::class)->execute(
             dto: new UpdateCategoryDTO(
                 id: $id,
                 code: $request->validated('code'),
                 name: $request->validated('name'),
-                isActive: $request->boolean('status'),
+                isActive: $request->boolean('is_active'),
             ),
         );
 
-        return to_route('master.categories.edit', ['id' => $id])->with('alert', [
-            'status' => 'success',
-            'message' => 'Kategori produk berhasil diperbarui.',
-        ]);
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Kategori produk berhasil diperbarui.',
+        );
     }
 
     /**
      * Download template import excel
      */
-    public function templateExport(): BinaryFileResponse
+    public function templateImportExcel(): BinaryFileResponse
     {
-        return Excel::download(new TemplateCategoryExport(), 'template_import_kategori_produk.xlsx');
+        return Excel::download(new TemplateCategoryExport(), 'Template_Import_Kategori_Produk.xlsx');
     }
 
     /**
@@ -122,7 +97,7 @@ class CategoryController extends Controller
     {
         Excel::import(new CategoryImport(), $request->file('file'));
 
-        return to_route('master.categories')->with('alert', [
+        return to_route('masters.categories')->with('alert', [
             'status' => 'success',
             'message' => 'Import excel berhasil.',
         ]);
@@ -133,11 +108,11 @@ class CategoryController extends Controller
      */
     public function exportExcel(): BinaryFileResponse
     {
-        return Excel::download(new CategoryExport(), 'kategori_produk.xlsx');
+        return Excel::download(new CategoryExport(), 'Master_Kategori.xlsx');
     }
 
     /**
-     * Soft delete.
+     * Remove (Soft delete).
      */
     public function remove(Request $request, string $id): JsonResponse
     {
@@ -148,6 +123,7 @@ class CategoryController extends Controller
         app(RemoveCategory::class)->execute($id);
 
         return $this->jsonResponse(
+            status: 200,
             message: 'Kategori produk berhasil dihapus.'
         );
     }

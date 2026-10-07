@@ -337,12 +337,9 @@ class App {
    */
   alert(variant, message) {
     $("#alert").html(`
-      <div class="alert alert-${variant} border-${variant} mb-6">
+      <div class="alert alert-${variant} border-${variant} mb-7 shadow-sm">
         <div class="row align-items-center">
-            <div class="col">
-                ${message}
-            </div>
-
+            <div class="col">${message}</div>
             <div class="col-auto">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -389,6 +386,7 @@ class App {
    */
   clearFormErrors(form) {
     form.find("[data-invalid]").removeClass("is-invalid");
+    form.find("[data-invalid]").addClass("border");
     form.find("[data-invalid-feedback]").text("");
   }
 
@@ -397,6 +395,7 @@ class App {
    */
   setFormErrors(form, error) {
     Object.entries(error.errors).forEach(([field, message]) => {
+      form.find(`[data-invalid="${field}"]`).removeClass("border");
       form.find(`[data-invalid="${field}"]`).addClass("is-invalid");
       form.find(`[data-invalid-feedback="${field}"]`).text(message[0]);
     });

@@ -2,7 +2,7 @@
     <x-page-header title="Tambah Role" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-12 col-lg-4 col-xl-3">
+                <div class="col-12 col-lg-4">
                     <a href="{{ route('masters.roles') }}" role="button" class="btn btn-light w-100">
                         <x-icon>arrow_back</x-icon>
                         <span>Kembali</span>
@@ -15,7 +15,7 @@
     <form action="{{ route('masters.roles.store') }}" method="post" name="create" autocomplete="off">
         @csrf @method('post')
 
-        <div class="row mt-6">
+        <div class="row gx-7 mt-7">
             <div class="col-12 col-lg-4 mb-6 mb-lg-0">
                 <div class="card shadow-sm position-sticky" style="top: 20px;">
                     <div class="card-header">
@@ -47,6 +47,7 @@
                                     id="role_description"
                                     error="{{ $errors->has('role_description') }}"
                                     value="{{ old('role_description') }}"
+                                    rows="5"
                                 />
                             </div>
                         </div>
@@ -60,11 +61,11 @@
 
             <div class="col-12 col-lg-8">
                 @foreach ($modules as $module)
-                    <div @class(['row', 'mb-6' => !$loop->last])>
+                    <div @class(['row', 'mb-7' => !$loop->last])>
                         <div class="col-12">
                             <div class="card shadow-sm">
                                 <div class="card-header">
-                                    <div class="row align-items-center">
+                                    <div class="row align-items-center justify-content-start">
                                         @isset($module->icon)
                                             <div class="col-auto">
                                                 <x-icon class="fs-4">{{ $module->icon }}</x-icon>

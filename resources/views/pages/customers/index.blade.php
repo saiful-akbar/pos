@@ -2,14 +2,14 @@
     <x-page-header title="Pelanggan (Member)" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-4 order-2 order-lg-1">
                     <x-button type="link" href="{{ route('masters.customers.export') }}" startIcon="download" fullWidth>
                         Export Excel
                     </x-button>
                 </div>
                 
                 @if ($access?->create)
-                    <div class="col-12 col-lg-4 mt-5 mt-lg-0">
+                    <div class="col-12 col-lg-4 order-1 order-lg-2 mb-5 mb-lg-0">
                         <x-button type="button" id="buttonCreate" startIcon="add" id="buttonCreate" fullWidth>
                             Tambah
                         </x-button>

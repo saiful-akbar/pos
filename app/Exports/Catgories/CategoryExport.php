@@ -21,8 +21,8 @@ class CategoryExport implements FromCollection, ShouldAutoSize, WithHeadings
     public function headings(): array
     {
         return [
-            'Kode Kategori',
-            'Nama Kategori',
+            'Kode',
+            'Nama (Deskripsi)',
             'Status',
             'Waktu Dibuat',
             'Waktu Diedit',

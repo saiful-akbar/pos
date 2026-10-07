@@ -1,6 +1,7 @@
 @php
     $class = [
         'form-control',
+        'border' => !$error,
         'is-invalid' => $error,
         'form-control-lg' => strtolower($size) === 'lg',
         'form-control-sm' => strtolower($size) === 'sm',
@@ -17,7 +18,7 @@
 
 @if ($label)
     <label for="{{ $id }}" class="form-label">
-        {{ $label }} <span class="text-danger">{{ $required ? '*' : '' }}</span>
+        {{ $label }} @if ($required) <span class="text-danger">*</span> @endif
     </label>
 @endif
 

@@ -1,24 +1,20 @@
 <x-layouts.auth title="Role" :access="$access">
-    <div class="row mb-7">
-        <div class="col-12">
-            <x-page-header title="Role" icon="data_table">
-                @if ($access?->create)
-                    <x-slot:action>
-                        <div class="row justify-content-end">
-                            <div class="col-12 col-lg-5 col-xl-3">
-                                <a role="button" href="{{ route('masters.roles.create') }}" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">add</x-icon>
-                                    <span>Tambah</span>
-                                </a>
-                            </div>
-                        </div>
-                    </x-slot:action>
-                @endif
-            </x-page-header>
-        </div>
-    </div>
+    <x-page-header title="Role" icon="data_table">
+        @if ($access?->create)
+            <x-slot:action>
+                <div class="row justify-content-end">
+                    <div class="col-12 col-lg-4">
+                        <a role="button" href="{{ route('masters.roles.create') }}" class="btn btn-secondary w-100">
+                            <x-icon class="me-1">add</x-icon>
+                            <span>Tambah</span>
+                        </a>
+                    </div>
+                </div>
+            </x-slot:action>
+        @endif
+    </x-page-header>
 
-    <div class="row">
+    <div class="row mt-7">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">

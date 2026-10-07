@@ -15,7 +15,7 @@
     <form action="{{ route('masters.users.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
         @csrf @method('post')
 
-        <div class="row mt-6 justify-content-center">
+        <div class="row mt-7 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -39,7 +39,7 @@
 
                             <div class="col-12 col-lg-6">
                                 <x-form-select required name="role" id="role" label="Role" error="{{ $errors->has('role') }}">
-                                    <option selected>Pilih role</option>
+                                    <option selected disabled>Pilih</option>
                                     
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}" @selected(old('role') == $role->id)>
@@ -54,7 +54,7 @@
             </div>
         </div>
         
-        <div class="row mt-6 justify-content-center">
+        <div class="row mt-7 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <div class="row mt-6 justify-content-center">
+        <div class="row mt-7 justify-content-center">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">

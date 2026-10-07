@@ -3,7 +3,7 @@
         @if($access?->create)
             <x-slot:action>
                 <div class="row justify-content-end">
-                    <div class="col-12 col-lg-5 col-xl-3">
+                    <div class="col-12 col-lg-4">
                         <a role="button" href="{{ route('masters.users.create') }}" class="btn btn-secondary w-100">
                             <x-icon class="me-1">add</x-icon>
                             <span>Tambah</span>
@@ -14,7 +14,7 @@
         @endif
     </x-page-header>
 
-    <div class="row mt-6">
+    <div class="row mt-7">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">

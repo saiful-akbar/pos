@@ -1,0 +1,54 @@
+@php
+    $merge = [
+        'tabindex' => '-1',
+    ];
+
+    $modalClass = [
+        'modal',
+        'fade',
+    ];
+    
+    $dialogClass = [
+        'modal-dialog',
+        'modal-fullscreen-xxl-down' => $fullScreen === 'xl',
+        'modal-fullscreen-xl-down' => $fullScreen === 'lg',
+        'modal-fullscreen-lg-down' => $fullScreen === 'md',
+        'modal-fullscreen-md-down' => $fullScreen === 'sm',
+        'modal-fullscreen-sm-down' => $fullScreen === 'xs',
+        'modal-xl' => $size === 'xl',
+        'modal-lg' => $size === 'lg',
+        'modal-sm' => $size === 'sm',
+    ];
+@endphp
+
+<div {{ $attributes->merge($merge)->class($modalClass) }}>
+    <div class="modal-dialog">
+        <div class="modal-content border">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">{{ $title }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                {{ $slot }}
+            </div>
+            
+            <div class="modal-footer">
+                <div class="w-100">
+                    @if ($footer)
+                        {{ $footer }}
+                    @else
+                        <div class="row justify-content-end">
+                            <div class="col-6 col-lg-4 col-xl-3">
+                                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
+                                    <x-icon class="me-1">close</x-icon>
+                                    <span>Tutup</span>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
