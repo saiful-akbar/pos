@@ -101,6 +101,7 @@
             </x-modal>
         </form>
 
+        {{-- Form import excel --}}
         <form action="{{ route('masters.categories.import') }}" method="post" autocomplete="off" id="formImport" enctype="multipart/form-data">
             @csrf
 
@@ -122,7 +123,6 @@
                     type="file"
                     name="file"
                     id="file"
-                    size="lg"
                     error="{{ $errors->has('file') }}"
                 />
 
@@ -429,6 +429,26 @@
                     }
                 })
             }
+
+            /**
+             * Buka modal import excel
+             */
+            service.buttonImport.click(function (e) { 
+                e.preventDefault();
+                
+                if (service.formImport === null) {
+                    return null;
+                }
+
+                service.modalImport.show();
+            });
+
+            /**
+             * Submit form import excel
+             */
+            service.formImport.submit(function (e) { 
+                app.showPreloader();
+            });
         </script>
     </x-slot:script>
 </x-layouts.auth>
