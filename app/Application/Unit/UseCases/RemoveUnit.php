@@ -9,11 +9,11 @@ use App\Application\ActivityLog\DTOs\CreateActivityDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Domain\Unit\Entities\UnitEntity;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
-class RemoveUnit
+final class RemoveUnit
 {
     /**
      * Create a new class instance.
@@ -25,38 +25,28 @@ class RemoveUnit
     ) {}
 
     /**
-     * Execute method.
+     * Execute method
      */
-    public function execute(string $id): int
+    public function execute(UnitEntity $unit): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $unit = $this->unitRepository->findById($id);
+            $this->unitRepository->remove(
+                id: $unit->id,
+            );
 
-            if ($unit === null) {
-                throw ValidationException::withMessages([
-                    'message' => 'Data unit produk tidak ditemukan.',
-                ]);
-            }
-
-            $removed = $this->unitRepository->removeById($unit->id);
-
-            $this->activityRepository->create(new CreateActivityDTO(
+            $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Menghapus unit produk',
-                event: EventActivityEnum::REMOVED,
+                logName: 'Menghapus (soft delete) data unit (satuan produk)',
+                event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     old: $unit->toArray(),
                 )
             ));
 
-            DB::connection(pos_connection())->commit();
-
-            return $removed;
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
-
             $this->errorRepository->create(
                 function: __METHOD__,
                 message: $e->getMessage(),

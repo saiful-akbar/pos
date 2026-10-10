@@ -4,42 +4,34 @@ declare(strict_types=1);
 
 namespace App\Domain\Unit\Repositories;
 
-use App\Application\Unit\DTOs\CreateUnitDTO;
-use App\Application\Unit\DTOs\UpdateUnitDTO;
+use App\Application\Unit\DTOs\UnitDTO;
 use App\Domain\Unit\Entities\UnitEntity;
 use Illuminate\Database\Eloquent\Builder;
 
 interface UnitRepositoryInterface
 {
     /**
-     * Mengambil daftar unit dalam format query builder.
+     * Mengambil daftar data dalam format query builder.
      */
     public function getQuery(): Builder;
 
     /**
-     * Mengambil data unit berdasarkan id.
+     * Menambah (insert).
+     */
+    public function create(UnitDTO $value): UnitEntity;
+
+    /**
+     * Mengambil data berdasarkan id.
      */
     public function findById(string $id): ?UnitEntity;
 
     /**
-     * Membuat unit baru
+     * Update
      */
-    public function create(CreateUnitDTO $dto): UnitEntity;
+    public function update(string $id, UnitDTO $value): int;
 
     /**
-     * Update unit.
+     * Soft delete
      */
-    public function update(UpdateUnitDTO $dto): void;
-
-    /**
-     * Mengambil semua data unit
-     *
-     * @return UnitEntity[]
-     */
-    public function getAll(): array;
-
-    /**
-     * Soft delete by id
-     */
-    public function removeById(string $id): int;
+    public function remove(string $id): int;
 }

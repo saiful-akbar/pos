@@ -6,7 +6,7 @@ namespace App\Application\Unit\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Unit\DTOs\CreateUnitDTO;
+use App\Application\Unit\DTOs\UnitDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
@@ -14,7 +14,7 @@ use App\Domain\Unit\Entities\UnitEntity;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class CreateUnit
+final class CreateUnit
 {
     /**
      * Create a new class instance.
@@ -26,30 +26,30 @@ class CreateUnit
     ) {}
 
     /**
-     * Execute method.
+     * Execute method
      */
-    public function execute(CreateUnitDTO $dto): UnitEntity
+    public function execute(UnitDTO $value): UnitEntity
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $unit = $this->unitRepository->create($dto);
+            $created = $this->unitRepository->create(
+                value: $value,
+            );
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat unit produk baru',
+                logName: 'Menambah (insert) data unit (satuan produk)',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
-                    attributes: $unit->toArray(),
-                ),
+                    attributes: $created->toArray(),
+                )
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
 
-            return $unit;
+            return $created;
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
-
             $this->errorRepository->create(
                 function: __METHOD__,
                 message: $e->getMessage(),

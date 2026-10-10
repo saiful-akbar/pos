@@ -1,5 +1,16 @@
+@php
+    $merge = [
+        'lang' => str_replace('_', '-', app()->getLocale()),
+        'data-read' => ($access?->read ?? false) ? 1: 0,
+        'data-create' => ($access?->create ?? false) ? 1: 0,
+        'data-update' => ($access?->update ?? false) ? 1: 0,
+        'data-remove' => ($access?->remove ?? false) ? 1: 0,
+        'data-delete' => ($access?->delete ?? false) ? 1: 0,
+    ];
+@endphp
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-read="{{ $access?->read }}" data-create="{{ $access?->create }}" data-update="{{ $access?->update }}" data-remove="{{ $access?->remove }}" data-delete="{{ $access?->delete }}">
+<html {{ $attributes->merge($merge) }}>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
-use App\Application\Unit\DTOs\CreateUnitDTO;
-use App\Application\Unit\DTOs\UpdateUnitDTO;
+use App\Application\Unit\DTOs\UnitDTO;
 use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
 use App\Application\Unit\UseCases\GetUnitsTable;
@@ -28,7 +27,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class UnitController extends Controller
 {
     /**
-     * Menampilkan halaman daftar unit.
+     * Menampilkan halaman unit.
      */
     public function index(Request $request): JsonResponse|View
     {
@@ -38,44 +37,47 @@ class UnitController extends Controller
 
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
-            route: 'master.units',
+            route: 'masters.units',
         );
 
-        return view('pages.units.index', compact('access'));
+        return view(
+            view: 'pages.units.index',
+            data: compact('access')
+        );
     }
 
     /**
-     * Menampilkan halaman tambah data unit
+     * Create data
      */
-    public function create(): View
+    public function store(StoreUnitRequest $request): JsonResponse
     {
-        return view('pages.units.create');
-    }
+        if (! $request->ajax()) {
+            abort(404);
+        }
 
-    /**
-     * Membuat (menyimpan) data unit baru
-     */
-    public function store(StoreUnitRequest $request): RedirectResponse
-    {
         app(CreateUnit::class)->execute(
-            dto: new CreateUnitDTO(
+            value: new UnitDTO(
                 code: $request->validated('code'),
                 name: $request->validated('name'),
-                isActive: $request->boolean('status'),
+                isActive: $request->boolean('is_active'),
             ),
         );
 
-        return to_route('master.units.create')->with('alert', [
-            'status' => 'success',
-            'message' => 'Unit produk baru berhasil ditambahkan.',
-        ]);
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Satuan produk baru berhasil ditambahkan.'
+        );
     }
 
     /**
-     * Menampilkan halaman edit data unit.
+     * Update data
      */
-    public function edit(string $id): View
+    public function update(UpdateUnitRequest $request, string $id): JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         $unit = app(FindUnitById::class)->execute(
             id: $id,
         );
@@ -84,60 +86,23 @@ class UnitController extends Controller
             abort(404);
         }
 
-        return view('pages.units.edit', compact('unit'));
-    }
-
-    /**
-     * Memperbarui data unit.
-     */
-    public function update(UpdateUnitRequest $request, string $id): RedirectResponse
-    {
         app(UpdateUnit::class)->execute(
-            dto: new UpdateUnitDTO(
-                id: $id,
+            unit: $unit,
+            value: new UnitDTO(
                 code: $request->validated('code'),
                 name: $request->validated('name'),
-                isActive: $request->boolean('status'),
+                isActive: $request->boolean('is_active'),
             ),
         );
 
-        return to_route('master.units.edit', ['id' => $id])->with('alert', [
-            'status' => 'success',
-            'message' => 'Unit produk berhasil diperbarui.',
-        ]);
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Satuan produk berhasil diperbarui.'
+        );
     }
 
     /**
-     * Download template import excel
-     */
-    public function templateExport(): BinaryFileResponse
-    {
-        return Excel::download(new TemplateUnitExport(), 'template_import_unit_produk.xlsx');
-    }
-
-    /**
-     * Import excel
-     */
-    public function importExcel(ImportExcelUnitRequest $request): RedirectResponse
-    {
-        Excel::import(new UnitImport(), $request->file('file'));
-
-        return to_route('master.units')->with('alert', [
-            'status' => 'success',
-            'message' => 'Import excel berhasil.',
-        ]);
-    }
-
-    /**
-     * Export excel.
-     */
-    public function exportExcel(): BinaryFileResponse
-    {
-        return Excel::download(new UnitExport(), 'unit_produk.xlsx');
-    }
-
-    /**
-     * Soft delete.
+     * Remove (soft delete)
      */
     public function remove(Request $request, string $id): JsonResponse
     {
@@ -145,10 +110,50 @@ class UnitController extends Controller
             abort(404);
         }
 
-        app(RemoveUnit::class)->execute($id);
+        $unit = app(FindUnitById::class)->execute(
+            id: $id,
+        );
+
+        if ($unit === null) {
+            abort(404);
+        }
+
+        app(RemoveUnit::class)->execute(
+            unit: $unit,
+        );
 
         return $this->jsonResponse(
-            message: 'Unit produk berhasil dihapus.'
+            status: 200,
+            message: 'Satuan produk berhasil dihapus.',
         );
+    }
+
+    /**
+     * Export excel
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new UnitExport(), 'Master_Unit_Produk.xlsx');
+    }
+
+    /**
+     * Export template import excel
+     */
+    public function templateImportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateUnitExport(), 'Template_Import_Unit_Produk.xlsx');
+    }
+
+    /**
+     * Import excel.
+     */
+    public function importExcel(ImportExcelUnitRequest $request): RedirectResponse
+    {
+        Excel::import(new UnitImport(), $request->file('file'));
+
+        return to_route('masters.units')->with('alert', [
+            'status' => 'success',
+            'message' => 'Import excel satuan produk berhasil.',
+        ]);
     }
 }

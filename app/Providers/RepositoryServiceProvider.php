@@ -113,7 +113,6 @@ use App\Application\Supplier\UseCases\RemoveSupplier;
 use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
-use App\Application\Unit\UseCases\GetAllUnits;
 use App\Application\Unit\UseCases\GetUnitsTable;
 use App\Application\Unit\UseCases\RemoveUnit;
 use App\Application\Unit\UseCases\UpdateUnit;
@@ -358,7 +357,6 @@ class RepositoryServiceProvider extends ServiceProvider
             FindUnitById::class => UnitRepository::class,
             CreateUnit::class => UnitRepository::class,
             UpdateUnit::class => UnitRepository::class,
-            GetAllUnits::class => UnitRepository::class,
             RemoveUnit::class => UnitRepository::class,
         ],
 

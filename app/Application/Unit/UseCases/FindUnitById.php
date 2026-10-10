@@ -7,18 +7,22 @@ namespace App\Application\Unit\UseCases;
 use App\Domain\Unit\Entities\UnitEntity;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 
-class FindUnitById
+final class FindUnitById
 {
     /**
      * Create a new class instance.
      */
-    public function __construct(private UnitRepositoryInterface $repository) {}
+    public function __construct(
+        private UnitRepositoryInterface $unitRepository,
+    ) {}
 
     /**
-     * Execute method.
+     * Execute method
      */
     public function execute(string $id): ?UnitEntity
     {
-        return $this->repository->findById($id);
+        return $this->unitRepository->findById(
+            id: $id,
+        );
     }
 }

@@ -23,6 +23,9 @@ class UnitEntity extends Entity
         public readonly ?DateTimeInterface $deletedAt,
     ) {}
 
+    /**
+     * KOnversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {

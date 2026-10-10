@@ -25,7 +25,7 @@ class StoreUnitRequest extends FormRequest
         return [
             'code' => ['required', 'string', 'max:100', 'unique:units,code'],
             'name' => ['required', 'string', 'max:200'],
-            'status' => ['required', 'boolean'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 
@@ -38,7 +38,7 @@ class StoreUnitRequest extends FormRequest
         return [
             'code' => 'kode',
             'name' => 'nama',
-            'status' => 'status',
+            'is_active' => 'status',
         ];
     }
 }

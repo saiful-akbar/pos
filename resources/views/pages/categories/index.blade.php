@@ -277,7 +277,7 @@
                                             class="btn btn-light"
                                             title="Hapus"
                                             data-action="delete"
-                                            onclick="removeCustomer(event, '${data}')"
+                                            onclick="removeCategory(event, '${data}')"
                                         >
                                             ${app.icon('delete', 'fs-6')}
                                         </button>
@@ -408,7 +408,7 @@
             /**
              * Fungsi remove (soft delete) 
              */
-            const removeCustomer = (event, id) => {
+            const removeCategory = (event, id) => {
                 event.preventDefault();
 
                 app.delete('Kategori', async (removed) => {

@@ -20,7 +20,7 @@ class TemplateUnitExport implements Export, ShouldAutoSize, WithHeadings
             ],
             [
                 'Kode *',
-                'Nama',
+                'Nama (Deskripsi) *',
                 'Status (1 = aktif, 0 = tidak aktif)',
             ],
         ];

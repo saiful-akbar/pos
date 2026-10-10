@@ -21,8 +21,8 @@ class UnitExport implements FromCollection, ShouldAutoSize, WithHeadings
     public function headings(): array
     {
         return [
-            'Kode Unit',
-            'Nama Unit',
+            'Kode',
+            'Nama',
             'Status',
             'Waktu Dibuat',
             'Waktu Diedit',

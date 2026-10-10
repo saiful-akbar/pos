@@ -6,14 +6,15 @@ namespace App\Application\Unit\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Unit\DTOs\UpdateUnitDTO;
+use App\Application\Unit\DTOs\UnitDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Domain\Unit\Entities\UnitEntity;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class UpdateUnit
+final class UpdateUnit
 {
     /**
      * Create a new class instance.
@@ -25,35 +26,30 @@ class UpdateUnit
     ) {}
 
     /**
-     * Execute method.
+     * Execute method
      */
-    public function execute(UpdateUnitDTO $dto): void
+    public function execute(UnitEntity $unit, UnitDTO $value): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $unit = app(FindUnitById::class)->execute(id: $dto->id);
-
-            if ($unit === null) {
-                abort(404);
-            }
-
-            $this->unitRepository->update(dto: $dto);
+            $this->unitRepository->update(
+                id: $unit->id,
+                value: $value,
+            );
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Memperbarui unit produk pada id: {$dto->id}",
-                event: EventActivityEnum::UPDATED,
+                logName: 'Memperbarui (update) data unit (satuan produk)',
+                event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
                     old: $unit->toArray(),
-                    attributes: $dto->toArray(),
-                ),
+                    attributes: $value->toArray(),
+                )
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
-
             $this->errorRepository->create(
                 function: __METHOD__,
                 message: $e->getMessage(),

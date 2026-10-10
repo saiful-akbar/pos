@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Unit\DTOs\CreateUnitDTO;
-use App\Application\Unit\DTOs\UpdateUnitDTO;
+use App\Application\Unit\DTOs\UnitDTO;
 use App\Base\Repository;
 use App\Domain\Unit\Entities\UnitEntity;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
@@ -13,7 +12,7 @@ use App\Models\Unit;
 use Illuminate\Database\Eloquent\Builder;
 use Override;
 
-class UnitRepository extends Repository implements UnitRepositoryInterface
+final class UnitRepository extends Repository implements UnitRepositoryInterface
 {
     /**
      * Create a new class instance.
@@ -24,7 +23,7 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
-     * Mengambil daftar unit dalam format query builder.
+     * Mengambil daftar data dalam format query builder.
      */
     #[Override]
     public function getQuery(): Builder
@@ -42,34 +41,40 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
-     * Mengambil data unit berdasarkan id.
+     * Menambah (insert).
+     */
+    #[Override]
+    public function create(UnitDTO $value): UnitEntity
+    {
+        try {
+            return $this->mapModelToUnitEntity(
+                model: $this->model->query()->create($value->toArray()),
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan id.
      */
     #[Override]
     public function findById(string $id): ?UnitEntity
     {
         try {
-            $data = $this->model->query()->find($id);
+            $result = $this->model->query()->find($id);
 
-            return $data === null ? null : $this->mapModelToUnitEntity($data);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
+            if ($result === null) {
+                return null;
+            }
 
-            throw $e;
-        }
-    }
-
-    /**
-     * Membuat unit baru
-     */
-    #[Override]
-    public function create(CreateUnitDTO $dto): UnitEntity
-    {
-        try {
             return $this->mapModelToUnitEntity(
-                $this->model->query()->create($dto->toArray())
+                model: $result,
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -82,38 +87,15 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
-     * Update Unit.
+     * Update
      */
     #[Override]
-    public function update(UpdateUnitDTO $dto): void
-    {
-        try {
-            $this->model->query()
-                ->where('id', '=', $dto->id)
-                ->update($dto->toArray());
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Mengambil semua data unit
-     *
-     * @return UnitEntity[]
-     */
-    #[Override]
-    public function getAll(): array
+    public function update(string $id, UnitDTO $value): int
     {
         try {
             return $this->model->query()
-                ->get()
-                ->map(fn ($unit) => $this->mapModelToUnitEntity($unit))
-                ->toArray();
+                ->where('id', $id)
+                ->update($value->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -125,10 +107,10 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
-     * Soft delete by id.
+     * Soft delete
      */
     #[Override]
-    public function removeById(string $id): int
+    public function remove(string $id): int
     {
         try {
             return $this->model->query()
@@ -145,7 +127,7 @@ class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
-     * Pemetaan model ke UnitEntity.
+     * Pemetaan class Model ke class UnitEntity.
      */
     private function mapModelToUnitEntity(Unit $model): UnitEntity
     {
