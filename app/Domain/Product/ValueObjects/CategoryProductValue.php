@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Product\ValueObjects;
 
-use App\Base\DTO;
+use App\Base\Entity;
 use Override;
 
-class CategoryProductValue extends DTO
+class CategoryProductValue extends Entity
 {
     /**
      * Create a new class instance.
@@ -19,6 +19,9 @@ class CategoryProductValue extends DTO
         public readonly bool $isActive,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {

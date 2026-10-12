@@ -32,14 +32,14 @@ interface CategoryRepositoryInterface
     public function update(UpdateCategoryDTO $dto): void;
 
     /**
+     * Soft delete.
+     */
+    public function remove(string $id): int;
+
+    /**
      * Mengambil semua data kategori
      *
      * @return CategoryEntity[]
      */
-    public function getAll(): array;
-
-    /**
-     * Soft delete by id.
-     */
-    public function removeById(string $id): int;
+    public function getAll(?bool $isActive = null): array;
 }

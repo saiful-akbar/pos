@@ -127,6 +127,35 @@ final class UnitRepository extends Repository implements UnitRepositoryInterface
     }
 
     /**
+     * Mengambil semua daftar
+     *
+     * @return UnitEntity[]
+     */
+    #[Override]
+    public function getAll(?bool $isActive = null): array
+    {
+        try {
+            $query = $this->model->query();
+
+            if (is_bool($isActive)) {
+                $query->where('is_active', $isActive);
+            }
+
+            return $query->orderBy('code', 'asc')
+                ->get()
+                ->map(fn ($data) => $this->mapModelToUnitEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class UnitEntity.
      */
     private function mapModelToUnitEntity(Unit $model): UnitEntity

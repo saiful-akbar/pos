@@ -6,13 +6,13 @@ namespace App\Application\Product\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Product\DTOs\CreateProductDTO;
+use App\Application\Product\DTOs\ProductDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Entities\ProductEntity;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
-use Illuminate\Http\Request;
+use App\Http\Requests\Products\StoreProductRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -31,43 +31,44 @@ class CreateProduct
     /**
      * Execute method.
      */
-    public function execute(Request $request): ProductEntity
+    public function execute(StoreProductRequest $request): ProductEntity
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $product = $this->productRepository->create(new CreateProductDTO(
-                categoryId: $request->validated('category'),
-                unitId: $request->validated('unit'),
-                code: $request->validated('code'),
-                barcode: $request->validated('barcode'),
-                name: $request->validated('name'),
-                purchasePrice: $request->float('purchase_price'),
-                sellingPrice: $request->float('selling_price'),
-                discount: $request->float('discount'),
-                minimumStock: $request->float('minimum_stock'),
-                currentStock: $request->float('current_stock'),
-                isActive: $request->boolean('is_active')
-            ));
+            $newProduct = $this->productRepository->create(
+                value: new ProductDTO(
+                    categoryId: $request->validated('category_id'),
+                    code: $request->validated('code'),
+                    name: $request->validated('name'),
+                    image: null,
+                    minimumStock: $request->float('minimum_stock'),
+                    currentStock: $request->float('current_stock'),
+                    isActive: $request->boolean('is_active'),
+                ),
+            );
 
             if ($request->hasFile('image')) {
-                $this->uploadImage(product: $product, file: $request->file('image'));
+                $this->uploadImage(
+                    product: $newProduct,
+                    file: $request->file('image'),
+                );
             }
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat produk baru',
+                logName: 'Menambah (insert) data produk baru',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
-                    attributes: $product->toArray(),
-                ),
+                    attributes: $newProduct->toArray(),
+                )
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
 
-            return $product;
+            return $newProduct;
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,
@@ -79,7 +80,7 @@ class CreateProduct
     }
 
     /**
-     * Upload image
+     * Upload image.
      */
     private function uploadImage(ProductEntity $product, UploadedFile $file): void
     {
@@ -87,12 +88,19 @@ class CreateProduct
             Storage::disk('public')->delete($product->image);
         }
 
-        $fileName = $product->code.'.'.$file->extension();
-        $path = Storage::disk('public')->putFileAs('images/products', $file, $fileName);
+        $path = Storage::disk('public')->putFile('images/products', $file);
 
-        $this->productRepository->updateImage(
+        $this->productRepository->update(
             id: $product->id,
-            path: $path,
+            value: new ProductDTO(
+                categoryId: $product->category->id,
+                code: $product->code,
+                name: $product->name,
+                image: $path,
+                minimumStock: $product->minimumStock,
+                currentStock: $product->currentStock,
+                isActive: $product->isActive,
+            ),
         );
     }
 }

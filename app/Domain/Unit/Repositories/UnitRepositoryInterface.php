@@ -34,4 +34,11 @@ interface UnitRepositoryInterface
      * Soft delete
      */
     public function remove(string $id): int;
+
+    /**
+     * Mengambil semua daftar
+     *
+     * @return UnitEntity[]
+     */
+    public function getAll(?bool $isActive = null): array;
 }

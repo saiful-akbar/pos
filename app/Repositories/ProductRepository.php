@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Product\DTOs\CreateProductDTO;
-use App\Application\Product\DTOs\UpdateProductDTO;
+use App\Application\Product\DTOs\ProductDTO;
 use App\Base\Repository;
-use App\Domain\Product\Entities\ProductDetailEntity;
 use App\Domain\Product\Entities\ProductEntity;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Product\ValueObjects\CategoryProductValue;
-use App\Domain\Product\ValueObjects\UnitProductValue;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Override;
@@ -27,13 +25,13 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
-     * Mengambil daftar produk dalam format query builder.
+     * Mengambil daftar dalam format query builder.
      */
     #[Override]
     public function getQuery(): Builder
     {
         try {
-            return $this->model->query()->with(['category', 'unit']);
+            return $this->model->query();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -45,28 +43,42 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
-     * Mengambil data produk berdasarkan id.
+     * Create (insert).
      */
     #[Override]
-    public function findById(string $id, string $response = ProductDetailEntity::class): ProductDetailEntity|ProductEntity|null
+    public function create(ProductDTO $value): ProductEntity
     {
         try {
-            $product = $this->model->query()
-                ->with(['category', 'unit'])
-                ->find($id);
+            $result = $this->model->query()->create($value->toArray());
 
-            if ($product === null) {
+            return $this->mapModelToProductEntity(
+                model: $result->load('category'),
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?ProductEntity
+    {
+        try {
+            $result = $this->model->with('category')->find($id);
+
+            if ($result === null) {
                 return null;
             }
 
-            if ($response === ProductDetailEntity::class) {
-                return $this->mapModelToProductDetailEntity(
-                    model: $product
-                );
-            }
-
             return $this->mapModelToProductEntity(
-                model: $product,
+                model: $result,
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -79,120 +91,15 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
-     * Membuat produk baru
+     * Update
      */
     #[Override]
-    public function create(CreateProductDTO $dto): ProductEntity
+    public function update(string $id, ProductDTO $value): int
     {
         try {
-            return $this->mapModelToProductEntity(
-                model: $this->model->query()->create($dto->toArray())
-            );
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Update produk.
-     */
-    #[Override]
-    public function update(UpdateProductDTO $dto): void
-    {
-        try {
-            $this->model->query()
-                ->where('id', '=', $dto->id)
-                ->update($dto->toArray());
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Reset discount.
-     */
-    #[Override]
-    public function resetDiscount(int|float $discount): void
-    {
-        try {
-            $this->model->query()
-                ->where('is_active', '=', 1)
-                ->update(['discount' => $discount]);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Perbarui gambar
-     */
-    #[Override]
-    public function updateImage(string $id, ?string $path = null): void
-    {
-        try {
-            $this->model->query()
-                ->where('id', '=', $id)
-                ->update(['image' => $path]);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Megambil data produk berdasarkan kode atau barcode.
-     */
-    #[Override]
-    public function findByCodeOrBarcode(string $value): ?ProductEntity
-    {
-        try {
-            $data = $this->model->query()
-                ->where('is_active', 1)
-                ->where(function (Builder $query) use ($value): void {
-                    $query->where('code', $value)->orWhere('barcode', $value);
-                })
-                ->first();
-
-            return $data === null ? null : $this->mapModelToProductEntity(model: $data);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Update stock product saat ini berdasarkan id.
-     */
-    #[Override]
-    public function updateCurrentStockById(string $id, int|float $stock): void
-    {
-        try {
-            $this->model->query()
+            return $this->model->query()
                 ->where('id', $id)
-                ->update(['current_stock' => $stock]);
+                ->update($value->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -204,54 +111,10 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
-     * Mengambil daftar produk yang masih aktif dalam format query.
+     * Soft delete berdasarkan id.
      */
     #[Override]
-    public function getActiveQuery(): Builder
-    {
-        try {
-            return $this->model->query()
-                ->with(['category', 'unit'])
-                ->where('is_active', 1);
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Mengambil daftar produk aktif.
-     *
-     * @return ProductEntity[]
-     */
-    #[Override]
-    public function getActive(): array
-    {
-        try {
-            return $this->model->query()
-                ->where('is_active', 1)
-                ->get()
-                ->map(fn ($product) => $this->mapModelToProductEntity($product))
-                ->toArray();
-        } catch (\Throwable $e) {
-            $this->errorLog(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Menghapus data produk berdasarkan id.
-     */
-    #[Override]
-    public function removeById(string $id): int
+    public function remove(string $id): int
     {
         try {
             return $this->model->query()
@@ -268,54 +131,49 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
-     * Pemetaan class model ke class ProductEntity
+     * Update stok saat ini berdasarkan id.
+     */
+    #[Override]
+    public function updateCurrentStock(string $id, float $value): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->update(['current_stock' => $value]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Pemetaan class Model ke class CategoryProductValue.
+     */
+    private function mapModelToCategoryProductValue(Category $model): CategoryProductValue
+    {
+        return new CategoryProductValue(
+            id: $model->id,
+            code: $model->code,
+            name: $model->name,
+            isActive: $model->is_active === 1,
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class ProductEntity.
      */
     private function mapModelToProductEntity(Product $model): ProductEntity
     {
         return new ProductEntity(
             id: $model->id,
-            categoryId: $model->category_id,
-            unitId: $model->unit_id,
+            category: $this->mapModelToCategoryProductValue($model->category),
             code: $model->code,
-            barcode: $model->barcode,
             name: $model->name,
-            purchasePrice: parse_float($model->purchase_price),
-            sellingPrice: parse_float($model->selling_price),
-            discount: parse_float($model->discount),
-            minimumStock: parse_float($model->minimum_stock),
-            currentStock: parse_float($model->current_stock),
-            isActive: $model->is_active === 1,
-            createdAt: $model->created_at,
-            updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
-        );
-    }
-
-    /**
-     * Pemetaan class model ke class ProductDetailEntity
-     */
-    private function mapModelToProductDetailEntity(Product $model): ProductDetailEntity
-    {
-        return new ProductDetailEntity(
-            id: $model->id,
-            category: new CategoryProductValue(
-                id: $model->category->id,
-                code: $model->category->code,
-                name: $model->category->name,
-                isActive: $model->category->is_active === 1,
-            ),
-            unit: new UnitProductValue(
-                id: $model->unit->id,
-                code: $model->unit->code,
-                name: $model->unit->name,
-                isActive: $model->unit->is_active === 1,
-            ),
-            code: $model->code,
-            barcode: $model->barcode,
-            name: $model->name,
-            purchasePrice: parse_float($model->purchase_price),
-            sellingPrice: parse_float($model->selling_price),
-            discount: parse_float($model->discount),
+            image: $model->image,
             minimumStock: parse_float($model->minimum_stock),
             currentStock: parse_float($model->current_stock),
             isActive: $model->is_active === 1,

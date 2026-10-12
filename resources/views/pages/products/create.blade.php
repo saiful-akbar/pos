@@ -1,73 +1,84 @@
 <x-layouts.auth title="Tambah Produk">
-    <x-page-header title="Tambah Produk" icon="data_table">
+    <x-page-header title="Tambah Produk" icon="add_box">
         <x-slot:action>
             <div class="row justify-content-end">
                 <div class="col-12 col-lg-4">
-                    <a href="{{ route('master.products') }}" class="btn btn-light w-100" role="button">
-                        <x-icon class="me-1">arrow_back</x-icon>
-                        <span>Kembali</span>
-                    </a>
+                    <x-button type="link" href="{{ route('masters.products') }}" color="light" startIcon="arrow_back" fullWidth>
+                        Kembali
+                    </x-button>
                 </div>
             </div>
         </x-slot:action>
     </x-page-header>
 
-    <form action="{{ route('master.products.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
-        @csrf @method('post')
+    <form action="{{ route('masters.products.store') }}" method="post" autocomplete="off" enctype="multipart/form-data">
+        @csrf
 
-        <div class="row mt-6">
+        <div class="row justify-content-center mt-7">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5">Data Produk</h3>
-                        <p class="text-body-secondary">Isikan data kode, barcode dan nama produk.</p>
+                        <h2 class="fs-5 mb-0">Produk</h2>
                     </div>
 
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-input
+                                <x-form-select
+                                    required
+                                    name="category_id"
+                                    id="categoryId"
+                                    label="Kategori"
+                                    value="{{ old('category_id') }}"
+                                    error="{{ $errors->has('category_id') }}"
+                                >
+                                    <option selected disabled>Pilih</option>
+                                    
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" @selected($category->id == old('category_id'))>
+                                            {{ $category->name }} ({{ $category->code }})
+                                        </option>
+                                    @endforeach
+                                </x-form-select>
+                            </div>
+
+                            <div class="col-12 col-lg-6 mb-5">
+                                <x-form-input
                                     required
                                     type="text"
                                     name="code"
                                     id="code"
-                                    label="Kode Produk"
-                                    placeholder="Kode Produk"
-                                    error="{{ $errors->has('code') }}"
+                                    label="Kode"
+                                    placeholder="Masukan kode..."
                                     value="{{ old('code') }}"
-                                />
-                            </div>
-
-                            <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-input
-                                    required
-                                    type="text"
-                                    name="barcode"
-                                    id="barcode"
-                                    label="Barcode"
-                                    placeholder="Barcode"
-                                    error="{{ $errors->has('barcode') }}"
-                                    value="{{ old('barcode') }}"
+                                    error="{{ $errors->has('code') }}"
                                 />
                             </div>
 
                             <div class="col-12 col-lg-6 mb-5 mb-lg-0">
-                                <x-form-floating-input
+                                <x-form-input
                                     type="text"
                                     name="name"
                                     id="name"
                                     label="Nama (Deskripsi)"
-                                    placeholder="Nama (Deskripsi)"
-                                    error="{{ $errors->has('name') }}"
+                                    placeholder="Masukan nama atau deskripsi..."
                                     value="{{ old('name') }}"
+                                    error="{{ $errors->has('name') }}"
                                 />
                             </div>
 
                             <div class="col-12 col-lg-6">
-                                <x-form-floating-select required name="is_active" id="is_active" label="Status" error="{{ $errors->has('is_active') }}">
-                                    <option value="1" @selected(old('is_active', 1) == 1)>Aktif</option>
-                                    <option value="0" @selected(old('is_active', 1) == 0)>Tidak Aktif</option>
-                                </x-form-floating-select>
+                                <x-form-select
+                                    required
+                                    name="is_active"
+                                    id="isActive"
+                                    label="Status"
+                                    value="{{ old('is_active') }}"
+                                    error="{{ $errors->has('is_active') }}"
+                                >
+                                    <option value="1">Aktif</option>
+                                    <option value="0">Tidak Aktif</option>
+                                </x-form-select>
                             </div>
                         </div>
                     </div>
@@ -75,143 +86,40 @@
             </div>
         </div>
 
-        <div class="row mt-6">
+        <div class="row justify-content-center mt-7">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5">Kategori & Unit</h3>
-                        <p class="text-body-secondary">Pilih kategori dan jenis unit produk.</p>
+                        <h2 class="fs-5 mb-0">Stok</h2>
                     </div>
 
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-lg-6 mb-5 mb-lg-0">
-                                <x-form-floating-select required name="category" id="category" label="Kategori" error="{{ $errors->has('category') }}">
-                                    <option disabled selected>Pilih kategori</option>
-
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" @selected(old('category') == $category->id)>
-                                            {{ $category->code }} - {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </x-form-floating-select>
-                            </div>
-
-                            <div class="col-12 col-lg-6">
-                                <x-form-floating-select required name="unit" id="unit" label="Unit" error="{{ $errors->has('unit') }}">
-                                    <option disabled selected>Pilih unit</option>
-
-                                    @foreach ($units as $unit)
-                                        <option value="{{ $unit->id }}" @selected(old('unit') == $unit->id)>
-                                            {{ $unit->code }} - {{ $unit->name }}
-                                        </option>
-                                    @endforeach
-                                </x-form-floating-select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-6">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h3 class="fs-5">Harga</h3>
-                        <p class="text-body-secondary">Masukan harga beli dan harga jual produk.</p>
-                    </div>
-
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-input
+                                <x-form-input
                                     type="number"
-                                    min="0"
-                                    name="purchase_price"
-                                    id="purchase_price"
-                                    label="Harga Beli"
-                                    placeholder="Harga Beli"
-                                    error="{{ $errors->has('purchase_price') }}"
-                                    value="{{ old('purchase_price') }}"
-                                    class="no-spinners"
-                                    step="any"
-                                />
-                            </div>
-
-                            <div class="col-12 col-lg-6 mb-5">
-                                <x-form-floating-input
-                                    type="number"
-                                    min="0"
-                                    name="selling_price"
-                                    id="selling_price"
-                                    label="Harga Jual"
-                                    placeholder="Harga Jual"
-                                    error="{{ $errors->has('selling_price') }}"
-                                    value="{{ old('selling_price') }}"
-                                    class="no-spinners"
-                                    step="any"
-                                />
-                            </div>
-
-                            <div class="col-12 col-lg-6">
-                                <x-form-floating-input
-                                    type="number"
-                                    min="0"
-                                    max="100"
-                                    name="discount"
-                                    id="discount"
-                                    label="Diskon (%)"
-                                    placeholder="Diskon (%)"
-                                    error="{{ $errors->has('discount') }}"
-                                    value="{{ old('discount') }}"
-                                    class="no-spinners"
-                                    step="any"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-6">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h3 class="fs-5">Stok</h3>
-                        <p class="text-body-secondary">Masukan stok produk.</p>
-                    </div>
-
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
-                                <x-form-floating-input
-                                    type="number"
-                                    min="0"
-                                    name="current_stock"
-                                    id="current_stock"
-                                    label="Stok Tersedia"
-                                    placeholder="Stok Tersedia"
-                                    error="{{ $errors->has('current_stock') }}"
-                                    value="{{ old('current_stock') }}"
-                                    class="no-spinners"
-                                    step="any"
-                                />
-                            </div>
-
-                            <div class="col-12 col-lg-6">
-                                <x-form-floating-input
-                                    type="number"
-                                    min="0"
                                     name="minimum_stock"
                                     id="minimum_stock"
-                                    label="Stok Minimum"
-                                    placeholder="Stok Minimum"
-                                    error="{{ $errors->has('minimum_stock') }}"
+                                    label="Stok minimum"
+                                    placeholder="Masukan stok minimum..."
                                     value="{{ old('minimum_stock') }}"
-                                    class="no-spinners"
-                                    step="any"
+                                    error="{{ $errors->has('minimum_stock') }}"
+                                    min="0"
+                                    step="0.01"
+                                />
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <x-form-input
+                                    type="number"
+                                    name="current_stock"
+                                    id="current_stock"
+                                    label="Stok saat ini"
+                                    placeholder="Masukan stok saat ini..."
+                                    value="{{ old('current_stock') }}"
+                                    error="{{ $errors->has('current_stock') }}"
+                                    min="0"
+                                    step="0.01"
                                 />
                             </div>
                         </div>
@@ -220,38 +128,38 @@
             </div>
         </div>
 
-        <div class="row mt-6">
+        <div class="row justify-content-center mt-7">
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5">Gambar Produk</h3>
-                        <p class="text-body-secondary">Unggah gambar produk.</p>
+                        <h2 class="fs-5 mb-0">Gambar</h2>
                     </div>
 
                     <div class="card-body">
-                        <x-form-input
-                            type="file"
-                            name="image"
-                            id="image"
-                            accept=".png, .jpg, .jpeg, .webp"
-                            error="{{ $errors->has('image') }}"
-                        />
+                        <div class="row">
+                            <div class="col-12">
+                                <x-form-input
+                                    type="file"
+                                    name="image"
+                                    id="image"
+                                    label="Unggah gambar"
+                                    placeholder="Unggah gambar produk..."
+                                    value="{{ old('image') }}"
+                                    error="{{ $errors->has('image') }}"
+                                    accept=".jpg,.jpeg,.png,.webp"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-footer">
-                        <div class="row justify-content-end align-items-center">
-                            <div class="col-6 col-lg-3 col-xl-2">
-                                <button type="reset" class="btn btn-light w-100">
-                                    <x-icon class="me-1">close</x-icon>
-                                    <span>Reset</span>
-                                </button>
+                        <div class="row justify-content-end">
+                            <div class="col-6 col-lg-4 col-xl-2">
+                                <x-button type="reset" color="light" startIcon="close" fullWidth>Reset</x-button>
                             </div>
 
-                            <div class="col-6 col-lg-3 col-xl-2">
-                                <button type="submit" class="btn btn-secondary w-100">
-                                    <x-icon class="me-1">save</x-icon>
-                                    <span>Simpan</span>
-                                </button>
+                            <div class="col-6 col-lg-4 col-xl-2">
+                                <x-button type="submit" color="secondary" startIcon="save" fullWidth>Simpan</x-button>
                             </div>
                         </div>
                     </div>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Product\Entities;
 
 use App\Base\Entity;
+use App\Domain\Product\ValueObjects\CategoryProductValue;
 use DateTimeInterface;
 use Override;
 
@@ -15,40 +16,33 @@ class ProductEntity extends Entity
      */
     public function __construct(
         public readonly string $id,
-        public readonly string $categoryId,
-        public readonly string $unitId,
+        public readonly CategoryProductValue $category,
         public readonly string $code,
-        public readonly string $barcode,
         public readonly ?string $name,
-        public readonly int|float $purchasePrice,
-        public readonly int|float $sellingPrice,
-        public readonly int|float $discount,
-        public readonly int|float $minimumStock,
-        public readonly int|float $currentStock,
+        public readonly ?string $image,
+        public readonly float $minimumStock,
+        public readonly float $currentStock,
         public readonly bool $isActive,
-        public readonly ?string $image = null,
-        public readonly ?DateTimeInterface $createdAt = null,
-        public readonly ?DateTimeInterface $updatedAt = null,
-        public readonly ?DateTimeInterface $deletedAt = null,
+        public readonly ?DateTimeInterface $createdAt,
+        public readonly ?DateTimeInterface $updatedAt,
+        public readonly ?DateTimeInterface $deletedAt,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {
         return [
             'id' => $this->id,
-            'category_id' => $this->categoryId,
-            'unit_id' => $this->unitId,
+            'category' => $this->category->toArray(),
             'code' => $this->code,
-            'barcode' => $this->barcode,
             'name' => $this->name,
-            'purcahse_price' => $this->purchasePrice,
-            'selling_price' => $this->sellingPrice,
-            'discount' => $this->discount,
+            'image' => $this->image,
             'minimum_stock' => $this->minimumStock,
             'current_stock' => $this->currentStock,
             'is_active' => $this->isActive,
-            'image' => $this->image,
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),

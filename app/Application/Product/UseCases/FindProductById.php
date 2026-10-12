@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Product\UseCases;
 
-use App\Domain\Product\Entities\ProductDetailEntity;
+use App\Domain\Product\Entities\ProductEntity;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 
 class FindProductById
@@ -12,13 +12,15 @@ class FindProductById
     /**
      * Create a new class instance.
      */
-    public function __construct(private ProductRepositoryInterface $repository) {}
+    public function __construct(private ProductRepositoryInterface $productRepository) {}
 
     /**
      * Execute method.
      */
-    public function execute(string $id): ?ProductDetailEntity
+    public function execute(string $id): ?ProductEntity
     {
-        return $this->repository->findById($id);
+        return $this->productRepository->findById(
+            id: $id,
+        );
     }
 }

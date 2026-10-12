@@ -156,21 +156,18 @@ Route::middleware('auth')->group(function (): void {
             ->name('.products')
             ->prefix('products')
             ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:master.products,read');
-                Route::post('/', 'store')->name('.store')->middleware('module:master.products,create');
-                Route::get('/active', 'getActiveTable')->name('.active');
-                Route::get('/create', 'create')->name('.create')->middleware('module:master.products,create');
-                Route::get('/export', 'exportExcel')->name('.export')->middleware('module:master.products,read');
-                Route::get('/export/template', 'templateImport')->name('.export.template')->middleware('module:master.products,create');
-                Route::get('/export/template/dicount', 'templateImportUpdateDiscount')->name('.export.template.discount')->middleware('module:master.products,update');
-                Route::get('/export/template/selling-price', 'templateImportUpdateSellingPrice')->name('.export.template.sellingPrice')->middleware('module:master.products,update');
-                Route::post('/import', 'importExcel')->name('.import')->middleware('module:master.products,create');
-                Route::patch('/import/discount', 'importUpdateDiscount')->name('.import.discount')->middleware('module:master.products,update');
-                Route::patch('/import/selling-price', 'importUpdateSellingPrice')->name('.import.sellingPrice')->middleware('module:master.products,update');
-                Route::patch('/reset-discount', 'resetDiscount')->name('.resetDiscount')->middleware('module:master.products,update');
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware('module:master.products,update');
-                Route::put('/{id}', 'update')->name('.update')->middleware('module:master.products,update');
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:master.products,remove');
+                $module = 'module:masters.products';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
+                Route::get('/create', 'create')->name('.create')->middleware("$module,create");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,create");
+                Route::post('/{productId}/prices', 'storePrice')->name('.prices.store')->middleware("$module,create");
+                Route::delete('/{productId}/prices/{priceId}', 'deletePrice')->name('.prices.delete')->middleware("$module,create");
+                Route::get('/{productId}/edit', 'edit')->name('.edit')->middleware("$module,update");
+                Route::patch('/{productId}', 'update')->name('.update')->middleware("$module,update");
+                Route::delete('/{productId}', 'remove')->name('.remove')->middleware("$module,remove");
             });
     });
 

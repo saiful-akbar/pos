@@ -13,13 +13,19 @@ class GetProductsTable
     /**
      * Create a new class instance.
      */
-    public function __construct(private ProductRepositoryInterface $repository) {}
+    public function __construct(
+        private ProductRepositoryInterface $productRepository,
+    ) {}
 
     /**
      * Execute method.
      */
     public function execute(): JsonResponse
     {
-        return DataTables::eloquent($this->repository->getQuery())->toJson();
+        $dataTable = DataTables::eloquent(
+            builder: $this->productRepository->getQuery(),
+        );
+
+        return $dataTable->toJson();
     }
 }

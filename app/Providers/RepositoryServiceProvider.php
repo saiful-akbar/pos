@@ -31,13 +31,14 @@ use App\Application\Module\UseCases\GetAllModules;
 use App\Application\Module\UseCases\GetAllModulesByRoleId;
 use App\Application\Module\UseCases\GetModulesByRoleId;
 use App\Application\Module\UseCases\UpdateModuleAccess;
+use App\Application\Price\UseCases\CreatePrice;
+use App\Application\Price\UseCases\DeletePrice;
+use App\Application\Price\UseCases\FindPriceById;
+use App\Application\Price\UseCases\GetPricesByProduct;
+use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
-use App\Application\Product\UseCases\GetActiveProductsTable;
 use App\Application\Product\UseCases\GetProductsTable;
-use App\Application\Product\UseCases\RemoveProduct;
-use App\Application\Product\UseCases\ResetDiscountProduct;
-use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
 use App\Application\Purchase\UseCases\CreatePurchasePayment;
@@ -113,6 +114,7 @@ use App\Application\Supplier\UseCases\RemoveSupplier;
 use App\Application\Supplier\UseCases\UpdateSupplier;
 use App\Application\Unit\UseCases\CreateUnit;
 use App\Application\Unit\UseCases\FindUnitById;
+use App\Application\Unit\UseCases\GetAllUnits;
 use App\Application\Unit\UseCases\GetUnitsTable;
 use App\Application\Unit\UseCases\RemoveUnit;
 use App\Application\Unit\UseCases\UpdateUnit;
@@ -129,6 +131,7 @@ use App\Domain\Discount\Repositories\DiscountRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
+use App\Domain\Price\Repositories\PriceRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
@@ -164,6 +167,7 @@ use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\MonthlyStockOpnameDetailRepository;
 use App\Repositories\MonthlyStockOpnameRepository;
+use App\Repositories\PriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\PurchaseCartDetailRepository;
 use App\Repositories\PurchaseCartRepository;
@@ -200,9 +204,6 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateCategory::class => ErrorLogRepository::class,
             CreateUnit::class => ErrorLogRepository::class,
             UpdateUnit::class => ErrorLogRepository::class,
-            CreateProduct::class => ErrorLogRepository::class,
-            UpdateProduct::class => ErrorLogRepository::class,
-            ResetDiscountProduct::class => ErrorLogRepository::class,
             CreateCustomer::class => ErrorLogRepository::class,
             UpdateCustomer::class => ErrorLogRepository::class,
             GetCustomersTable::class => ErrorLogRepository::class,
@@ -240,7 +241,6 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCustomer::class => ErrorLogRepository::class,
             RemoveCategory::class => ErrorLogRepository::class,
             RemoveUnit::class => ErrorLogRepository::class,
-            RemoveProduct::class => ErrorLogRepository::class,
             RemovePurchase::class => ErrorLogRepository::class,
             RemoveSale::class => ErrorLogRepository::class,
             RemoveSaleReturn::class => ErrorLogRepository::class,
@@ -249,6 +249,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSupplier::class => ErrorLogRepository::class,
             UpdateSupplier::class => ErrorLogRepository::class,
             RemoveSupplier::class => ErrorLogRepository::class,
+            CreateProduct::class => ErrorLogRepository::class,
+            CreatePrice::class => ErrorLogRepository::class,
+            DeletePrice::class => ErrorLogRepository::class,
+            FindPriceById::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -261,9 +265,6 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateCategory::class => ActivityLogRepository::class,
             CreateUnit::class => ActivityLogRepository::class,
             UpdateUnit::class => ActivityLogRepository::class,
-            CreateProduct::class => ActivityLogRepository::class,
-            UpdateProduct::class => ActivityLogRepository::class,
-            ResetDiscountProduct::class => ActivityLogRepository::class,
             CreateCustomer::class => ActivityLogRepository::class,
             UpdateCustomer::class => ActivityLogRepository::class,
             GetCustomersTable::class => ActivityLogRepository::class,
@@ -292,7 +293,6 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCustomer::class => ActivityLogRepository::class,
             RemoveCategory::class => ActivityLogRepository::class,
             RemoveUnit::class => ActivityLogRepository::class,
-            RemoveProduct::class => ActivityLogRepository::class,
             RemovePurchase::class => ActivityLogRepository::class,
             RemoveSale::class => ActivityLogRepository::class,
             RemoveSaleReturn::class => ActivityLogRepository::class,
@@ -301,6 +301,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSupplier::class => ActivityLogRepository::class,
             UpdateSupplier::class => ActivityLogRepository::class,
             RemoveSupplier::class => ActivityLogRepository::class,
+            CreateProduct::class => ActivityLogRepository::class,
+            CreatePrice::class => ActivityLogRepository::class,
+            DeletePrice::class => ActivityLogRepository::class,
+            FindPriceById::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -358,30 +362,23 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateUnit::class => UnitRepository::class,
             UpdateUnit::class => UnitRepository::class,
             RemoveUnit::class => UnitRepository::class,
+            GetAllUnits::class => UnitRepository::class,
         ],
 
         // Product
         ProductRepositoryInterface::class => [
             GetProductsTable::class => ProductRepository::class,
-            FindProductById::class => ProductRepository::class,
             CreateProduct::class => ProductRepository::class,
-            UpdateProduct::class => ProductRepository::class,
-            ResetDiscountProduct::class => ProductRepository::class,
-            CreatePurchaseCartDetail::class => ProductRepository::class,
-            SavePurchase::class => ProductRepository::class,
-            GetActiveProductsTable::class => ProductRepository::class,
-            CreateSaleCartDetail::class => ProductRepository::class,
-            DeleteSaleCartDetailById::class => ProductRepository::class,
-            UpdateQuantitySalesCartDetailById::class => ProductRepository::class,
-            CreateSale::class => ProductRepository::class,
-            CreateSaleReturnCartDetail::class => ProductRepository::class,
-            CreateSaleReturn::class => ProductRepository::class,
-            CreateDailyStockOpnameDetail::class => ProductRepository::class,
-            SetActiveStock::class => ProductRepository::class,
-            RemoveProduct::class => ProductRepository::class,
-            RemovePurchase::class => ProductRepository::class,
-            RemoveSale::class => ProductRepository::class,
-            RemoveSaleReturn::class => ProductRepository::class,
+            FindProductById::class => ProductRepository::class,
+        ],
+
+        // Product Price
+        PriceRepositoryInterface::class => [
+            GetPricesByProduct::class => PriceRepository::class,
+            GetPricesTableByProduct::class => PriceRepository::class,
+            CreatePrice::class => PriceRepository::class,
+            DeletePrice::class => PriceRepository::class,
+            FindPriceById::class => PriceRepository::class,
         ],
 
         // Customer

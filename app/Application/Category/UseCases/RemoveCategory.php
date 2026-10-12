@@ -40,7 +40,7 @@ class RemoveCategory
                 ]);
             }
 
-            $removed = $this->categoryRepository->removeById($category->id);
+            $removed = $this->categoryRepository->remove($category->id);
 
             $this->activityRepository->create(new CreateActivityDTO(
                 userId: user()->id,

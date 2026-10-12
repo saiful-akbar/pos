@@ -102,18 +102,15 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     }
 
     /**
-     * Mengambil semua data kategori
-     *
-     * @return CategoryEntity[]
+     * Soft delete.
      */
     #[Override]
-    public function getAll(): array
+    public function remove(string $id): int
     {
         try {
             return $this->model->query()
-                ->get()
-                ->map(fn ($category) => $this->mapModelToCategoryEntity($category))
-                ->toArray();
+                ->where('id', $id)
+                ->delete();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -125,15 +122,24 @@ class CategoryRepository extends Repository implements CategoryRepositoryInterfa
     }
 
     /**
-     * Soft delete by id.
+     * Mengambil semua data kategori
+     *
+     * @return CategoryEntity[]
      */
     #[Override]
-    public function removeById(string $id): int
+    public function getAll(?bool $isActive = null): array
     {
         try {
-            return $this->model->query()
-                ->where('id', $id)
-                ->delete();
+            $query = $this->model->query();
+
+            if (is_bool($isActive)) {
+                $query->where('is_active', $isActive);
+            }
+
+            return $query->orderBy('name', 'asc')
+                ->get()
+                ->map(fn ($category) => $this->mapModelToCategoryEntity($category))
+                ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

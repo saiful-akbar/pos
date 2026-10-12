@@ -4,68 +4,39 @@ declare(strict_types=1);
 
 namespace App\Domain\Product\Repositories;
 
-use App\Application\Product\DTOs\CreateProductDTO;
-use App\Application\Product\DTOs\UpdateProductDTO;
-use App\Domain\Product\Entities\ProductDetailEntity;
+use App\Application\Product\DTOs\ProductDTO;
 use App\Domain\Product\Entities\ProductEntity;
 use Illuminate\Database\Eloquent\Builder;
 
 interface ProductRepositoryInterface
 {
     /**
-     * Mengambil daftar produk dalam format query builder.
+     * Mengambil daftar dalam format query builder.
      */
     public function getQuery(): Builder;
 
     /**
-     * Mengambil daftar produk yang masih aktif dalam format query.
+     * Create (insert).
      */
-    public function getActiveQuery(): Builder;
+    public function create(ProductDTO $value): ProductEntity;
 
     /**
-     * Mengambil data produk berdasarkan id.
+     * Mengambil data berdasarkan id.
      */
-    public function findById(string $id, string $response = ProductDetailEntity::class): ProductDetailEntity|ProductEntity|null;
+    public function findById(string $id): ?ProductEntity;
 
     /**
-     * Membuat produk baru
+     * Update
      */
-    public function create(CreateProductDTO $dto): ProductEntity;
+    public function update(string $id, ProductDTO $value): int;
 
     /**
-     * Update produk.
+     * Soft delete berdasarkan id.
      */
-    public function update(UpdateProductDTO $dto): void;
+    public function remove(string $id): int;
 
     /**
-     * Reset discount.
+     * Update stok saat ini berdasarkan id.
      */
-    public function resetDiscount(int|float $discount): void;
-
-    /**
-     * Update gambar
-     */
-    public function updateImage(string $id, ?string $path = null): void;
-
-    /**
-     * Megambil data produk berdasarkan kode atau barcode.
-     */
-    public function findByCodeOrBarcode(string $value): ?ProductEntity;
-
-    /**
-     * Update stock product saat ini berdasarkan id.
-     */
-    public function updateCurrentStockById(string $id, int|float $stock): void;
-
-    /**
-     * Mengambil daftar produk aktif.
-     *
-     * @return ProductEntity[]
-     */
-    public function getActive(): array;
-
-    /**
-     * Menghapus data produk berdasarkan id.
-     */
-    public function removeById(string $id): int;
+    public function updateCurrentStock(string $id, float $value): int;
 }

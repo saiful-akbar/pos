@@ -2,22 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Product\UseCases;
+namespace App\Application\Price\UseCases;
 
+use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
-use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use App\Domain\Price\Entities\PriceEntity;
+use App\Domain\Price\Repositories\PriceRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class ResetDiscountProduct
+class DeletePrice
 {
     /**
      * Create a new class instance.
      */
     public function __construct(
-        private ProductRepositoryInterface $productRepository,
+        private PriceRepositoryInterface $priceRepository,
         private ActivityLogRepositoryInterface $activityRepository,
         private ErrorLogRepositoryInterface $errorRepository,
     ) {}
@@ -25,22 +27,27 @@ class ResetDiscountProduct
     /**
      * Execute method.
      */
-    public function execute(int $discount): void
+    public function execute(PriceEntity $price): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $this->productRepository->resetDiscount(discount: $discount);
+            $this->priceRepository->delete(
+                id: $price->id,
+            );
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: "Reset discount product menjadi $discount%",
-                event: EventActivityEnum::UPDATED,
+                logName: 'Menghapus (delete) data harga produk',
+                event: EventActivityEnum::DELETED,
+                attributeChanges: new AttributeActivityDTO(
+                    old: $price->toArray(),
+                ),
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

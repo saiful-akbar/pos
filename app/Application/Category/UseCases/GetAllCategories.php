@@ -19,8 +19,10 @@ class GetAllCategories
      *
      * @return CategoryEntity[]
      */
-    public function execute(): array
+    public function execute(?bool $isActive = null): array
     {
-        return $this->repository->getAll();
+        return $this->repository->getAll(
+            isActive: $isActive,
+        );
     }
 }

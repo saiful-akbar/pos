@@ -23,40 +23,32 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => ['required', 'exists:categories,id'],
-            'unit' => ['required', 'exists:units,id'],
+            'category_id' => ['required', 'exists:categories,id'],
             'code' => ['required', 'string', 'max:50', 'unique:products,code'],
-            'barcode' => ['required', 'string', 'max:50', 'unique:products,barcode'],
-            'name' => ['nullable', 'string', 'max:500'],
-            'purchase_price' => ['nullable', 'numeric', 'min:0'],
-            'selling_price' => ['nullable', 'numeric', 'min:0'],
-            'discount' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'name' => ['nullable', 'string', 'max:200'],
+            'image' => ['nullable', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
             'minimum_stock' => ['nullable', 'numeric', 'min:0'],
             'current_stock' => ['nullable', 'numeric', 'min:0'],
             'is_active' => ['required', 'boolean'],
-            'image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
         ];
     }
 
     /**
-     * Merubah nama atribut untuk pesan error.
+     * Merubah nama attribut untuk pesan error.
+     *
+     * @return void
      */
     #[Override]
-    public function attributes(): array
+    public function attributes()
     {
         return [
-            'category' => 'kategori',
-            'unit' => 'unit',
+            'category_id' => 'kategori',
             'code' => 'kode',
-            'barcode' => 'barcode',
-            'name' => 'nama (deskripsi)',
-            'purchase_price' => 'harga beli',
-            'selling_price' => 'harga jual',
-            'discount' => 'diskon',
-            'minimum_stock' => 'stok minimal',
-            'current_stock' => 'stok',
-            'is_active' => 'status',
-            'image' => 'gambar',
+            'name' => 'nama atau deskripsi',
+            'image' => 'gambar atau foto',
+            'minimum_stock' => 'stok minimum',
+            'current_stock' => 'stok saat ini',
+            'is_active' => 'status keaktifan',
         ];
     }
 }
