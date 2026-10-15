@@ -13,9 +13,7 @@ use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Entities\ProductEntity;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Http\Requests\Products\StoreProductRequest;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class CreateProduct
 {
@@ -44,12 +42,13 @@ class CreateProduct
                     image: null,
                     minimumStock: $request->float('minimum_stock'),
                     currentStock: $request->float('current_stock'),
+                    discount: $request->float('discount'),
                     isActive: $request->boolean('is_active'),
                 ),
             );
 
             if ($request->hasFile('image')) {
-                $this->uploadImage(
+                app(UploadImageProduct::class)->execute(
                     product: $newProduct,
                     file: $request->file('image'),
                 );
@@ -77,30 +76,5 @@ class CreateProduct
 
             throw $e;
         }
-    }
-
-    /**
-     * Upload image.
-     */
-    private function uploadImage(ProductEntity $product, UploadedFile $file): void
-    {
-        if ($product->image !== null) {
-            Storage::disk('public')->delete($product->image);
-        }
-
-        $path = Storage::disk('public')->putFile('images/products', $file);
-
-        $this->productRepository->update(
-            id: $product->id,
-            value: new ProductDTO(
-                categoryId: $product->category->id,
-                code: $product->code,
-                name: $product->name,
-                image: $path,
-                minimumStock: $product->minimumStock,
-                currentStock: $product->currentStock,
-                isActive: $product->isActive,
-            ),
-        );
     }
 }

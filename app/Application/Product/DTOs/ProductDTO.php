@@ -19,6 +19,7 @@ class ProductDTO extends DTO
         public readonly ?string $image = null,
         public readonly float $minimumStock = 0.00,
         public readonly float $currentStock = 0.00,
+        public readonly float $discount = 0.00,
         public readonly bool $isActive = true,
     ) {}
 
@@ -35,6 +36,7 @@ class ProductDTO extends DTO
             'image' => $this->image,
             'minimum_stock' => $this->minimumStock,
             'current_stock' => $this->currentStock,
+            'discount' => $this->discount,
             'is_active' => $this->isActive,
         ];
     }

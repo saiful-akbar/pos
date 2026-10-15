@@ -70,6 +70,7 @@ class Product extends Model
         'selling_price',
         'minimum_stock',
         'current_stock',
+        'discount',
         'is_active',
     ];
 

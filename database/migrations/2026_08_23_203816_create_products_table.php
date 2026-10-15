@@ -33,6 +33,7 @@ return new class() extends Migration
             $table->string('image', 100)->nullable();
             $table->decimal('minimum_stock', 15, 2)->default(0);
             $table->decimal('current_stock', 15, 2)->default(0);
+            $table->decimal('discount', 5, 2)->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

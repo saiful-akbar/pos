@@ -18,13 +18,6 @@ use App\Application\Customer\UseCases\RemoveCustomer;
 use App\Application\Customer\UseCases\UpdateCustomer;
 use App\Application\Dashboard\UseCases\GetBestSellingProduct;
 use App\Application\Dashboard\UseCases\GetMonthlySalesSummary;
-use App\Application\Discount\UseCases\CreateDiscount;
-use App\Application\Discount\UseCases\FindDiscountById;
-use App\Application\Discount\UseCases\GetActiveDiscountsTable;
-use App\Application\Discount\UseCases\GetAllDiscounts;
-use App\Application\Discount\UseCases\GetAllDiscountsTable;
-use App\Application\Discount\UseCases\RemoveDiscountById;
-use App\Application\Discount\UseCases\UpdateDiscount;
 use App\Application\ErrorLog\UseCases\CreateErrorLog;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Module\UseCases\GetAllModules;
@@ -39,6 +32,8 @@ use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\UpdateProduct;
+use App\Application\Product\UseCases\UploadImageProduct;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
 use App\Application\Purchase\UseCases\CreatePurchasePayment;
@@ -127,7 +122,6 @@ use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Domain\Customer\Repositories\CustomerRepositoryInterface;
 use App\Domain\Dashboard\Repositories\SaleDashboardRepositoryInterface;
-use App\Domain\Discount\Repositories\DiscountRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleAccessRepositoryInterface;
 use App\Domain\Module\Repositories\ModuleRepositoryInterface;
@@ -162,7 +156,6 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\DailyStockOpnameDetailRepository;
 use App\Repositories\DailyStockOpnameRepository;
-use App\Repositories\DiscountRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
 use App\Repositories\MonthlyStockOpnameDetailRepository;
@@ -218,9 +211,6 @@ class RepositoryServiceProvider extends ServiceProvider
             DeletePurchasePaymentById::class => ErrorLogRepository::class,
             CreateSaleCart::class => ErrorLogRepository::class,
             DeleteSaleCartById::class => ErrorLogRepository::class,
-            CreateDiscount::class => ErrorLogRepository::class,
-            UpdateDiscount::class => ErrorLogRepository::class,
-            RemoveDiscountById::class => ErrorLogRepository::class,
             CreateSaleCartDetail::class => ErrorLogRepository::class,
             DeleteSaleCartDetailById::class => ErrorLogRepository::class,
             UpdateQuantitySalesCartDetailById::class => ErrorLogRepository::class,
@@ -253,6 +243,8 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePrice::class => ErrorLogRepository::class,
             DeletePrice::class => ErrorLogRepository::class,
             FindPriceById::class => ErrorLogRepository::class,
+            UploadImageProduct::class => ErrorLogRepository::class,
+            UpdateProduct::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -276,9 +268,6 @@ class RepositoryServiceProvider extends ServiceProvider
             DeletePurchasePaymentById::class => ActivityLogRepository::class,
             CreateSaleCart::class => ActivityLogRepository::class,
             DeleteSaleCartById::class => ActivityLogRepository::class,
-            CreateDiscount::class => ActivityLogRepository::class,
-            UpdateDiscount::class => ActivityLogRepository::class,
-            RemoveDiscountById::class => ActivityLogRepository::class,
             CreateSale::class => ActivityLogRepository::class,
             CreateSaleReturnCart::class => ActivityLogRepository::class,
             DeleteSaleReturnCartByCurrentUser::class => ActivityLogRepository::class,
@@ -305,6 +294,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePrice::class => ActivityLogRepository::class,
             DeletePrice::class => ActivityLogRepository::class,
             FindPriceById::class => ActivityLogRepository::class,
+            UpdateProduct::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -370,6 +360,8 @@ class RepositoryServiceProvider extends ServiceProvider
             GetProductsTable::class => ProductRepository::class,
             CreateProduct::class => ProductRepository::class,
             FindProductById::class => ProductRepository::class,
+            UploadImageProduct::class => ProductRepository::class,
+            UpdateProduct::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -398,17 +390,6 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSupplier::class => SupplierRepository::class,
             RemoveSupplier::class => SupplierRepository::class,
             FindSupplierById::class => SupplierRepository::class,
-        ],
-
-        // Discount
-        DiscountRepositoryInterface::class => [
-            GetAllDiscountsTable::class => DiscountRepository::class,
-            GetActiveDiscountsTable::class => DiscountRepository::class,
-            CreateDiscount::class => DiscountRepository::class,
-            UpdateDiscount::class => DiscountRepository::class,
-            FindDiscountById::class => DiscountRepository::class,
-            RemoveDiscountById::class => DiscountRepository::class,
-            GetAllDiscounts::class => DiscountRepository::class,
         ],
 
         // Purchase cart

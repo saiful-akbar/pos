@@ -29,6 +29,7 @@ class StoreProductRequest extends FormRequest
             'image' => ['nullable', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
             'minimum_stock' => ['nullable', 'numeric', 'min:0'],
             'current_stock' => ['nullable', 'numeric', 'min:0'],
+            'discount' => ['nullable', 'numeric', 'min:0', 'max:999'],
             'is_active' => ['required', 'boolean'],
         ];
     }
@@ -47,7 +48,8 @@ class StoreProductRequest extends FormRequest
             'name' => 'nama atau deskripsi',
             'image' => 'gambar atau foto',
             'minimum_stock' => 'stok minimum',
-            'current_stock' => 'stok saat ini',
+            'current_stock' => 'stok tersedia',
+            'discount' => 'diskon',
             'is_active' => 'status keaktifan',
         ];
     }

@@ -14,9 +14,11 @@ use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
 use App\Http\Requests\Products\StorePriceProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
+use App\Http\Requests\Products\UpdateProductRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -182,5 +184,52 @@ class ProductController extends Controller
             status: 200,
             message: 'Harga produk berhasil dihapus.'
         );
+    }
+
+    /**
+     * Menampilkan halaman edit.
+     */
+    public function edit(Request $request, string $productId): View
+    {
+        $product = app(FindProductById::class)->execute(
+            id: $productId,
+        );
+
+        if ($productId === null) {
+            abort(404);
+        }
+
+        $categories = app(GetAllCategories::class)->execute(
+            isActive: true,
+        );
+
+        return view(
+            view: 'pages.products.edit',
+            data: compact('product', 'categories'),
+        );
+    }
+
+    /**
+     * Update
+     */
+    public function update(UpdateProductRequest $request, string $productId): RedirectResponse
+    {
+        $product = app(FindProductById::class)->execute(
+            id: $productId,
+        );
+
+        if ($product === null) {
+            abort(404);
+        }
+
+        app(UpdateProduct::class)->execute(
+            product: $product,
+            request: $request,
+        );
+
+        return to_route('masters.products.edit', ['productId' => $product->id])->with('alert', [
+            'status' => 'success',
+            'message' => 'Produk berhasil diperbarui.',
+        ]);
     }
 }

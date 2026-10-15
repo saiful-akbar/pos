@@ -31,7 +31,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     public function getQuery(): Builder
     {
         try {
-            return $this->model->query();
+            return $this->model->query()->with('category');
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -176,6 +176,7 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             image: $model->image,
             minimumStock: parse_float($model->minimum_stock),
             currentStock: parse_float($model->current_stock),
+            discount: parse_float($model->discount),
             isActive: $model->is_active === 1,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

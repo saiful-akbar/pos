@@ -69,7 +69,6 @@
 
                             <div class="col-12 col-lg-6">
                                 <x-form-select
-                                    required
                                     name="is_active"
                                     id="isActive"
                                     label="Status"
@@ -95,7 +94,7 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+                            <div class="col-12 col-lg-6 mb-5">
                                 <x-form-input
                                     type="number"
                                     name="minimum_stock"
@@ -109,15 +108,29 @@
                                 />
                             </div>
 
-                            <div class="col-12 col-lg-6">
+                            <div class="col-12 col-lg-6 mb-5">
                                 <x-form-input
                                     type="number"
                                     name="current_stock"
                                     id="current_stock"
-                                    label="Stok saat ini"
-                                    placeholder="Masukan stok saat ini..."
+                                    label="Stok tersedia"
+                                    placeholder="Masukan ketersediaan stok..."
                                     value="{{ old('current_stock') }}"
                                     error="{{ $errors->has('current_stock') }}"
+                                    min="0"
+                                    step="0.01"
+                                />
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <x-form-input
+                                    type="number"
+                                    name="discount"
+                                    id="discount"
+                                    label="Diskon"
+                                    placeholder="Masukan diskon..."
+                                    value="{{ old('discount') }}"
+                                    error="{{ $errors->has('discount') }}"
                                     min="0"
                                     step="0.01"
                                 />
