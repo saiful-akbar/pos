@@ -32,6 +32,7 @@ use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\ResetAllDiscountProducts;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Product\UseCases\UploadImageProduct;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
@@ -245,6 +246,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindPriceById::class => ErrorLogRepository::class,
             UploadImageProduct::class => ErrorLogRepository::class,
             UpdateProduct::class => ErrorLogRepository::class,
+            ResetAllDiscountProducts::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -295,6 +297,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DeletePrice::class => ActivityLogRepository::class,
             FindPriceById::class => ActivityLogRepository::class,
             UpdateProduct::class => ActivityLogRepository::class,
+            ResetAllDiscountProducts::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -362,6 +365,7 @@ class RepositoryServiceProvider extends ServiceProvider
             FindProductById::class => ProductRepository::class,
             UploadImageProduct::class => ProductRepository::class,
             UpdateProduct::class => ProductRepository::class,
+            ResetAllDiscountProducts::class => ProductRepository::class,
         ],
 
         // Product Price

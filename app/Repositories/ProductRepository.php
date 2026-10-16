@@ -151,6 +151,26 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
     }
 
     /**
+     * Reset all discounts.
+     */
+    #[Override]
+    public function resetAllDiscounts(float $value): int
+    {
+        try {
+            return $this->model->query()
+                ->where('is_active', 1)
+                ->update(['discount' => $value]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Pemetaan class Model ke class CategoryProductValue.
      */
     private function mapModelToCategoryProductValue(Category $model): CategoryProductValue

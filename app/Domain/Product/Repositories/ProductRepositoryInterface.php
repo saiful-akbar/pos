@@ -39,4 +39,9 @@ interface ProductRepositoryInterface
      * Update stok saat ini berdasarkan id.
      */
     public function updateCurrentStock(string $id, float $value): int;
+
+    /**
+     * Reset all discounts.
+     */
+    public function resetAllDiscounts(float $value): int;
 }

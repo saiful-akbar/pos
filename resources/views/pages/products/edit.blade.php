@@ -1,5 +1,5 @@
-<x-layouts.auth title="Tambah Produk">
-    <x-page-header title="Tambah Produk" icon="add_box">
+<x-layouts.auth title="Edit Produk">
+    <x-page-header title="Edit Produk" icon="edit_square">
         <x-slot:action>
             <div class="row justify-content-end">
                 <div class="col-12 col-lg-4">

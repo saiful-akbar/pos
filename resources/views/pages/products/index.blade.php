@@ -2,22 +2,38 @@
     <x-page-header title="Produk" icon="data_table">
         <x-slot:action>
             <div class="row justify-content-end">
-                <div @class(["order-2", "order-lg-1", "col-12", "col-lg-4" => !($access?->create ?? false), "col-lg-8" => ($access?->create ?? false)])>
+                <div @class(["col-12", "col-lg-4" => !($access?->create ?? false), "col-lg-6" => ($access?->create ?? false)])>
                     <div class="btn-group w-100">
                         <x-button type="link" href="{{ route('masters.products.export') }}" startIcon="download" fullWidth>
-                            Export Excel
+                            Export
                         </x-button>
                         
                         @if ($access?->create ?? false)
                             <x-button id="buttonImport" startIcon="upload" fullWidth>
-                                Import Excel
+                                Import
                             </x-button>
                         @endif
                     </div>
                 </div>
     
+                @if ($access?->update ?? false)
+                    <div class="col-12 col-lg-3 mt-5 mt-lg-0">
+                        <div class="dropdown">
+                            <x-button class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" startIcon="edit_square" fullWidth>
+                                Update
+                            </x-button>
+
+                            <ul class="dropdown-menu dropdown-menu-end border">
+                                <li><a class="dropdown-item" href="#" id="buttonResetDiscounts">Reset discount</a></li>
+                                <li><a class="dropdown-item" href="#" id="buttonImportUpdateDiscounts">Import update diskon</a></li>
+                                <li><a class="dropdown-item" href="#" id="buttonImportUpdatePrices">Import update harga</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+    
                 @if ($access?->create ?? false)
-                    <div class="col-12 col-lg-4 order-1 order-lg-2 mb-5 mb-lg-0">
+                    <div class="col-12 col-lg-3 mt-5 mt-lg-0">
                         <x-button type="link" href="{{ route('masters.products.create') }}" startIcon="add" fullWidth>
                             Tambah
                         </x-button>
@@ -68,10 +84,52 @@
                     <div class="w-100">
                         <div class="row">
                             <div class="col-6">
-                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>Batal</x-button>
+                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>
+                                    Batal
+                                </x-button>
                             </div>
+
                             <div class="col-6">
-                                <x-button type="submit" startIcon="save" fullWidth>Simpan</x-button>
+                                <x-button type="submit" startIcon="save" fullWidth>
+                                    Simpan
+                                </x-button>
+                            </div>
+                        </div>
+                    </div>
+                </x-slot:footer>
+            </x-modal>
+        </form>
+    @endif
+
+    {{-- Import reset discount --}}
+    @if ($access?->update ?? false)
+        <form action="{{ route('masters.products.discount.reset') }}" method="post" id="formResetDiscounts" autocomplete="off">
+            @csrf @method('patch')
+
+            <x-modal id="modalResetDiscounts" title="Reset Diskon" fullScreen="md">
+                <x-form-input
+                    required
+                    type="number"
+                    name="discount"
+                    id="discount"
+                    placeholder="Masukan diskon..."
+                    error="{{ $errors->has('discount') }}"
+                    value="{{ old('discount') }}"
+                />
+            
+                <x-slot:footer>
+                    <div class="w-100">
+                        <div class="row">
+                            <div class="col-6">
+                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>
+                                    Batal
+                                </x-button>
+                            </div>
+
+                            <div class="col-6">
+                                <x-button type="submit" startIcon="save" fullWidth>
+                                    Simpan
+                                </x-button>
                             </div>
                         </div>
                     </div>
@@ -89,6 +147,9 @@
                     this.buttonImport = $('#buttonImport');
                     this.formImport = $('#formImport');
                     this.modalImport = this.#modalImportInit();
+                    this.buttonResetDiscounts = $('#buttonResetDiscounts');
+                    this.formResetDiscounts = $('#formResetDiscounts');
+                    this.modalResetDiscounts = this.#modalResetDiscountsInit();
                 }
 
                 /**
@@ -268,6 +329,19 @@
                 }
 
                 /**
+                 * Inisialisasi modal import
+                 */
+                #modalResetDiscountsInit() {
+                    if ($('#modalResetDiscounts').length === 0) {
+                        return null;
+                    }
+
+                    return new bootstrap.Modal('#modalResetDiscounts', {
+                        backdrop: 'static',
+                    });
+                }
+
+                /**
                  * Import insert product
                  */
                 importInsert() {
@@ -280,6 +354,22 @@
                             data: formData,
                             processData: false,
                             contentType: false,
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    })
+                }
+
+                /**
+                 * Reset discounts
+                 */
+                resetDiscounts() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "patch",
+                            url: this.formResetDiscounts.attr('action'),
+                            data: this.formResetDiscounts.serialize(),
+                            dataType: 'json',
                             success: (response) => resolve(response),
                             error: (error) => reject(error.responseJSON),
                         });
@@ -299,6 +389,7 @@
             service.buttonImport.click(function (e) { 
                 e.preventDefault();
                 app.clearFormErrors(service.formImport);
+                service.formImport.trigger('reset');
                 service.modalImport?.show();
             });
 
@@ -320,6 +411,41 @@
                     }
                 } catch (error) {
                     app.setFormErrors(service.formImport, error);
+                } finally {
+                    app.hidePreloader();
+                }
+            });
+
+            /**
+             * Buka modal reset discounts
+             */
+            service.buttonResetDiscounts.click(function (e) { 
+                e.preventDefault();
+                app.clearFormErrors(service.formResetDiscounts);
+                service.formResetDiscounts.trigger('reset');
+                service.modalResetDiscounts?.show();
+            });
+
+            /**
+             * Submit form reset discounts 
+             */
+            service.formResetDiscounts.submit(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+
+                try {
+                    const response = await service.resetDiscounts();
+                    const { message, status } = response;
+
+                    if (status === 200) {
+                        service.modalResetDiscounts?.hide();
+                        service.productTable.ajax.reload();
+                        app.alert('success', message);
+                    }
+                } catch (error) {
+                    console.log(error);
+                    
+                    app.setFormErrors(service.formResetDiscounts, error);
                 } finally {
                     app.hidePreloader();
                 }

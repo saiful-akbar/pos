@@ -164,6 +164,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::post('/import', 'importExcel')->name('.import')->middleware("$module,create");
                 Route::get('/import/template', 'downloadTemplate')->name('.import.template')->middleware("$module,create");
+                Route::patch('/discount/import', 'importDiscounts')->name('.discount.import')->middleware("$module,update");
+                Route::patch('/discount/reset', 'resetDiscounts')->name('.discount.reset')->middleware("$module,update");
                 Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,create");
                 Route::post('/{productId}/prices', 'storePrice')->name('.prices.store')->middleware("$module,create");
                 Route::delete('/{productId}/prices/{priceId}', 'deletePrice')->name('.prices.delete')->middleware("$module,create");

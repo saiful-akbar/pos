@@ -1,6 +1,7 @@
 @php
     $merge = [
         'tabindex' => '-1',
+        'aria-hidden' => 'true',
     ];
 
     $modalClass = [
@@ -22,7 +23,7 @@
 @endphp
 
 <div {{ $attributes->merge($merge)->class($modalClass) }}>
-    <div class="modal-dialog">
+    <div @class($dialogClass)>
         <div class="modal-content border">
             <div class="modal-header">
                 <h1 class="modal-title fs-5">{{ $title }}</h1>

@@ -14,11 +14,13 @@ use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\ResetAllDiscountProducts;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
 use App\Exports\Products\ProductExport;
 use App\Exports\Products\TemplateProductExport;
 use App\Http\Requests\Products\ImportProductRequest;
+use App\Http\Requests\Products\ResetDiscountProductRequest;
 use App\Http\Requests\Products\StorePriceProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
@@ -269,6 +271,25 @@ class ProductController extends Controller
         return $this->jsonResponse(
             status: 201,
             message: 'Impor excel data produk berhasil.'
+        );
+    }
+
+    /**
+     * Reset discount.
+     */
+    public function resetDiscounts(ResetDiscountProductRequest $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(ResetAllDiscountProducts::class)->execute(
+            value: $request->float('discount'),
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Diskon berhasil direset.'
         );
     }
 }
