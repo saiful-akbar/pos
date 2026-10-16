@@ -127,7 +127,7 @@
                                     type="number"
                                     name="discount"
                                     id="discount"
-                                    label="Diskon"
+                                    label="Diskon %"
                                     placeholder="Masukan diskon..."
                                     value="{{ old('discount', $product->discount) }}"
                                     error="{{ $errors->has('discount') }}"

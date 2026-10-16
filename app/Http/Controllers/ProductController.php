@@ -16,14 +16,20 @@ use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
+use App\Exports\Products\ProductExport;
+use App\Exports\Products\TemplateProductExport;
+use App\Http\Requests\Products\ImportProductRequest;
 use App\Http\Requests\Products\StorePriceProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
+use App\Imports\Products\ProductImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ProductController extends Controller
 {
@@ -231,5 +237,38 @@ class ProductController extends Controller
             'status' => 'success',
             'message' => 'Produk berhasil diperbarui.',
         ]);
+    }
+
+    /**
+     * Export excel.
+     */
+    public function exportExcel(): BinaryFileResponse
+    {
+        return Excel::download(new ProductExport(), 'Master_Produk.xlsx');
+    }
+
+    /**
+     * Download template untuk import excel.
+     */
+    public function downloadTemplate(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateProductExport(), 'Template_Import_Produk.xlsx');
+    }
+
+    /**
+     * Import excel untuk menambah produk baru.
+     */
+    public function importExcel(ImportProductRequest $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        Excel::import(new ProductImport(), $request->file('file'));
+
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Impor excel data produk berhasil.'
+        );
     }
 }

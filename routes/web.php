@@ -162,6 +162,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
                 Route::get('/create', 'create')->name('.create')->middleware("$module,create");
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::post('/import', 'importExcel')->name('.import')->middleware("$module,create");
+                Route::get('/import/template', 'downloadTemplate')->name('.import.template')->middleware("$module,create");
                 Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,create");
                 Route::post('/{productId}/prices', 'storePrice')->name('.prices.store')->middleware("$module,create");
                 Route::delete('/{productId}/prices/{priceId}', 'deletePrice')->name('.prices.delete')->middleware("$module,create");
