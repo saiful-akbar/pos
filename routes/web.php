@@ -164,9 +164,13 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::post('/import', 'importExcel')->name('.import')->middleware("$module,create");
                 Route::get('/import/template', 'downloadTemplate')->name('.import.template')->middleware("$module,create");
-                Route::patch('/discount/import', 'importDiscounts')->name('.discount.import')->middleware("$module,update");
-                Route::patch('/discount/reset', 'resetDiscounts')->name('.discount.reset')->middleware("$module,update");
-                Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,create");
+                Route::patch('/discounts/reset', 'resetDiscounts')->name('.discounts.reset')->middleware("$module,update");
+                Route::patch('/discounts/import', 'importUpdateDiscounts')->name('.discounts.import')->middleware("$module,update");
+                Route::get('/discounts/import/template', 'templateImportUpdateDiscounts')->name('.discounts.import.template')->middleware("$module,update");
+                Route::patch('/prices/import', 'importUpdatePrices')->name('.prices.import')->middleware("$module,update");
+                Route::get('/prices/import/template', 'templateImportUpdatePrices')->name('.prices.import.template')->middleware("$module,update");
+                Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,read");
+                Route::get('/{productId}/prices/create', 'createPrices')->name('.prices.create')->middleware("$module,create");
                 Route::post('/{productId}/prices', 'storePrice')->name('.prices.store')->middleware("$module,create");
                 Route::delete('/{productId}/prices/{priceId}', 'deletePrice')->name('.prices.delete')->middleware("$module,create");
                 Route::get('/{productId}/edit', 'edit')->name('.edit')->middleware("$module,update");

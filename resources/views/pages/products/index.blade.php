@@ -75,7 +75,7 @@
                     required
                     type="file"
                     name="file"
-                    id="file"
+                    id="fileImport"
                     accept=".xlsx,.xls.csv"
                     error="{{ $errors->has('file') }}"
                 />
@@ -101,9 +101,9 @@
         </form>
     @endif
 
-    {{-- Import reset discount --}}
     @if ($access?->update ?? false)
-        <form action="{{ route('masters.products.discount.reset') }}" method="post" id="formResetDiscounts" autocomplete="off">
+        {{-- Import reset discount --}}
+        <form action="{{ route('masters.products.discounts.reset') }}" method="post" id="formResetDiscounts" autocomplete="off">
             @csrf @method('patch')
 
             <x-modal id="modalResetDiscounts" title="Reset Diskon" fullScreen="md">
@@ -136,7 +136,104 @@
                 </x-slot:footer>
             </x-modal>
         </form>
+
+        {{-- Import update discount --}}
+        <form action="{{ route('masters.products.discounts.import') }}" method="post" id="formImportUpdateDiscounts" autocomplete="off" enctype="multipart/form-data">
+            @csrf @method('patch')
+
+            <x-modal id="modalImportUpdateDiscounts" title="Import Update Diskon" fullScreen="md">
+                <x-button
+                    type="link"
+                    href="{{ route('masters.products.discounts.import.template') }}"
+                    color="secondary"
+                    startIcon="download"
+                    fullWidth
+                >
+                    Unduh Template
+                </x-button>
+
+                <hr class="my-6">
+
+                <x-form-input
+                    required
+                    type="file"
+                    name="file"
+                    id="fileImportUpdateDiscounts"
+                    accept=".xlsx,.xls.csv"
+                    error="{{ $errors->has('file') }}"
+                />
+            
+                <x-slot:footer>
+                    <div class="w-100">
+                        <div class="row">
+                            <div class="col-6">
+                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>
+                                    Batal
+                                </x-button>
+                            </div>
+
+                            <div class="col-6">
+                                <x-button type="submit" startIcon="save" fullWidth>
+                                    Simpan
+                                </x-button>
+                            </div>
+                        </div>
+                    </div>
+                </x-slot:footer>
+            </x-modal>
+        </form>
+
+        {{-- Import update harga --}}
+        <form action="{{ route('masters.products.prices.import') }}" method="post" id="formImportUpdatePrices" autocomplete="off" enctype="multipart/form-data">
+            @csrf @method('patch')
+
+            <x-modal id="modalImportUpdatePrices" title="Import Update Harga" fullScreen="md">
+                <x-button
+                    type="link"
+                    href="{{ route('masters.products.prices.import.template') }}"
+                    color="secondary"
+                    startIcon="download"
+                    fullWidth
+                >
+                    Unduh Template
+                </x-button>
+
+                <hr class="my-6">
+
+                <x-form-input
+                    required
+                    type="file"
+                    name="file"
+                    id="fileImportUpdatePrices"
+                    accept=".xlsx,.xls.csv"
+                    error="{{ $errors->has('file') }}"
+                />
+            
+                <x-slot:footer>
+                    <div class="w-100">
+                        <div class="row">
+                            <div class="col-6">
+                                <x-button type="button" color="light" startIcon="close" data-bs-dismiss="modal" fullWidth>
+                                    Batal
+                                </x-button>
+                            </div>
+
+                            <div class="col-6">
+                                <x-button type="submit" startIcon="save" fullWidth>
+                                    Simpan
+                                </x-button>
+                            </div>
+                        </div>
+                    </div>
+                </x-slot:footer>
+            </x-modal>
+        </form>
     @endif
+
+    {{-- Modal daftar harga per-produk --}}
+    <x-modal id="modalPrices" title="Harga" fullScreen="md" size="xl">
+        <table id="pricesTable" class="table table-hover table-sm align-middle w-100"></table>
+    </x-modal>
 
     <x-slot:script>
         <script>
@@ -150,6 +247,14 @@
                     this.buttonResetDiscounts = $('#buttonResetDiscounts');
                     this.formResetDiscounts = $('#formResetDiscounts');
                     this.modalResetDiscounts = this.#modalResetDiscountsInit();
+                    this.buttonImportUpdateDiscounts = $('#buttonImportUpdateDiscounts');
+                    this.formImportUpdateDiscounts = $('#formImportUpdateDiscounts');
+                    this.modalImportUpdateDiscounts = this.#modalImportUpdateDiscountsInit();
+                    this.buttonImportUpdatePrices = $('#buttonImportUpdatePrices');
+                    this.formImportUpdatePrices = $('#formImportUpdatePrices');
+                    this.modalImportUpdatePrices = this.#modalImportUpdatePricesInit();
+                    this.modalPrices = new bootstrap.Modal('#modalPrices');
+                    this.pricesTable = null;
                 }
 
                 /**
@@ -164,6 +269,7 @@
                         delete: $('html').data('delete') === 1,
                     }
                 }
+
                 /**
                  * Inisialisasi product datatables.
                  */
@@ -249,10 +355,7 @@
                             type: 'date',
                             render: (data) => app.dateTimeFormat(data),
                         },
-                    ];
-
-                    if (this.access.update || this.access.remove) {
-                        columns.push({
+                        {
                             title: app.icon('settings', 'fs-6'),
                             name: 'id',
                             data: 'id',
@@ -261,17 +364,27 @@
                             searchable: false,
                             orderable: false,
                             render: (data) => {
-                                let html = '';
+                                let html = `
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-light"
+                                        data-action="detail"
+                                        title="Harga"
+                                        onclick="showPrices(event, '${data}')"
+                                    >
+                                        ${app.icon('payments', 'fs-6')}
+                                    </button>
+                                `;
                                     
                                 if (this.access.update) {
                                     html += `
                                         <a
-                                            href="${app.baseUrl}/masters/products/${data}/prices"
+                                            href="${app.baseUrl}/masters/products/${data}/prices/create"
                                             class="btn btn-sm btn-light"
-                                            title="Lihat atau edit harga"
+                                            title="Edit harga"
                                             role="button"
                                         >
-                                            ${app.icon('price_change', 'fs-6')}
+                                            ${app.icon('edit_square', 'fs-6')}
                                         </a>
 
                                         <a
@@ -292,6 +405,7 @@
                                             class="btn btn-sm btn-light"
                                             data-action="remove"
                                             title="Hapus"
+                                            onclick="removeProduct(event, '${data}')"
                                         >
                                             ${app.icon('delete', 'fs-6')}
                                         </button>
@@ -300,8 +414,8 @@
 
                                 return html;
                             },
-                        });
-                    }
+                        }
+                    ];
 
                     return app.dataTable('#productTable', {
                         columns,
@@ -342,6 +456,32 @@
                 }
 
                 /**
+                 * Inisialisasi modal import update discounts
+                 */
+                #modalImportUpdateDiscountsInit() {
+                    if ($('#modalImportUpdateDiscounts').length === 0) {
+                        return null;
+                    }
+
+                    return new bootstrap.Modal('#modalImportUpdateDiscounts', {
+                        backdrop: 'static',
+                    });
+                }
+
+                /**
+                 * Inisialisasi modal import update prices
+                 */
+                #modalImportUpdatePricesInit() {
+                    if ($('#modalImportUpdatePrices').length === 0) {
+                        return null;
+                    }
+
+                    return new bootstrap.Modal('#modalImportUpdatePrices', {
+                        backdrop: 'static',
+                    });
+                }
+
+                /**
                  * Import insert product
                  */
                 importInsert() {
@@ -357,7 +497,7 @@
                             success: (response) => resolve(response),
                             error: (error) => reject(error.responseJSON),
                         });
-                    })
+                    });
                 }
 
                 /**
@@ -373,6 +513,116 @@
                             success: (response) => resolve(response),
                             error: (error) => reject(error.responseJSON),
                         });
+                    });
+                }
+
+                /**
+                 * Remove (soft delete)
+                 */
+                remove(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "delete",
+                            url: app.url(`/masters/products/${id}`),
+                            data: {
+                                _token: app.csrfToken,
+                                _method: 'delete',
+                            },
+                            dataType: 'json',
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
+
+                /**
+                 * Import update discounts
+                 */
+                importUpdateDiscounts() {
+                    const formData = new FormData(document.querySelector('#formImportUpdateDiscounts'));
+                    
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "post",
+                            url: this.formImportUpdateDiscounts.attr('action'),
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
+
+                /**
+                 * Import update price
+                 */
+                importUpdatePrices() {
+                    const formData = new FormData(document.querySelector('#formImportUpdatePrices'));
+                    
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "post",
+                            url: this.formImportUpdatePrices.attr('action'),
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
+
+                /**
+                 * Inisialisasi dataTable harga.
+                 */
+                pricesDataTableInit(productId) {
+                    return app.modalDataTable('#pricesTable', {
+                        serverSide: true,
+                        ajax: app.url(`/masters/products/${productId}/prices`),
+                        scrollX: false,
+                        columns: [
+                            {
+                                title: 'Unit (Satuan)',
+                                name: 'units.name',
+                                data: 'unit_name',
+                                className: 'text-nowrap',
+                                type: 'string',
+                                render: (data, type, row) => `${row.unit_name} (${row.unit_code})`,
+                            },
+                            {
+                                title: 'Harga Default',
+                                name: 'prices.is_default',
+                                data: 'is_default',
+                                className: 'text-nowrap',
+                                type: 'string',
+                                render: (data, type, row) => data === 1 ? 'Ya' : 'Tidak',
+                            },
+                            {
+                                title: 'Kelipatan Stok',
+                                name: 'prices.multiples_quantity',
+                                data: 'multiples_quantity',
+                                className: 'text-nowrap',
+                                type: 'num',
+                                render: (data, type, row) => app.numberFormat(data, 2),
+                            },
+                            {
+                                title: 'Harga Beli',
+                                name: 'prices.purchase_price',
+                                data: 'purchase_price',
+                                className: 'text-nowrap',
+                                type: 'num',
+                                render: (data, type, row) => app.numberFormat(data, 2),
+                            },
+                            {
+                                title: 'Harga Jual',
+                                name: 'prices.selling_price',
+                                data: 'selling_price',
+                                className: 'text-nowrap',
+                                type: 'num',
+                                render: (data, type, row) => app.numberFormat(data, 2),
+                            },
+                        ],
                     })
                 }
             }
@@ -443,13 +693,123 @@
                         app.alert('success', message);
                     }
                 } catch (error) {
-                    console.log(error);
-                    
                     app.setFormErrors(service.formResetDiscounts, error);
                 } finally {
                     app.hidePreloader();
                 }
             });
+            
+            /**
+             * Remove (soft delete)
+             */
+            const removeProduct = (e, id) => {
+                e.preventDefault();
+
+                app.delete('Produk', async (removed) => {
+                    if (!removed) return;
+
+                    app.showPreloader();
+                    
+                    try {
+                        const response = await service.remove(id);
+                        const { status, message } = response;
+
+                        if (status === 200) {
+                            app.alert('success', message);
+                            service.productTable.ajax.reload();
+                        }
+                    } catch (error) {
+                        app.alert('danger', error.message);
+                    } finally {
+                        app.hidePreloader();
+                    }
+                });
+            }
+
+            /**
+             * Buka modal import update discounts
+             */
+            service.buttonImportUpdateDiscounts.click(function (e) { 
+                e.preventDefault();
+                app.clearFormErrors(service.formImportUpdateDiscounts);
+                service.formImportUpdateDiscounts.trigger('reset');
+                service.modalImportUpdateDiscounts?.show();
+            });
+
+            /**
+             * Submit form import update discount.
+             */
+            service.formImportUpdateDiscounts.submit(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+                app.clearFormErrors(service.formImportUpdateDiscounts);
+
+                try {
+                    const response = await service.importUpdateDiscounts();
+                    const { status, message } = response;
+
+                    if (status === 200) {
+                        app.alert('success', message);
+                        service.modalImportUpdateDiscounts?.hide();
+                        service.productTable.ajax.reload();
+                    }
+                } catch (error) {
+                    service.formImportUpdateDiscounts.find('input[name="file"]').removeClass('border');
+                    service.formImportUpdateDiscounts.find('input[name="file"]').addClass('is-invalid');
+                    service.formImportUpdateDiscounts.find('input[name="file"]').next().text(error.message);
+                } finally {
+                    app.hidePreloader();
+                }
+            });
+
+            /**
+             * Buka modal import update Prices
+             */
+            service.buttonImportUpdatePrices.click(function (e) { 
+                e.preventDefault();
+                app.clearFormErrors(service.formImportUpdatePrices);
+                service.formImportUpdatePrices.trigger('reset');
+                service.modalImportUpdatePrices?.show();
+            });
+
+            /**
+             * Submit form import update prices.
+             */
+            service.formImportUpdatePrices.submit(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+                app.clearFormErrors(service.formImportUpdatePrices);
+
+                try {
+                    const response = await service.importUpdatePrices();
+                    const { status, message } = response;
+
+                    if (status === 200) {
+                        app.alert('success', message);
+                        service.modalImportUpdatePrices?.hide();
+                        service.productTable.ajax.reload();
+                    }
+                } catch (error) {
+                    service.formImportUpdatePrices.find('input[name="file"]').removeClass('border');
+                    service.formImportUpdatePrices.find('input[name="file"]').addClass('is-invalid');
+                    service.formImportUpdatePrices.find('input[name="file"]').next().text(error.message);
+                } finally {
+                    app.hidePreloader();
+                }
+            });
+
+            /**
+             * Tampilkan modal harga
+             */
+            const showPrices = (e, productId) => {
+                service.modalPrices.show();
+
+                if (service.pricesTable === null) {
+                    service.pricesTable = service.pricesDataTableInit(productId);
+                }
+
+                service.pricesTable?.ajax.url(app.url(`/masters/products/${productId}/prices`)).load();
+            }
         </script>
     </x-slot:script>
 </x-layouts.auth>

@@ -14,17 +14,22 @@ use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
+use App\Application\Product\UseCases\RemoveProduct;
 use App\Application\Product\UseCases\ResetAllDiscountProducts;
 use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Unit\UseCases\GetAllUnits;
 use App\Exports\Products\ProductExport;
 use App\Exports\Products\TemplateProductExport;
+use App\Exports\Products\TemplateUpdateDiscountProductExport;
+use App\Exports\Products\TemplateUpdatePricesProductExport;
 use App\Http\Requests\Products\ImportProductRequest;
 use App\Http\Requests\Products\ResetDiscountProductRequest;
 use App\Http\Requests\Products\StorePriceProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
 use App\Imports\Products\ProductImport;
+use App\Imports\Products\UpdateDiscountProductImport;
+use App\Imports\Products\UpdatePricesProductImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -84,7 +89,7 @@ class ProductController extends Controller
             request: $request,
         );
 
-        return to_route('masters.products.prices', ['productId' => $product->id])->with('alert', [
+        return to_route('masters.products.prices.create', ['productId' => $product->id])->with('alert', [
             'status' => 'success',
             'message' => 'Produk berhasil ditambahkan. Silahkan tambahkan harga produk.',
         ]);
@@ -97,12 +102,36 @@ class ProductController extends Controller
      */
     public function prices(Request $request, string $productId): View|JsonResponse
     {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
         $product = app(FindProductById::class)->execute(
             id: $productId,
         );
 
         if ($product === null) {
-            abort(404);
+            abort(404, 'Produk tidak ditemukan');
+        }
+
+        return app(GetPricesTableByProduct::class)->execute(
+            product: $product,
+        );
+    }
+
+    /**
+     * Menampilkn halaman daftar harga.
+     *
+     * @return View
+     */
+    public function createPrices(Request $request, string $productId): View|JsonResponse
+    {
+        $product = app(FindProductById::class)->execute(
+            id: $productId,
+        );
+
+        if ($product === null) {
+            abort(404, 'Produk tidak ditemukan.');
         }
 
         if ($request->ajax()) {
@@ -135,7 +164,7 @@ class ProductController extends Controller
         );
 
         if ($product === null) {
-            abort(404);
+            abort(404, 'Produk tidak ditemukan.');
         }
 
         app(CreatePrice::class)->execute(
@@ -169,9 +198,7 @@ class ProductController extends Controller
         );
 
         if ($product === null) {
-            throw ValidationException::withMessages(messages: [
-                'message' => 'Produk tidak ditemukan.',
-            ]);
+            abort(404, 'Produk tidak ditemukan.');
         }
 
         $price = app(FindPriceById::class)->execute(
@@ -197,14 +224,14 @@ class ProductController extends Controller
     /**
      * Menampilkan halaman edit.
      */
-    public function edit(Request $request, string $productId): View
+    public function edit(string $productId): View
     {
         $product = app(FindProductById::class)->execute(
             id: $productId,
         );
 
         if ($productId === null) {
-            abort(404);
+            abort(404, 'Produk tidak ditemukan.');
         }
 
         $categories = app(GetAllCategories::class)->execute(
@@ -227,7 +254,7 @@ class ProductController extends Controller
         );
 
         if ($product === null) {
-            abort(404);
+            abort(404, 'Produk tidak ditemukan.');
         }
 
         app(UpdateProduct::class)->execute(
@@ -275,6 +302,33 @@ class ProductController extends Controller
     }
 
     /**
+     * Hapus (soft delete)
+     */
+    public function remove(Request $request, string $productId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $product = app(FindProductById::class)->execute(
+            id: $productId,
+        );
+
+        if ($product === null) {
+            abort(404, 'Produk tidak ditemukan.');
+        }
+
+        app(RemoveProduct::class)->execute(
+            product: $product,
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Produk berhasil dihapus.'
+        );
+    }
+
+    /**
      * Reset discount.
      */
     public function resetDiscounts(ResetDiscountProductRequest $request): JsonResponse
@@ -290,6 +344,48 @@ class ProductController extends Controller
         return $this->jsonResponse(
             status: 200,
             message: 'Diskon berhasil direset.'
+        );
+    }
+
+    /**
+     * Download template import excel untuk update diskon.
+     */
+    public function templateImportUpdateDiscounts(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateUpdateDiscountProductExport(), 'Template_Import_Update_Diskon_Produk.xlsx');
+    }
+
+    /**
+     * Import excel untuk update diskon.
+     */
+    public function importUpdateDiscounts(ImportProductRequest $request): JsonResponse
+    {
+        Excel::import(new UpdateDiscountProductImport(), $request->file('file'));
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Import update diskon produk berhasil.',
+        );
+    }
+
+    /**
+     * Download template import excel untuk update harga.
+     */
+    public function templateImportUpdatePrices(): BinaryFileResponse
+    {
+        return Excel::download(new TemplateUpdatePricesProductExport(), 'Template_Import_Update_Harga_Produk.xlsx');
+    }
+
+    /**
+     * Import excel untuk update diskon.
+     */
+    public function importUpdatePrices(ImportProductRequest $request): JsonResponse
+    {
+        Excel::import(new UpdatePricesProductImport(), $request->file('file'));
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Import update harga produk berhasil.',
         );
     }
 }

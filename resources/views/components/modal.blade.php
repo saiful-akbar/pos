@@ -36,7 +36,7 @@
             
             <div class="modal-footer">
                 <div class="w-100">
-                    @if ($footer)
+                    @isset($footer)
                         {{ $footer }}
                     @else
                         <div class="row justify-content-end">
@@ -47,7 +47,7 @@
                                 </button>
                             </div>
                         </div>
-                    @endif
+                    @endisset
                 </div>
             </div>
         </div>
