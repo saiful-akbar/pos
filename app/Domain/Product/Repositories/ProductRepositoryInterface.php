@@ -13,7 +13,7 @@ interface ProductRepositoryInterface
     /**
      * Mengambil daftar dalam format query builder.
      */
-    public function getQuery(): Builder;
+    public function getQuery(?bool $isActive = null): Builder;
 
     /**
      * Create (insert).
@@ -44,4 +44,9 @@ interface ProductRepositoryInterface
      * Reset all discounts.
      */
     public function resetAllDiscounts(float $value): int;
+
+    /**
+     * Mengambil data berdasarkan code.
+     */
+    public function findByCode(string $code): ?ProductEntity;
 }

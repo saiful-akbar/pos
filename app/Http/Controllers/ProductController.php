@@ -22,6 +22,7 @@ use App\Exports\Products\ProductExport;
 use App\Exports\Products\TemplateProductExport;
 use App\Exports\Products\TemplateUpdateDiscountProductExport;
 use App\Exports\Products\TemplateUpdatePricesProductExport;
+use App\Http\Requests\Products\GetProductsRequest;
 use App\Http\Requests\Products\ImportProductRequest;
 use App\Http\Requests\Products\ResetDiscountProductRequest;
 use App\Http\Requests\Products\StorePriceProductRequest;
@@ -48,10 +49,18 @@ class ProductController extends Controller
     /**
      * Menampilkan halaman utama master produk
      */
-    public function index(Request $request): JsonResponse|View
+    public function index(GetProductsRequest $request): JsonResponse|View
     {
         if ($request->ajax()) {
-            return app(GetProductsTable::class)->execute();
+            $active = null;
+
+            if ($request->has('is_active')) {
+                $active = $request->boolean('is_active');
+            }
+
+            return app(GetProductsTable::class)->execute(
+                isActive: $active,
+            );
         }
 
         $access = app(FindModuleAccessByRoute::class)->execute(

@@ -63,9 +63,11 @@ class PurchaseDetail extends Model
     protected $fillable = [
         'purchase_id',
         'product_id',
+        'unit_id',
+        'multiples_quantity',
         'quantity',
-        'purchase_price',
-        'subtotal_price',
+        'price',
+        'subtotal',
     ];
 
     /**
@@ -82,5 +84,13 @@ class PurchaseDetail extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get the unit that owns the PurchaseDetail
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 }

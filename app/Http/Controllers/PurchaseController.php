@@ -5,32 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
-use App\Application\Purchase\DTOs\CreatePurchasePaymentDTO;
-use App\Application\Purchase\DTOs\GetPurchasesDTO;
-use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDTO;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
-use App\Application\Purchase\UseCases\CreatePurchasePayment;
-use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\DeletePurchaseCart;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
-use App\Application\Purchase\UseCases\DeletePurchasePaymentById;
-use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
-use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
-use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
-use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
-use App\Application\Purchase\UseCases\GetPurchases;
-use App\Application\Purchase\UseCases\RemovePurchase;
-use App\Application\Purchase\UseCases\SavePurchase;
-use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
-use App\Application\Supplier\UseCases\GetActiveSuppliers;
-use App\Domain\Purchase\Enums\PaymentMethodEnum;
-use App\Domain\Purchase\Enums\PaymentStatusEnum;
-use App\Http\Requests\Purchases\CreatePurchasePaymentRequest;
-use App\Http\Requests\Purchases\GetPurchaseByDateRangeRequest;
-use App\Http\Requests\Purchases\SavePurchaseRequest;
-use App\Http\Requests\Purchases\StorePuchaseCartDetailRequest;
-use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
+use App\Application\Purchase\UseCases\FindPurchaseCartById;
+use App\Application\Purchase\UseCases\FindPurchaseCartDetailById;
+use App\Application\Purchase\UseCases\GetPurchaseCartDetailsByPurchaseCartId;
+use App\Http\Requests\Purchases\StorePurchaseCartDetailRequest;
 use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -42,211 +26,151 @@ class PurchaseController extends Controller
     /**
      * Menampilkan halaman utama pembelian.
      */
-    public function index(GetPurchaseByDateRangeRequest $request): View|JsonResponse
+    public function index(): View
     {
-        if ($request->ajax()) {
-            $data = app(GetPurchases::class)->execute(dto: new GetPurchasesDTO(
-                fromDate: new DateTimeImmutable($request->validated('from_date')),
-                toDate: new DateTimeImmutable($request->validated('to_date')),
-                paymentStatus: PaymentStatusEnum::tryFrom($request->validated('payment_status')),
-            ));
-
-            return $this->jsonResponse(
-                data: $data,
-            );
-        }
-
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: 'transactions.purchases',
         );
 
-        return view('pages.purchases.index', compact('access'));
+        return view(
+            view: 'pages.purchases.index',
+            data: compact('access'),
+        );
     }
 
     /**
-     * Menampilkan halaman tambah penjualan
+     * Menampilkan halaman keranjang pembelian.
      */
-    public function createCart(): View
+    public function carts(): View
     {
         $cart = app(FindPurchaseCartByCurrentUser::class)->execute();
 
         if ($cart === null) {
-            $cart = app(CreatePurchaseCart::class)->execute();
+            $cart = app(CreatePurchaseCart::class)->execute(values: new PurchaseCartDTO(
+                userId: user()->id,
+                transactionDate: new DateTimeImmutable(),
+                totalProduct: 0.00,
+                totalQuantity: 0.00,
+                totalPrice: 0.00
+            ));
         }
 
-        $details = app(GetPurchaseCartDetailByCartId::class)->execute(cartId: $cart->id);
-        $suppliers = app(GetActiveSuppliers::class)->execute();
-
-        return view('pages.purchases.create', compact('cart', 'details', 'suppliers'));
+        return view(
+            view: 'pages.purchases.cart',
+            data: compact('cart')
+        );
     }
 
     /**
-     * Menambah (insert) cart detail.
+     * Menghapus (membatalkan) data keranjang.
      */
-    public function addCartDetail(StorePuchaseCartDetailRequest $request): RedirectResponse
+    public function deleteCart(string $cartId): RedirectResponse
     {
-        app(CreatePurchaseCartDetail::class)->execute(request: $request);
-
-        return to_route('transactions.purchases.cart')->with('alert', [
-            'status' => 'success',
-            'message' => 'Produk berhasil ditambahkan kedaftar.',
-        ]);
-    }
-
-    /**
-     * Update cart detail.
-     */
-    public function updateCartDetail(UpdatePurchaseCartDetailRequest $request, string $cartDetailId): RedirectResponse
-    {
-        app(UpdatePurchaseCartDetail::class)->execute(
-            dto: new UpdatePurchaseCartDetailDTO(
-                id: $cartDetailId,
-                purchasePrice: $request->float('purchase_price'),
-                quantity: $request->float('quantity'),
-
-            )
+        $cart = app(FindPurchaseCartById::class)->execute(
+            id: $cartId,
         );
 
-        return to_route('transactions.purchases.cart')->with('alert', [
-            'status' => 'success',
-            'message' => 'Produk berhasil diubah.',
-        ]);
-    }
+        if ($cart === null) {
+            abort(404, 'Transaksi pembelian tidak ditemukan');
+        }
 
-    /**
-     * Menghapus cart detail.
-     */
-    public function deleteCartDetail(string $cartDetailId): RedirectResponse
-    {
-        app(DeletePurchaseCartDetail::class)->execute(id: $cartDetailId);
-
-        return to_route('transactions.purchases.cart')->with('alert', [
-            'status' => 'success',
-            'message' => 'Produk berhasil dihapus.',
-        ]);
-    }
-
-    /**
-     * Menghapus cart
-     */
-    public function cancelCart(): RedirectResponse
-    {
-        app(DeletePurchaseCartByCurrentUser::class)->execute();
-
-        return to_route('transactions.purchases');
-    }
-
-    /**
-     * Menyimpan data pembelian.
-     */
-    public function save(SavePurchaseRequest $request): RedirectResponse
-    {
-        app(SavePurchase::class)->execute(request: $request);
+        app(DeletePurchaseCart::class)->execute(
+            purchaseCart: $cart,
+        );
 
         return to_route('transactions.purchases')->with('alert', [
             'status' => 'success',
-            'message' => 'Pembelian berhasil disimpan.',
+            'message' => 'Transaksi pembelian berhasil dibatalkan.',
         ]);
     }
 
     /**
-     * Melihat detail pembelian.
+     * Mengambil daftar detail keranjang
      */
-    public function detail(string $purchaseId): View
-    {
-        $purchase = app(FindPurchaseById::class)->execute(id: $purchaseId);
-
-        if ($purchase === null) {
-            abort(404);
-        }
-
-        $details = app(GetPurchaseDetailByPurchaseId::class)->execute(
-            purchaseId: $purchase->id,
-        );
-
-        $payments = app(GetPurchasePaymentByPurchaseId::class)->execute(
-            purchaseId: $purchase->id,
-        );
-
-        $access = app(FindModuleAccessByRoute::class)->execute(
-            roleId: user()->role_id,
-            route: 'transactions.purchases'
-        );
-
-        return view('pages.purchases.detail', compact('purchase', 'details', 'payments', 'access'));
-    }
-
-    /**
-     * Menampilkan halaman daftar pembayaran
-     *
-     * @return View
-     */
-    public function payment(string $purchaseId): View|JsonResponse
-    {
-        $purchase = app(FindPurchaseById::class)->execute(id: $purchaseId);
-
-        if ($purchase === null) {
-            abort(404);
-        }
-
-        $payments = app(GetPurchasePaymentByPurchaseId::class)->execute(purchaseId: $purchaseId);
-        $totalPaymentAmount = 0;
-
-        foreach ($payments as $payment) {
-            $totalPaymentAmount += $payment->amount;
-        }
-
-        return view('pages.purchases.payment', compact('purchase', 'payments', 'totalPaymentAmount'));
-    }
-
-    /**
-     * Menambah pembayaran pembelian baru.
-     */
-    public function createPayment(CreatePurchasePaymentRequest $request, string $purchaseId): RedirectResponse
-    {
-        app(CreatePurchasePayment::class)->execute(dto: new CreatePurchasePaymentDTO(
-            purchaseId: $purchaseId,
-            userId: user()->id,
-            paymentDate: $request->date('payment_date'),
-            paymentMethod: $request->enum('payment_method', PaymentMethodEnum::class),
-            amount: $request->float('amount'),
-            referencesNumber: $request->validated('reference_number'),
-            notes: $request->validated('reference_number'),
-        ));
-
-        return to_route('transactions.purchases.payments', ['id' => $purchaseId])->with('alert', [
-            'status' => 'success',
-            'message' => 'Pembayaran berhasil ditambahkan.',
-        ]);
-    }
-
-    /**
-     * Menghapus pembayaran pembelian
-     */
-    public function deletePayment(string $purchaseId, string $paymentId): RedirectResponse
-    {
-        app(DeletePurchasePaymentById::class)->execute(id: $paymentId);
-
-        return to_route('transactions.purchases.payments', ['id' => $purchaseId])->with('alert', [
-            'status' => 'success',
-            'message' => 'Pembayaran berhasil dihapus.',
-        ]);
-    }
-
-    /**
-     * Soft delete
-     */
-    public function remove(Request $request, string $id): JsonResponse
+    public function cartDetails(Request $request, string $cartId): JsonResponse
     {
         if (! $request->ajax()) {
             abort(404);
         }
 
-        app(RemovePurchase::class)->execute($id);
+        $cart = app(FindPurchaseCartById::class)->execute(
+            id: $cartId,
+        );
+
+        if ($cart === null) {
+            abort(404, 'Detail transaksi tidak ditemukan.');
+        }
+
+        $cartDetails = app(GetPurchaseCartDetailsByPurchaseCartId::class)->execute(
+            purchaseCart: $cart,
+        );
 
         return $this->jsonResponse(
-            message: 'Transaksi pembelian berhasil dihapus.'
+            status: 200,
+            data: $cartDetails,
+        );
+    }
+
+    /**
+     * Create (insert) detail keranjang pembelian.
+     */
+    public function storeCartDetail(StorePurchaseCartDetailRequest $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $purchaseCart = app(FindPurchaseCartByCurrentUser::class)->execute();
+
+        if ($purchaseCart === null) {
+            abort(404, 'Transaksi tidak ditemukan');
+        }
+
+        app(CreatePurchaseCartDetail::class)->execute(
+            purchaseCart: $purchaseCart,
+            productCode: $request->validated('product_code'),
+        );
+
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Produk berhasil ditambahkan.',
+        );
+    }
+
+    /**
+     * Delete cart detail.
+     */
+    public function deleteCartDetail(Request $request, string $cartId, string $cartDetailId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $cart = app(FindPurchaseCartById::class)->execute(
+            id: $cartId,
+        );
+
+        if ($cart === null) {
+            abort(404, 'Transaksi tidak ditemukan.');
+        }
+
+        $cartDetail = app(FindPurchaseCartDetailById::class)->execute(
+            id: $cartDetailId,
+        );
+
+        if ($cartDetail === null) {
+            abort(404, 'Produk tidak ditemukan.');
+        }
+
+        app(DeletePurchaseCartDetail::class)->execute(
+            purchaseCart: $cart,
+            purchaseCartDetail: $cartDetail,
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Produk berhasil dihapus.'
         );
     }
 }

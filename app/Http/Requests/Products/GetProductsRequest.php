@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Purchases;
+namespace App\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePurchaseCartDetailRequest extends FormRequest
+class GetProductsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class UpdatePurchaseCartDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'purchase_price' => ['required', 'numeric', 'min:0'],
-            'quantity' => ['required', 'numeric', 'min:1'],
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
 }

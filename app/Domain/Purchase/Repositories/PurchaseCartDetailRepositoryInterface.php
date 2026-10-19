@@ -4,41 +4,55 @@ declare(strict_types=1);
 
 namespace App\Domain\Purchase\Repositories;
 
-use App\Application\Purchase\DTOs\CreatePurchaseCartDetailDTO;
-use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDetailDTO;
 use App\Domain\Purchase\Entities\PurchaseCartDetailEntity;
 
 interface PurchaseCartDetailRepositoryInterface
 {
     /**
-     * Membuat (insert) atau memperbarui (update) data cart detail
+     * Mengambil data berdasarkan product_id.
      */
-    public function createOrUpdate(CreatePurchaseCartDetailDTO $dto): PurchaseCartDetailEntity;
+    public function findByPurchaseCartIdAndProductId(string $purchaseCartId, string $productId): ?PurchaseCartDetailEntity;
 
     /**
-     * Update data purcahse cart detail.
+     * Mengambil data berdasarkan id.
      */
-    public function update(UpdatePurchaseCartDetailDTO $dto): void;
+    public function findById(string $id): ?PurchaseCartDetailEntity;
 
     /**
-     * Mengahpus purcahse cart detail
+     * Create (insert).
      */
-    public function deleteById(string $id): void;
+    public function create(PurchaseCartDetailDTO $values): PurchaseCartDetailEntity;
 
     /**
-     * Menghitung total quantity cart detail berdasarkan id cart.
+     * Update
      */
-    public function sumQuantityByCartId(string $cartId): int;
+    public function update(string $id, PurchaseCartDetailDTO $values): int;
 
     /**
-     * Menghitung total subtotal berdasarkan id cart.
+     * Delete
      */
-    public function sumSubtotalByCartId(string $cartId): int;
+    public function delete(string $id): int;
 
     /**
-     * Mengambil daftar purchase cart detail berdasarkan id dari purchase cart.
+     * Menghitung total produk berdasarkan purchase_cart_id.
+     */
+    public function countProductByPurchaseCartId(string $purchaseCartId): float;
+
+    /**
+     * Menghitung total quantity berdasarkan purchase_cart_id.
+     */
+    public function sumQuantityByPurchaseCartId(string $purchaseCartId): float;
+
+    /**
+     * Menghitung total price (subtotal) berdasarkan purchase_cart_id.
+     */
+    public function sumSubtotalByPurchaseCartId(string $purchaseCartId): float;
+
+    /**
+     * Mengambil daftar berdasarkan purchase_cart_id.
      *
      * @return PurchaseCartDetailEntity[]
      */
-    public function getByCartId(string $cartId): array;
+    public function getByPurchaseCartId(string $purchaseCartId): array;
 }

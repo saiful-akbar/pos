@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Application\Purchase\DTOs\CreatePurchaseCartDetailDTO;
-use App\Application\Purchase\DTOs\UpdatePurchaseCartDetailDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDetailDTO;
 use App\Base\Repository;
 use App\Domain\Purchase\Entities\PurchaseCartDetailEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
-use App\Domain\Purchase\ValueObjects\CategoryProductPurchaseValue;
 use App\Domain\Purchase\ValueObjects\ProductPurchaseValue;
-use App\Domain\Purchase\ValueObjects\UnitProductPurchaseValue;
-use App\Models\Category;
+use App\Domain\Purchase\ValueObjects\UnitPurchaseValue;
 use App\Models\Product;
 use App\Models\PurchaseCartDetail;
 use App\Models\Unit;
@@ -29,39 +26,52 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Membuat (insert) atau memperbarui (update) data cart detail
+     * Mengambil data berdasarkan product_id.
      */
     #[Override]
-    public function createOrUpdate(CreatePurchaseCartDetailDTO $dto): PurchaseCartDetailEntity
+    public function findByPurchaseCartIdAndProductId(string $purchaseCartId, string $productId): ?PurchaseCartDetailEntity
     {
         try {
-            $data = $this->model->query()
-                ->where('purchase_cart_id', $dto->cartId)
-                ->where('product_id', $dto->productId)
+            $result = $this->model->query()
+                ->with(['product', 'unit'])
+                ->where('purchase_cart_id', $purchaseCartId)
+                ->where('product_id', $productId)
                 ->first();
 
-            if ($data === null) {
-                return $this->mapModelToPurchaseCartDetailEntity(
-                    model: $this->model->query()->create([
-                        'purchase_cart_id' => $dto->cartId,
-                        'product_id' => $dto->productId,
-                        'quantity' => $dto->quantity,
-                        'purchase_price' => $dto->purchasePrice,
-                        'subtotal_price' => $dto->quantity * $dto->purchasePrice,
-                    ]),
-                );
+            if ($result === null) {
+                return null;
             }
 
-            $quantity = $data->quantity + $dto->quantity;
-            $subtotal = $quantity * $dto->purchasePrice;
+            return $this->mapModelToPurchaseCartDetailEntity(
+                model: $result,
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
 
-            $data->quantity = $quantity;
-            $data->purchase_price = $dto->purchasePrice;
-            $data->subtotal_price = $subtotal;
-            $data->save();
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?PurchaseCartDetailEntity
+    {
+        try {
+            $result = $this->model->query()
+                ->with(['product', 'unit'])
+                ->find($id);
+
+            if ($result === null) {
+                return null;
+            }
 
             return $this->mapModelToPurchaseCartDetailEntity(
-                model: $data,
+                model: $result,
             );
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -74,15 +84,17 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Update data purcahse cart detail.
+     * Create (insert)
      */
     #[Override]
-    public function update(UpdatePurchaseCartDetailDTO $dto): void
+    public function create(PurchaseCartDetailDTO $values): PurchaseCartDetailEntity
     {
         try {
-            $this->model->query()
-                ->findOrFail($dto->id)
-                ->update($dto->toArray());
+            $result = $this->model->query()->create($values->toArray());
+
+            return $this->mapModelToPurchaseCartDetailEntity(
+                model: $result->load(['product', 'unit']),
+            );
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -94,14 +106,34 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Mengahpus purcahse cart detail
+     * Update
      */
     #[Override]
-    public function deleteById(string $id): void
+    public function update(string $id, PurchaseCartDetailDTO $values): int
     {
         try {
-            $this->model->query()
-                ->findOrFail($id)
+            return $this->model->query()
+                ->where('id', $id)
+                ->update($values->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Delete
+     */
+    #[Override]
+    public function delete(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
                 ->forceDelete();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -114,15 +146,39 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Menghitung total quantity cart detail berdasarkan id cart.
+     * Menghitung total produk berdasarkan purchase_cart_id.
      */
     #[Override]
-    public function sumQuantityByCartId(string $cartId): int
+    public function countProductByPurchaseCartId(string $purchaseCartId): float
     {
         try {
-            return (int) $this->model->query()
-                ->where('purchase_cart_id', $cartId)
+            $result = $this->model->query()
+                ->where('purchase_cart_id', $purchaseCartId)
+                ->count('product_id');
+
+            return parse_float($result);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Menghitung total quantity berdasarkan purchase_cart_id.
+     */
+    #[Override]
+    public function sumQuantityByPurchaseCartId(string $purchaseCartId): float
+    {
+        try {
+            $result = $this->model->query()
+                ->where('purchase_cart_id', $purchaseCartId)
                 ->sum('quantity');
+
+            return parse_float($result);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -134,15 +190,17 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Menghitung total subtotal berdasarkan id cart.
+     * Menghitung total price (subtotal) berdasarkan purchase_cart_id.
      */
     #[Override]
-    public function sumSubtotalByCartId(string $cartId): int
+    public function sumSubtotalByPurchaseCartId(string $purchaseCartId): float
     {
         try {
-            return (int) $this->model->query()
-                ->where('purchase_cart_id', $cartId)
-                ->sum('subtotal_price');
+            $result = $this->model->query()
+                ->where('purchase_cart_id', $purchaseCartId)
+                ->sum('subtotal');
+
+            return parse_float($result);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -154,20 +212,20 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Mengambil daftar purchase cart detail berdasarkan id dari purchase cart.
+     * Mengambil daftar berdasarkan purchase_cart_id.
      *
      * @return PurchaseCartDetailEntity[]
      */
     #[Override]
-    public function getByCartId(string $cartId): array
+    public function getByPurchaseCartId(string $purchaseCartId): array
     {
         try {
             return $this->model->query()
-                ->with(['product.unit', 'product.category'])
-                ->where('purchase_cart_id', $cartId)
+                ->with(['product', 'unit'])
+                ->where('purchase_cart_id', $purchaseCartId)
                 ->orderBy('created_at', 'desc')
                 ->get()
-                ->map(fn ($detail) => $this->mapModelToPurchaseCartDetailEntity($detail))
+                ->map(fn ($data) => $this->mapModelToPurchaseCartDetailEntity($data))
                 ->toArray();
         } catch (\Throwable $e) {
             $this->errorLog(
@@ -180,38 +238,6 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
     }
 
     /**
-     * Pemetaan class Model ke class CategoryProductPurchaseValue
-     */
-    private function mapModelToCategoryProductPurchaseValue(?Category $model): ?CategoryProductPurchaseValue
-    {
-        if ($model === null) {
-            return null;
-        }
-
-        return new CategoryProductPurchaseValue(
-            id: $model->id,
-            code: $model->code,
-            name: $model->name,
-        );
-    }
-
-    /**
-     * Pemetaan class Model ke class UnitProductPurchaseValue
-     */
-    private function mapModelToUnitProductPurchaseValue(?Unit $model): ?UnitProductPurchaseValue
-    {
-        if ($model === null) {
-            return null;
-        }
-
-        return new UnitProductPurchaseValue(
-            id: $model->id,
-            code: $model->code,
-            name: $model->name,
-        );
-    }
-
-    /**
      * Pemetaan class Model ke class ProductPurchaseValue
      */
     private function mapModelToProductPurchaseValue(Product $model): ProductPurchaseValue
@@ -219,22 +245,30 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
         return new ProductPurchaseValue(
             id: $model->id,
             code: $model->code,
-            barcode: $model->barcode,
             name: $model->name,
             image: $model->image,
-            purchasePrice: parse_float($model->purchase_price),
-            sellingPrice: parse_float($model->selling_price),
-            discount: parse_float($model->discount),
             minimumStock: parse_float($model->minimum_stock),
             currentStock: parse_float($model->current_stock),
+            discount: parse_float($model->discount),
             isActive: $model->is_active === 1,
-            category: $this->mapModelToCategoryProductPurchaseValue($model->category),
-            unit: $this->mapModelToUnitProductPurchaseValue($model->unit),
         );
     }
 
     /**
-     * Pemetaan model ke PurchaseCartDetailEntity.
+     * Pemetaan class Model ke class UnitPurchaseValue
+     */
+    private function mapModelToUnitPurchaseValue(Unit $model): UnitPurchaseValue
+    {
+        return new UnitPurchaseValue(
+            id: $model->id,
+            code: $model->code,
+            name: $model->name,
+            isActive: $model->is_active === 1,
+        );
+    }
+
+    /**
+     * Pemetaan class Model ke class PurchaseCartDetailEntity
      */
     private function mapModelToPurchaseCartDetailEntity(PurchaseCartDetail $model): PurchaseCartDetailEntity
     {
@@ -242,12 +276,14 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
             id: $model->id,
             purchaseCartId: $model->purchase_cart_id,
             product: $this->mapModelToProductPurchaseValue($model->product),
+            unit: $this->mapModelToUnitPurchaseValue($model->unit),
+            multiplesQuantity: parse_float($model->multiples_quantity),
             quantity: parse_float($model->quantity),
-            purchasePrice: parse_float($model->purchase_price),
-            subtotalPrice: parse_float($model->subtotal_price),
+            price: parse_float($model->price),
+            subtotal: parse_float($model->subtotal),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at
+            deletedAt: $model->deleted_at,
         );
     }
 }

@@ -7,7 +7,7 @@ namespace App\Domain\Purchase\ValueObjects;
 use App\Base\Entity;
 use Override;
 
-class CategoryProductPurchaseValue extends Entity
+class UnitPurchaseValue extends Entity
 {
     /**
      * Create a new class instance.
@@ -16,10 +16,11 @@ class CategoryProductPurchaseValue extends Entity
         public readonly string $id,
         public readonly string $code,
         public readonly string $name,
+        public readonly bool $isActive,
     ) {}
 
     /**
-     * Konversi data object ke array
+     * Konversi data object ke array.
      */
     #[Override]
     public function toArray(): array
@@ -28,6 +29,7 @@ class CategoryProductPurchaseValue extends Entity
             'id' => $this->id,
             'code' => $this->code,
             'name' => $this->name,
+            'is_active' => $this->isActive,
         ];
     }
 }

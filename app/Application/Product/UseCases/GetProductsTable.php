@@ -20,10 +20,12 @@ class GetProductsTable
     /**
      * Execute method.
      */
-    public function execute(): JsonResponse
+    public function execute(?bool $isActive = null): JsonResponse
     {
         $dataTable = DataTables::eloquent(
-            builder: $this->productRepository->getQuery(),
+            builder: $this->productRepository->getQuery(
+                isActive: $isActive,
+            ),
         );
 
         return $dataTable->toJson();

@@ -64,9 +64,11 @@ class PurchaseCartDetail extends Model
         'id',
         'purchase_cart_id',
         'product_id',
+        'unit_id',
+        'multiples_quantity',
         'quantity',
-        'purchase_price',
-        'subtotal_price',
+        'price',
+        'subtotal',
     ];
 
     /**
@@ -83,5 +85,13 @@ class PurchaseCartDetail extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get the unit that owns the PurchaseCartDetail
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 }

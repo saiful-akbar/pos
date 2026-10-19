@@ -28,10 +28,16 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
      * Mengambil daftar dalam format query builder.
      */
     #[Override]
-    public function getQuery(): Builder
+    public function getQuery(?bool $isActive = null): Builder
     {
         try {
-            return $this->model->query()->with('category');
+            $query = $this->model->query()->with('category');
+
+            if (is_bool($isActive)) {
+                $query->where('is_active', $isActive);
+            }
+
+            return $query;
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -160,6 +166,35 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
             return $this->model->query()
                 ->where('is_active', 1)
                 ->update(['discount' => $value]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan code.
+     */
+    #[Override]
+    public function findByCode(string $code): ?ProductEntity
+    {
+        try {
+            $result = $this->model->query()
+                ->with('category')
+                ->where('code', $code)
+                ->first();
+
+            if ($result === null) {
+                return null;
+            }
+
+            return $this->mapModelToProductEntity(
+                model: $result,
+            );
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

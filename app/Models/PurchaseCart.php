@@ -63,7 +63,8 @@ class PurchaseCart extends Model
      */
     protected $fillable = [
         'user_id',
-        'purchase_date',
+        'transaction_date',
+        'total_product',
         'total_quantity',
         'total_price',
     ];

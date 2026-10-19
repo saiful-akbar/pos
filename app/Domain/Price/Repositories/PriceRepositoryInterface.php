@@ -23,7 +23,7 @@ interface PriceRepositoryInterface
     /**
      * Mengambil data berdasarkan product_id dan unit_id.
      */
-    public function findByProductIdAndUnitId(string $productId, string $unitId, ?bool $isDefault = null): ?PriceEntity;
+    public function findByProductIdAndUnitId(string $productId, ?string $unitId = null, ?bool $isDefault = null): ?PriceEntity;
 
     /**
      * Memeriksa apakah data ada berdasarkan product_id dan unit_id.

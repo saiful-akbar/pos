@@ -6,13 +6,12 @@ namespace App\Application\Purchase\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
-use App\Application\Purchase\DTOs\CreatePurchaseCartDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Purchase\Entities\PurchaseCartEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
-use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 
 class CreatePurchaseCart
@@ -22,39 +21,36 @@ class CreatePurchaseCart
      */
     public function __construct(
         private PurchaseCartRepositoryInterface $purchaseCartRepository,
-        private ErrorLogRepositoryInterface $errorRepository,
         private ActivityLogRepositoryInterface $activityRepository,
+        private ErrorLogRepositoryInterface $errorRepository,
     ) {}
 
     /**
      * Execute method.
      */
-    public function execute(): PurchaseCartEntity
+    public function execute(PurchaseCartDTO $values): PurchaseCartEntity
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $cart = $this->purchaseCartRepository->create(dto: new CreatePurchaseCartDTO(
-                userId: user()->id,
-                purchaseDate: new DateTimeImmutable(),
-                totalQuantity: 0,
-                totalPrice: 0,
-            ));
+            $result = $this->purchaseCartRepository->create(
+                values: $values
+            );
 
             $this->activityRepository->create(dto: new CreateActivityDTO(
                 userId: user()->id,
-                logName: 'Membuat penjualan baru',
+                logName: 'Memulai transaksi pembelian',
                 event: EventActivityEnum::CREATED,
                 attributeChanges: new AttributeActivityDTO(
-                    attributes: $cart->toArray(),
+                    attributes: $result->toArray(),
                 ),
             ));
 
-            DB::connection(pos_connection())->commit();
+            DB::commit();
 
-            return $cart;
+            return $result;
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

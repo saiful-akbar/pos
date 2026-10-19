@@ -100,19 +100,22 @@ class PriceRepository extends Repository implements PriceRepositoryInterface
      * Mengambil data berdasarkan product_id dan unit_id.
      */
     #[Override]
-    public function findByProductIdAndUnitId(string $productId, string $unitId, ?bool $isDefault = null): ?PriceEntity
+    public function findByProductIdAndUnitId(string $productId, ?string $unitId = null, ?bool $isDefault = null): ?PriceEntity
     {
         try {
             $query = $this->model->query()
                 ->with(['product', 'unit'])
-                ->where('product_id', $productId)
-                ->where('unit_id', $unitId);
+                ->where('product_id', $productId);
 
-            if (is_bool($isDefault)) {
+            if ($unitId !== null) {
+                $query->where('unit_id', $unitId);
+            }
+
+            if ($isDefault !== null) {
                 $query->where('is_default', $isDefault);
             }
 
-            $result = $query->first();
+            $result = $query->orderBy('created_at', 'asc')->first();
 
             if ($result === null) {
                 return null;

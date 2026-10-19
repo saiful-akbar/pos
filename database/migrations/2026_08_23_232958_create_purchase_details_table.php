@@ -33,9 +33,15 @@ return new class() extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
+            $table->foreignUlid('unit_id')
+                ->constrained('units')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->decimal('multiples_quantity', 15, 2)->default(0);
             $table->decimal('quantity', 15, 2)->default(0);
-            $table->decimal('purchase_price', 15, 2)->default(0);
-            $table->decimal('subtotal_price', 15, 2)->default(0);
+            $table->decimal('price', 15, 2)->default(0);
+            $table->decimal('subtotal', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

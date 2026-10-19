@@ -66,6 +66,7 @@ class Purchase extends Model
         'user_id',
         'invoice_number',
         'transaction_date',
+        'total_product',
         'total_quantity',
         'total_price',
         'payment_status',

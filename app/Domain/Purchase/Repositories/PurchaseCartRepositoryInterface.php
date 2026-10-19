@@ -4,29 +4,33 @@ declare(strict_types=1);
 
 namespace App\Domain\Purchase\Repositories;
 
-use App\Application\Purchase\DTOs\CreatePurchaseCartDTO;
-use App\Application\Purchase\DTOs\UpdateQuantityAndPricePurchaseCartDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDTO;
 use App\Domain\Purchase\Entities\PurchaseCartEntity;
 
 interface PurchaseCartRepositoryInterface
 {
     /**
-     * Mengambil data cart berdasarkan user id.
+     * Mengambil data berdasarkan user_id.
      */
     public function findByUserId(string $userId): ?PurchaseCartEntity;
 
     /**
-     * Membuat data cart baru.
+     * Mengambil data berdasarkan id.
      */
-    public function create(CreatePurchaseCartDTO $dto): PurchaseCartEntity;
+    public function findById(string $id): ?PurchaseCartEntity;
 
     /**
-     * Update total quantity dan total price purchase cart.
+     * Create (insert).
      */
-    public function updateQuantityAndPriceById(UpdateQuantityAndPricePurchaseCartDTO $dto): void;
+    public function create(PurchaseCartDTO $values): PurchaseCartEntity;
 
     /**
-     * Hapus purchase cart.
+     * Update.
      */
-    public function deleteByUserId(string $userId): void;
+    public function update(string $id, PurchaseCartDTO $values): int;
+
+    /**
+     * Delete.
+     */
+    public function delete(string $id): int;
 }

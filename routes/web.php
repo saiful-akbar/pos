@@ -184,24 +184,14 @@ Route::middleware('auth')->group(function (): void {
             ->name('.purchases')
             ->prefix('purchases')
             ->group(function (): void {
-                Route::get('/', 'index')->middleware('module:transactions.purchases,read');
-                Route::post('/', 'save')->name('.save')->middleware('module:transactions.purchases,create');
-                Route::get('/cart', 'createCart')->name('.cart')->middleware('module:transactions.purchases,create');
-                Route::post('/cart', 'addCartDetail')->name('.cart.store')->middleware('module:transactions.purchases,create');
-                Route::patch('/cart/{cartDetailId}', 'updateCartDetail')->name('.cart.update')->middleware('module:transactions.purchases,create');
-                Route::delete('/cart/cancel', 'cancelCart')->name('.cart.cancel')->middleware('module:transactions.purchases,create');
-                Route::delete('/cart/{cartDetailId}', 'deleteCartDetail')->name('.cart.delete')->middleware('module:transactions.purchases,create');
-                Route::get('/{id}', 'detail')->name('.detail')->middleware('module:transactions.purchases,read');
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware('module:transactions.purchases,remove');
+                $module = 'module:transactions.purchases';
 
-                Route::name('.payments')
-                    ->prefix('/{id}/payments')
-                    ->middleware('module:transactions.purchases,create')
-                    ->group(function (): void {
-                        Route::get('/', 'payment');
-                        Route::post('/', 'createPayment')->name('.create');
-                        Route::delete('/{paymentId}', 'deletePayment')->name('.delete');
-                    });
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
+                Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create");
+                Route::get('/carts/{cartId}/details', 'cartDetails')->name('.carts.details')->middleware("$module,read");
+                Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
+                Route::delete('/carts/{cartId}/details/{detailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create");
             });
 
         Route::controller(SaleController::class)

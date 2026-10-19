@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Purchase\UseCases;
 
-use App\Application\Purchase\DTOs\CreatePurchaseCartDetailDTO;
-use App\Application\Purchase\DTOs\UpdateQuantityAndPricePurchaseCartDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDetailDTO;
+use App\Application\Purchase\DTOs\PurchaseCartDTO;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Domain\Price\Repositories\PriceRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use App\Domain\Purchase\Entities\PurchaseCartEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -20,72 +21,99 @@ class CreatePurchaseCartDetail
      * Create a new class instance.
      */
     public function __construct(
-        private PurchaseCartRepositoryInterface $cartRepository,
-        private PurchaseCartDetailRepositoryInterface $cartDetailRepository,
+        private PurchaseCartDetailRepositoryInterface $purchaseCartDetailRepository,
+        private PurchaseCartRepositoryInterface $purchaseCartRepository,
         private ProductRepositoryInterface $productRepository,
+        private PriceRepositoryInterface $productPriceRepository,
         private ErrorLogRepositoryInterface $errorRepository,
     ) {}
 
     /**
-     * Execute method
+     * Execute method.
      */
-    public function execute(Request $request): void
+    public function execute(PurchaseCartEntity $purchaseCart, string $productCode): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        DB::beginTransaction();
 
         try {
-            $productCode = $request->validated('product_code');
-            $product = $this->productRepository->findByCodeOrBarcode(value: $productCode);
-            $purchasePrice = $request->float('purchase_price') ?: $product->purchasePrice;
-            $quantity = $request->float('quantity') ?: 1;
+            $product = $this->productRepository->findByCode(
+                code: $productCode,
+            );
 
-            // validasi produk
             if ($product === null) {
                 throw ValidationException::withMessages(messages: [
-                    'product_code' => 'kode atau barcode produk tidak terdaftar.',
+                    'product_code' => 'Produk tidak ditemukan.',
                 ]);
             }
 
-            // ambil data purchase cart berdasarkan id user yang sedang login.
-            $cart = $this->cartRepository->findByUserId(
-                userId: user()->id,
-            );
-
-            // validasi purcahse cart
-            if ($cart === null) {
-                throw ValidationException::withMessages(messages: [
-                    'product_code' => 'Transaksi tidak ditemukan.',
-                ]);
-            }
-
-            // Create atau update data purchase cart detail
-            $this->cartDetailRepository->createOrUpdate(dto: new CreatePurchaseCartDetailDTO(
-                cartId: $cart->id,
+            $productPrice = $this->productPriceRepository->findByProductIdAndUnitId(
                 productId: $product->id,
-                purchasePrice: $purchasePrice,
-                quantity: $quantity,
-            ));
-
-            // ambil total quantity dari purchase cart detail.
-            $totalQuantity = $this->cartDetailRepository->sumQuantityByCartId(
-                cartId: $cart->id,
             );
 
-            // ambil total dari subtotal price dari purchase cart detail.
-            $totalPrice = $this->cartDetailRepository->sumSubtotalByCartId(
-                cartId: $cart->id,
+            if ($productPrice === null) {
+                throw ValidationException::withMessages(messages: [
+                    'product_code' => 'Produk tidak memiliki harga.',
+                ]);
+            }
+
+            $purchaseCartDetail = $this->purchaseCartDetailRepository->findByPurchaseCartIdAndProductId(
+                purchaseCartId: $purchaseCart->id,
+                productId: $productPrice->product->id,
             );
 
-            // Update total quantity dan total price pada purchase cart
-            $this->cartRepository->updateQuantityAndPriceById(dto: new UpdateQuantityAndPricePurchaseCartDTO(
-                id: $cart->id,
-                totalQuantity: $totalQuantity,
-                totalPrice: $totalPrice,
-            ));
+            if ($purchaseCartDetail === null) {
+                $this->purchaseCartDetailRepository->create(
+                    values: new PurchaseCartDetailDTO(
+                        purchaseCartId: $purchaseCart->id,
+                        productId: $productPrice->product->id,
+                        unitId: $productPrice->unit->id,
+                        multiplesQuantity: $productPrice->multiplesQuantity,
+                        quantity: 1,
+                        price: $productPrice->purchasePrice,
+                        subtotal: $productPrice->purchasePrice * 1,
+                    ),
+                );
+            } else {
+                $this->purchaseCartDetailRepository->update(
+                    id: $purchaseCartDetail->id,
+                    values: new PurchaseCartDetailDTO(
+                        purchaseCartId: $purchaseCart->id,
+                        productId: $productPrice->product->id,
+                        unitId: $productPrice->unit->id,
+                        multiplesQuantity: $productPrice->multiplesQuantity,
+                        quantity: $purchaseCartDetail->quantity + 1,
+                        price: $productPrice->purchasePrice,
+                        subtotal: $productPrice->purchasePrice * ($purchaseCartDetail->quantity + 1),
+                    ),
+                );
+            }
 
-            DB::connection(pos_connection())->commit();
+            $totalProduct = $this->purchaseCartDetailRepository->countProductByPurchaseCartId(
+                purchaseCartId: $purchaseCart->id,
+            );
+
+            $totalQuantity = $this->purchaseCartDetailRepository->sumQuantityByPurchaseCartId(
+                purchaseCartId: $purchaseCart->id,
+            );
+
+            $totalPrice = $this->purchaseCartDetailRepository->sumSubtotalByPurchaseCartId(
+                purchaseCartId: $purchaseCart->id,
+            );
+
+            $this->purchaseCartRepository->update(
+                id: $purchaseCart->id,
+                values: new PurchaseCartDTO(
+                    userId: $purchaseCart->user->id,
+                    transactionDate: $purchaseCart->transactionDate,
+                    totalProduct: $totalProduct,
+                    totalQuantity: $totalQuantity,
+                    totalPrice: $totalPrice,
+                ),
+            );
+
+            DB::commit();
         } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
+            DB::rollBack();
 
             $this->errorRepository->create(
                 function: __METHOD__,

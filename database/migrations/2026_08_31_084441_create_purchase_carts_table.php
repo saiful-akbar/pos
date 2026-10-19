@@ -28,7 +28,8 @@ return new class() extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->date('purchase_date');
+            $table->date('transaction_date');
+            $table->decimal('total_product', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_price', 15, 2)->default(0);
             $table->timestamps();

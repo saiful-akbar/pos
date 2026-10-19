@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Purchase\UseCases;
 
-use App\Application\Purchase\DTOs\UpdateQuantityAndPricePurchaseCartDTO;
-use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
+use App\Application\Purchase\DTOs\PurchaseCartDTO;
+use App\Domain\Purchase\Entities\PurchaseCartDetailEntity;
+use App\Domain\Purchase\Entities\PurchaseCartEntity;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class DeletePurchaseCartDetail
 {
@@ -17,61 +16,40 @@ class DeletePurchaseCartDetail
      * Create a new class instance.
      */
     public function __construct(
-        private PurchaseCartRepositoryInterface $cartRepository,
-        private PurchaseCartDetailRepositoryInterface $cartDetailRepository,
-        private ErrorLogRepositoryInterface $errorRepository,
+        private PurchaseCartDetailRepositoryInterface $purchaseCartDetailRepository,
+        private PurchaseCartRepositoryInterface $purchaseCartRepository,
     ) {}
 
     /**
      * Execute method.
      */
-    public function execute(string $id): void
+    public function execute(PurchaseCartEntity $purchaseCart, PurchaseCartDetailEntity $purchaseCartDetail): void
     {
-        DB::connection(pos_connection())->beginTransaction();
+        $this->purchaseCartDetailRepository->delete(
+            id: $purchaseCartDetail->id,
+        );
 
-        try {
-            // ambil data purchase cart berdasarkan id user yang sedang login.
-            $cart = $this->cartRepository->findByUserId(
-                userId: user()->id,
-            );
+        $totalProduct = $this->purchaseCartDetailRepository->countProductByPurchaseCartId(
+            purchaseCartId: $purchaseCart->id,
+        );
 
-            // validasi purcahse cart
-            if ($cart === null) {
-                throw ValidationException::withMessages(messages: [
-                    'product_code' => 'Transaksi tidak ditemukan.',
-                ]);
-            }
+        $totalQuantity = $this->purchaseCartDetailRepository->sumQuantityByPurchaseCartId(
+            purchaseCartId: $purchaseCart->id,
+        );
 
-            // hapus purchase cart detail
-            $this->cartDetailRepository->deleteById(id: $id);
+        $totalPrice = $this->purchaseCartDetailRepository->sumSubtotalByPurchaseCartId(
+            purchaseCartId: $purchaseCart->id,
+        );
 
-            // ambil total quantity dari purchase cart detail.
-            $totalQuantity = $this->cartDetailRepository->sumQuantityByCartId(
-                cartId: $cart->id,
-            );
-
-            // ambil total dari subtotal price dari purchase cart detail.
-            $totalPrice = $this->cartDetailRepository->sumSubtotalByCartId(
-                cartId: $cart->id,
-            );
-
-            // Update total quantity dan total price pada purchase cart
-            $this->cartRepository->updateQuantityAndPriceById(dto: new UpdateQuantityAndPricePurchaseCartDTO(
-                id: $cart->id,
+        $this->purchaseCartRepository->update(
+            id: $purchaseCart->id,
+            values: new PurchaseCartDTO(
+                userId: $purchaseCart->user->id,
+                transactionDate: $purchaseCart->transactionDate,
+                totalProduct: $totalProduct,
                 totalQuantity: $totalQuantity,
                 totalPrice: $totalPrice,
-            ));
-
-            DB::connection(pos_connection())->commit();
-        } catch (\Throwable $e) {
-            DB::connection(pos_connection())->rollBack();
-
-            $this->errorRepository->create(
-                function: __METHOD__,
-                message: $e->getMessage(),
-            );
-
-            throw $e;
-        }
+            ),
+        );
     }
 }

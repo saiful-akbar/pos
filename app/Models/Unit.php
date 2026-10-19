@@ -73,4 +73,20 @@ class Unit extends Model
     {
         return $this->hasMany(Price::class, 'unit_id', 'id');
     }
+
+    /**
+     * Get all of the purchaseCartDetails for the Unit
+     */
+    public function purchaseCartDetails(): HasMany
+    {
+        return $this->hasMany(PurchaseCartDetail::class, 'unit_id', 'id');
+    }
+
+    /**
+     * Get all of the purchaseDetails for the Unit
+     */
+    public function purchaseDetails(): HasMany
+    {
+        return $this->hasMany(PurchaseDetail::class, 'unit_id', 'id');
+    }
 }

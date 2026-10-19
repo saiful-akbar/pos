@@ -12,13 +12,17 @@ class FindPurchaseCartByCurrentUser
     /**
      * Create a new class instance.
      */
-    public function __construct(private PurchaseCartRepositoryInterface $purchaseCartRepository) {}
+    public function __construct(
+        private PurchaseCartRepositoryInterface $purchaseCartRepository,
+    ) {}
 
     /**
-     * Execute method
+     * Execute method.
      */
     public function execute(): ?PurchaseCartEntity
     {
-        return $this->purchaseCartRepository->findByUserId(userId: user()->id);
+        return $this->purchaseCartRepository->findByUserId(
+            userId: user()->id,
+        );
     }
 }

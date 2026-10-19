@@ -20,6 +20,9 @@ class UserPurchaseValue extends Entity
         public readonly bool $isActive,
     ) {}
 
+    /**
+     * Konversi data object ke array.
+     */
     #[Override]
     public function toArray(): array
     {
@@ -28,7 +31,7 @@ class UserPurchaseValue extends Entity
             'username' => $this->username,
             'full_name' => $this->fullName,
             'photo' => $this->photo,
-            'isActive' => $this->isActive,
+            'is_active' => $this->isActive,
         ];
     }
 }

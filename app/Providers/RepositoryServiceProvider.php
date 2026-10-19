@@ -38,23 +38,12 @@ use App\Application\Product\UseCases\UpdateProduct;
 use App\Application\Product\UseCases\UploadImageProduct;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
-use App\Application\Purchase\UseCases\CreatePurchasePayment;
-use App\Application\Purchase\UseCases\DeletePurchaseCartByCurrentUser;
+use App\Application\Purchase\UseCases\DeletePurchaseCart;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
-use App\Application\Purchase\UseCases\DeletePurchasePaymentById;
-use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
-use App\Application\Purchase\UseCases\GetPurchaseByDateRangeTable;
-use App\Application\Purchase\UseCases\GetPurchaseCartDetailByCartId;
-use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseId;
-use App\Application\Purchase\UseCases\GetPurchaseDetailByPurchaseIdTable;
-use App\Application\Purchase\UseCases\GetPurchaseDetailsByDate;
-use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseId;
-use App\Application\Purchase\UseCases\GetPurchasePaymentByPurchaseIdTable;
-use App\Application\Purchase\UseCases\GetPurchases;
-use App\Application\Purchase\UseCases\RemovePurchase;
-use App\Application\Purchase\UseCases\SavePurchase;
-use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\FindPurchaseCartById;
+use App\Application\Purchase\UseCases\FindPurchaseCartDetailById;
+use App\Application\Purchase\UseCases\GetPurchaseCartDetailsByPurchaseCartId;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
@@ -131,9 +120,6 @@ use App\Domain\Price\Repositories\PriceRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
-use App\Domain\Purchase\Repositories\PurchaseDetailRepositoryInterface;
-use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
-use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Report\Repositories\ReportRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
@@ -166,9 +152,6 @@ use App\Repositories\PriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\PurchaseCartDetailRepository;
 use App\Repositories\PurchaseCartRepository;
-use App\Repositories\PurchaseDetailRepository;
-use App\Repositories\PurchasePaymentRepository;
-use App\Repositories\PurchaseRepository;
 use App\Repositories\ReportRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SaleCartDetailRepository;
@@ -204,13 +187,6 @@ class RepositoryServiceProvider extends ServiceProvider
             GetCustomersTable::class => ErrorLogRepository::class,
             FindCustomerById::class => ErrorLogRepository::class,
             UpdateSetting::class => ErrorLogRepository::class,
-            CreatePurchaseCart::class => ErrorLogRepository::class,
-            CreatePurchaseCartDetail::class => ErrorLogRepository::class,
-            UpdatePurchaseCartDetail::class => ErrorLogRepository::class,
-            DeletePurchaseCartDetail::class => ErrorLogRepository::class,
-            SavePurchase::class => ErrorLogRepository::class,
-            CreatePurchasePayment::class => ErrorLogRepository::class,
-            DeletePurchasePaymentById::class => ErrorLogRepository::class,
             CreateSaleCart::class => ErrorLogRepository::class,
             DeleteSaleCartById::class => ErrorLogRepository::class,
             CreateSaleCartDetail::class => ErrorLogRepository::class,
@@ -233,7 +209,6 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCustomer::class => ErrorLogRepository::class,
             RemoveCategory::class => ErrorLogRepository::class,
             RemoveUnit::class => ErrorLogRepository::class,
-            RemovePurchase::class => ErrorLogRepository::class,
             RemoveSale::class => ErrorLogRepository::class,
             RemoveSaleReturn::class => ErrorLogRepository::class,
             RemoveDailyStockOpname::class => ErrorLogRepository::class,
@@ -249,6 +224,9 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateProduct::class => ErrorLogRepository::class,
             ResetAllDiscountProducts::class => ErrorLogRepository::class,
             RemoveProduct::class => ErrorLogRepository::class,
+            CreatePurchaseCart::class => ErrorLogRepository::class,
+            DeletePurchaseCart::class => ErrorLogRepository::class,
+            CreatePurchaseCartDetail::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -266,10 +244,6 @@ class RepositoryServiceProvider extends ServiceProvider
             GetCustomersTable::class => ActivityLogRepository::class,
             FindCustomerById::class => ActivityLogRepository::class,
             UpdateSetting::class => ActivityLogRepository::class,
-            CreatePurchaseCart::class => ActivityLogRepository::class,
-            SavePurchase::class => ActivityLogRepository::class,
-            CreatePurchasePayment::class => ActivityLogRepository::class,
-            DeletePurchasePaymentById::class => ActivityLogRepository::class,
             CreateSaleCart::class => ActivityLogRepository::class,
             DeleteSaleCartById::class => ActivityLogRepository::class,
             CreateSale::class => ActivityLogRepository::class,
@@ -286,7 +260,6 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveCustomer::class => ActivityLogRepository::class,
             RemoveCategory::class => ActivityLogRepository::class,
             RemoveUnit::class => ActivityLogRepository::class,
-            RemovePurchase::class => ActivityLogRepository::class,
             RemoveSale::class => ActivityLogRepository::class,
             RemoveSaleReturn::class => ActivityLogRepository::class,
             RemoveDailyStockOpname::class => ActivityLogRepository::class,
@@ -301,6 +274,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateProduct::class => ActivityLogRepository::class,
             ResetAllDiscountProducts::class => ActivityLogRepository::class,
             RemoveProduct::class => ActivityLogRepository::class,
+            CreatePurchaseCart::class => ActivityLogRepository::class,
+            DeletePurchaseCart::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -370,6 +345,7 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateProduct::class => ProductRepository::class,
             ResetAllDiscountProducts::class => ProductRepository::class,
             RemoveProduct::class => ProductRepository::class,
+            CreatePurchaseCartDetail::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -379,6 +355,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePrice::class => PriceRepository::class,
             DeletePrice::class => PriceRepository::class,
             FindPriceById::class => PriceRepository::class,
+            CreatePurchaseCartDetail::class => PriceRepository::class,
         ],
 
         // Customer
@@ -400,58 +377,8 @@ class RepositoryServiceProvider extends ServiceProvider
             FindSupplierById::class => SupplierRepository::class,
         ],
 
-        // Purchase cart
-        PurchaseCartRepositoryInterface::class => [
-            FindPurchaseCartByCurrentUser::class => PurchaseCartRepository::class,
-            CreatePurchaseCart::class => PurchaseCartRepository::class,
-            CreatePurchaseCartDetail::class => PurchaseCartRepository::class,
-            UpdatePurchaseCartDetail::class => PurchaseCartRepository::class,
-            DeletePurchaseCartDetail::class => PurchaseCartRepository::class,
-            DeletePurchaseCartByCurrentUser::class => PurchaseCartRepository::class,
-            SavePurchase::class => PurchaseCartRepository::class,
-        ],
-
-        // Purchase cart detail
-        PurchaseCartDetailRepositoryInterface::class => [
-            CreatePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
-            UpdatePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
-            DeletePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
-            GetPurchaseCartDetailByCartId::class => PurchaseCartDetailRepository::class,
-            SavePurchase::class => PurchaseCartDetailRepository::class,
-        ],
-
-        // Purchase
-        PurchaseRepositoryInterface::class => [
-            SavePurchase::class => PurchaseRepository::class,
-            GetPurchaseByDateRangeTable::class => PurchaseRepository::class,
-            FindPurchaseById::class => PurchaseRepository::class,
-            CreatePurchasePayment::class => PurchaseRepository::class,
-            DeletePurchasePaymentById::class => PurchaseRepository::class,
-            GetPurchases::class => PurchaseRepository::class,
-            RemovePurchase::class => PurchaseRepository::class,
-        ],
-
-        // Purchase Detail
-        PurchaseDetailRepositoryInterface::class => [
-            SavePurchase::class => PurchaseDetailRepository::class,
-            GetPurchaseDetailByPurchaseIdTable::class => PurchaseDetailRepository::class,
-            GetPurchaseDetailByPurchaseId::class => PurchaseDetailRepository::class,
-            GetPurchaseDetailsByDate::class => PurchaseDetailRepository::class,
-            RemovePurchase::class => PurchaseDetailRepository::class,
-        ],
-
-        // Purchase payment
-        PurchasePaymentRepositoryInterface::class => [
-            SavePurchase::class => PurchasePaymentRepository::class,
-            GetPurchasePaymentByPurchaseId::class => PurchasePaymentRepository::class,
-            GetPurchasePaymentByPurchaseIdTable::class => PurchasePaymentRepository::class,
-            CreatePurchasePayment::class => PurchasePaymentRepository::class,
-            DeletePurchasePaymentById::class => PurchasePaymentRepository::class,
-        ],
-
         // Stock movement
         StockMovementRepositoryInterface::class => [
-            SavePurchase::class => StockMovementRepository::class,
             CreateSale::class => StockMovementRepository::class,
             CreateSaleReturn::class => StockMovementRepository::class,
         ],
@@ -585,6 +512,24 @@ class RepositoryServiceProvider extends ServiceProvider
         SaleDashboardRepositoryInterface::class => [
             GetMonthlySalesSummary::class => SaleRepository::class,
             GetBestSellingProduct::class => SaleRepository::class,
+        ],
+
+        // Purchase cart
+        PurchaseCartRepositoryInterface::class => [
+            FindPurchaseCartByCurrentUser::class => PurchaseCartRepository::class,
+            FindPurchaseCartById::class => PurchaseCartRepository::class,
+            CreatePurchaseCart::class => PurchaseCartRepository::class,
+            DeletePurchaseCart::class => PurchaseCartRepository::class,
+            CreatePurchaseCartDetail::class => PurchaseCartRepository::class,
+            DeletePurchaseCartDetail::class => PurchaseCartRepository::class,
+        ],
+
+        // Purchase cart detail
+        PurchaseCartDetailRepositoryInterface::class => [
+            CreatePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
+            GetPurchaseCartDetailsByPurchaseCartId::class => PurchaseCartDetailRepository::class,
+            DeletePurchaseCartDetail::class => PurchaseCartDetailRepository::class,
+            FindPurchaseCartDetailById::class => PurchaseCartDetailRepository::class,
         ],
     ];
 
