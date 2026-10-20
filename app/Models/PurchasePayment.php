@@ -66,7 +66,6 @@ class PurchasePayment extends Model
         'payment_date',
         'payment_method',
         'amount',
-        'reference_number',
         'notes',
     ];
 

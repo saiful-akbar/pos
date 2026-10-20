@@ -22,6 +22,7 @@ class PurchaseDTO extends DTO
         public readonly float $totalProduct,
         public readonly float $totalQuantity,
         public readonly float $totalPrice,
+        public readonly float $alreadyPaid,
         public readonly PaymentStatusEnum $paymentStatus,
         public readonly ?string $notes,
     ) {}
@@ -40,6 +41,7 @@ class PurchaseDTO extends DTO
             'total_product' => $this->totalProduct,
             'total_quantity' => $this->totalQuantity,
             'total_price' => $this->totalPrice,
+            'already_paid' => $this->alreadyPaid,
             'payment_status' => $this->paymentStatus->value,
             'notes' => $this->notes,
         ];

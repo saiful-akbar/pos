@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Application\Dashboard\UseCases\GetBestSellingProduct;
-use App\Application\Dashboard\UseCases\GetMonthlySalesSummary;
 use App\Http\Requests\Dashboards\GetByDateRangeRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,7 +29,7 @@ class DashboardController extends Controller
         }
 
         return $this->jsonResponse(
-            data: app(GetMonthlySalesSummary::class)->execute(),
+            data: []
         );
     }
 
@@ -45,10 +43,7 @@ class DashboardController extends Controller
         }
 
         return $this->jsonResponse(
-            data: app(GetBestSellingProduct::class)->execute(
-                fromDate: $request->date('from_date'),
-                toDate: $request->date('to_date'),
-            ),
+            data: [],
         );
     }
 }

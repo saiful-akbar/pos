@@ -14,6 +14,7 @@ use App\Domain\Purchase\ValueObjects\UserPurchaseValue;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\User;
+use DateTimeInterface;
 use Override;
 
 class PurchaseRepository extends Repository implements PurchaseRepositoryInterface
@@ -38,6 +39,95 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             return $this->mapModelToPurchaseEntity(
                 model: $result->load(['user', 'supplier']),
             );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar pembelian
+     *
+     * @return PurchaseEntity[]
+     */
+    #[Override]
+    public function getByDate(DateTimeInterface $fromDate, DateTimeInterface $toDate): array
+    {
+        try {
+            return $this->model->query()
+                ->with(['user', 'supplier'])
+                ->whereBetween('transaction_date', [$fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                ->get()
+                ->map(fn ($data) => $this->mapModelToPurchaseEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil data berdasarkan id.
+     */
+    #[Override]
+    public function findById(string $id): ?PurchaseEntity
+    {
+        try {
+            $result = $this->model->query()
+                ->with(['user', 'supplier'])
+                ->find($id);
+
+            return $result === null ? null : $this->mapModelToPurchaseEntity(
+                model: $result,
+            );
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Remove (soft delete).
+     */
+    #[Override]
+    public function remove(string $id): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Update
+     */
+    #[Override]
+    public function update(string $id, PurchaseDTO $value): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $id)
+                ->update($value->toArray());
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,
@@ -90,6 +180,7 @@ class PurchaseRepository extends Repository implements PurchaseRepositoryInterfa
             totalProduct: parse_float($model->total_product),
             totalQuantity: parse_float($model->total_quantity),
             totalPrice: parse_float($model->total_price),
+            alreadyPaid: parse_float($model->already_paid),
             paymentStatus: PaymentStatusEnum::from($model->payment_status),
             notes: $model->notes,
             createdAt: $model->created_at,

@@ -9,17 +9,26 @@ use App\Application\Purchase\DTOs\PurchaseCartDTO;
 use App\Application\Purchase\UseCases\CreatePurchase;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\CreatePurchasePayment;
 use App\Application\Purchase\UseCases\DeletePurchaseCart;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchasePayment;
+use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\FindPurchaseCartById;
 use App\Application\Purchase\UseCases\FindPurchaseCartDetailById;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailsByPurchaseCartId;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailsTable;
+use App\Application\Purchase\UseCases\GetPurchaseDetailTableByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchasePaymentsTableByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchasesByDate;
+use App\Application\Purchase\UseCases\RemovePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetAllSuppliers;
 use App\Http\Requests\Purchases\CreatePurchaseRequest;
+use App\Http\Requests\Purchases\GetPurchasesRequest;
 use App\Http\Requests\Purchases\StorePurchaseCartDetailRequest;
+use App\Http\Requests\Purchases\StorePurchasePaymentRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
 use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
@@ -32,8 +41,17 @@ class PurchaseController extends Controller
     /**
      * Menampilkan halaman utama pembelian.
      */
-    public function index(): View
+    public function index(GetPurchasesRequest $request): View|JsonResponse
     {
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: app(GetPurchasesByDate::class)->execute(
+                    fromDate: $request->date('from_date'),
+                    toDate: $request->date('to_date'),
+                ),
+            );
+        }
+
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: 'transactions.purchases',
@@ -42,6 +60,25 @@ class PurchaseController extends Controller
         return view(
             view: 'pages.purchases.index',
             data: compact('access'),
+        );
+    }
+
+    /**
+     * Remove (soft delete) pembelian.
+     */
+    public function remove(Request $request, string $purchaseId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(RemovePurchase::class)->execute(
+            id: $purchaseId,
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Transaksi pembelian berhasil dihapus.'
         );
     }
 
@@ -252,6 +289,104 @@ class PurchaseController extends Controller
 
         return $this->jsonResponse(
             message: 'Produk berhasil diperbarui.'
+        );
+    }
+
+    /**
+     * Menampilkan detail pembelian.
+     */
+    public function show(Request $request, string $purchaseId): View|JsonResponse
+    {
+        $purchase = app(FindPurchaseById::class)->execute(
+            id: $purchaseId,
+        );
+
+        if ($purchase === null) {
+            abort(404, 'Transaksi pembelian tidak ditemukan.');
+        }
+
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: $purchase,
+            );
+        }
+
+        $access = app(FindModuleAccessByRoute::class)->execute(
+            roleId: user()->role_id,
+            route: 'transactions.purchases',
+        );
+
+        return view(
+            view: 'pages.purchases.show',
+            data: compact('purchase', 'access'),
+        );
+    }
+
+    /**
+     * Mengambil daftar detail pembelian.
+     */
+    public function details(Request $request, string $purchaseId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetPurchaseDetailTableByPurchaseId::class)->execute(
+            purchaseId: $purchaseId,
+        );
+    }
+
+    /**
+     * Mengambil daftar pembayaran.
+     */
+    public function payments(Request $request, string $purchaseId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetPurchasePaymentsTableByPurchaseId::class)->execute(
+            purchaseId: $purchaseId,
+        );
+    }
+
+    /**
+     * Create pembayaran.
+     */
+    public function storePayment(StorePurchasePaymentRequest $request, string $purchaseId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(CreatePurchasePayment::class)->execute(
+            request: $request,
+            purchaseId: $purchaseId,
+        );
+
+        return $this->jsonResponse(
+            status: 201,
+            message: 'Pembayaran berhasil ditambahkan.'
+        );
+    }
+
+    /**
+     * Hapus permanen pembayaran
+     */
+    public function deletePayment(Request $request, string $purchaseId, string $paymentId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(DeletePurchasePayment::class)->execute(
+            purchaseId: $purchaseId,
+            paymentId: $paymentId,
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Pembayaran berhasil dihapus.'
         );
     }
 }

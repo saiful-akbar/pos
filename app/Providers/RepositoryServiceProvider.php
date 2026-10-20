@@ -37,13 +37,20 @@ use App\Application\Product\UseCases\UploadImageProduct;
 use App\Application\Purchase\UseCases\CreatePurchase;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
+use App\Application\Purchase\UseCases\CreatePurchasePayment;
 use App\Application\Purchase\UseCases\DeletePurchaseCart;
 use App\Application\Purchase\UseCases\DeletePurchaseCartDetail;
+use App\Application\Purchase\UseCases\DeletePurchasePayment;
+use App\Application\Purchase\UseCases\FindPurchaseById;
 use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\FindPurchaseCartById;
 use App\Application\Purchase\UseCases\FindPurchaseCartDetailById;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailsByPurchaseCartId;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailsTable;
+use App\Application\Purchase\UseCases\GetPurchaseDetailTableByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchasePaymentsTableByPurchaseId;
+use App\Application\Purchase\UseCases\GetPurchasesByDate;
+use App\Application\Purchase\UseCases\RemovePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
@@ -147,6 +154,9 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchaseCartDetail::class => ErrorLogRepository::class,
             UpdatePurchaseCartDetail::class => ErrorLogRepository::class,
             CreatePurchase::class => ErrorLogRepository::class,
+            RemovePurchase::class => ErrorLogRepository::class,
+            CreatePurchasePayment::class => ErrorLogRepository::class,
+            DeletePurchasePayment::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -181,6 +191,9 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchaseCart::class => ActivityLogRepository::class,
             DeletePurchaseCart::class => ActivityLogRepository::class,
             CreatePurchase::class => ActivityLogRepository::class,
+            RemovePurchase::class => ActivityLogRepository::class,
+            CreatePurchasePayment::class => ActivityLogRepository::class,
+            DeletePurchasePayment::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -252,6 +265,7 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveProduct::class => ProductRepository::class,
             CreatePurchaseCartDetail::class => ProductRepository::class,
             CreatePurchase::class => ProductRepository::class,
+            RemovePurchase::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -315,16 +329,27 @@ class RepositoryServiceProvider extends ServiceProvider
         // Purchase
         PurchaseRepositoryInterface::class => [
             CreatePurchase::class => PurchaseRepository::class,
+            GetPurchasesByDate::class => PurchaseRepository::class,
+            RemovePurchase::class => PurchaseRepository::class,
+            FindPurchaseById::class => PurchaseRepository::class,
+            CreatePurchasePayment::class => PurchaseRepository::class,
+            DeletePurchasePayment::class => PurchaseRepository::class,
         ],
 
         // Purchase detail
         PurchaseDetailRepositoryInterface::class => [
             CreatePurchase::class => PurchaseDetailRepository::class,
+            RemovePurchase::class => PurchaseDetailRepository::class,
+            GetPurchaseDetailTableByPurchaseId::class => PurchaseDetailRepository::class,
         ],
 
         // Purchase payment
         PurchasePaymentRepositoryInterface::class => [
             CreatePurchase::class => PurchasePaymentRepository::class,
+            RemovePurchase::class => PurchasePaymentRepository::class,
+            GetPurchasePaymentsTableByPurchaseId::class => PurchasePaymentRepository::class,
+            CreatePurchasePayment::class => PurchasePaymentRepository::class,
+            DeletePurchasePayment::class => PurchasePaymentRepository::class,
         ],
     ];
 

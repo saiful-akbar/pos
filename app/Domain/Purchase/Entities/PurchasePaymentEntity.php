@@ -23,7 +23,6 @@ class PurchasePaymentEntity extends Entity
         public readonly DateTimeInterface $paymentDate,
         public readonly PaymentMethodEnum $paymentMethod,
         public readonly float $amount,
-        public readonly ?string $referenceNumber,
         public readonly ?string $notes,
         public readonly ?DateTimeInterface $createdAt,
         public readonly ?DateTimeInterface $updatedAt,
@@ -43,11 +42,10 @@ class PurchasePaymentEntity extends Entity
             'payment_date' => $this->paymentDate->format('Y-m-d'),
             'payment_method' => $this->paymentMethod->value,
             'amount' => $this->amount,
-            'reference_number' => $this->referenceNumber,
             'notes' => $this->notes,
-            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s'),
-            'deleted_at' => $this->deletedAt->format('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
+            'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -63,7 +61,6 @@ class PurchasePaymentEntity extends Entity
             paymentDate: parse_date_time_immutable($model->payment_date),
             paymentMethod: PaymentMethodEnum::from($model->payment_method),
             amount: parse_float($model->amount),
-            referenceNumber: $model->reference_number,
             notes: $model->notes,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

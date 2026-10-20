@@ -69,6 +69,7 @@ class Purchase extends Model
         'total_product',
         'total_quantity',
         'total_price',
+        'already_paid',
         'payment_status',
         'notes',
     ];

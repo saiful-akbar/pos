@@ -52,7 +52,7 @@ class CreatePurchase
             $transactionDate = $request->date('transaction_date');
             $invoiceNumber = $request->validated('invoice_number');
             $paymentMethod = $request->enum('payment_method', PaymentMethodEnum::class);
-            $paidAmount = $request->float('paid_amount');
+            $amountPaid = $request->float('amount_paid');
             $notes = $request->validated('notes');
 
             // Ambil data keranjang pembelian.
@@ -75,11 +75,11 @@ class CreatePurchase
             // Buat status pembayaran.
             $paymentStatus = PaymentStatusEnum::UNPAID;
 
-            if ($paidAmount > 0 && $paidAmount < $purchaseCart->totalPrice) {
+            if ($amountPaid > 0 && $amountPaid < $purchaseCart->totalPrice) {
                 $paymentStatus = PaymentStatusEnum::PARTIAL;
             }
 
-            if ($paidAmount > 0 && $paidAmount >= $purchaseCart->totalPrice) {
+            if ($amountPaid > 0 && $amountPaid >= $purchaseCart->totalPrice) {
                 $paymentStatus = PaymentStatusEnum::PAID;
             }
 
@@ -93,6 +93,7 @@ class CreatePurchase
                     totalProduct: $purchaseCart->totalProduct,
                     totalQuantity: $purchaseCart->totalQuantity,
                     totalPrice: $purchaseCart->totalPrice,
+                    alreadyPaid: $amountPaid,
                     paymentStatus: $paymentStatus,
                     notes: $notes,
                 ),
@@ -127,8 +128,7 @@ class CreatePurchase
                         userId: user()->id,
                         paymentDate: $transactionDate,
                         paymentMethod: $paymentMethod,
-                        amount: $paidAmount,
-                        referenceNumber: null,
+                        amount: $amountPaid,
                         notes: null,
                     ),
                 );

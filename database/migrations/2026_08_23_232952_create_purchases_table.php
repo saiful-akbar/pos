@@ -38,6 +38,7 @@ return new class() extends Migration
             $table->decimal('total_product', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_price', 15, 2)->default(0);
+            $table->decimal('already_paid', 15, 2)->default(0);
             $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->text('notes')->nullable();
             $table->timestamps();

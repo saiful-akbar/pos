@@ -29,7 +29,6 @@ return new class() extends Migration
             $table->date('payment_date');
             $table->enum('payment_method', ['cash', 'transfer', 'credit', 'debit']);
             $table->decimal('amount', 15, 2);
-            $table->string('reference_number', 100)->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

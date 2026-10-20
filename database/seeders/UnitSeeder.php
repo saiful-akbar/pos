@@ -56,6 +56,10 @@ class UnitSeeder extends Seeder
                 'code' => 'RENCENG',
                 'name' => 'Renceng',
             ],
+            [
+                'code' => 'KR',
+                'name' => 'Karung',
+            ],
         ];
     }
 }

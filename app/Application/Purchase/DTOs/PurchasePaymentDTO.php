@@ -20,7 +20,6 @@ class PurchasePaymentDTO extends DTO
         public readonly DateTimeInterface $paymentDate,
         public readonly PaymentMethodEnum $paymentMethod,
         public readonly float $amount,
-        public readonly ?string $referenceNumber,
         public readonly ?string $notes,
     ) {}
 
@@ -36,7 +35,6 @@ class PurchasePaymentDTO extends DTO
             'payment_date' => $this->paymentDate->format('Y-m-d'),
             'payment_method' => $this->paymentMethod->value,
             'amount' => $this->amount,
-            'reference_number' => $this->referenceNumber,
             'notes' => $this->notes,
         ];
     }

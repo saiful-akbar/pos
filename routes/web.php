@@ -192,6 +192,12 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
                 Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create");
                 Route::patch('/carts/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.carts.details.update')->middleware("$module,create");
+                Route::get('/{purchaseId}', 'show')->name('.show')->middleware("$module,read");
+                Route::get('/{purchaseId}/details', 'details')->name('.details')->middleware("$module,read");
+                Route::get('/{purchaseId}/payments', 'payments')->name('.payments')->middleware("$module,read");
+                Route::post('/{purchaseId}/payments', 'storePayment')->name('.payments.store')->middleware("$module,create");
+                Route::delete('/{purchaseId}/payments/{paymentId}', 'deletePayment')->name('.payments.delete')->middleware("$module,delete");
+                Route::delete('/{purchaseId}', 'remove')->name('.remove')->middleware("$module,remove");
             });
     });
 });
