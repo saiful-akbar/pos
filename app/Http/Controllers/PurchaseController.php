@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Purchase\DTOs\PurchaseCartDTO;
+use App\Application\Purchase\UseCases\CreatePurchase;
 use App\Application\Purchase\UseCases\CreatePurchaseCart;
 use App\Application\Purchase\UseCases\CreatePurchaseCartDetail;
 use App\Application\Purchase\UseCases\DeletePurchaseCart;
@@ -14,7 +15,12 @@ use App\Application\Purchase\UseCases\FindPurchaseCartByCurrentUser;
 use App\Application\Purchase\UseCases\FindPurchaseCartById;
 use App\Application\Purchase\UseCases\FindPurchaseCartDetailById;
 use App\Application\Purchase\UseCases\GetPurchaseCartDetailsByPurchaseCartId;
+use App\Application\Purchase\UseCases\GetPurchaseCartDetailsTable;
+use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
+use App\Application\Supplier\UseCases\GetAllSuppliers;
+use App\Http\Requests\Purchases\CreatePurchaseRequest;
 use App\Http\Requests\Purchases\StorePurchaseCartDetailRequest;
+use App\Http\Requests\Purchases\UpdatePurchaseCartDetailRequest;
 use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -40,9 +46,24 @@ class PurchaseController extends Controller
     }
 
     /**
+     * Create (insert)
+     */
+    public function store(CreatePurchaseRequest $request): RedirectResponse
+    {
+        app(CreatePurchase::class)->execute(
+            request: $request,
+        );
+
+        return to_route('transactions.purchases')->with('alert', [
+            'status' => 'success',
+            'message' => 'Transaksi pembelian berhasil disimpan.',
+        ]);
+    }
+
+    /**
      * Menampilkan halaman keranjang pembelian.
      */
-    public function carts(): View
+    public function carts(Request $request): View|JsonResponse
     {
         $cart = app(FindPurchaseCartByCurrentUser::class)->execute();
 
@@ -56,9 +77,19 @@ class PurchaseController extends Controller
             ));
         }
 
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: $cart,
+            );
+        }
+
+        $suppliers = app(GetAllSuppliers::class)->execute(
+            isActive: true,
+        );
+
         return view(
             view: 'pages.purchases.cart',
-            data: compact('cart')
+            data: compact('cart', 'suppliers')
         );
     }
 
@@ -109,6 +140,20 @@ class PurchaseController extends Controller
         return $this->jsonResponse(
             status: 200,
             data: $cartDetails,
+        );
+    }
+
+    /**
+     * Mengambil daftar detail keranjang untuk datatable.
+     */
+    public function cartDetailsTable(Request $request, string $cartId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetPurchaseCartDetailsTable::class)->execute(
+            purchaseCartId: $cartId,
         );
     }
 
@@ -171,6 +216,42 @@ class PurchaseController extends Controller
         return $this->jsonResponse(
             status: 200,
             message: 'Produk berhasil dihapus.'
+        );
+    }
+
+    /**
+     * Update cart detail.
+     */
+    public function updateCartDetail(UpdatePurchaseCartDetailRequest $request, string $cartId, string $cartDetailId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $cart = app(FindPurchaseCartById::class)->execute(
+            id: $cartId,
+        );
+
+        if ($cart === null) {
+            abort(404, 'Transaksi tidak ditemukan.');
+        }
+
+        $cartDetail = app(FindPurchaseCartDetailById::class)->execute(
+            id: $cartDetailId,
+        );
+
+        if ($cartDetail === null) {
+            abort(404, 'Produk tidak ditemukan.');
+        }
+
+        app(UpdatePurchaseCartDetail::class)->execute(
+            purchaseCart: $cart,
+            purchaseCartDetail: $cartDetail,
+            request: $request,
+        );
+
+        return $this->jsonResponse(
+            message: 'Produk berhasil diperbarui.'
         );
     }
 }

@@ -29,23 +29,23 @@ class CategorySeeder extends Seeder
     {
         return [
             [
-                'code' => '0001',
+                'code' => 'A0001',
                 'name' => 'Makanan',
             ],
             [
-                'code' => '0002',
+                'code' => 'A0002',
                 'name' => 'Minuman',
             ],
             [
-                'code' => '0003',
+                'code' => 'A0003',
                 'name' => 'Bumbu',
             ],
             [
-                'code' => '0004',
+                'code' => 'A0004',
                 'name' => 'Toping',
             ],
             [
-                'code' => '0006',
+                'code' => 'A0006',
                 'name' => 'Alat Kebersihan',
             ],
         ];

@@ -16,6 +16,13 @@ interface SupplierRepositoryInterface
     public function getQuery(): Builder;
 
     /**
+     * Mengambil semua daftar pemasok.
+     *
+     * @return SupplierEntity[]
+     */
+    public function getAll(?bool $isActive = null): array;
+
+    /**
      * Mengambil data berdasarkan id.
      */
     public function findById(string $id): ?SupplierEntity;

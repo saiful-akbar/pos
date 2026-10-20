@@ -10,6 +10,7 @@ use App\Application\Price\DTOs\PriceDTO;
 use App\Application\Price\UseCases\CreatePrice;
 use App\Application\Price\UseCases\DeletePrice;
 use App\Application\Price\UseCases\FindPriceById;
+use App\Application\Price\UseCases\GetPricesByProduct;
 use App\Application\Price\UseCases\GetPricesTableByProduct;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
@@ -110,6 +111,30 @@ class ProductController extends Controller
      * @return View
      */
     public function prices(Request $request, string $productId): View|JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $product = app(FindProductById::class)->execute(
+            id: $productId,
+        );
+
+        if ($product === null) {
+            abort(404, 'Produk tidak ditemukan');
+        }
+
+        return $this->jsonResponse(
+            data: app(GetPricesByProduct::class)->execute(
+                product: $product,
+            ),
+        );
+    }
+
+    /**
+     * Mengambil daftar harga untuk dataTables.
+     */
+    public function pricesTable(Request $request, string $productId): JsonResponse
     {
         if (! $request->ajax()) {
             abort(404);

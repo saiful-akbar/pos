@@ -13,6 +13,7 @@ use App\Domain\Purchase\ValueObjects\UnitPurchaseValue;
 use App\Models\Product;
 use App\Models\PurchaseCartDetail;
 use App\Models\Unit;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 class PurchaseCartDetailRepository extends Repository implements PurchaseCartDetailRepositoryInterface
@@ -227,6 +228,43 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
                 ->get()
                 ->map(fn ($data) => $this->mapModelToPurchaseCartDetailEntity($data))
                 ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar berdasarkan purchase_cart_id dalam format query builder.
+     */
+    #[Override]
+    public function getQueryByPurchaseCartId(string $purchaseCartId): Builder
+    {
+        try {
+            $columns = [
+                'purchase_cart_details.id AS id',
+                'purchase_cart_details.purchase_cart_id AS purchase_cart_id',
+                'purchase_cart_details.multiples_quantity AS multiples_quantity',
+                'purchase_cart_details.quantity AS quantity',
+                'purchase_cart_details.price AS price',
+                'purchase_cart_details.subtotal AS subtotal',
+                'products.id AS product_id',
+                'products.code AS product_code',
+                'products.name AS product_name',
+                'units.id AS unit_id',
+                'units.code AS unit_code',
+                'units.name AS unit_name',
+            ];
+
+            return $this->model->query()
+                ->select($columns)
+                ->leftJoin('products', 'purchase_cart_details.product_id', '=', 'products.id')
+                ->leftJoin('units', 'purchase_cart_details.unit_id', '=', 'units.id')
+                ->where('purchase_cart_details.purchase_cart_id', $purchaseCartId);
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

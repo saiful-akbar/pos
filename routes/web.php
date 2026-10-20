@@ -5,14 +5,10 @@ declare(strict_types=1);
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\DailyStockOpnameController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\MonthlyStockOpnameController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
@@ -170,6 +166,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::patch('/prices/import', 'importUpdatePrices')->name('.prices.import')->middleware("$module,update");
                 Route::get('/prices/import/template', 'templateImportUpdatePrices')->name('.prices.import.template')->middleware("$module,update");
                 Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,read");
+                Route::get('/{productId}/prices/table', 'pricesTable')->name('.prices.table')->middleware("$module,read");
                 Route::get('/{productId}/prices/create', 'createPrices')->name('.prices.create')->middleware("$module,create");
                 Route::post('/{productId}/prices', 'storePrice')->name('.prices.store')->middleware("$module,create");
                 Route::delete('/{productId}/prices/{priceId}', 'deletePrice')->name('.prices.delete')->middleware("$module,create");
@@ -187,101 +184,16 @@ Route::middleware('auth')->group(function (): void {
                 $module = 'module:transactions.purchases';
 
                 Route::get('/', 'index')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
                 Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create");
                 Route::get('/carts/{cartId}/details', 'cartDetails')->name('.carts.details')->middleware("$module,read");
+                Route::get('/carts/{cartId}/details/table', 'cartDetailsTable')->name('.carts.details.table')->middleware("$module,read");
                 Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
-                Route::delete('/carts/{cartId}/details/{detailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create");
-            });
-
-        Route::controller(SaleController::class)
-            ->name('.sales')
-            ->prefix('sales')
-            ->group(function (): void {
-                $module = 'module:transactions.sales';
-
-                Route::get('/', 'index')->middleware("$module,read");
-                Route::post('/', 'storeSale')->name('.store')->middleware("$module,create");
-
-                Route::name('.carts')
-                    ->prefix('/carts')
-                    ->group(function () use ($module): void {
-                        Route::get('/', 'carts')->middleware("$module,create");
-                        Route::post('/', 'storeCart')->name('.store')->middleware("$module,create");
-                        Route::get('/{cartId}', 'showCart')->name('.show')->middleware("$module,create");
-                        Route::delete('/{cartId}', 'deleteCart')->name('.delete')->middleware("$module,create");
-                        Route::get('/{cartId}/details', 'getCartDetailsTable')->name('.details')->middleware("$module,create");
-                        Route::post('/{cartId}/details', 'storeCartDetail')->name('.details.store')->middleware("$module,create");
-                        Route::delete('/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.details.delete')->middleware("$module,create");
-                        Route::patch('/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.details.update')->middleware("$module,create");
-                    });
-
-                Route::name('.return')
-                    ->prefix('/return')
-                    ->group(function () use ($module): void {
-                        Route::get('/', 'return')->middleware("$module,read");
-                        Route::post('/', 'storeReturn')->name('.store')->middleware("$module,update");
-                        Route::get('/carts', 'returnCart')->name('.carts')->middleware("$module,update");
-                        Route::post('/carts', 'storeReturnCart')->name('.carts.store')->middleware("$module,update");
-                        Route::delete('/casrts', 'deleteReturnCart')->name('.carts.delete')->middleware("$module,update");
-                        Route::get('/carts/details', 'getReturnCartDetails')->name('.carts.details')->middleware("$module,update");
-                        Route::post('/carts/details', 'storeReturnCartDetail')->name('.carts.details.store')->middleware("$module,update");
-                        Route::patch('/carts/details/{detailId}', 'updateReturnCartDetail')->name('.carts.details.update')->middleware("$module,update");
-                        Route::delete('/carts/details/{detailId}', 'deleteReturnCartDetail')->name('.carts.details.delete')->middleware("$module,update");
-                        Route::delete('/{returnId}', 'removeSaleReturn')->name('.remove')->middleware("$module,remove");
-                    });
-
-                Route::delete('/{saleId}', 'removeSale')->name('.remove')->middleware("$module,remove");
-                Route::get('/{saleId}/receipt', 'printReceipt')->name('.receipt')->middleware("$module,read");
-                Route::get('/{saleId}/details', 'getDetails')->name('.details')->middleware("$module,read");
+                Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create");
+                Route::patch('/carts/{cartId}/details/{cartDetailId}', 'updateCartDetail')->name('.carts.details.update')->middleware("$module,create");
             });
     });
-
-    Route::name('stockOpnames')->prefix('/stock-opnames')->group(function (): void {
-        Route::controller(DailyStockOpnameController::class)
-            ->name('.daily')
-            ->prefix('/daily')
-            ->group(function (): void {
-                $module = 'module:stockOpnames.daily';
-
-                Route::get('/', 'index')->middleware("$module,read");
-                Route::get('/export', 'exportTemplateInput')->name('.export')->middleware("$module,create");
-                Route::post('/import', 'importFromExcel')->name('.import')->middleware("$module,create");
-                Route::get('/{id}', 'show')->name('.show')->middleware("$module,read");
-                Route::delete('/{id}', 'remove')->name('.remove')->middleware("$module,remove");
-                Route::delete('/{id}/delete', 'delete')->name('.delete')->middleware("$module,delete");
-                Route::patch('/{id}/active', 'setActiveStock')->name('.active')->middleware("$module,create");
-                Route::post('/{id}/monthly', 'storeMonthlyStock')->name('.monthly')->middleware("$module,create");
-                Route::get('/{id}/edit', 'edit')->name('.edit')->middleware("$module,update");
-                Route::post('/{id}/details', 'storeDetail')->name('.details.store')->middleware("$module,update");
-                Route::delete('/{id}/details/{detailId}', 'deleteDetail')->name('.details.delete')->middleware("$module,update");
-                Route::patch('/{id}/details/{detailId}', 'updateDetail')->name('.details.update')->middleware("$module,update");
-            });
-
-        Route::controller(MonthlyStockOpnameController::class)
-            ->name('.monthly')
-            ->prefix('/monthly')
-            ->group(function (): void {
-                $module = 'module:stockOpnames.monthly';
-
-                Route::get('/', 'index')->middleware("$module,read");
-                Route::post('/', 'store')->name('.store')->middleware("$module,create");
-                Route::patch('/{id}', 'update')->name('.update')->middleware("$module,update");
-            });
-    });
-
-    Route::controller(ReportController::class)
-        ->name('reports')
-        ->prefix('/reports')
-        ->group(function (): void {
-            Route::get('purchases', 'purchaseSummaries')->name('.purchases')->middleware('module:reports.purchases,read');
-            Route::get('purchases/details', 'purchaseDetails')->name('.purchases.details')->middleware('module:reports.purchases,read');
-            Route::get('sales', 'saleSummaries')->name('.sales')->middleware('module:reports.sales,read');
-            Route::get('sales/details', 'saleDetails')->name('.sales.details')->middleware('module:reports.sales,read');
-            Route::get('returns', 'returnSummaries')->name('.returns')->middleware('module:reports.returns,read');
-            Route::get('returns/details', 'returnDetails')->name('.returns.details')->middleware('module:reports.returns,read');
-            Route::get('/stocks', 'monitoringMonthlyStock')->name('.stocks')->middleware('module:reports.stocks,read');
-        });
 });
 
 Route::redirect('/', '/dashboard');

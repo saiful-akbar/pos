@@ -6,6 +6,7 @@ namespace App\Domain\Purchase\Repositories;
 
 use App\Application\Purchase\DTOs\PurchaseCartDetailDTO;
 use App\Domain\Purchase\Entities\PurchaseCartDetailEntity;
+use Illuminate\Database\Eloquent\Builder;
 
 interface PurchaseCartDetailRepositoryInterface
 {
@@ -55,4 +56,9 @@ interface PurchaseCartDetailRepositoryInterface
      * @return PurchaseCartDetailEntity[]
      */
     public function getByPurchaseCartId(string $purchaseCartId): array;
+
+    /**
+     * Mengambil daftar berdasarkan purchase_cart_id dalam format query builder.
+     */
+    public function getQueryByPurchaseCartId(string $purchaseCartId): Builder;
 }

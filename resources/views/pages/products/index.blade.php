@@ -254,7 +254,7 @@
                     this.formImportUpdatePrices = $('#formImportUpdatePrices');
                     this.modalImportUpdatePrices = this.#modalImportUpdatePricesInit();
                     this.modalPrices = new bootstrap.Modal('#modalPrices');
-                    this.pricesTable = null;
+                    this.pricesTable = null
                 }
 
                 /**
@@ -579,7 +579,7 @@
                 pricesDataTableInit(productId) {
                     return app.modalDataTable('#pricesTable', {
                         serverSide: true,
-                        ajax: app.url(`/masters/products/${productId}/prices`),
+                        ajax: app.url(`/masters/products/${productId}/prices/table`),
                         scrollX: false,
                         columns: [
                             {
@@ -623,6 +623,20 @@
                                 render: (data, type, row) => app.numberFormat(data, 2),
                             },
                         ],
+                    })
+                }
+
+                /**
+                 * Mengambil daftar harga berdasarkan produk
+                 */
+                getPrices(productId) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "get",
+                            url: app.url(`/masters/products/${productId}/prices`),
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
                     })
                 }
             }
@@ -801,14 +815,19 @@
             /**
              * Tampilkan modal harga
              */
-            const showPrices = (e, productId) => {
+            const showPrices = async (e, productId) => {
                 service.modalPrices.show();
 
-                if (service.pricesTable === null) {
-                    service.pricesTable = service.pricesDataTableInit(productId);
-                }
+                try {
+                    if (service.pricesTable === null) {
+                        service.pricesTable = service.pricesDataTableInit(productId);
+                        return;
+                    }
 
-                service.pricesTable?.ajax.url(app.url(`/masters/products/${productId}/prices`)).load();
+                    service.pricesTable.ajax.url(app.url(`/masters/products/${productId}/prices/table`)).load();
+                } catch (error) {
+                    app.alert('danger', error.message);
+                }
             }
         </script>
     </x-slot:script>

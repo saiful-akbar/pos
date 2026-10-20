@@ -41,6 +41,31 @@ class SupplierRepository extends Repository implements SupplierRepositoryInterfa
     }
 
     /**
+     * Mengambil semua daftar pemasok.
+     *
+     * @return SupplierEntity[]
+     */
+    #[Override]
+    public function getAll(?bool $isActive = null): array
+    {
+        try {
+            return $this->model->query()
+                ->when(is_bool($isActive), fn ($query) => $query->where('is_active', $isActive))
+                ->orderBy('name', 'asc')
+                ->get()
+                ->map(fn ($data) => $this->mapModelToSupplierEntity($data))
+                ->toArray();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Mengambil data berdasarkan id.
      */
     #[Override]

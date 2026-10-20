@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Purchase\ValueObjects;
 
 use App\Base\Entity;
+use App\Models\User;
 use Override;
 
 class UserPurchaseValue extends Entity
@@ -33,5 +34,19 @@ class UserPurchaseValue extends Entity
             'photo' => $this->photo,
             'is_active' => $this->isActive,
         ];
+    }
+
+    /**
+     * From model.
+     */
+    public static function fromModel(User $model): self
+    {
+        return new self(
+            id: $model->id,
+            username: $model->username,
+            fullName: $model->full_name,
+            photo: $model->photo,
+            isActive: $model->is_active === 1,
+        );
     }
 }

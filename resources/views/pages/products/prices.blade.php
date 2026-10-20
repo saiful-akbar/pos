@@ -182,7 +182,7 @@
                 #priceDataTableInit() {
                     return app.dataTable('#priceTable', {
                         serverSide: true,
-                        ajax: "{{ route('masters.products.prices', ['productId' => $product->id]) }}",
+                        ajax: "{{ route('masters.products.prices.table', ['productId' => $product->id]) }}",
                         fixedColumns: {
                             start: 0,
                             end: 1,
