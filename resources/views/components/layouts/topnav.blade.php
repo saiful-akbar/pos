@@ -41,7 +41,7 @@
                 @foreach ($modules as $module)
                     <div class="nav-item dropdown ms-xl-3 mt-2 mt-xl-0">
                         <a class="nav-link dropdown-toggle {{ active_path($module->path) ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <x-icon class="me-3">{{ $module->icon }}</x-icon>
+                            <x-icon class="me-2">{{ $module->icon }}</x-icon>
                             <span>{{ $module->name }}</span>
                         </a>
                         

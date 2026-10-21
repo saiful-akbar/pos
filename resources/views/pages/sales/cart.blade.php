@@ -116,15 +116,15 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('masters.customers') }}" target="_blank">
-                                                    <x-icon class="me-1">add</x-icon>
-                                                    <span>Tambah member baru</span>
-                                                </a>
-                                            </li>
-                                            <li>
                                                 <a class="dropdown-item" href="#" id="buttonRemoveCustomer">
                                                     <x-icon class="me-1">remove</x-icon>
                                                     <span>Hapus member</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('masters.customers') }}" target="_blank">
+                                                    <x-icon class="me-1">add</x-icon>
+                                                    <span>Tambah member baru</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -136,7 +136,7 @@
                         <div class="card-body">
                             <ul class="list-group list-group-flush m-0 p-0">
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <span class="text-body-secondary">Customer</span>
+                                    <span class="text-body-secondary">Member</span>
                                     <span class="fw-bold ms-10 text-end" id="customer">{{ $cart->customer?->name ?? '-' }}</span>
                                 </li>
                                 
@@ -261,6 +261,10 @@
 
         <x-modal id="modalEditCartDetailQuantity" title="Edit" size="md" fullScreen="md">
             <div class="mb-5">
+                <x-form-input type="text" name="product" id="productEditQuantity" label="Produk" disabled />
+            </div>
+
+            <div class="mb-5">
                 <x-form-select name="unit_id" id="unitEditQuantity" label="Unit (Satuan)" required></x-form-select>
             </div>
 
@@ -286,12 +290,16 @@
         @csrf @method('patch')
 
         <x-modal id="modalEditCartDetailPrice" title="Edit" size="md" fullScreen="md">
+             <div class="mb-5">
+                <x-form-input type="text" name="product" id="productEditPrice" label="Produk" disabled />
+            </div>
+
             <div class="mb-5">
                 <x-form-select name="unit_id" id="unitEditPrice" label="Unit (Satuan)" required></x-form-select>
             </div>
 
             <div>
-                <x-form-input type="number" name="price" id="price" step="0.01" label="Jumlah harga" required />
+                <x-form-input type="number" name="price" id="price" step="0.01" label="Harga" required />
             </div>
 
             <x-slot:footer>
@@ -502,6 +510,7 @@
                         createdRow: (row, data, index) => {
                             $(row).find('button[data-action="edit-quantity"]').click(async (e) => { 
                                 e.preventDefault();
+                                app.showPreloader();
                                 
                                 try {
                                     const selectEl = this.formEditCartDetailQuantity.find('select[name="unit_id"]');
@@ -509,6 +518,7 @@
     
                                     if (response.status === 200) {
                                         this.formEditCartDetailQuantity.attr('action', app.url(`/transactions/sales/carts/${this.cartId}/details/${data.id}/quantity`));
+                                        this.formEditCartDetailQuantity.find('input[name="product"]').val(`${data.product_name} (${data.product_code})`);
                                         this.formEditCartDetailQuantity.find('input[name="quantity"]').val(data.quantity);
                                         this.formEditCartDetailQuantity.find('select[name="unit_id"]').empty();
 
@@ -524,11 +534,14 @@
                                     }
                                 } catch (error) {
                                     app.alert('danger', error.message);
+                                } finally {
+                                    app.hidePreloader();
                                 }
                             });
 
                             $(row).find('button[data-action="edit-price"]').click(async (e) => { 
                                 e.preventDefault();
+                                app.showPreloader();
                                 
                                 try {
                                     const selectEl = this.formEditCartDetailPrice.find('select[name="unit_id"]');
@@ -536,6 +549,7 @@
     
                                     if (response.status === 200) {
                                         this.formEditCartDetailPrice.attr('action', app.url(`/transactions/sales/carts/${this.cartId}/details/${data.id}/price`));
+                                        this.formEditCartDetailPrice.find('input[name="product"]').val(`${data.product_name} (${data.product_code})`);
                                         this.formEditCartDetailPrice.find('input[name="price"]').val(data.subtotal);
                                         this.formEditCartDetailPrice.find('select[name="unit_id"]').empty();
 
@@ -551,6 +565,8 @@
                                     }
                                 } catch (error) {
                                     app.alert('danger', error.message);
+                                } finally {
+                                    app.hidePreloader();
                                 }
                             });
                         }
