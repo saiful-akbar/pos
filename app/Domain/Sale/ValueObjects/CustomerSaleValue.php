@@ -41,14 +41,14 @@ class CustomerSaleValue extends Entity
     /**
      * Membuat instance dari model.
      */
-    public static function fromModel(Customer $model): self
+    public static function fromModel(?Customer $model): ?self
     {
-        return new self(
+        return $model === null ? null : new self(
             id: $model->id,
             name: $model->name,
             phoneNumber: $model->phone_number,
             address: $model->address,
-            discount: $model->discount,
+            discount: parse_float($model->discount),
             isActive: $model->is_active === 1,
         );
     }

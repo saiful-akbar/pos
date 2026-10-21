@@ -29,7 +29,7 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
     {
         try {
             $result = $this->model->query()
-                ->with('user')
+                ->with(['user', 'customer'])
                 ->where('user_id', $userId)
                 ->first();
 
@@ -49,7 +49,7 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
     {
         try {
             $result = $this->model->query()
-                ->with('user')
+                ->with(['user', 'customer'])
                 ->where($column, $value)
                 ->first();
 
@@ -73,7 +73,9 @@ class SaleCartRepository extends Repository implements SaleCartRepositoryInterfa
         try {
             $result = $this->model->query()->create($value->toArray());
 
-            return SaleCartEntity::fromModel($result->load('user'));
+            return SaleCartEntity::fromModel(
+                model: $result->load(['user', 'customer']),
+            );
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

@@ -67,10 +67,13 @@ class DeleteSaleCartDetail
                 id: $cart->id,
                 value: new SaleCartDTO(
                     userId: $cart->user->id,
+                    customerId: $cart->customer?->id,
                     transactionDate: $cart->transactionDate,
                     totalProduct: $totalProduct,
                     totalQuantity: $totalQuantity,
                     totalAmount: $totalAmount,
+                    discount: $cart->discount,
+                    grandTotal: $totalAmount - (($totalAmount * $cart->discount) / 100),
                 ),
             );
 

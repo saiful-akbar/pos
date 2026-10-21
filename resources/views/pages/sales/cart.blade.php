@@ -83,11 +83,176 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-12 col-xl-4 mt-7 mt-xl-0">
+            <div class="row gx-7">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="fs-6 mb-0">Total</h3>
+                                </div>
+
+                                <div class="col-auto my-n1">
+                                    <div class="dropdown">
+                                        <div data-bs-toggle="dropdown">
+                                            <x-button
+                                                size="sm"
+                                                color="light"
+                                                class="rounded"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="Pilih atau hapus member"
+                                            >
+                                                <x-icon class="fs-6">person</x-icon>
+                                            </x-button>
+                                        </div>
+
+                                        <ul class="dropdown-menu border">
+                                            <li>
+                                                <a class="dropdown-item" href="#" id="buttonAddCustomer">
+                                                    <x-icon class="me-1">check</x-icon>
+                                                    <span>Pilih member</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('masters.customers') }}" target="_blank">
+                                                    <x-icon class="me-1">add</x-icon>
+                                                    <span>Tambah member baru</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#" id="buttonRemoveCustomer">
+                                                    <x-icon class="me-1">remove</x-icon>
+                                                    <span>Hapus member</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush m-0 p-0">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span class="text-body-secondary">Customer</span>
+                                    <span class="fw-bold ms-10 text-end" id="customer">{{ $cart->customer?->name ?? '-' }}</span>
+                                </li>
+                                
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span class="text-body-secondary">Qty</span>
+                                    <span class="fw-bold ms-10 text-end" id="totalQuantity">{{ number_format($cart->totalQuantity, 2) }}</span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span class="text-body-secondary">Subtotal</span>
+                                    <span class="fw-bold ms-10 text-end" id="totalAmount">Rp {{ number_format($cart->totalAmount, 2) }}</span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span class="text-body-secondary">Diskon</span>
+                                    <span class="fw-bold ms-10 text-end" id="discount">{{ number_format($cart->discount) }}%</span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span class="text-body-secondary">Grand Total</span>
+                                    <span class="fw-bold ms-10 text-end" id="grandTotal" data-value="{{ $cart->grandTotal }}">Rp {{ number_format($cart->grandTotal, 2) }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-7">
+                    <form id="formCreateSale" action="{{ route('transactions.sales.store') }}" method="post" autocomplete="off">
+                        @csrf
+
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h3 class="fs-6 mb-0">Pembayaran</h3>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="mb-5">
+                                    <x-form-select
+                                        required
+                                        name="payment_method"
+                                        id="paymentMethod"
+                                        label="Metode pembayaran"
+                                        error="{{ $errors->has('payment_method') }}"
+                                    >
+                                        <option value="cash" @selected(old('payment_method') == 'cash')>Tunai</option>
+                                        <option value="qris" @selected(old('payment_method') == 'qris')>Qris</option>
+                                        <option value="debit" @selected(old('payment_method') == 'debit')>Kartu debit</option>
+                                        <option value="credit" @selected(old('payment_method') == 'credit')>Kartu kredit</option>
+                                    </x-form-select>
+                                </div>
+
+                                <div class="mb-5">
+                                    <x-form-input
+                                        required
+                                        type="number"
+                                        name="paid_amount"
+                                        id="paidAmount"
+                                        label="Pembayaran"
+                                        placeholder="Masukan pembayaran..."
+                                        value="{{ old('paid_amount') }}"
+                                        error="{{ $errors->has('paid_amount') }}"
+                                    />
+                                </div>
+
+                                <div class="mb-5">
+                                    <x-form-input
+                                        type="number"
+                                        name="change_amount"
+                                        id="changeAmount"
+                                        label="Kembalian"
+                                        placeholder="Kembalian..."
+                                        value="{{ old('change_amount') }}"
+                                        error="{{ $errors->has('change_amount') }}"
+                                        readonly
+                                    />
+                                </div>
+
+                                <div class="">
+                                    <x-form-input
+                                        type="textarea"
+                                        name="notes"
+                                        id="notes"
+                                        label="Catatan"
+                                        placeholder="Masukan catatan..."
+                                        value="{{ old('notes') }}"
+                                        error="{{ $errors->has('notes') }}"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <x-button
+                                    type="submit"
+                                    color="secondary"
+                                    startIcon="save"
+                                    fullWidth
+                                >
+                                    Selesaikan Transaksi
+                                </x-button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Modal product --}}
     <x-modal title="Produk" size="xl" fullScreen="md" id="modalProduct">
         <table id="productTable" class="table table-sm table-hover align-middle w-100"></table>
+    </x-modal>
+
+    {{-- Modal customer --}}
+    <x-modal title="Pelanggan (Member)" size="xl" fullScreen="md" id="modalCustomer">
+        <table id="customerTable" class="table table-sm table-hover align-middle w-100"></table>
     </x-modal>
 
     {{-- Form modal edit cart detail quantity --}}
@@ -157,6 +322,11 @@
                     this.formEditCartDetailQuantity = $('#formEditCartDetailQuantity');
                     this.modalEditCartDetailPrice = new bootstrap.Modal('#modalEditCartDetailPrice');
                     this.formEditCartDetailPrice = $('#formEditCartDetailPrice');
+                    this.buttonAddCustomer = $('#buttonAddCustomer');
+                    this.buttonRemoveCustomer = $('#buttonRemoveCustomer');
+                    this.modalCustomer = new bootstrap.Modal('#modalCustomer');
+                    this.customerTable = this.#customerDataTableInit();
+                    this.formCreateSale = $('#formCreateSale');
                 }
 
                 /**
@@ -388,18 +558,84 @@
                 }
 
                 /**
+                 * Inisialisasi customer dataTable.
+                 */
+                #customerDataTableInit() {
+                    return app.modalDataTable('#customerTable', {
+                        serverSide: true,
+                        ajax: "{{ route('masters.customers') }}",
+                        columns: [
+                            {
+                                title: 'Nama',
+                                name: 'name',
+                                data: 'name',
+                                type: 'string',
+                                className: 'text-nowrap',
+                            },
+                            {
+                                title: 'Telepon',
+                                name: 'phone_number',
+                                data: 'phone_number',
+                                type: 'string',
+                                className: 'text-nowrap',
+                            },
+                            {
+                                title: 'Alamat',
+                                name: 'address',
+                                data: 'address',
+                                type: 'string',
+                                width: '300px',
+                            },
+                            {
+                                title: 'Diskon (%)',
+                                name: 'discount',
+                                data: 'discount',
+                                type: 'num',
+                                className: 'text-nowrap',
+                                render: (data) => app.numberFormat(data),
+                            },
+                        ],
+                        createdRow: (row, data) => {
+                            $(row).addClass('cursor-pointer');
+
+                            $(row).click(async (e) => { 
+                                e.preventDefault();
+                                app.showPreloader();
+
+                                try {
+                                    const response = await this.addCustomer(data.id);
+
+                                    if (response.status === 200) {
+                                        await this.findCart();
+                                    }
+                                } catch (error) {
+                                    app.alert('danger', error.message);
+                                } finally {
+                                    app.hidePreloader();
+                                    this.modalCustomer.hide();
+                                }
+                            });
+                        }
+                    })
+                }
+
+                /**
                  * Mengambil data cart
                  */
                 findCart() {
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             type: "get",
-                            url: app.url(`/transactions/purchases/carts`),
+                            url: app.url(`/transactions/sales/carts`),
                             success: (response) => {
                                 resolve(response);
-                                $('#totalProduct').text(app.numberFormat(response.data.total_product, 0));
+                                
+                                $('#customer').text(response.data.customer?.name ?? '-');
                                 $('#totalQuantity').text(app.numberFormat(response.data.total_quantity));
-                                $('#totalPrice').text(`Rp ${app.numberFormat(response.data.total_price)}`);
+                                $('#totalAmount').text(`Rp ${app.numberFormat(response.data.total_amount)}`);
+                                $('#discount').text(`${app.numberFormat(response.data.discount, 0)}%`);
+                                $('#grandTotal').text(`Rp ${app.numberFormat(response.data.grand_total)}`);
+                                $('#grandTotal').data('value', response.data.grand_total);
                             },
                             error: (error) => reject(error.responseJSON),
                         });
@@ -481,6 +717,25 @@
                             type: "patch",
                             url: this.formEditCartDetailPrice.attr('action'),
                             data: this.formEditCartDetailPrice.serialize(),
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
+
+                /**
+                 * Tambah pelanggan
+                 */
+                addCustomer(customerId) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "patch",
+                            url: app.url(`/transactions/sales/carts/${this.cartId}`),
+                            data: {
+                                _token: app.csrfToken,
+                                _method: 'patch',
+                                customer_id: customerId,
+                            },
                             success: (response) => resolve(response),
                             error: (error) => reject(error.responseJSON),
                         });
@@ -628,6 +883,93 @@
                 } finally {
                     app.hidePreloader();
                 }
+            });
+
+            /**
+             * Buka modal table customer
+             */
+            service.buttonAddCustomer.click(function (e) { 
+                e.preventDefault();
+                service.modalCustomer.show();
+                service.customerTable.ajax.reload();
+            });
+
+            /**
+             * Hapus customer
+             */
+            service.buttonRemoveCustomer.click(async function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+
+                try {
+                    const response = await service.addCustomer(null);
+
+                    if (response.status === 200) {
+                        await service.findCart();
+                    }
+                } catch (error) {
+                    app.alert('danger', error.message);
+                } finally {
+                    app.hidePreloader();
+                    service.modalCustomer.hide();
+                }
+            });
+
+            /**
+             * Mengisi nilai defaul pada form pembayaran jika
+             * metode pembayaran yang dipilih bukan cash (tunai).
+             */
+            service.formCreateSale.find('select[name=payment_method]').change(function(e) {
+                e.preventDefault();
+
+                const inputPaidAmount = service.formCreateSale.find('input[name=paid_amount]');
+                const inputChangeAmount = service.formCreateSale.find('input[name=change_amount]');
+                const grandTotal = $('#grandTotal').data('value');
+
+                if ($(this).val() !== 'cash') {
+                    inputPaidAmount.attr('readonly', 'readonly');
+                    inputPaidAmount.removeClass('is-invalid');
+                    inputPaidAmount.val(grandTotal);
+                    inputChangeAmount.val('');
+                } else {
+                    inputPaidAmount.val("");
+                    inputPaidAmount.removeAttr('readonly');
+                }
+            });
+
+            /**
+             * Update nilai kembalian ketika form
+             * pembayaran diinput.
+             */
+            service.formCreateSale.find('input[name=paid_amount]').keyup(function(e) {
+                e.preventDefault();
+
+                const grandTotal = $('#grandTotal').data('value');
+                const paidAmount = $(this).val();
+                const changeAmount = paidAmount - grandTotal;
+                const inputChangeAmount = service.formCreateSale.find('input[name=change_amount]');
+                const inputPaidAmount = service.formCreateSale.find('input[name=paid_amount]');
+
+                if (changeAmount >= 0) {
+                    inputChangeAmount.val(changeAmount);
+                    inputPaidAmount.removeClass('is-invalid');
+                    inputPaidAmount.addClass('border');
+                    inputPaidAmount.next().text('');
+                } else {
+                    inputChangeAmount.val(0);
+                    inputPaidAmount.addClass('is-invalid');
+                    inputPaidAmount.removeClass('border');
+                    inputPaidAmount.next().text('Pembayaran kurang');
+                }
+            });
+
+            /**
+             * Submit form create sales
+             */
+            service.formCreateSale.find('button[type="submit"]').click(function (e) { 
+                e.preventDefault();
+                app.showPreloader();
+                service.formCreateSale.submit();
             });
         </script>
     </x-slot:script>

@@ -344,6 +344,7 @@
                     return app.dataTable('#cartDetailTable', {
                         serverSide: true,
                         ajax: "{{ route('transactions.purchases.carts.details.table', ['cartId' => $cart->id]) }}",
+                        ordering: false,
                         fixedColumns: {
                             start: 0,
                             end: 1,
@@ -371,7 +372,7 @@
                                 data: 'price',
                                 type: 'num',
                                 className: 'text-nowrap',
-                                render: (data, type, row) => app.numberFormat(data),
+                                render: (data, type, row) => `Rp ${app.numberFormat(data)}`,
                             },
                             {
                                 title: 'Qty',
@@ -387,7 +388,7 @@
                                 data: 'subtotal',
                                 type: 'num',
                                 className: 'text-nowrap',
-                                render: (data, type, row) => app.numberFormat(data),
+                                render: (data, type, row) => `Rp ${app.numberFormat(data)}`,
                             },
                             {
                                 title: app.icon('settings', 'fs-6'),

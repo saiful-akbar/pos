@@ -59,7 +59,7 @@ p {
   -moz-appearance: textfield;
 }
 
-[type="number"]::-webkit-outer-spin-button,
+/* [type="number"]::-webkit-outer-spin-button,
 [type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
@@ -67,7 +67,7 @@ p {
 
 [type="number"] {
   -moz-appearance: textfield;
-}
+} */
 
 .form-floating > label {
   top: 2px !important;

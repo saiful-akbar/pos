@@ -264,7 +264,8 @@ class PurchaseCartDetailRepository extends Repository implements PurchaseCartDet
                 ->select($columns)
                 ->leftJoin('products', 'purchase_cart_details.product_id', '=', 'products.id')
                 ->leftJoin('units', 'purchase_cart_details.unit_id', '=', 'units.id')
-                ->where('purchase_cart_details.purchase_cart_id', $purchaseCartId);
+                ->where('purchase_cart_details.purchase_cart_id', $purchaseCartId)
+                ->orderBy('purchase_cart_details.created_at', 'desc');
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

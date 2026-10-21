@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Sale\DTOs;
 
-use App\Base\Entity;
+use App\Base\DTO;
 use Override;
 
-class SaleCartDetailDTO extends Entity
+class SaleCartDetailDTO extends DTO
 {
     /**
      * Create a new class instance.

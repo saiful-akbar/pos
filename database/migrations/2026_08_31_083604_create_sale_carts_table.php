@@ -28,10 +28,18 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
+            $table->foreignUlid('customer_id')
+                ->nullable()
+                ->constrained('customers', 'id')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
             $table->date('transaction_date');
             $table->decimal('total_product', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);
+            $table->decimal('discount', 15, 2)->default(0);
+            $table->decimal('grand_total', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

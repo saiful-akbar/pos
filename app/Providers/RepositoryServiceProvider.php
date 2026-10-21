@@ -58,6 +58,7 @@ use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Rreport\UseCases\GetMonitoringMonthlyStock;
+use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCart;
@@ -65,6 +66,7 @@ use App\Application\Sale\UseCases\DeleteSaleCartDetail;
 use App\Application\Sale\UseCases\FindSaleCartByUserId;
 use App\Application\Sale\UseCases\GetSaleCartDetail;
 use App\Application\Sale\UseCases\GetSaleCartDetailTable;
+use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
 use App\Application\Setting\UseCases\FindSetting;
@@ -103,6 +105,8 @@ use App\Domain\Report\Repositories\ReportRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
@@ -123,6 +127,8 @@ use App\Repositories\ReportRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SaleCartDetailRepository;
 use App\Repositories\SaleCartRepository;
+use App\Repositories\SaleDetailRepository;
+use App\Repositories\SaleRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
@@ -176,6 +182,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSaleCartDetailByPrice::class => ErrorLogRepository::class,
             UpdateSaleCartDetailByQuantity::class => ErrorLogRepository::class,
             DeleteSaleCartDetail::class => ErrorLogRepository::class,
+            UpdateSaleCart::class => ErrorLogRepository::class,
+            CreateSale::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -216,6 +224,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleCart::class => ActivityLogRepository::class,
             DeleteSaleCart::class => ActivityLogRepository::class,
             CreateSaleCartDetail::class => ActivityLogRepository::class,
+            CreateSale::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -289,6 +298,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchase::class => ProductRepository::class,
             RemovePurchase::class => ProductRepository::class,
             CreateSaleCartDetail::class => ProductRepository::class,
+            CreateSale::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -312,6 +322,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateCustomer::class => CustomerRepository::class,
             UpdateCustomer::class => CustomerRepository::class,
             RemoveCustomer::class => CustomerRepository::class,
+            UpdateSaleCart::class => CustomerRepository::class,
         ],
 
         // Supplier
@@ -387,6 +398,8 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSaleCartDetailByPrice::class => SaleCartRepository::class,
             UpdateSaleCartDetailByQuantity::class => SaleCartRepository::class,
             DeleteSaleCartDetail::class => SaleCartRepository::class,
+            UpdateSaleCart::class => SaleCartRepository::class,
+            CreateSale::class => SaleCartRepository::class,
         ],
 
         // Sale cart detail
@@ -398,6 +411,17 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSaleCartDetailByPrice::class => SaleCartDetailRepository::class,
             UpdateSaleCartDetailByQuantity::class => SaleCartDetailRepository::class,
             DeleteSaleCartDetail::class => SaleCartDetailRepository::class,
+            CreateSale::class => SaleCartDetailRepository::class,
+        ],
+
+        // Sale
+        SaleRepositoryInterface::class => [
+            CreateSale::class => SaleRepository::class,
+        ],
+
+        // Sale detail
+        SaleDetailRepositoryInterface::class => [
+            CreateSale::class => SaleDetailRepository::class,
         ],
     ];
 

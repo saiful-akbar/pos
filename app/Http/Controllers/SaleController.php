@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCart;
 use App\Application\Sale\UseCases\DeleteSaleCartDetail;
 use App\Application\Sale\UseCases\FindSaleCartByUserId;
 use App\Application\Sale\UseCases\GetSaleCartDetailTable;
+use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
+use App\Http\Requests\Sales\AddCustomerSaleRequest;
+use App\Http\Requests\Sales\CreateSaleRequest;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\UpdateSaleCartDetailByPriceRequest;
 use App\Http\Requests\Sales\UpdateSaleCartDetailByQuantityRequest;
@@ -37,9 +41,24 @@ class SaleController extends Controller
     }
 
     /**
+     * Create (insert) data penjualan.
+     */
+    public function store(CreateSaleRequest $request): RedirectResponse
+    {
+        app(CreateSale::class)->execute(
+            request: $request,
+        );
+
+        return to_route('transactions.sales')->with('alert', [
+            'status' => 'success',
+            'message' => 'Transaksi penjualan berhasil diselesaikan.',
+        ]);
+    }
+
+    /**
      * Menampilkan halaman keranjang penjualan.
      */
-    public function carts(): View
+    public function carts(Request $request): View|JsonResponse
     {
         $cart = app(FindSaleCartByUserId::class)->execute(
             userId: user()->id,
@@ -47,6 +66,12 @@ class SaleController extends Controller
 
         if ($cart === null) {
             $cart = app(CreateSaleCart::class)->execute();
+        }
+
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: $cart,
+            );
         }
 
         return view(view: 'pages.sales.cart', data: compact('cart'));
@@ -65,6 +90,25 @@ class SaleController extends Controller
             'status' => 'success',
             'message' => 'Transaksi berhasil dibatalkan.',
         ]);
+    }
+
+    /**
+     * Update transaksi keranjang penjualan.
+     */
+    public function updateCart(AddCustomerSaleRequest $request, string $cartId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(UpdateSaleCart::class)->execute(
+            cartId: $cartId,
+            customerId: $request->validated('customer_id'),
+        );
+
+        return $this->jsonResponse(
+            message: 'Pelanggan berhsail ditambahkan.'
+        );
     }
 
     /**

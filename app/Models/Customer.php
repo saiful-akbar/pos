@@ -76,4 +76,12 @@ class Customer extends Model
     {
         return $this->hasMany(Sale::class, 'customer_id', 'id');
     }
+
+    /**
+     * Get all of the saleCarts for the Customer
+     */
+    public function saleCarts(): HasMany
+    {
+        return $this->hasMany(SaleCart::class, 'customer_id', 'id');
+    }
 }

@@ -37,10 +37,13 @@ class CreateSaleCart
             $cart = $this->cartRepository->create(
                 value: new SaleCartDTO(
                     userId: user()->id,
+                    customerId: null,
                     transactionDate: new DateTimeImmutable(),
                     totalProduct: 0,
                     totalQuantity: 0,
                     totalAmount: 0,
+                    discount: 0,
+                    grandTotal: 0,
                 ),
             );
 

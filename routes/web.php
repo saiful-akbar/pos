@@ -208,8 +208,10 @@ Route::middleware('auth')->group(function (): void {
                 $module = 'module:transactions.sales';
 
                 Route::get('/', 'index')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
-                Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create");
+                Route::patch('/carts/{cartId}', 'updateCart')->name('.carts.update')->middleware("$module,create,update");
+                Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create,delete");
                 Route::get('/carts/{cartId}/details', 'cartDetails')->name('.carts.details')->middleware("$module,read,create");
                 Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
                 Route::patch('/carts/{cartId}/details/{cartDetailId}/quantity', 'updateCartDetailByQuantity')->name('.carts.details.update.quantity')->middleware("$module,create,update");

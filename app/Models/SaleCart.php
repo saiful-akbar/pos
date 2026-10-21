@@ -63,10 +63,13 @@ class SaleCart extends Model
      */
     protected $fillable = [
         'user_id',
+        'customer_id',
         'transaction_date',
         'total_product',
         'total_quantity',
         'total_amount',
+        'discount',
+        'grand_total',
     ];
 
     /**
@@ -83,5 +86,13 @@ class SaleCart extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the customer that owns the SaleCart
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 }
