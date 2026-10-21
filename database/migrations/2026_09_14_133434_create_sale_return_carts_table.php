@@ -34,6 +34,7 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->date('transaction_date');
+            $table->decimal('total_product', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);
             $table->text('notes')->nullable();

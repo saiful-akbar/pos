@@ -198,6 +198,12 @@ class ModuleSeeder extends Seeder
                         'route' => 'transactions.sales',
                         'roles' => ['Admin', 'Kasir'],
                     ],
+                    [
+                        'name' => 'Pengambalian',
+                        'path' => '/transactions/returns',
+                        'route' => 'transactions.returns',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
                 ],
             ],
             [

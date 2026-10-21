@@ -33,6 +33,12 @@ return new class() extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
+            $table->foreignUlid('unit_id')
+                ->constrained('units', 'id')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
+            $table->decimal('multiples_quantity', 15, 2)->default(0);
             $table->decimal('quantity', 15, 2)->default(0);
             $table->decimal('purchase_price', 15, 2)->default(0);
             $table->decimal('selling_price', 15, 2)->default(0);

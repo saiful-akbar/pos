@@ -58,6 +58,15 @@ use App\Application\Role\UseCases\GetActiveRoles;
 use App\Application\Role\UseCases\GetAllRolesTable;
 use App\Application\Role\UseCases\UpdateRole;
 use App\Application\Rreport\UseCases\GetMonitoringMonthlyStock;
+use App\Application\Sale\UseCases\CreateSaleCart;
+use App\Application\Sale\UseCases\CreateSaleCartDetail;
+use App\Application\Sale\UseCases\DeleteSaleCart;
+use App\Application\Sale\UseCases\DeleteSaleCartDetail;
+use App\Application\Sale\UseCases\FindSaleCartByUserId;
+use App\Application\Sale\UseCases\GetSaleCartDetail;
+use App\Application\Sale\UseCases\GetSaleCartDetailTable;
+use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
+use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
@@ -92,6 +101,8 @@ use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\Report\Repositories\ReportRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
@@ -110,6 +121,8 @@ use App\Repositories\PurchasePaymentRepository;
 use App\Repositories\PurchaseRepository;
 use App\Repositories\ReportRepository;
 use App\Repositories\RoleRepository;
+use App\Repositories\SaleCartDetailRepository;
+use App\Repositories\SaleCartRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
@@ -157,6 +170,12 @@ class RepositoryServiceProvider extends ServiceProvider
             RemovePurchase::class => ErrorLogRepository::class,
             CreatePurchasePayment::class => ErrorLogRepository::class,
             DeletePurchasePayment::class => ErrorLogRepository::class,
+            CreateSaleCart::class => ErrorLogRepository::class,
+            DeleteSaleCart::class => ErrorLogRepository::class,
+            CreateSaleCartDetail::class => ErrorLogRepository::class,
+            UpdateSaleCartDetailByPrice::class => ErrorLogRepository::class,
+            UpdateSaleCartDetailByQuantity::class => ErrorLogRepository::class,
+            DeleteSaleCartDetail::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -194,6 +213,9 @@ class RepositoryServiceProvider extends ServiceProvider
             RemovePurchase::class => ActivityLogRepository::class,
             CreatePurchasePayment::class => ActivityLogRepository::class,
             DeletePurchasePayment::class => ActivityLogRepository::class,
+            CreateSaleCart::class => ActivityLogRepository::class,
+            DeleteSaleCart::class => ActivityLogRepository::class,
+            CreateSaleCartDetail::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -266,6 +288,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchaseCartDetail::class => ProductRepository::class,
             CreatePurchase::class => ProductRepository::class,
             RemovePurchase::class => ProductRepository::class,
+            CreateSaleCartDetail::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -277,6 +300,9 @@ class RepositoryServiceProvider extends ServiceProvider
             FindPriceById::class => PriceRepository::class,
             CreatePurchaseCartDetail::class => PriceRepository::class,
             UpdatePurchaseCartDetail::class => PriceRepository::class,
+            CreateSaleCartDetail::class => PriceRepository::class,
+            UpdateSaleCartDetailByPrice::class => PriceRepository::class,
+            UpdateSaleCartDetailByQuantity::class => PriceRepository::class,
         ],
 
         // Customer
@@ -350,6 +376,28 @@ class RepositoryServiceProvider extends ServiceProvider
             GetPurchasePaymentsTableByPurchaseId::class => PurchasePaymentRepository::class,
             CreatePurchasePayment::class => PurchasePaymentRepository::class,
             DeletePurchasePayment::class => PurchasePaymentRepository::class,
+        ],
+
+        // Sale cart
+        SaleCartRepositoryInterface::class => [
+            CreateSaleCart::class => SaleCartRepository::class,
+            FindSaleCartByUserId::class => SaleCartRepository::class,
+            DeleteSaleCart::class => SaleCartRepository::class,
+            CreateSaleCartDetail::class => SaleCartRepository::class,
+            UpdateSaleCartDetailByPrice::class => SaleCartRepository::class,
+            UpdateSaleCartDetailByQuantity::class => SaleCartRepository::class,
+            DeleteSaleCartDetail::class => SaleCartRepository::class,
+        ],
+
+        // Sale cart detail
+        SaleCartDetailRepositoryInterface::class => [
+            CreateSaleCart::class => SaleCartDetailRepository::class,
+            CreateSaleCartDetail::class => SaleCartDetailRepository::class,
+            GetSaleCartDetailTable::class => SaleCartDetailRepository::class,
+            GetSaleCartDetail::class => SaleCartDetailRepository::class,
+            UpdateSaleCartDetailByPrice::class => SaleCartDetailRepository::class,
+            UpdateSaleCartDetailByQuantity::class => SaleCartDetailRepository::class,
+            DeleteSaleCartDetail::class => SaleCartDetailRepository::class,
         ],
     ];
 

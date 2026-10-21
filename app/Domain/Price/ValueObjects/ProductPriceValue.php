@@ -19,6 +19,7 @@ class ProductPriceValue extends Entity
         public readonly ?string $image,
         public readonly float $minimumStock,
         public readonly float $currentStock,
+        public readonly float $discount,
         public readonly bool $isActive,
     ) {}
 
@@ -35,6 +36,7 @@ class ProductPriceValue extends Entity
             'image' => $this->image,
             'minimum_stock' => $this->minimumStock,
             'current_stock' => $this->currentStock,
+            'discount' => $this->discount,
             'is_active' => $this->isActive,
         ];
     }

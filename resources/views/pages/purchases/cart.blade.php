@@ -329,33 +329,10 @@
                             
                             $(row).click(async (e) => { 
                                 e.preventDefault();
-                                app.showPreloader();
-                                app.clearFormErrors(this.formCreateCartDetail);
-                                
-                                this.formCreateCartDetail.find('[name="product_code"]').val(data.code);
                                 this.modalProduct.hide();
-
-                                try {
-                                    const response = await this.createCartDetail();
-                                    const { status, message } = response;
-
-                                    if (status === 201) {
-                                        app.alert('success', message);
-                                        app.clearFormErrors(this.formCreateCartDetail);
-
-                                        this.formCreateCartDetail.trigger('reset');
-                                        this.formCreateCartDetail.find('[name="product_code"]').focus();
-                                        this.cartDetailTable.ajax.reload();
-                                        
-                                        await this.findCart();
-                                    }
-                                } catch (error) {
-                                    app.setFormErrors(this.formCreateCartDetail, error);
-                                } finally {
-                                    app.hidePreloader();
-                                }
+                                this.formCreateCartDetail.find('[name="product_code"]').val(data.code);
+                                this.formCreateCartDetail.submit();
                             });
-                            
                         },
                     });
                 }

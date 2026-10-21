@@ -63,8 +63,8 @@ class SaleCart extends Model
      */
     protected $fillable = [
         'user_id',
-        'is_pending',
         'transaction_date',
+        'total_product',
         'total_quantity',
         'total_amount',
     ];

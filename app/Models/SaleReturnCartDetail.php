@@ -63,6 +63,8 @@ class SaleReturnCartDetail extends Model
     protected $fillable = [
         'sale_return_cart_id',
         'product_id',
+        'unit_id',
+        'multiples_quantity',
         'quantity',
         'purchase_price',
         'selling_price',
@@ -84,5 +86,13 @@ class SaleReturnCartDetail extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get the unit that owns the SaleReturnCartDetail
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 }

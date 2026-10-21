@@ -89,4 +89,36 @@ class Unit extends Model
     {
         return $this->hasMany(PurchaseDetail::class, 'unit_id', 'id');
     }
+
+    /**
+     * Get all of the saleCartDetails for the Unit
+     */
+    public function saleCartDetails(): HasMany
+    {
+        return $this->hasMany(SaleCartDetail::class, 'unit_id', 'id');
+    }
+
+    /**
+     * Get all of the saleDetails for the Unit
+     */
+    public function saleDetails(): HasMany
+    {
+        return $this->hasMany(SaleDetail::class, 'unit_id', 'id');
+    }
+
+    /**
+     * Get all of the saleReturnCartDetails for the Unit
+     */
+    public function saleReturnCartDetails(): HasMany
+    {
+        return $this->hasMany(SaleReturnCartDetail::class, 'unit_id', 'id');
+    }
+
+    /**
+     * Get all of the saleReturnDetails for the Unit
+     */
+    public function saleReturnDetails(): HasMany
+    {
+        return $this->hasMany(SaleReturnDetail::class, 'unit_id', 'id');
+    }
 }

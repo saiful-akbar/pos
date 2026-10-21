@@ -66,6 +66,7 @@ class SaleReturn extends Model
         'sale_id',
         'return_number',
         'transaction_date',
+        'total_product',
         'total_quantity',
         'total_amount',
         'notes',

@@ -260,6 +260,7 @@ class PriceRepository extends Repository implements PriceRepositoryInterface
             image: $model->image,
             minimumStock: parse_float($model->minimum_stock),
             currentStock: parse_float($model->current_stock),
+            discount: parse_float($model->discount),
             isActive: $model->is_active === 1,
         );
     }

@@ -15,7 +15,7 @@ class ModuleAccessMiddleware
      *
      * @param Closure(Request): (Response) $next
      */
-    public function handle(Request $request, Closure $next, string $route, string $access): Response
+    public function handle(Request $request, Closure $next, string $route, string $access, ?string $access2 = null): Response
     {
         $modules = modules();
 
@@ -23,6 +23,10 @@ class ModuleAccessMiddleware
             foreach ($module->details as $menu) {
                 if ($menu->route === $route) {
                     if ($menu->{$access}) {
+                        return $next($request);
+                    }
+
+                    if ($access2 !== null && $menu->{$access}) {
                         return $next($request);
                     }
 

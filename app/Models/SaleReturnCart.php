@@ -65,6 +65,7 @@ class SaleReturnCart extends Model
         'user_id',
         'sale_id',
         'transaction_date',
+        'total_product',
         'total_quantity',
         'total_amount',
         'notes',

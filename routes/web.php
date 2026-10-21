@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
@@ -198,6 +199,22 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/{purchaseId}/payments', 'storePayment')->name('.payments.store')->middleware("$module,create");
                 Route::delete('/{purchaseId}/payments/{paymentId}', 'deletePayment')->name('.payments.delete')->middleware("$module,delete");
                 Route::delete('/{purchaseId}', 'remove')->name('.remove')->middleware("$module,remove");
+            });
+
+        Route::controller(SaleController::class)
+            ->name('.sales')
+            ->prefix('sales')
+            ->group(function (): void {
+                $module = 'module:transactions.sales';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
+                Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create");
+                Route::get('/carts/{cartId}/details', 'cartDetails')->name('.carts.details')->middleware("$module,read,create");
+                Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
+                Route::patch('/carts/{cartId}/details/{cartDetailId}/quantity', 'updateCartDetailByQuantity')->name('.carts.details.update.quantity')->middleware("$module,create,update");
+                Route::patch('/carts/{cartId}/details/{cartDetailId}/price', 'updateCartDetailByPrice')->name('.carts.details.update.price')->middleware("$module,create,update");
+                Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create,delete");
             });
     });
 });
