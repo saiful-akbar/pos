@@ -1,7 +1,7 @@
 {{-- Topnav (base) --}}
 <nav class="navbar navbar-expand-xl topnav-base bg-body shadow-sm">
     <div class="container-lg">
-        <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="index-2.html">
+        <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="{{ route('dashboard') }}">
             <img src="{{ logo($setting->storeLogo) }}" alt="Logo" width="30" height="30" class="me-3 rounded">
             <span>{{ $setting?->appName ?? config('app.name') }}</span>
         </a>

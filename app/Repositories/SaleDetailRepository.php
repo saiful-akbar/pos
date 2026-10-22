@@ -90,4 +90,54 @@ class SaleDetailRepository extends Repository implements SaleDetailRepositoryInt
             throw $e;
         }
     }
+
+    /**
+     * Menghapus seluruh detail berdasarkan ID penjualan.
+     */
+    #[Override]
+    public function deleteBySaleId(string $saleId): int
+    {
+        try {
+            return $this->model
+                ->newQuery()
+                ->where('sale_id', $saleId)
+                ->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                __METHOD__,
+                $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil daftar detail penjualan berdasarkan ID penjualan.
+     *
+     * @return array<SaleDetailEntity>
+     */
+    #[Override]
+    public function getBySaleId(string $saleId): array
+    {
+        try {
+            $models = $this->model
+                ->newQuery()
+                ->with(['product', 'unit'])
+                ->where('sale_id', $saleId)
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            return $models
+                ->map(fn (SaleDetail $model): SaleDetailEntity => SaleDetailEntity::fromModel($model))
+                ->all();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                __METHOD__,
+                $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
 }

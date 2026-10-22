@@ -209,6 +209,9 @@ Route::middleware('auth')->group(function (): void {
 
                 Route::get('/', 'index')->middleware("$module,read");
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::delete('/{saleId}/remove', 'remove')->name('.remove')->middleware("$module,remove");
+                Route::get('/{saleId}/receipt', 'receipt')->name('.receipt')->middleware("$module,read");
+                Route::get('/{saleId}/pdf', 'pdf')->name('.pdf')->middleware("$module,read");
                 Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
                 Route::patch('/carts/{cartId}', 'updateCart')->name('.carts.update')->middleware("$module,create,update");
                 Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create,delete");

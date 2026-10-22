@@ -23,4 +23,16 @@ interface SaleDetailRepositoryInterface
      * Menghapus data sale detail berdasarkan ID.
      */
     public function deleteById(string $id): int;
+
+    /**
+     * Menghapus seluruh detail berdasarkan ID penjualan.
+     */
+    public function deleteBySaleId(string $saleId): int;
+
+    /**
+     * Mengambil daftar detail penjualan berdasarkan ID penjualan.
+     *
+     * @return array<SaleDetailEntity>
+     */
+    public function getBySaleId(string $saleId): array;
 }

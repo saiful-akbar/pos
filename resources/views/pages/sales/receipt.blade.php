@@ -1,0 +1,201 @@
+@php
+    function payment_method(string $status): string {
+        if ($status === 'cash') {
+            return 'Tunai';
+        }
+
+        return ucfirst($status);
+    }
+@endphp
+
+<x-layouts.receipt title="Struk Penjualan {{ $sale->invoiceNumber }}">
+    <div class="row justify-content-center align-items-start">
+        <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+            <div class="row gx-2 mb-6">
+                <div class="col-6">
+                    <x-button
+                        class="shadow-sm"
+                        id="print"
+                        startIcon="print"
+                        fullWidth
+                    >
+                        Cetak (Ctrl + P)
+                    </x-button>
+                </div>
+
+                <div class="col-3">
+                    <x-button
+                        type="link"
+                        href="{{ route('transactions.sales.pdf', ['saleId' => $sale->id]) }}"
+                        target="_blank"
+                        class="shadow-sm"
+                        startIcon="picture_as_pdf"
+                        fullWidth
+                    >
+                        PDF
+                    </x-button>
+                </div>
+
+                <div class="col-3">
+                    <x-button
+                        color="dark"
+                        class="shadow-sm"
+                        id="close"
+                        startIcon="close"
+                        fullWidth
+                    >
+                        Tutup
+                    </x-button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm" id="print-area">
+                        <div class="card-body">
+                            <div class="row justify-content-center mb-7">
+                                <div class="col-12 text-center mb-2">
+                                    <img src="{{ logo(setting()?->storeLogo) }}" alt="Logo" class="rounded" width="100" height="100" >
+                                </div>
+        
+                                <div class="col-12 text-center">
+                                    <h3 class="fs-3 fw-bold mb-1">{{ setting()?->storeName ?? config('app.name') }}</h3>
+                                    <p class="fs-sm">{{ setting()?->storeAddress }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row justify-content-between">
+                                <div class="col-auto">
+                                    <div class="fw-bold">Nota: {{ $sale->invoiceNumber }}</div>
+                                    <div class="fw-bold">Kasir: {{ $sale->user->fullName }}</div>
+                                </div>
+
+                                <div class="col-auto text-end">
+                                    <div class="fw-bold">{{ $sale->createdAt->format('d M Y') }}</div>
+                                    <div class="fw-bold">{{ $sale->createdAt->format('H:i:s') }}</div>
+                                </div>
+                            </div>
+        
+                            <hr class="my-5">
+        
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fs-6 fw-bold m-0">Detail Pembelian:</div>
+                                </div>
+                            </div>
+        
+                            @foreach ($details as $detail)
+                                <div class="row justify-content-between align-items-start gx-2 mt-3">
+                                    <div class="col-8">
+                                        <div class="text-start text-body-primary text-truncate fs-6" style="max-width: auto;">
+                                            <span class="fw-bold">{{ $detail->product->code }}</span>
+                                            @isset($detail->product->name) <span> - {{ $detail->product->name }}</span> @endisset
+                                        </div>
+                                        
+                                        <div class="text-body-primary fs-6">
+                                            <span>{{ $detail->quantity }} {{ strtolower($detail->unit->code) }} X {{ number_format($detail->sellingPrice, 2) }}</span>
+                                            <span>{{ $detail->discount > 0 ? "$detail->discount%" : '' }}</span>
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-4 text-end fs-6">
+                                        <div class="text-body-primary">{{ number_format($detail->subtotal, 2) }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+        
+                            <hr class="my-5">
+        
+                            <div class="row justify-content-between">
+                                <div class="col-auto fs-5 fw-bold">Subtotal</div>
+                                <div class="col-auto fs-5 fw-bold">{{ number_format($sale->totalAmount, 2) }}</div>
+                            </div>
+        
+                            <div class="row justify-content-between">
+                                <div class="col-auto fs-5 fw-bold">Diskon</div>
+                                <div class="col-auto fs-5 fw-bold">{{ number_format($sale->discount) }}%</div>
+                            </div>
+
+                            <div class="row justify-content-between">
+                                <div class="col-auto fs-5 fw-bold">Total</div>
+                                <div class="col-auto fs-5 fw-bold">{{ number_format($sale->grandTotal, 2) }}</div>
+                            </div>
+        
+                            <hr class="my-5">
+        
+                            <div class="row justify-content-between mb-3">
+                                <div class="col-12 fs-5 fw-bold m-0">Pembayaran:</div>
+                            </div>
+        
+                            <div class="row justify-content-between">
+                                <div class="col fw-bold fs-6">{{ payment_method($sale->paymentMethod) }}</div>
+                                <div class="col-auto fw-bold fs-6">{{ number_format($sale->paidAmount, 2) }}</div>
+                            </div>
+        
+                            <div class="row justify-content-between">
+                                <div class="col fw-bold fs-6">Kembalian</div>
+                                <div class="col-auto fw-bold fs-6">{{ number_format($sale->changeAmount, 2) }}</div>
+                            </div>
+        
+                            <div class="row justify-content-center mt-7">
+                                <div class="col-auto rounded p-3 bg-white">
+                                    {!! $barcode !!}
+                                </div>
+                            </div>
+        
+                            <div class="row justify-content-center mt-5">
+                                <div class="col-12 text-center fw-bold">
+                                    Terima kasih atas kunjungan anda
+                                </div>
+        
+                                <div class="col text-center fs-sm text-body-secondary">
+                                    Produk yang sudah dibeli tidak dapat ditukar atau dikembalikan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <x-slot:style>
+        <style>
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+                
+                #print-area,
+                #print-area * {
+                    visibility: visible;
+                    background: #fff;
+                    box-shadow: none !important;
+                    color: #000 !important;
+                }
+
+                #print-area {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    border: none;
+                }
+            }
+        </style>
+    </x-slot:style>
+
+    <x-slot:script>
+        <script>
+            $('#print').click(function (e) { 
+                e.preventDefault();
+                window.print()
+            });
+
+            $('#close').click(function (e) { 
+                e.preventDefault();
+                window.close()
+            });
+        </script>
+    </x-slot:script>
+</x-layouts.receipt>

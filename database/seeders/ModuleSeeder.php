@@ -199,7 +199,7 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Pengambalian',
+                        'name' => 'Pengembalian',
                         'path' => '/transactions/returns',
                         'route' => 'transactions.returns',
                         'roles' => ['Admin', 'Kasir'],

@@ -10,34 +10,61 @@ use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCart;
 use App\Application\Sale\UseCases\DeleteSaleCartDetail;
+use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByUserId;
 use App\Application\Sale\UseCases\GetSaleCartDetailTable;
+use App\Application\Sale\UseCases\GetSaleDetailsBySaleId;
+use App\Application\Sale\UseCases\GetSalesByDateRange;
+use App\Application\Sale\UseCases\RemoveSale;
 use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
 use App\Http\Requests\Sales\AddCustomerSaleRequest;
 use App\Http\Requests\Sales\CreateSaleRequest;
+use App\Http\Requests\Sales\GetSalesRequest;
 use App\Http\Requests\Sales\StoreSaleCartDetailRequest;
 use App\Http\Requests\Sales\UpdateSaleCartDetailByPriceRequest;
 use App\Http\Requests\Sales\UpdateSaleCartDetailByQuantityRequest;
+use Barryvdh\DomPDF\Facade\Pdf as DomPdf;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class SaleController extends Controller
 {
     /**
      * Menampilkan halaman utama penjualan.
      */
-    public function index(): View
+    public function index(GetSalesRequest $request, GetSalesByDateRange $getSalesByDateRange): View|JsonResponse
     {
         $access = app(FindModuleAccessByRoute::class)->execute(
             roleId: user()->role_id,
             route: 'transactions.sales',
         );
 
-        return view(view: 'pages.sales.index', data: compact('access'));
+        $sales = [];
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $sales = $getSalesByDateRange->execute(
+                startDate: Carbon::parse($request->input('start_date')),
+                endDate: Carbon::parse($request->input('end_date')),
+            );
+        }
+
+        if ($request->ajax()) {
+            return $this->jsonResponse(
+                data: $sales,
+                message: 'Data penjualan berhasil diambil.',
+            );
+        }
+
+        return view(
+            view: 'pages.sales.index',
+            data: compact('access', 'sales'),
+        );
     }
 
     /**
@@ -52,6 +79,94 @@ class SaleController extends Controller
         return to_route('transactions.sales')->with('alert', [
             'status' => 'success',
             'message' => 'Transaksi penjualan berhasil diselesaikan.',
+        ]);
+    }
+
+    /**
+     * Remove (soft delete) sales.
+     */
+    public function remove(Request $request, string $saleId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        $deleted = app(RemoveSale::class)->execute(
+            id: $saleId,
+        );
+
+        if ($deleted === 0) {
+            return $this->jsonResponse(
+                status: 404,
+                message: 'Data penjualan tidak ditemukan.',
+            );
+        }
+
+        return $this->jsonResponse(
+            data: ['id' => $saleId],
+            message: 'Data penjualan berhasil dihapus.',
+        );
+    }
+
+    /**
+     * Menampilkan struk penjualan.
+     */
+    public function receipt(string $saleId): View
+    {
+        $sale = app(FindSaleById::class)->execute(
+            id: $saleId,
+        );
+
+        abort_if($sale === null, 404, 'Data penjualan tidak ditemukan.');
+
+        $details = app(GetSaleDetailsBySaleId::class)->execute(
+            saleId: $saleId,
+        );
+
+        $generator = new BarcodeGeneratorSVG();
+
+        $barcode = $generator->getBarcode(
+            barcode: $sale->invoiceNumber,
+            type: $generator::TYPE_CODE_128,
+            height: 80,
+
+        );
+
+        return view(
+            view: 'pages.sales.receipt',
+            data: compact('sale', 'details', 'barcode'),
+        );
+    }
+
+    /**
+     * Cetak PDF
+     *
+     * @return void
+     */
+    public function pdf(string $saleId)
+    {
+        $sale = app(FindSaleById::class)
+            ->execute(id: $saleId);
+
+        abort_if(
+            $sale === null,
+            404,
+            'Data penjualan tidak ditemukan.'
+        );
+
+        $details = app(GetSaleDetailsBySaleId::class)
+            ->execute(saleId: $saleId);
+
+        $pdf = DomPdf::loadView('pages.sales.pdf', [
+            'sale' => $sale,
+            'details' => $details,
+        ])->setPaper('a5', 'portrait');
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="invoice-'.
+                $sale->invoiceNumber.'.pdf"',
+            'Cache-Control' => 'no-store, private',
         ]);
     }
 

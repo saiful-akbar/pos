@@ -63,9 +63,13 @@ use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCart;
 use App\Application\Sale\UseCases\DeleteSaleCartDetail;
+use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByUserId;
 use App\Application\Sale\UseCases\GetSaleCartDetail;
 use App\Application\Sale\UseCases\GetSaleCartDetailTable;
+use App\Application\Sale\UseCases\GetSaleDetailsBySaleId;
+use App\Application\Sale\UseCases\GetSalesByDateRange;
+use App\Application\Sale\UseCases\RemoveSale;
 use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
@@ -184,6 +188,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteSaleCartDetail::class => ErrorLogRepository::class,
             UpdateSaleCart::class => ErrorLogRepository::class,
             CreateSale::class => ErrorLogRepository::class,
+            RemoveSale::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -225,6 +230,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteSaleCart::class => ActivityLogRepository::class,
             CreateSaleCartDetail::class => ActivityLogRepository::class,
             CreateSale::class => ActivityLogRepository::class,
+            RemoveSale::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -417,11 +423,16 @@ class RepositoryServiceProvider extends ServiceProvider
         // Sale
         SaleRepositoryInterface::class => [
             CreateSale::class => SaleRepository::class,
+            GetSalesByDateRange::class => SaleRepository::class,
+            RemoveSale::class => SaleRepository::class,
+            FindSaleById::class => SaleRepository::class,
         ],
 
         // Sale detail
         SaleDetailRepositoryInterface::class => [
             CreateSale::class => SaleDetailRepository::class,
+            RemoveSale::class => SaleDetailRepository::class,
+            GetSaleDetailsBySaleId::class => SaleDetailRepository::class,
         ],
     ];
 
