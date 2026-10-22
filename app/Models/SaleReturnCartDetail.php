@@ -65,11 +65,12 @@ class SaleReturnCartDetail extends Model
         'product_id',
         'unit_id',
         'multiples_quantity',
-        'quantity',
         'purchase_price',
         'selling_price',
-        'discount',
+        'quantity',
         'subtotal',
+        'discount',
+        'grand_total',
     ];
 
     /**
@@ -77,7 +78,7 @@ class SaleReturnCartDetail extends Model
      */
     public function saleReturCart(): BelongsTo
     {
-        return $this->belongsTo(SaleReturn::class, 'sale_return_cart_id', 'id');
+        return $this->belongsTo(SaleReturnCart::class, 'sale_return_cart_id', 'id');
     }
 
     /**

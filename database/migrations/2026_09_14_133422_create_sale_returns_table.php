@@ -38,6 +38,8 @@ return new class() extends Migration
             $table->decimal('total_product', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);
+            $table->decimal('discount', 15, 2)->default(0);
+            $table->decimal('grand_total', 15, 2)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -9,6 +9,7 @@
                         <x-button
                             type="link"
                             href="{{ route('transactions.sales.carts') }}"
+                            id="buttonNewSale"
                             color="secondary"
                             startIcon="add_shopping_cart"
                             fullWidth
@@ -30,36 +31,36 @@
                         Filter Data Penjualan
                     </h3>
                 </div>
-    
+
                 <div class="card-body">
-                    <form id="sales-filter-form">
+                    <form id="formSales">
                         <div class="row g-3 align-items-end">
                             <div class="col-12 col-lg-4 col-xl-5">
                                 <x-form-input
                                     type="text"
                                     name="start_date"
-                                    id="start_date"
+                                    id="startDate"
                                     label="Tanggal Mulai"
                                     value="{{ request('start_date', date('Y-m-d')) }}"
                                     data-flatpickr=""
                                     required
                                 />
                             </div>
-    
+
                             <div class="col-12 col-lg-4 col-xl-5 mt-6 mt-lg-0">
                                 <x-form-input
                                     type="text"
                                     name="end_date"
-                                    id="end_date"
+                                    id="endDate"
                                     label="Tanggal Akhir"
                                     value="{{ request('end_date', date('Y-m-d')) }}"
                                     data-flatpickr=""
                                     required
                                 />
                             </div>
-    
+
                             <div class="col-12 col-lg-4 col-xl-2 mt-6 mt-lg-0">
-                                <x-button type="submit" id="btn-filter-sales" startIcon="search" fullWidth>
+                                <x-button type="submit" id="buttonFilterSales" startIcon="search" fullWidth>
                                     Tampilkan
                                 </x-button>
                             </div>
@@ -69,7 +70,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- Tabel penjualan --}}
     <div class="row gx-7">
         <div class="col-12 mt-7">
@@ -79,10 +80,10 @@
                         Daftar Penjualan
                     </h3>
                 </div>
-        
+
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="sales-table" class="table table-sm table-hover align-middle w-100"></table>
+                        <table id="salesTable" class="table table-sm table-hover align-middle w-100"></table>
                     </div>
                 </div>
             </div>
@@ -92,111 +93,128 @@
     {{-- JavaScript --}}
     <x-slot:script>
         <script>
-            $(function () {
-                const $form = $('#sales-filter-form');
-                const $startDate = $('#start_date');
-                const $endDate = $('#end_date');
-                const $submitButton = $('#btn-filter-sales');
-
-                const access = {
-                    read: $('html').data('read') === 1,
-                    create: $('html').data('create') === 1,
-                    update: $('html').data('update') === 1,
-                    remove: $('html').data('remove') === 1,
-                    delete: $('html').data('delete') === 1,
+            class Service {
+                constructor() {
+                    this.access = this.#getAccess();
+                    this.form = $('#formSales');
+                    this.startDate = $('#startDate');
+                    this.endDate = $('#endDate');
+                    this.buttonFilter = $('#buttonFilterSales');
+                    this.buttonNewSale = $('#buttonNewSale');
+                    this.table = this.#salesDataTableInit();
+                    this.currentRequest = null;
                 }
 
-                let currentRequest = null;
+                /**
+                 * Mengambil hak akses user.
+                 */
+                #getAccess() {
+                    return {
+                        read: $('html').data('read') === 1,
+                        create: $('html').data('create') === 1,
+                        update: $('html').data('update') === 1,
+                        remove: $('html').data('remove') === 1,
+                        delete: $('html').data('delete') === 1,
+                    }
+                }
 
                 /**
-                 * Inisialisasi DataTables melalui helper app.
+                 * Inisialisasi sales datatables.
                  */
-                const table = app.dataTable('#sales-table', {
-                    order: [[0, 'asc'], [1, 'asc']],
-                    fixedColumns: {
-                        start: 0,
-                        end: 1,
-                    },
-                    columns: [
+                #salesDataTableInit() {
+                    const columns = [
                         {
+                            title: 'Tanggal',
+                            name: 'transaction_date',
                             data: 'transaction_date',
-                            title: 'Tanggal Transaksi',
                             className: 'text-nowrap',
                             type: 'date',
-                            render: (data) => formatDate(data)
+                            render: (data) => this.#formatDate(data),
                         },
                         {
+                            title: 'Nomor Faktur',
+                            name: 'invoice_number',
                             data: 'invoice_number',
-                            title: 'No. Invoice',
                             className: 'text-nowrap',
                             type: 'string',
-                            render: (data) => escapeHtml(data ?? '-')
+                            render: (data) => this.#escapeHtml(data ?? '-'),
                         },
                         {
-                            data: 'user',
                             title: 'Kasir',
+                            name: 'user',
+                            data: 'user',
                             className: 'text-nowrap',
                             type: 'string',
-                            render: (data) => escapeHtml(getPersonName(data))
+                            render: (data) => this.#escapeHtml(this.#getPersonName(data)),
                         },
                         {
-                            data: 'customer',
                             title: 'Pelanggan',
+                            name: 'customer',
+                            data: 'customer',
                             className: 'text-nowrap',
                             type: 'string',
-                            render: (data) => escapeHtml(getPersonName(data))
+                            render: (data) => this.#escapeHtml(this.#getPersonName(data)),
                         },
                         {
-                            data: 'total_product',
                             title: 'Total Produk',
+                            name: 'total_product',
+                            data: 'total_product',
                             className: 'text-nowrap',
                             type: 'string',
-                            render: (data) => app.numberFormat(Number(data ?? 0))
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
                         },
                         {
+                            title: 'Total Qty',
+                            name: 'total_quantity',
                             data: 'total_quantity',
-                            title: 'Total Kuantitas',
                             className: 'text-nowrap',
                             type: 'num',
-                            render: (data) => app.numberFormat(Number(data ?? 0))
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
                         },
                         {
-                            data: 'total_amount',
                             title: 'Total Belanja',
-                            className: 'text-nowrap',
-                            render: (data) => app.numberFormat(Number(data ?? 0))
-                        },
-                        {
-                            data: 'discount',
-                            title: 'Diskon (%)',
+                            name: 'total_amount',
+                            data: 'total_amount',
                             className: 'text-nowrap',
                             type: 'num',
-                            render: (data) => app.numberFormat(Number(data ?? 0))
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
                         },
                         {
+                            title: 'Diskon (%)',
+                            name: 'discount',
+                            data: 'discount',
+                            className: 'text-nowrap',
+                            type: 'num',
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
+                        },
+                        {
+                            title: 'Grand Total',
+                            name: 'grand_total',
                             data: 'grand_total',
-                            title: 'Total Akhir',
                             className: 'text-nowrap fw-semibold',
                             type: 'num',
-                            render: (data) => app.numberFormat(Number(data ?? 0))
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
                         },
                         {
-                            data: 'payment_method',
                             title: 'Metode Pembayaran',
+                            name: 'payment_method',
+                            data: 'payment_method',
                             className: 'text-nowrap',
                             type: 'string',
-                            render: (data) => escapeHtml(getPaymentMethod(data))
+                            render: (data) => this.#escapeHtml(this.#getPaymentMethod(data)),
                         },
                         {
-                            data: null,
                             title: app.icon('settings', 'fs-6'),
+                            name: 'id',
+                            data: 'id',
                             className: 'text-nowrap text-center no-export',
+                            type: 'html',
                             searchable: false,
                             orderable: false,
-                            render: function (data, type, row) {
+                            render: (data) => {
                                 let html = `
                                     <a
-                                        href="${app.baseUrl}/transactions/sales/${data.id}/receipt"
+                                        href="${app.baseUrl}/transactions/sales/${data}/receipt"
                                         target="_blank"
                                         role="button"
                                         class="btn btn-sm btn-light rounded"
@@ -207,12 +225,13 @@
                                     </a>
                                 `;
 
-                                if (access.remove) {
+                                if (this.access.remove) {
                                     html += `
                                         <button
                                             type="button"
-                                            class="btn btn-sm btn-light rounded btn-delete-sale"
-                                            data-id="${escapeHtml(row.id)}"
+                                            class="btn btn-sm btn-light"
+                                            data-action="remove"
+                                            data-id="${this.#escapeHtml(data)}"
                                             title="Hapus Penjualan"
                                             aria-label="Hapus Penjualan"
                                         >
@@ -222,22 +241,31 @@
                                 }
 
                                 return html;
-                            }
-                        }
-                    ],
-                });
+                            },
+                        },
+                    ];
+
+                    return app.dataTable('#salesTable', {
+                        columns,
+                        order: [[0, 'asc'], [1, 'asc']],
+                        fixedColumns: {
+                            start: 0,
+                            end: this.access.remove ? 1 : 0,
+                        },
+                    });
+                }
 
                 /**
                  * Menghindari HTML dari data server dirender sebagai markup.
                  */
-                function escapeHtml(value) {
+                #escapeHtml(value) {
                     return $('<div>').text(String(value ?? '')).html();
                 }
 
                 /**
                  * Mendukung relasi user dan customer dalam bentuk object.
                  */
-                function getPersonName(value) {
+                #getPersonName(value) {
                     if (typeof value === 'string') {
                         return value;
                     }
@@ -254,26 +282,9 @@
                 }
 
                 /**
-                 * Format tanggal tanpa menggeser tanggal akibat timezone.
-                 */
-                function formatDate(value) {
-                    if (!value) {
-                        return '-';
-                    }
-
-                    const match = String(value).match(
-                        /^(\d{4})-(\d{2})-(\d{2})/
-                    );
-
-                    return match
-                        ? `${match[3]}-${match[2]}-${match[1]}`
-                        : escapeHtml(value);
-                }
-                
-                /**
                  * Mengambil jenis pembayaran.
                  */
-                function getPaymentMethod(value) {
+                #getPaymentMethod(value) {
                     const labels = {
                         cash: 'Tunai',
                         qris: 'QRIS',
@@ -285,161 +296,190 @@
                 }
 
                 /**
-                 * Mengambil data berdasarkan rentang tanggal.
+                 * Format tanggal tanpa menggeser tanggal akibat timezone.
                  */
-                function loadSales(updateUrl = true) {
-                    const startDate = $startDate.val();
-                    const endDate = $endDate.val();
-
-                    app.clearAlert();
-                    app.clearFormErrors($form);
-
-                    if (!startDate || !endDate) {
-                        app.alert('warning', 'Tanggal mulai dan tanggal akhir wajib diisi.');
-                        return;
+                #formatDate(value) {
+                    if (!value) {
+                        return '-';
                     }
 
-                    if (endDate < startDate) {
-                        app.alert('warning', 'Tanggal akhir tidak boleh lebih awal dari tanggal mulai.');
-                        return;
-                    }
+                    const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
 
-                    if (updateUrl) {
-                        app.updateQueryParams({
-                            start_date: startDate,
-                            end_date: endDate
+                    return match
+                        ? `${match[3]}-${match[2]}-${match[1]}`
+                        : this.#escapeHtml(value);
+                }
+
+                /**
+                 * Mengambil data penjualan berdasarkan rentang tanggal.
+                 */
+                getSales(startDate, endDate) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: 'get',
+                            url: @json(route('transactions.sales')),
+                            dataType: 'json',
+                            data: {
+                                start_date: startDate,
+                                end_date: endDate,
+                            },
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
                         });
-                    }
-
-                    // Batalkan request sebelumnya jika masih berjalan.
-                    if (currentRequest) {
-                        currentRequest.abort();
-                    }
-
-                    $submitButton.prop('disabled', true);
-                    app.showPreloader();
-
-                    currentRequest = $.ajax({
-                        url: @json(route('transactions.sales')),
-                        method: 'GET',
-                        dataType: 'json',
-                        data: {
-                            start_date: startDate,
-                            end_date: endDate
-                        },
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .done(function (response) {
-                        if (!Array.isArray(response.data)) {
-                            table.clear().draw();
-
-                            app.alert('danger', 'Format respons data penjualan tidak valid.');
-                            return;
-                        }
-
-                        table.clear();
-                        table.rows.add(response.data);
-                        table.draw();
-
-                        if (response.message) {
-                            app.clearAlert();
-                        }
-                    })
-                    .fail(function (xhr, textStatus) {
-                        if (textStatus === 'abort') {
-                            return;
-                        }
-
-                        if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                            app.setFormErrors($form, xhr.responseJSON);
-                            app.alert(
-                                'danger',
-                                'Periksa kembali rentang tanggal yang Anda masukkan.'
-                            );
-                            return;
-                        }
-
-                        app.alert('danger', xhr.responseJSON?.message ?? 'Terjadi kesalahan saat mengambil data penjualan.'
-                        );
-                    })
-                    .always(function () {
-                        currentRequest = null;
-                        $submitButton.prop('disabled', false);
-                        app.hidePreloader();
                     });
                 }
 
                 /**
-                 * Submit form tanpa reload halaman.
+                 * Hapus (soft delete) data penjualan.
                  */
-                $form.on('submit', function (event) {
-                    event.preventDefault();
-                    loadSales();
-                });
-
-                /**
-                 * Navigasi Back/Forward browser.
-                 */
-                window.addEventListener('popstate', function () {
-                    const params = new URLSearchParams(window.location.search);
-
-                    const today = new Date();
-                    const todayString = [
-                        today.getFullYear(),
-                        String(today.getMonth() + 1).padStart(2, '0'),
-                        String(today.getDate()).padStart(2, '0')
-                    ].join('-');
-
-                    $startDate.val(params.get('start_date') || todayString);
-                    $endDate.val(params.get('end_date') || todayString);
-
-                    loadSales(false);
-                });
-
-                /**
-                 * Menghapus data penjualan.
-                 */
-                $('#sales-table').on('click', '.btn-delete-sale', function () {
-                    const saleId = $(this).data('id');
-
-                    app.delete('Penjualan', function (confirmed) {
-                        if (!confirmed) {
-                            return;
-                        }
-
-                        app.showPreloader();
-
+                remove(id) {
+                    return new Promise((resolve, reject) => {
                         $.ajax({
-                            url: app.url(`/transactions/sales/${saleId}/remove`),
-                            method: 'DELETE',
+                            type: 'delete',
+                            url: app.url(`/transactions/sales/${id}/remove`),
                             dataType: 'json',
+                            data: {
+                                _token: app.csrfToken,
+                                _method: 'delete',
+                            },
                             headers: {
-                                'X-CSRF-TOKEN': app.csrfToken,
                                 'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json'
-                            }
-                        })
-                        .done((response) => {
-                            loadSales(false);
-                            app.alert('success', response.message ?? 'Data penjualan berhasil dihapus.');
-                        })
-                        .fail(function (xhr) {
-                            app.alert('danger', xhr.responseJSON?.message ?? 'Terjadi kesalahan saat menghapus data penjualan.');
-                        })
-                        .always(function () {
-                            app.hidePreloader();
+                                'Accept': 'application/json',
+                            },
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
                         });
                     });
+                }
+            }
+
+            window.service = new Service();
+        </script>
+
+        <script>
+            "use strict"
+
+            /**
+             * Submit form filter.
+             */
+            service.form.submit(async function (e) {
+                e.preventDefault();
+
+                const startDate = service.startDate.val();
+                const endDate = service.endDate.val();
+
+                app.clearAlert();
+                app.clearFormErrors(service.form);
+
+                if (!startDate || !endDate) {
+                    app.alert('warning', 'Tanggal mulai dan tanggal akhir wajib diisi.');
+                    return;
+                }
+
+                if (endDate < startDate) {
+                    app.alert('warning', 'Tanggal akhir tidak boleh lebih awal dari tanggal mulai.');
+                    return;
+                }
+
+                app.updateQueryParams({
+                    start_date: startDate,
+                    end_date: endDate,
                 });
 
-                /**
-                 * Request pertama saat halaman dibuka.
-                 */
-                loadSales(false);
+                // Batalkan request sebelumnya jika masih berjalan.
+                if (service.currentRequest) {
+                    service.currentRequest.abort();
+                }
+
+                service.buttonFilter.prop('disabled', true);
+                app.showPreloader();
+
+                try {
+                    const response = await service.getSales(startDate, endDate);
+                    const { data, message } = response;
+
+                    if (!Array.isArray(data)) {
+                        service.table.clear().draw();
+                        app.alert('danger', 'Format respons data penjualan tidak valid.');
+                        return;
+                    }
+
+                    service.table.clear();
+                    service.table.rows.add(data);
+                    service.table.draw();
+
+                    if (message) {
+                        app.clearAlert();
+                    }
+                } catch (error) {
+                    if (error?.status === 422 && error?.errors) {
+                        app.setFormErrors(service.form, error);
+                        app.alert('danger', 'Periksa kembali rentang tanggal yang Anda masukkan.');
+                        return;
+                    }
+
+                    app.alert('danger', error?.message ?? 'Terjadi kesalahan saat mengambil data penjualan.');
+                } finally {
+                    service.currentRequest = null;
+                    service.buttonFilter.prop('disabled', false);
+                    app.hidePreloader();
+                }
             });
+
+            /**
+             * Navigasi Back/Forward browser.
+             */
+            window.addEventListener('popstate', function () {
+                const params = new URLSearchParams(window.location.search);
+
+                const today = new Date();
+                const todayString = [
+                    today.getFullYear(),
+                    String(today.getMonth() + 1).padStart(2, '0'),
+                    String(today.getDate()).padStart(2, '0'),
+                ].join('-');
+
+                service.startDate.val(params.get('start_date') || todayString);
+                service.endDate.val(params.get('end_date') || todayString);
+
+                service.form.trigger('submit');
+            });
+
+            /**
+             * Hapus data penjualan.
+             */
+            service.table.on('click', '[data-action="remove"]', function (e) {
+                const id = $(this).data('id');
+
+                app.delete('Penjualan', async (removed) => {
+                    if (!removed) return;
+
+                    app.showPreloader();
+
+                    try {
+                        const response = await service.remove(id);
+                        const { status, message } = response;
+
+                        if (status === 200) {
+                            app.alert('success', message);
+                            service.form.trigger('submit');
+                        }
+                    } catch (error) {
+                        app.alert('danger', error?.message ?? 'Terjadi kesalahan saat menghapus data penjualan.');
+                    } finally {
+                        app.hidePreloader();
+                    }
+                });
+            });
+
+            /**
+             * Request pertama saat halaman dibuka.
+             */
+            service.form.trigger('submit');
         </script>
     </x-slot:script>
 </x-layouts.auth>

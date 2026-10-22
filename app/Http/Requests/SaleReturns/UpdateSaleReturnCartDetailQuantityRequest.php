@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\SaleReturns;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Override;
+
+class UpdateSaleReturnCartDetailQuantityRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        return [
+            // Quantity wajib diisi, berupa angka, dan harus lebih dari 0 (tidak boleh 0 atau minus).
+            'quantity' => ['required', 'numeric', 'gt:0'],
+        ];
+    }
+
+    /**
+     * Merubah nama atribut.
+     */
+    #[Override]
+    public function attributes(): array
+    {
+        return [
+            'quantity' => 'quantity',
+        ];
+    }
+}

@@ -65,11 +65,12 @@ class SaleReturnDetail extends Model
         'product_id',
         'unit_id',
         'multiples_quantity',
-        'quantity',
         'purchase_price',
         'selling_price',
-        'discount',
+        'quantity',
         'subtotal',
+        'discount',
+        'grand_total',
     ];
 
     /**

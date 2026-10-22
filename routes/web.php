@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleReturnController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
@@ -212,6 +213,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::delete('/{saleId}/remove', 'remove')->name('.remove')->middleware("$module,remove");
                 Route::get('/{saleId}/receipt', 'receipt')->name('.receipt')->middleware("$module,read");
                 Route::get('/{saleId}/pdf', 'pdf')->name('.pdf')->middleware("$module,read");
+                Route::get('/{saleId}/details', 'details')->name('.details')->middleware("$module,read");
                 Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
                 Route::patch('/carts/{cartId}', 'updateCart')->name('.carts.update')->middleware("$module,create,update");
                 Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create,delete");
@@ -219,6 +221,25 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
                 Route::patch('/carts/{cartId}/details/{cartDetailId}/quantity', 'updateCartDetailByQuantity')->name('.carts.details.update.quantity')->middleware("$module,create,update");
                 Route::patch('/carts/{cartId}/details/{cartDetailId}/price', 'updateCartDetailByPrice')->name('.carts.details.update.price')->middleware("$module,create,update");
+                Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create,delete");
+            });
+
+        Route::controller(SaleReturnController::class)
+            ->name('.returns')
+            ->prefix('returns')
+            ->group(function (): void {
+                $module = 'module:transactions.returns';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::delete('/{saleReturnId}/remove', 'remove')->name('.remove')->middleware("$module,remove");
+                Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
+                Route::post('/carts', 'storeCart')->name('.carts.store')->middleware("$module,create");
+                Route::post('/carts/{cartId}/complete', 'store')->name('.carts.complete')->middleware("$module,create");
+                Route::delete('/carts/{cartId}', 'deleteCart')->name('.carts.delete')->middleware("$module,create,delete");
+                Route::get('/carts/{cartId}/info', 'cartInfo')->name('.carts.info')->middleware("$module,read,create");
+                Route::get('/carts/{cartId}/details', 'cartDetails')->name('.carts.details')->middleware("$module,read,create");
+                Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
+                Route::patch('/carts/{cartId}/details/{cartDetailId}/quantity', 'updateCartDetailQuantity')->name('.carts.details.update.quantity')->middleware("$module,create,update");
                 Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create,delete");
             });
     });

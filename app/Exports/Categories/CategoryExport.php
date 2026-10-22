@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Exports\Catgories;
+namespace App\Exports\Categories;
 
 use App\Models\Category;
 use Illuminate\Support\Enumerable;

@@ -6,6 +6,7 @@ namespace App\Domain\Sale\Repositories;
 
 use App\Application\Sale\DTOs\SaleDetailDTO;
 use App\Domain\Sale\Entities\SaleDetailEntity;
+use Illuminate\Database\Eloquent\Builder;
 
 interface SaleDetailRepositoryInterface
 {
@@ -13,6 +14,11 @@ interface SaleDetailRepositoryInterface
      * Mencari data sale detail berdasarkan ID.
      */
     public function findById(string $id): ?SaleDetailEntity;
+
+    /**
+     * Mencari data sale detail berdasarkan sale_id dan product_id.
+     */
+    public function findBySaleIdAndProductId(string $saleId, string $productId): ?SaleDetailEntity;
 
     /**
      * Membuat data sale detail baru.
@@ -35,4 +41,9 @@ interface SaleDetailRepositoryInterface
      * @return array<SaleDetailEntity>
      */
     public function getBySaleId(string $saleId): array;
+
+    /**
+     * Mengambil data berdasarkan sale_id beserta data produk dan unit dalam format query builder.
+     */
+    public function getQueryBySaleId(string $saleId): Builder;
 }

@@ -49,6 +49,32 @@ class SaleRepository extends Repository implements SaleRepositoryInterface
     }
 
     /**
+     * Mencari data sale berdasarkan kolom dan value.
+     */
+    #[Override]
+    public function find(string $column, string|int|float|bool|null $value): ?SaleEntity
+    {
+        try {
+            $model = $this->model
+                ->newQuery()
+                ->with(['user', 'customer'])
+                ->where($column, $value)
+                ->first();
+
+            return $model !== null
+                ? SaleEntity::fromModel($model)
+                : null;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Membuat data sale baru.
      */
     #[Override]

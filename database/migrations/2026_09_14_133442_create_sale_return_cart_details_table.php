@@ -39,11 +39,12 @@ return new class() extends Migration
                 ->restrictOnDelete();
 
             $table->decimal('multiples_quantity', 15, 2)->default(0);
-            $table->decimal('quantity', 15, 2)->default(0);
             $table->decimal('purchase_price', 15, 2)->default(0);
             $table->decimal('selling_price', 15, 2)->default(0);
-            $table->decimal('discount', 5, 2)->default(0);
+            $table->decimal('quantity', 15, 2)->default(0);
             $table->decimal('subtotal', 15, 2)->default(0);
+            $table->decimal('discount', 5, 2)->default(0);
+            $table->decimal('grand_total', 15, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

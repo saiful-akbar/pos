@@ -61,18 +61,31 @@ use App\Application\Rreport\UseCases\GetMonitoringMonthlyStock;
 use App\Application\Sale\UseCases\CreateSale;
 use App\Application\Sale\UseCases\CreateSaleCart;
 use App\Application\Sale\UseCases\CreateSaleCartDetail;
+use App\Application\Sale\UseCases\CreateSaleReturn;
+use App\Application\Sale\UseCases\CreateSaleReturnCart;
+use App\Application\Sale\UseCases\CreateSaleReturnCartDetail;
 use App\Application\Sale\UseCases\DeleteSaleCart;
 use App\Application\Sale\UseCases\DeleteSaleCartDetail;
+use App\Application\Sale\UseCases\DeleteSaleReturnCartById;
+use App\Application\Sale\UseCases\DeleteSaleReturnCartDetail;
+use App\Application\Sale\UseCases\FindSale;
 use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByUserId;
+use App\Application\Sale\UseCases\FindSaleReturnCartByUserId;
 use App\Application\Sale\UseCases\GetSaleCartDetail;
 use App\Application\Sale\UseCases\GetSaleCartDetailTable;
 use App\Application\Sale\UseCases\GetSaleDetailsBySaleId;
+use App\Application\Sale\UseCases\GetSaleDetailsTable;
+use App\Application\Sale\UseCases\GetSaleReturnCartDetailTable;
+use App\Application\Sale\UseCases\GetSaleReturnCartInfo;
+use App\Application\Sale\UseCases\GetSaleReturnsByDateRange;
 use App\Application\Sale\UseCases\GetSalesByDateRange;
 use App\Application\Sale\UseCases\RemoveSale;
+use App\Application\Sale\UseCases\RemoveSaleReturn;
 use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
+use App\Application\Sale\UseCases\UpdateSaleReturnCartDetailQuantity;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Supplier\UseCases\CreateSupplier;
@@ -111,6 +124,10 @@ use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnCartDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnCartRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnDetailRepositoryInterface;
+use App\Domain\Sale\Repositories\SaleReturnRepositoryInterface;
 use App\Domain\Setting\Repositories\SettingRepositoryInterface;
 use App\Domain\Supplier\Repositories\SupplierRepositoryInterface;
 use App\Domain\Unit\Repositories\UnitRepositoryInterface;
@@ -133,6 +150,10 @@ use App\Repositories\SaleCartDetailRepository;
 use App\Repositories\SaleCartRepository;
 use App\Repositories\SaleDetailRepository;
 use App\Repositories\SaleRepository;
+use App\Repositories\SaleReturnCartDetailRepository;
+use App\Repositories\SaleReturnCartRepository;
+use App\Repositories\SaleReturnDetailRepository;
+use App\Repositories\SaleReturnRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
@@ -189,6 +210,13 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSaleCart::class => ErrorLogRepository::class,
             CreateSale::class => ErrorLogRepository::class,
             RemoveSale::class => ErrorLogRepository::class,
+            CreateSaleReturnCart::class => ErrorLogRepository::class,
+            DeleteSaleReturnCartById::class => ErrorLogRepository::class,
+            CreateSaleReturnCartDetail::class => ErrorLogRepository::class,
+            UpdateSaleReturnCartDetailQuantity::class => ErrorLogRepository::class,
+            DeleteSaleReturnCartDetail::class => ErrorLogRepository::class,
+            CreateSaleReturn::class => ErrorLogRepository::class,
+            RemoveSaleReturn::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -231,6 +259,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleCartDetail::class => ActivityLogRepository::class,
             CreateSale::class => ActivityLogRepository::class,
             RemoveSale::class => ActivityLogRepository::class,
+            CreateSaleReturnCart::class => ActivityLogRepository::class,
+            DeleteSaleReturnCartById::class => ActivityLogRepository::class,
+            CreateSaleReturn::class => ActivityLogRepository::class,
+            RemoveSaleReturn::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -305,6 +337,8 @@ class RepositoryServiceProvider extends ServiceProvider
             RemovePurchase::class => ProductRepository::class,
             CreateSaleCartDetail::class => ProductRepository::class,
             CreateSale::class => ProductRepository::class,
+            CreateSaleReturnCartDetail::class => ProductRepository::class,
+            CreateSaleReturn::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -426,6 +460,9 @@ class RepositoryServiceProvider extends ServiceProvider
             GetSalesByDateRange::class => SaleRepository::class,
             RemoveSale::class => SaleRepository::class,
             FindSaleById::class => SaleRepository::class,
+            FindSale::class => SaleRepository::class,
+            CreateSaleReturnCart::class => SaleRepository::class,
+            GetSaleReturnCartInfo::class => SaleRepository::class,
         ],
 
         // Sale detail
@@ -433,6 +470,43 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSale::class => SaleDetailRepository::class,
             RemoveSale::class => SaleDetailRepository::class,
             GetSaleDetailsBySaleId::class => SaleDetailRepository::class,
+            GetSaleDetailsTable::class => SaleDetailRepository::class,
+            CreateSaleReturnCartDetail::class => SaleDetailRepository::class,
+            UpdateSaleReturnCartDetailQuantity::class => SaleDetailRepository::class,
+        ],
+
+        // Sale return cart
+        SaleReturnCartRepositoryInterface::class => [
+            CreateSaleReturnCart::class => SaleReturnCartRepository::class,
+            FindSaleReturnCartByUserId::class => SaleReturnCartRepository::class,
+            DeleteSaleReturnCartById::class => SaleReturnCartRepository::class,
+            CreateSaleReturnCartDetail::class => SaleReturnCartRepository::class,
+            GetSaleReturnCartInfo::class => SaleReturnCartRepository::class,
+            UpdateSaleReturnCartDetailQuantity::class => SaleReturnCartRepository::class,
+            DeleteSaleReturnCartDetail::class => SaleReturnCartRepository::class,
+            CreateSaleReturn::class => SaleReturnCartRepository::class,
+        ],
+
+        // Sale return cart detail
+        SaleReturnCartDetailRepositoryInterface::class => [
+            GetSaleReturnCartDetailTable::class => SaleReturnCartDetailRepository::class,
+            CreateSaleReturnCartDetail::class => SaleReturnCartDetailRepository::class,
+            UpdateSaleReturnCartDetailQuantity::class => SaleReturnCartDetailRepository::class,
+            DeleteSaleReturnCartDetail::class => SaleReturnCartDetailRepository::class,
+            CreateSaleReturn::class => SaleReturnCartDetailRepository::class,
+        ],
+
+        // Sale return
+        SaleReturnRepositoryInterface::class => [
+            GetSaleReturnsByDateRange::class => SaleReturnRepository::class,
+            CreateSaleReturn::class => SaleReturnRepository::class,
+            RemoveSaleReturn::class => SaleReturnRepository::class,
+        ],
+
+        // Sale return detail
+        SaleReturnDetailRepositoryInterface::class => [
+            CreateSaleReturn::class => SaleReturnDetailRepository::class,
+            RemoveSaleReturn::class => SaleReturnDetailRepository::class,
         ],
     ];
 

@@ -69,6 +69,8 @@ class SaleReturn extends Model
         'total_product',
         'total_quantity',
         'total_amount',
+        'discount',
+        'grand_total',
         'notes',
     ];
 

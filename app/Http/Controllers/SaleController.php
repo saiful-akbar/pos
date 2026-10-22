@@ -14,6 +14,7 @@ use App\Application\Sale\UseCases\FindSaleById;
 use App\Application\Sale\UseCases\FindSaleCartByUserId;
 use App\Application\Sale\UseCases\GetSaleCartDetailTable;
 use App\Application\Sale\UseCases\GetSaleDetailsBySaleId;
+use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\GetSalesByDateRange;
 use App\Application\Sale\UseCases\RemoveSale;
 use App\Application\Sale\UseCases\UpdateSaleCart;
@@ -168,6 +169,20 @@ class SaleController extends Controller
                 $sale->invoiceNumber.'.pdf"',
             'Cache-Control' => 'no-store, private',
         ]);
+    }
+
+    /**
+     * Mengambil daftar detail penjualan untuk dataTables serverside.
+     */
+    public function details(Request $request, string $saleId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetSaleDetailsTable::class)->execute(
+            saleId: $saleId,
+        );
     }
 
     /**

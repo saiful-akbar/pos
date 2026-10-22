@@ -17,6 +17,11 @@ interface SaleRepositoryInterface
     public function findById(string $id): ?SaleEntity;
 
     /**
+     * Mencari data sale berdasarkan kolom dan value.
+     */
+    public function find(string $column, string|int|float|bool|null $value): ?SaleEntity;
+
+    /**
      * Membuat data sale baru.
      */
     public function create(SaleDTO $value): SaleEntity;
