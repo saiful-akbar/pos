@@ -28,14 +28,16 @@
                 </div>
             </div>
         </div>
- 
-        <div class="col-12 col-lg-9" data-bs-spy="scroll" data-bs-target="#settingNav" data-bs-smooth-scroll="true" tabindex="0">
+
+        <div class="col-12 col-lg-9" data-bs-spy="scroll" data-bs-target="#settingNav" data-bs-smooth-scroll="true"
+            tabindex="0">
             <section class="card shadow-sm mb-6" id="store">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-auto">
                             <div class="avatar avatar-xl">
-                                <img class="avatar-img" src="{{ storage_image($setting?->storeLogo) }}" alt="Logo" />
+                                <img class="avatar-img" src="{{ storage_image($setting?->storeLogo) }}"
+                                    alt="Logo" />
                             </div>
                         </div>
                         <div class="col">
@@ -45,7 +47,7 @@
                     </div>
 
                     <hr />
-                    
+
                     <div class="mb-4">
                         <div class="form-label text-body-secondary">Alamat</div>
                         <div>{{ $setting?->storeAddress }}</div>
@@ -68,7 +70,7 @@
                                 <div class="col text-end text-body-secondary">{{ $setting?->appName }}</div>
                             </div>
                         </li>
-                        
+
                         <li class="list-group-item px-0">
                             <div class="row align-items-center">
                                 <div class="col-auto">Versi</div>
@@ -87,7 +89,8 @@
 
                     <hr>
 
-                    <img src="{{ storage_image($setting?->backgroundImage) }}" alt="Background" width="200" height="200" class="img-fluid rounded">
+                    <img src="{{ storage_image($setting?->backgroundImage) }}" alt="Background" width="200"
+                        height="200" class="img-fluid rounded">
                 </div>
             </section>
         </div>

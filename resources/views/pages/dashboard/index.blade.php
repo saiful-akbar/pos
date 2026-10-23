@@ -6,7 +6,8 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">Penjualan {{ date('Y') }}</h3>
+                    <h2 class="fs-5 mb-0">Penjualan {{ date('Y') }}</h2>
+                    <p class="text-body-secondary mt-1 mb-0">Penjualan {{ date('Y') }}</p>
                 </div>
 
                 <div class="card-body">

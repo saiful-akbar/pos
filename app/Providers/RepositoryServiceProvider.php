@@ -50,8 +50,27 @@ use App\Application\Purchase\UseCases\GetPurchaseCartDetailsTable;
 use App\Application\Purchase\UseCases\GetPurchaseDetailTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentsTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasesByDate;
-use App\Application\Purchase\UseCases\RemovePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
+use App\Application\Report\UseCases\GetPurchaseReportQuery;
+use App\Application\Report\UseCases\GetPurchaseReportSummary;
+use App\Application\Report\UseCases\GetPurchaseReportTable;
+use App\Application\Report\UseCases\GetPurchaseTransactionReport;
+use App\Application\Report\UseCases\GetSaleReportFilterOptions;
+use App\Application\Report\UseCases\GetSaleReportQuery;
+use App\Application\Report\UseCases\GetSaleReportSummary;
+use App\Application\Report\UseCases\GetSaleReportTable;
+use App\Application\Report\UseCases\GetSaleReturnReportAnalysis;
+use App\Application\Report\UseCases\GetSaleReturnReportDetailsTable;
+use App\Application\Report\UseCases\GetSaleReturnReportFilterOptions;
+use App\Application\Report\UseCases\GetSaleReturnReportQuery;
+use App\Application\Report\UseCases\GetSaleReturnReportSummary;
+use App\Application\Report\UseCases\GetSaleReturnReportTable;
+use App\Application\Report\UseCases\GetSaleTransactionReport;
+use App\Application\Report\UseCases\GetStockReportMutations;
+use App\Application\Report\UseCases\GetStockReportProduct;
+use App\Application\Report\UseCases\GetStockReportQuery;
+use App\Application\Report\UseCases\GetStockReportSummary;
+use App\Application\Report\UseCases\GetStockReportTable;
 use App\Application\Role\UseCases\CreateRole;
 use App\Application\Role\UseCases\FindRoleById;
 use App\Application\Role\UseCases\GetActiveRoles;
@@ -80,8 +99,6 @@ use App\Application\Sale\UseCases\GetSaleReturnCartDetailTable;
 use App\Application\Sale\UseCases\GetSaleReturnCartInfo;
 use App\Application\Sale\UseCases\GetSaleReturnsByDateRange;
 use App\Application\Sale\UseCases\GetSalesByDateRange;
-use App\Application\Sale\UseCases\RemoveSale;
-use App\Application\Sale\UseCases\RemoveSaleReturn;
 use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
@@ -133,7 +150,11 @@ use App\Domain\Purchase\Repositories\PurchaseCartRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseDetailRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
 use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
+use App\Domain\Report\Repositories\PurchaseReportRepositoryInterface;
 use App\Domain\Report\Repositories\ReportRepositoryInterface;
+use App\Domain\Report\Repositories\SaleReportRepositoryInterface;
+use App\Domain\Report\Repositories\SaleReturnReportRepositoryInterface;
+use App\Domain\Report\Repositories\StockReportRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
@@ -166,18 +187,22 @@ use App\Repositories\PurchaseCartDetailRepository;
 use App\Repositories\PurchaseCartRepository;
 use App\Repositories\PurchaseDetailRepository;
 use App\Repositories\PurchasePaymentRepository;
+use App\Repositories\PurchaseReportRepository;
 use App\Repositories\PurchaseRepository;
 use App\Repositories\ReportRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SaleCartDetailRepository;
 use App\Repositories\SaleCartRepository;
 use App\Repositories\SaleDetailRepository;
+use App\Repositories\SaleReportRepository;
 use App\Repositories\SaleRepository;
 use App\Repositories\SaleReturnCartDetailRepository;
 use App\Repositories\SaleReturnCartRepository;
 use App\Repositories\SaleReturnDetailRepository;
+use App\Repositories\SaleReturnReportRepository;
 use App\Repositories\SaleReturnRepository;
 use App\Repositories\SettingRepository;
+use App\Repositories\StockReportRepository;
 use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
 use App\Repositories\UserRepository;
@@ -221,7 +246,6 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchaseCartDetail::class => ErrorLogRepository::class,
             UpdatePurchaseCartDetail::class => ErrorLogRepository::class,
             CreatePurchase::class => ErrorLogRepository::class,
-            RemovePurchase::class => ErrorLogRepository::class,
             CreatePurchasePayment::class => ErrorLogRepository::class,
             DeletePurchasePayment::class => ErrorLogRepository::class,
             CreateSaleCart::class => ErrorLogRepository::class,
@@ -232,7 +256,6 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteSaleCartDetail::class => ErrorLogRepository::class,
             UpdateSaleCart::class => ErrorLogRepository::class,
             CreateSale::class => ErrorLogRepository::class,
-            RemoveSale::class => ErrorLogRepository::class,
             CreateSaleReturnCart::class => ErrorLogRepository::class,
             DeleteSaleReturnCartById::class => ErrorLogRepository::class,
             CreateSaleReturnCartDetail::class => ErrorLogRepository::class,
@@ -247,7 +270,6 @@ class RepositoryServiceProvider extends ServiceProvider
             DeleteDailyStock::class => ErrorLogRepository::class,
             DeleteMonthlyStock::class => ErrorLogRepository::class,
             CreateSaleReturn::class => ErrorLogRepository::class,
-            RemoveSaleReturn::class => ErrorLogRepository::class,
         ],
 
         // Activity log
@@ -282,18 +304,15 @@ class RepositoryServiceProvider extends ServiceProvider
             CreatePurchaseCart::class => ActivityLogRepository::class,
             DeletePurchaseCart::class => ActivityLogRepository::class,
             CreatePurchase::class => ActivityLogRepository::class,
-            RemovePurchase::class => ActivityLogRepository::class,
             CreatePurchasePayment::class => ActivityLogRepository::class,
             DeletePurchasePayment::class => ActivityLogRepository::class,
             CreateSaleCart::class => ActivityLogRepository::class,
             DeleteSaleCart::class => ActivityLogRepository::class,
             CreateSaleCartDetail::class => ActivityLogRepository::class,
             CreateSale::class => ActivityLogRepository::class,
-            RemoveSale::class => ActivityLogRepository::class,
             CreateSaleReturnCart::class => ActivityLogRepository::class,
             DeleteSaleReturnCartById::class => ActivityLogRepository::class,
             CreateSaleReturn::class => ActivityLogRepository::class,
-            RemoveSaleReturn::class => ActivityLogRepository::class,
             ImportDailyStock::class => ActivityLogRepository::class,
             UpdateDailyStockByImport::class => ActivityLogRepository::class,
             ActivateDailyStock::class => ActivityLogRepository::class,
@@ -374,7 +393,6 @@ class RepositoryServiceProvider extends ServiceProvider
             RemoveProduct::class => ProductRepository::class,
             CreatePurchaseCartDetail::class => ProductRepository::class,
             CreatePurchase::class => ProductRepository::class,
-            RemovePurchase::class => ProductRepository::class,
             CreateSaleCartDetail::class => ProductRepository::class,
             CreateSale::class => ProductRepository::class,
             CreateSaleReturnCartDetail::class => ProductRepository::class,
@@ -421,6 +439,40 @@ class RepositoryServiceProvider extends ServiceProvider
             GetAllSuppliers::class => SupplierRepository::class,
         ],
 
+        // Purchase report
+        PurchaseReportRepositoryInterface::class => [
+            GetPurchaseReportTable::class => PurchaseReportRepository::class,
+            GetPurchaseReportSummary::class => PurchaseReportRepository::class,
+            GetPurchaseReportQuery::class => PurchaseReportRepository::class,
+        ],
+
+        // Sale report
+        SaleReportRepositoryInterface::class => [
+            GetSaleReportTable::class => SaleReportRepository::class,
+            GetSaleReportSummary::class => SaleReportRepository::class,
+            GetSaleReportQuery::class => SaleReportRepository::class,
+            GetSaleReportFilterOptions::class => SaleReportRepository::class,
+        ],
+
+        // Sale return report
+        SaleReturnReportRepositoryInterface::class => [
+            GetSaleReturnReportTable::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportSummary::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportQuery::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportAnalysis::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportDetailsTable::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportFilterOptions::class => SaleReturnReportRepository::class,
+        ],
+
+        // Stock report
+        StockReportRepositoryInterface::class => [
+            GetStockReportTable::class => StockReportRepository::class,
+            GetStockReportSummary::class => StockReportRepository::class,
+            GetStockReportQuery::class => StockReportRepository::class,
+            GetStockReportMutations::class => StockReportRepository::class,
+            GetStockReportProduct::class => StockReportRepository::class,
+        ],
+
         // Report
         ReportRepositoryInterface::class => [
             GetMonitoringMonthlyStock::class => ReportRepository::class,
@@ -453,8 +505,8 @@ class RepositoryServiceProvider extends ServiceProvider
         PurchaseRepositoryInterface::class => [
             CreatePurchase::class => PurchaseRepository::class,
             GetPurchasesByDate::class => PurchaseRepository::class,
-            RemovePurchase::class => PurchaseRepository::class,
             FindPurchaseById::class => PurchaseRepository::class,
+            GetPurchaseTransactionReport::class => PurchaseRepository::class,
             CreatePurchasePayment::class => PurchaseRepository::class,
             DeletePurchasePayment::class => PurchaseRepository::class,
         ],
@@ -462,15 +514,15 @@ class RepositoryServiceProvider extends ServiceProvider
         // Purchase detail
         PurchaseDetailRepositoryInterface::class => [
             CreatePurchase::class => PurchaseDetailRepository::class,
-            RemovePurchase::class => PurchaseDetailRepository::class,
             GetPurchaseDetailTableByPurchaseId::class => PurchaseDetailRepository::class,
+            GetPurchaseTransactionReport::class => PurchaseDetailRepository::class,
         ],
 
         // Purchase payment
         PurchasePaymentRepositoryInterface::class => [
             CreatePurchase::class => PurchasePaymentRepository::class,
-            RemovePurchase::class => PurchasePaymentRepository::class,
             GetPurchasePaymentsTableByPurchaseId::class => PurchasePaymentRepository::class,
+            GetPurchaseTransactionReport::class => PurchasePaymentRepository::class,
             CreatePurchasePayment::class => PurchasePaymentRepository::class,
             DeletePurchasePayment::class => PurchasePaymentRepository::class,
         ],
@@ -504,8 +556,8 @@ class RepositoryServiceProvider extends ServiceProvider
         SaleRepositoryInterface::class => [
             CreateSale::class => SaleRepository::class,
             GetSalesByDateRange::class => SaleRepository::class,
-            RemoveSale::class => SaleRepository::class,
             FindSaleById::class => SaleRepository::class,
+            GetSaleTransactionReport::class => SaleRepository::class,
             FindSale::class => SaleRepository::class,
             CreateSaleReturnCart::class => SaleRepository::class,
             GetSaleReturnCartInfo::class => SaleRepository::class,
@@ -514,9 +566,9 @@ class RepositoryServiceProvider extends ServiceProvider
         // Sale detail
         SaleDetailRepositoryInterface::class => [
             CreateSale::class => SaleDetailRepository::class,
-            RemoveSale::class => SaleDetailRepository::class,
             GetSaleDetailsBySaleId::class => SaleDetailRepository::class,
             GetSaleDetailsTable::class => SaleDetailRepository::class,
+            GetSaleTransactionReport::class => SaleDetailRepository::class,
             CreateSaleReturnCartDetail::class => SaleDetailRepository::class,
             UpdateSaleReturnCartDetailQuantity::class => SaleDetailRepository::class,
         ],
@@ -584,13 +636,11 @@ class RepositoryServiceProvider extends ServiceProvider
         SaleReturnRepositoryInterface::class => [
             GetSaleReturnsByDateRange::class => SaleReturnRepository::class,
             CreateSaleReturn::class => SaleReturnRepository::class,
-            RemoveSaleReturn::class => SaleReturnRepository::class,
         ],
 
         // Sale return detail
         SaleReturnDetailRepositoryInterface::class => [
             CreateSaleReturn::class => SaleReturnDetailRepository::class,
-            RemoveSaleReturn::class => SaleReturnDetailRepository::class,
         ],
     ];
 

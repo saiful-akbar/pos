@@ -19,7 +19,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-0">User Data</h3>
+                        <h2 class="fs-5 mb-0">User Data</h2>
                     </div>
 
                     <div class="card-body">
@@ -63,7 +63,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-0">Autentikasi</h3>
+                        <h2 class="fs-5 mb-0">Autentikasi</h2>
                     </div>
 
                     <div class="card-body">
@@ -103,7 +103,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-0">Foto</h3>
+                        <h2 class="fs-5 mb-0">Foto</h2>
                     </div>
 
                     <div class="card-body">

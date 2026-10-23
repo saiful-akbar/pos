@@ -19,7 +19,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 m-0">Toko</h3>
+                        <h2 class="fs-5 mb-0">Toko</h2>
                     </div>
     
                     <div class="card-body">
@@ -70,7 +70,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 m-0">Aplikasi</h3>
+                        <h2 class="fs-5 mb-0">Aplikasi</h2>
                     </div>
     
                     <div class="card-body">
@@ -109,7 +109,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 m-0">Latar belakang</h3>
+                        <h2 class="fs-5 mb-0">Latar belakang</h2>
                     </div>
     
                     <div class="card-body">

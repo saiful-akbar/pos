@@ -19,8 +19,8 @@
             <div class="col-12 col-lg-4 mb-6 mb-lg-0">
                 <div class="card shadow-sm position-sticky" style="top: 20px;">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-1">Role</h3>
-                        <p class="text-body-secondary m-0">Isi nama dan deskripsi role baru.</p>
+                        <h2 class="fs-5 mb-0">Role</h2>
+                        <p class="text-body-secondary mt-1 mb-0">Isi nama dan deskripsi role baru.</p>
                     </div>
                     
                     <div class="card-body">
@@ -73,7 +73,7 @@
                                         @endisset
             
                                         <div class="col">
-                                            <h3 class="fs-6 m-0">{{ $module->name }}</h3>
+                                            <h2 class="fs-5 mb-0">{{ $module->name }}</h2>
                                         </div>
                                     </div>
                                 </div>

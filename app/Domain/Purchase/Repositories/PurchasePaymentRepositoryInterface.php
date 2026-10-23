@@ -16,6 +16,13 @@ interface PurchasePaymentRepositoryInterface
     public function getQueryByPurchaseId(string $purchaseId): Builder;
 
     /**
+     * Mengambil daftar pembayaran berdasarkan purchase_id (terurut tanggal pembayaran).
+     *
+     * @return PurchasePaymentEntity[]
+     */
+    public function getByPurchaseId(string $purchaseId): array;
+
+    /**
      * Create (insert).
      */
     public function create(PurchasePaymentDTO $value): PurchasePaymentEntity;

@@ -21,7 +21,7 @@
         <div class="col-12 col-xl-4">
             <div class="card shadow-sm position-sticky" style="top: 20px;">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">Summary</h3>
+                    <h2 class="fs-5 mb-0">Summary</h2>
                 </div>
 
                 <div class="card-body">
@@ -91,7 +91,7 @@
                 <div class="col-12">
                     <div class="card shadow-sm">
                         <div class="card-header">
-                            <h3 class="fs-6 mb-0">Detail Produk</h3>
+                            <h2 class="fs-5 mb-0">Detail Produk</h2>
                         </div>
 
                         <div class="card-body">
@@ -105,7 +105,7 @@
                         <div class="card-header w-100">
                             <div class="row align-items-center justify-content-between">
                                 <div class="col-12 col-lg-9 col-xl-8">
-                                    <h3 class="fs-6 mb-0">Pembayaran</h3>
+                                    <h2 class="fs-5 mb-0">Pembayaran</h2>
                                 </div>
                                 
                                 @if ($access?->create ?? false)

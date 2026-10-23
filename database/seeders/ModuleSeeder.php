@@ -207,6 +207,32 @@ class ModuleSeeder extends Seeder
                 ],
             ],
             [
+                'name' => 'Kas',
+                'icon' => 'payments',
+                'path' => '/cash',
+                'route' => 'cash',
+                'details' => [
+                    [
+                        'name' => 'Ringkasan Kas',
+                        'path' => '/cash/dashboard',
+                        'route' => 'cash.dashboard',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Transaksi Kas',
+                        'path' => '/cash/transactions',
+                        'route' => 'cash.transactions',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Rekonsiliasi Kas',
+                        'path' => '/cash/reconciliation',
+                        'route' => 'cash.reconciliation',
+                        'roles' => ['Admin'],
+                    ],
+                ],
+            ],
+            [
                 'name' => 'Stock',
                 'icon' => 'inventory',
                 'path' => '/stocks',

@@ -14,7 +14,6 @@ use App\Application\Sale\UseCases\FindSaleReturnCartByUserId;
 use App\Application\Sale\UseCases\GetSaleReturnCartDetailTable;
 use App\Application\Sale\UseCases\GetSaleReturnCartInfo;
 use App\Application\Sale\UseCases\GetSaleReturnsByDateRange;
-use App\Application\Sale\UseCases\RemoveSaleReturn;
 use App\Application\Sale\UseCases\UpdateSaleReturnCartDetailQuantity;
 use App\Http\Requests\SaleReturns\CreateSaleReturnRequest;
 use App\Http\Requests\SaleReturns\GetSaleReturnsByDateRange as GetSaleReturnsByDateRangeRequest;
@@ -104,32 +103,6 @@ class SaleReturnController extends Controller
             'status' => 'success',
             'message' => 'Transaksi pengembalian penjualan berhasil diselesaikan.',
         ]);
-    }
-
-    /**
-     * Menghapus (soft delete) data pengembalian penjualan beserta detailnya.
-     */
-    public function remove(Request $request, string $saleReturnId): JsonResponse
-    {
-        if (! $request->ajax()) {
-            abort(404);
-        }
-
-        $removed = app(RemoveSaleReturn::class)->execute(
-            id: $saleReturnId,
-        );
-
-        if ($removed === 0) {
-            return $this->jsonResponse(
-                status: 404,
-                message: 'Data pengembalian penjualan tidak ditemukan.',
-            );
-        }
-
-        return $this->jsonResponse(
-            data: ['id' => $saleReturnId],
-            message: 'Data pengembalian penjualan berhasil dihapus.',
-        );
     }
 
     /**

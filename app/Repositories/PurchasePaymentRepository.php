@@ -43,6 +43,33 @@ class PurchasePaymentRepository extends Repository implements PurchasePaymentRep
     }
 
     /**
+     * Mengambil daftar pembayaran berdasarkan purchase_id (terurut tanggal pembayaran).
+     *
+     * @return PurchasePaymentEntity[]
+     */
+    #[Override]
+    public function getByPurchaseId(string $purchaseId): array
+    {
+        try {
+            return $this->model->query()
+                ->with('user')
+                ->where('purchase_id', $purchaseId)
+                ->orderBy('payment_date')
+                ->orderBy('created_at')
+                ->get()
+                ->map(fn ($payment): PurchasePaymentEntity => PurchasePaymentEntity::fromModel($payment))
+                ->all();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Create (inser)
      */
     #[Override]

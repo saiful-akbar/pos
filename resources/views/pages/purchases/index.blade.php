@@ -100,7 +100,6 @@
                         read: $('html').data('read') === 1,
                         create: $('html').data('create') === 1,
                         update: $('html').data('update') === 1,
-                        remove: $('html').data('remove') === 1,
                         delete: $('html').data('delete') === 1,
                     }
                 }
@@ -212,19 +211,6 @@
                                         </a>
                                     `;
 
-                                    if (this.access.remove) {
-                                        html += `
-                                            <button
-                                                type="button"
-                                                class="btn btn-light"
-                                                title="Hapus"
-                                                onclick="removePurchase(event, '${data}')"
-                                            >
-                                                ${app.icon('delete', 'fs-6')}
-                                            </button>
-                                        `;
-                                    }
-
                                     return html;
                                 },
                             },
@@ -249,24 +235,6 @@
                             error: (error) => {
                                 reject(error.responseJSON);
                             },
-                        });
-                    });
-                }
-
-                /**
-                 * Remove (soft delete)
-                 */
-                remove(purchaseId) {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            type: "delete",
-                            url: app.url(`/transactions/purchases/${purchaseId}`),
-                            data: {
-                                _token: app.csrfToken,
-                                _method: 'delete',
-                            },
-                            success: (response) => resolve(response),
-                            error: (error) => reject(error.responseJSON),
                         });
                     });
                 }
@@ -321,32 +289,6 @@
                 }
                 
             });
-
-            /**
-             * Remove (soft delete)
-             */
-            const removePurchase = (e, purchaseId) => {
-                app.delete('Pembelian', async (deleted) => {
-                    if (!deleted) return;
-
-                    app.showPreloader();
-
-                    try {
-                        const response = await service.remove(purchaseId);
-                        const { status, message } = response;
-
-                        if (status === 200) {
-                            app.alert('success', message);
-
-                            await service.getPurchases();
-                        }
-                    } catch (error) {
-                        app.alert('danger', error.message);
-                    } finally {
-                        app.hidePreloader();
-                    }
-                });
-            }
         </script>
     </x-slot:script>
 </x-layouts.auth>

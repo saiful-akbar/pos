@@ -16,7 +16,6 @@ use App\Application\Sale\UseCases\GetSaleCartDetailTable;
 use App\Application\Sale\UseCases\GetSaleDetailsBySaleId;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
 use App\Application\Sale\UseCases\GetSalesByDateRange;
-use App\Application\Sale\UseCases\RemoveSale;
 use App\Application\Sale\UseCases\UpdateSaleCart;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByPrice;
 use App\Application\Sale\UseCases\UpdateSaleCartDetailByQuantity;
@@ -81,32 +80,6 @@ class SaleController extends Controller
             'status' => 'success',
             'message' => 'Transaksi penjualan berhasil diselesaikan.',
         ]);
-    }
-
-    /**
-     * Remove (soft delete) sales.
-     */
-    public function remove(Request $request, string $saleId): JsonResponse
-    {
-        if (! $request->ajax()) {
-            abort(404);
-        }
-
-        $deleted = app(RemoveSale::class)->execute(
-            id: $saleId,
-        );
-
-        if ($deleted === 0) {
-            return $this->jsonResponse(
-                status: 404,
-                message: 'Data penjualan tidak ditemukan.',
-            );
-        }
-
-        return $this->jsonResponse(
-            data: ['id' => $saleId],
-            message: 'Data penjualan berhasil dihapus.',
-        );
     }
 
     /**

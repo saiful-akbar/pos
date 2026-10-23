@@ -1,5 +1,7 @@
 @php
     $merge = [
+        // Klik di luar modal tidak menutup modal (berlaku untuk semua modal, termasuk yang dibuat tanpa opsi JS).
+        'data-bs-backdrop' => 'static',
         'tabindex' => '-1',
         'aria-hidden' => 'true',
     ];
@@ -11,6 +13,8 @@
     
     $dialogClass = [
         'modal-dialog',
+        // Isi modal dapat di-scroll di dalam dialog (header dan footer tetap terlihat).
+        'modal-dialog-scrollable',
         'modal-fullscreen-xxl-down' => $fullScreen === 'xl',
         'modal-fullscreen-xl-down' => $fullScreen === 'lg',
         'modal-fullscreen-lg-down' => $fullScreen === 'md',

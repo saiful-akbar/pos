@@ -35,7 +35,7 @@
         <form action="#" method="post" autocomplete="off" id="form">
             @csrf @method('post')
 
-            <div class="modal" tabindex="-1" id="modalForm">
+            <div class="modal" tabindex="-1" id="modalForm" data-bs-backdrop="static">
                 <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
                     <div class="modal-content border">
                         <div class="modal-header">

@@ -93,7 +93,7 @@
         <div class="col-12 col-xl-4 mt-7 mt-xl-0">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">Informasi</h3>
+                    <h2 class="fs-5 mb-0">Informasi</h2>
                 </div>
 
                 <div class="card-body">
@@ -137,7 +137,7 @@
 
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-6 mb-0">Catatan</h3>
+                        <h2 class="fs-5 mb-0">Catatan</h2>
                     </div>
 
                     <div class="card-body">

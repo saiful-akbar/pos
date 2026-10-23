@@ -20,9 +20,9 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm sales-filter-card">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">
+                    <h2 class="fs-5 mb-0">
                         Filter Data Pengembalian
-                    </h3>
+                    </h2>
                 </div>
 
                 <div class="card-body">
@@ -55,9 +55,9 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">
+                    <h2 class="fs-5 mb-0">
                         Daftar Pengembalian
-                    </h3>
+                    </h2>
                 </div>
 
                 <div class="card-body">
@@ -235,48 +235,11 @@
                             type: 'string',
                             render: (data) => this.#escapeHtml(data ?? '-'),
                         },
-                        {
-                            title: app.icon('settings', 'fs-6'),
-                            name: 'id',
-                            data: 'id',
-                            className: 'text-nowrap text-center no-export',
-                            type: 'html',
-                            searchable: false,
-                            orderable: false,
-                            render: (data) => {
-                                let html = '';
-
-                                if (this.access.remove) {
-                                    html += `
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-light"
-                                            data-action="remove"
-                                            data-id="${this.#escapeHtml(data)}"
-                                            title="Hapus Pengembalian"
-                                            aria-label="Hapus Pengembalian"
-                                        >
-                                            ${app.icon('delete', 'fs-6')}
-                                        </button>
-                                    `;
-                                }
-
-                                if (!html) {
-                                    return '-';
-                                }
-
-                                return html;
-                            },
-                        },
                     ];
 
                     return app.dataTable('#saleReturnsTable', {
                         columns,
                         order: [[0, 'asc'], [1, 'asc']],
-                        fixedColumns: {
-                            start: 0,
-                            end: this.access.remove ? 1 : 0,
-                        },
                     });
                 }
 
@@ -357,29 +320,6 @@
                             data: {
                                 start_date: startDate,
                                 end_date: endDate,
-                            },
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                            },
-                            success: (response) => resolve(response),
-                            error: (error) => reject(error.responseJSON),
-                        });
-                    });
-                }
-
-                /**
-                 * Hapus (soft delete) data pengembalian.
-                 */
-                remove(id) {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            type: 'delete',
-                            url: app.url(`/transactions/returns/${id}/remove`),
-                            dataType: 'json',
-                            data: {
-                                _token: app.csrfToken,
-                                _method: 'delete',
                             },
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
@@ -482,33 +422,6 @@
                 service.endDate.val(params.get('end_date') || todayString);
 
                 service.form.trigger('submit');
-            });
-
-            /**
-             * Hapus data pengembalian.
-             */
-            service.table.on('click', '[data-action="remove"]', function (e) {
-                const id = $(this).data('id');
-
-                app.delete('Pengembalian', async (removed) => {
-                    if (!removed) return;
-
-                    app.showPreloader();
-
-                    try {
-                        const response = await service.remove(id);
-                        const { status, message } = response;
-
-                        if (status === 200) {
-                            app.alert('success', message);
-                            service.form.trigger('submit');
-                        }
-                    } catch (error) {
-                        app.alert('danger', error?.message ?? 'Terjadi kesalahan saat menghapus data pengembalian.');
-                    } finally {
-                        app.hidePreloader();
-                    }
-                });
             });
 
             /**

@@ -27,9 +27,9 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm mb-4 sales-filter-card">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">
+                    <h2 class="fs-5 mb-0">
                         Filter Data Penjualan
-                    </h3>
+                    </h2>
                 </div>
 
                 <div class="card-body">
@@ -76,9 +76,9 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">
+                    <h2 class="fs-5 mb-0">
                         Daftar Penjualan
-                    </h3>
+                    </h2>
                 </div>
 
                 <div class="card-body">
@@ -225,21 +225,6 @@
                                     </a>
                                 `;
 
-                                if (this.access.remove) {
-                                    html += `
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-light"
-                                            data-action="remove"
-                                            data-id="${this.#escapeHtml(data)}"
-                                            title="Hapus Penjualan"
-                                            aria-label="Hapus Penjualan"
-                                        >
-                                            ${app.icon('delete', 'fs-6')}
-                                        </button>
-                                    `;
-                                }
-
                                 return html;
                             },
                         },
@@ -250,7 +235,7 @@
                         order: [[0, 'asc'], [1, 'asc']],
                         fixedColumns: {
                             start: 0,
-                            end: this.access.remove ? 1 : 0,
+                            end: 1,
                         },
                     });
                 }
@@ -322,29 +307,6 @@
                             data: {
                                 start_date: startDate,
                                 end_date: endDate,
-                            },
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                            },
-                            success: (response) => resolve(response),
-                            error: (error) => reject(error.responseJSON),
-                        });
-                    });
-                }
-
-                /**
-                 * Hapus (soft delete) data penjualan.
-                 */
-                remove(id) {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            type: 'delete',
-                            url: app.url(`/transactions/sales/${id}/remove`),
-                            dataType: 'json',
-                            data: {
-                                _token: app.csrfToken,
-                                _method: 'delete',
                             },
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
@@ -447,33 +409,6 @@
                 service.endDate.val(params.get('end_date') || todayString);
 
                 service.form.trigger('submit');
-            });
-
-            /**
-             * Hapus data penjualan.
-             */
-            service.table.on('click', '[data-action="remove"]', function (e) {
-                const id = $(this).data('id');
-
-                app.delete('Penjualan', async (removed) => {
-                    if (!removed) return;
-
-                    app.showPreloader();
-
-                    try {
-                        const response = await service.remove(id);
-                        const { status, message } = response;
-
-                        if (status === 200) {
-                            app.alert('success', message);
-                            service.form.trigger('submit');
-                        }
-                    } catch (error) {
-                        app.alert('danger', error?.message ?? 'Terjadi kesalahan saat menghapus data penjualan.');
-                    } finally {
-                        app.hidePreloader();
-                    }
-                });
             });
 
             /**

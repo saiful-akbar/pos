@@ -19,8 +19,8 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        <h3 class="fs-5 mb-1">Form edit diskon</h3>
-                        <p class="text-body-secondary m-0">Form dengan tanda * wajib diisi</p>
+                        <h2 class="fs-5 mb-0">Form edit diskon</h2>
+                        <p class="text-body-secondary mt-1 mb-0">Form dengan tanda * wajib diisi</p>
                     </div>
     
                     <div class="card-header">

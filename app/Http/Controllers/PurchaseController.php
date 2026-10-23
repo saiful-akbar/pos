@@ -22,7 +22,6 @@ use App\Application\Purchase\UseCases\GetPurchaseCartDetailsTable;
 use App\Application\Purchase\UseCases\GetPurchaseDetailTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentsTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasesByDate;
-use App\Application\Purchase\UseCases\RemovePurchase;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
 use App\Application\Supplier\UseCases\GetAllSuppliers;
 use App\Http\Requests\Purchases\CreatePurchaseRequest;
@@ -60,25 +59,6 @@ class PurchaseController extends Controller
         return view(
             view: 'pages.purchases.index',
             data: compact('access'),
-        );
-    }
-
-    /**
-     * Remove (soft delete) pembelian.
-     */
-    public function remove(Request $request, string $purchaseId): JsonResponse
-    {
-        if (! $request->ajax()) {
-            abort(404);
-        }
-
-        app(RemovePurchase::class)->execute(
-            id: $purchaseId,
-        );
-
-        return $this->jsonResponse(
-            status: 200,
-            message: 'Transaksi pembelian berhasil dihapus.'
         );
     }
 

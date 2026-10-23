@@ -10,10 +10,14 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MonthlyStockController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\PurchaseReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleReportController;
 use App\Http\Controllers\SaleReturnController;
+use App\Http\Controllers\SaleReturnReportController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
@@ -201,7 +205,6 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/{purchaseId}/payments', 'payments')->name('.payments')->middleware("$module,read");
                 Route::post('/{purchaseId}/payments', 'storePayment')->name('.payments.store')->middleware("$module,create");
                 Route::delete('/{purchaseId}/payments/{paymentId}', 'deletePayment')->name('.payments.delete')->middleware("$module,delete");
-                Route::delete('/{purchaseId}', 'remove')->name('.remove')->middleware("$module,remove");
             });
 
         Route::controller(SaleController::class)
@@ -212,7 +215,6 @@ Route::middleware('auth')->group(function (): void {
 
                 Route::get('/', 'index')->middleware("$module,read");
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
-                Route::delete('/{saleId}/remove', 'remove')->name('.remove')->middleware("$module,remove");
                 Route::get('/{saleId}/receipt', 'receipt')->name('.receipt')->middleware("$module,read");
                 Route::get('/{saleId}/pdf', 'pdf')->name('.pdf')->middleware("$module,read");
                 Route::get('/{saleId}/details', 'details')->name('.details')->middleware("$module,read");
@@ -233,7 +235,6 @@ Route::middleware('auth')->group(function (): void {
                 $module = 'module:transactions.returns';
 
                 Route::get('/', 'index')->middleware("$module,read");
-                Route::delete('/{saleReturnId}/remove', 'remove')->name('.remove')->middleware("$module,remove");
                 Route::get('/carts', 'carts')->name('.carts')->middleware("$module,create");
                 Route::post('/carts', 'storeCart')->name('.carts.store')->middleware("$module,create");
                 Route::post('/carts/{cartId}/complete', 'store')->name('.carts.complete')->middleware("$module,create");
@@ -243,6 +244,65 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
                 Route::patch('/carts/{cartId}/details/{cartDetailId}/quantity', 'updateCartDetailQuantity')->name('.carts.details.update.quantity')->middleware("$module,create,update");
                 Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create,delete");
+            });
+    });
+
+    Route::name('reports')->prefix('reports')->group(function (): void {
+        Route::controller(PurchaseReportController::class)
+            ->name('.purchases')
+            ->prefix('purchases')
+            ->group(function (): void {
+                $module = 'module:reports.purchases';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
+                Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
+                Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/{purchaseId}/details', 'transactionDetails')->name('.transactions.details')->middleware("$module,read");
+                Route::get('/{purchaseId}/payments', 'transactionPayments')->name('.transactions.payments')->middleware("$module,read");
+                Route::get('/{purchaseId}/export/excel', 'exportTransactionExcel')->name('.transactions.export.excel')->middleware("$module,read");
+                Route::get('/{purchaseId}/export/pdf', 'exportTransactionPdf')->name('.transactions.export.pdf')->middleware("$module,read");
+            });
+
+        Route::controller(SaleReportController::class)
+            ->name('.sales')
+            ->prefix('sales')
+            ->group(function (): void {
+                $module = 'module:reports.sales';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
+                Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
+                Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/{saleId}/details', 'transactionDetails')->name('.transactions.details')->middleware("$module,read");
+                Route::get('/{saleId}/export/pdf', 'exportTransactionPdf')->name('.transactions.export.pdf')->middleware("$module,read");
+            });
+
+        Route::controller(SaleReturnReportController::class)
+            ->name('.returns')
+            ->prefix('returns')
+            ->group(function (): void {
+                $module = 'module:reports.returns';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
+                Route::get('/analysis', 'analysis')->name('.analysis')->middleware("$module,read");
+                Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
+                Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/{saleReturnId}/details', 'details')->name('.details')->middleware("$module,read");
+            });
+
+        Route::controller(StockReportController::class)
+            ->name('.stocks')
+            ->prefix('stocks')
+            ->group(function (): void {
+                $module = 'module:reports.stocks';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
+                Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
+                Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/{productId}/mutations', 'mutations')->name('.mutations')->middleware("$module,read");
             });
     });
 

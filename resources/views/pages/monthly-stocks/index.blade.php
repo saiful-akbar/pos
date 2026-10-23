@@ -19,7 +19,7 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">Filter Data Stok</h3>
+                    <h2 class="fs-5 mb-0">Filter Data Stok</h2>
                 </div>
 
                 <div class="card-body">
@@ -59,7 +59,7 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h3 class="fs-6 mb-0">Daftar Stok Bulanan</h3>
+                    <h2 class="fs-5 mb-0">Daftar Stok Bulanan</h2>
                 </div>
 
                 <div class="card-body">

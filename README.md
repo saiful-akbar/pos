@@ -1,736 +1,537 @@
-# POS (Point Of Sales)
+# Implementasi Fitur Laporan Penjualan (Sales Report)
+
+## 1. Tugas Utama
+
+Implementasikan fitur **Laporan Penjualan (Sales Report)** yang terintegrasi dengan aplikasi POS saat ini.
+
+Fitur ini digunakan untuk membantu pengguna memantau transaksi penjualan, nilai penjualan, produk yang terjual, pelanggan, metode pembayaran, dan performa penjualan berdasarkan periode tertentu.
+
+Sebelum menulis atau mengubah kode, lakukan analisis terhadap proyek untuk memahami implementasi yang sudah ada.
+
+Periksa setidaknya:
+
+1. Struktur direktori dan namespace aplikasi.
+2. Implementasi MVC dan pemisahan layer DDD.
+3. Pola Repository, Repository Interface, Use Case, Entity, DTO, dan Value Object.
+4. Fitur laporan lain yang sudah ada, khususnya laporan pembelian jika tersedia.
+5. Controller, route, middleware, permission, dan authorization yang digunakan.
+6. Pola validasi menggunakan Form Request atau mekanisme yang sudah digunakan proyek.
+7. Pola respons JSON, error handling, logging, pagination, dan format tanggal.
+8. Implementasi DataTables server-side, filter tabel, dan AJAX.
+9. Implementasi ekspor Excel menggunakan Maatwebsite Excel 4.0.
+10. Implementasi ekspor PDF menggunakan Barryvdh Laravel DomPDF.
+11. Pola tampilan Blade, layout, komponen, modal, tombol, dan notifikasi yang sudah digunakan.
+12. Use Case dan Repository penjualan yang telah tersedia apabila relevan.
 
-## 1. Project Overview
+Jangan langsung membuat implementasi baru sebelum memahami pola proyek yang ada. Gunakan kembali komponen dan mekanisme yang sudah tersedia jika sesuai.
+
+## 2. Struktur Database
+
+Fitur ini menggunakan tabel berikut:
+
+### Tabel `sales`
 
-This project is a Point of Sales (POS) application with integrated inventory management, built with PHP 8.3, Laravel 12, and MySQL 8.0.
+Kolom utama:
 
-The application supports master data management, purchasing, sales, sales returns, stock opname, and operational reporting.
+- `id`
+- `user_id`
+- `customer_id` — nullable
+- `invoice_number`
+- `transaction_date`
+- `total_product`
+- `total_quantity`
+- `total_amount`
+- `discount`
+- `grand_total`
+- `paid_amount`
+- `change_amount`
+- `payment_method` — enum `cash`, `qris`, `debit`, `credit`
+- `notes` — nullable
+- `created_at`
+- `updated_at`
+- `deleted_at`
+
+Relasi:
+
+- `user_id` mengacu pada pengguna atau kasir.
+- `customer_id` mengacu pada pelanggan.
+
+### Tabel `sale_details`
 
-### Architectural Approach
+Kolom utama:
 
-The application combines:
+- `id`
+- `sale_id`
+- `product_id`
+- `unit_id`
+- `multiples_quantity`
+- `purchase_price`
+- `selling_price`
+- `quantity`
+- `subtotal`
+- `discount`
+- `grand_total`
+- `created_at`
+- `updated_at`
+- `deleted_at`
 
-- **Laravel MVC** for HTTP request handling and presentation.
-- **Domain-Driven Design (DDD)** for domain modeling and business rules.
-- **Use Case-Based Application Architecture** for orchestrating business operations.
-- **Repository Pattern** for abstracting data access and persistence.
+Relasi:
 
-Claude Code must follow the existing implementation and maintain clear separation of responsibilities between these architectural components.
+- `sale_id` mengacu pada transaksi penjualan.
+- `product_id` mengacu pada produk.
+- `unit_id` mengacu pada satuan produk.
 
-### Core principles
+### Tabel `customers`
 
-- Understand the existing codebase before making changes.
-- Preserve existing interfaces, namespaces, and business rules.
-- Keep controllers thin and delegate business operations to use cases.
-- Keep persistence logic inside repository implementations.
-- Represent business concepts through entities and value objects where appropriate.
-- Maintain inventory integrity and financial accuracy.
-- Prefer small, testable, maintainable changes over unnecessary refactoring.
+Kolom relevan:
 
----
+- `id`
+- `name`
+- `phone_number`
+- `address`
+- `discount`
+- `is_active`
+- `deleted_at`
 
-## 2. Technology Stack
+### Tabel `products`
 
-### Backend
+Kolom relevan:
 
-- PHP 8.3
-- Laravel 12
-- `barryvdh/laravel-dompdf` 3.1 — PDF generation
-- `maatwebsite/excel` 4.0 — Excel import and export
-- `yajra/laravel-datatables-oracle` 12.0 — server-side DataTables
+- `id`
+- `category_id`
+- `code`
+- `name`
+- `minimum_stock`
+- `current_stock`
+- `discount`
+- `is_active`
+- `deleted_at`
 
-### Frontend
+### Tabel `categories`
 
-- Bootstrap CSS 5
-- jQuery 4
-- DataTables 3.0.2
-- Bootbox 6.0.4
-- Laravel Blade
+Kolom relevan:
 
-### Database
+- `id`
+- `code`
+- `name`
+- `is_active`
+- `deleted_at`
 
-- MySQL 8.0
+### Tabel `units`
 
-Verify installed package versions using the project's dependency manifests and lockfiles before relying on specific APIs. Do not assume that APIs from other versions are available.
+Kolom relevan:
 
----
+- `id`
+- `code`
+- `name`
+- `is_active`
+- `deleted_at`
 
-## 3. Business Modules
+Gunakan definisi database aktual dan model yang ada sebagai sumber kebenaran. Periksa migration, relasi Eloquent, cast, accessor, dan implementasi transaksi yang sudah tersedia sebelum menentukan cara mengambil atau menghitung data.
 
-### 3.1 Master Data
+## 3. Kebutuhan Halaman Laporan Penjualan
 
-- Users
-- User roles and permissions
-- Suppliers
-- Customers
-- Product categories
-- Product units
-- Products
+Buat halaman laporan penjualan terpisah dari halaman transaksi penjualan.
 
-### 3.2 Purchasing
+Halaman minimal memiliki:
 
-- Create and manage purchase transactions.
-- Associate purchases with suppliers.
-- Record purchased products, units, quantities, and prices.
-- Calculate purchase totals according to business rules.
-- Update stock when a purchase reaches the appropriate finalized state.
+- Judul sesuai pola aplikasi.
+- Filter periode transaksi.
+- Filter pelanggan.
+- Filter kasir atau pengguna.
+- Filter metode pembayaran.
+- Pencarian nomor invoice.
+- Filter kategori produk.
+- Filter produk.
+- Tombol pencarian atau penerapan filter sesuai pola aplikasi.
+- Tombol reset filter.
+- Ringkasan KPI.
+- Tabel laporan penjualan dengan pagination server-side.
+- Aksi untuk melihat detail transaksi.
+- Ekspor Excel.
+- Ekspor PDF jika sesuai dengan pola dan fitur ekspor yang sudah tersedia.
 
-### 3.3 Sales
+Seluruh elemen UI harus mengikuti desain dan komponen yang sudah digunakan proyek. Jangan membuat desain baru yang tidak konsisten dengan halaman lain.
 
-- Create sales transactions.
-- Associate sales with users and optional customers.
-- Record products, units, quantities, and selling prices.
-- Calculate transaction totals and discounts.
-- Validate stock availability.
-- Decrease stock when a sale is finalized.
-- Generate invoice numbers.
-- Print sales receipts.
+## 4. KPI atau Ringkasan Penjualan
 
-Invoice number format example: `INV2610-00001`.
+Tampilkan KPI berikut:
 
-The year and month must be represented in the prefix. The sequential number must reset when the month changes. Invoice generation must remain unique and safe under concurrent requests.
+### A. Total Transaksi
 
-### 3.4 Sales Returns
+Jumlah transaksi penjualan yang sesuai dengan filter aktif.
 
-- Associate returns with original sales.
-- Validate eligible return quantities.
-- Prevent cumulative returns from exceeding eligible sold quantities.
-- Calculate return amounts according to established business rules.
-- Restore stock when appropriate.
-- Preserve transaction history and relationships.
+Gunakan jumlah transaksi yang unik, bukan jumlah baris detail penjualan.
 
-### 3.5 Stock Opname
+### B. Total Penjualan
 
-- Support daily and monthly stock opname.
-- Record system quantities and physical counts.
-- Calculate inventory discrepancies.
-- Finalize stock adjustments.
-- Prevent duplicate adjustments.
-- Preserve an audit trail of stock changes.
+Jumlah nilai penjualan berdasarkan `sales.grand_total`.
 
-### 3.6 Reports
+Gunakan istilah yang konsisten dengan definisi nilai transaksi di aplikasi. Pastikan transaksi tidak dihitung ganda akibat join dengan `sale_details`.
 
-- Purchase reports.
-- Sales reports.
-- Sales return reports.
-- Inventory and stock reports.
+### C. Total Produk Terjual
 
-Use appropriate date filters, database-level aggregation, and consistent calculation rules.
+Jumlah kuantitas barang terjual berdasarkan data detail penjualan.
 
----
+Periksa arti kolom `total_quantity`, `quantity`, dan `multiples_quantity` serta implementasi konversi satuan yang sudah digunakan aplikasi. Jangan menjumlahkan kuantitas dari satuan yang berbeda seolah-olah semuanya memiliki satuan dasar yang sama.
 
-## 4. Architecture: Laravel MVC + DDD + Use Case-Based Repository Pattern
+### D. Total Diskon
 
-This architecture is mandatory for new features and modifications unless the user explicitly authorizes a different approach.
+Tampilkan total diskon transaksi berdasarkan `sales.discount`, jika definisi kolom tersebut dalam implementasi transaksi memang merupakan nominal diskon yang dapat dijumlahkan.
 
-Follow the existing directory structure and namespaces. The structure below illustrates responsibilities; it does not require moving existing classes.
+Periksa pula penggunaan `sale_details.discount` dan pastikan diskon detail tidak ditambahkan lagi ke diskon transaksi apabila nilainya sudah tercakup dalam total transaksi.
 
-### 4.1 Architectural flow
+## 5. Filter Laporan
 
-```text
-HTTP Request
-    |
-    v
-Route
-    |
-    v
-Controller
-    |
-    | Validate request and prepare input
-    v
-Application Use Case
-    |
-    | Coordinate business operation
-    v
-Domain Entities / Value Objects
-    |
-    | Persistence through abstractions
-    v
-Repository Interface
-    ^
-    | implements
-Repository Implementation
-    |
-    v
-Eloquent Model
-    |
-    v
-MySQL Database
-```
+Implementasikan filter berikut:
 
-The dependency direction must remain consistent with the existing architecture: application and domain logic should depend on abstractions rather than concrete persistence implementations.
+### Periode Transaksi
 
-The controller receives the result from the use case and returns an appropriate HTTP response, JSON response, redirect, or Blade view.
+- Tanggal mulai.
+- Tanggal akhir.
+- Menggunakan kolom `sales.transaction_date`.
+- Validasi bahwa tanggal mulai tidak lebih besar daripada tanggal akhir.
+- Terapkan filter tanggal secara konsisten pada tabel, KPI, detail laporan, dan ekspor.
 
-### 4.2 Laravel MVC responsibilities
+### Pelanggan
 
-**Model**
+- Filter berdasarkan `sales.customer_id`.
+- Sediakan pilihan semua pelanggan.
+- Transaksi tanpa pelanggan harus tetap dapat ditampilkan ketika tidak ada filter pelanggan yang dipilih.
 
-Use Eloquent models to represent persistence and database relationships.
+### Kasir atau Pengguna
 
-Models may define relationships, casts, scopes, and persistence-related behavior. Do not turn Eloquent models into containers for the entire business workflow.
+- Filter berdasarkan `sales.user_id`.
+- Gunakan sumber data pengguna yang sudah tersedia di proyek.
 
-**View**
+### Metode Pembayaran
 
-Use Blade templates, Bootstrap 5, jQuery, DataTables, and Bootbox for the user interface.
+Gunakan nilai enum yang benar-benar tersedia:
 
-Views must not contain complex business rules or perform direct database operations.
+- Cash
+- QRIS
+- Debit
+- Credit
 
-**Controller**
+Label yang ditampilkan dapat menggunakan format UI yang sudah berlaku di aplikasi.
 
-Controllers handle HTTP concerns, including:
+### Nomor Invoice
 
-- Receiving requests.
-- Applying request validation through Form Requests or the established validation approach.
-- Enforcing authentication and authorization.
-- Passing validated input to the appropriate use case.
-- Translating results into HTTP responses.
-- Returning views, redirects, JSON, PDF, or Excel responses.
+- Pencarian berdasarkan `sales.invoice_number`.
+- Gunakan pencarian yang aman dan sesuai pola query proyek.
 
-Controllers must remain thin.
+### Kategori Produk
 
-Do not implement stock calculations, invoice number generation algorithms, or multi-step transaction workflows directly in controllers.
+- Filter berdasarkan `products.category_id`.
+- Gunakan relasi `sale_details.product_id` ke `products`, kemudian ke `categories`.
 
-### 4.3 Domain-Driven Design responsibilities
+### Produk
 
-The Domain layer represents business concepts and invariants.
+- Filter berdasarkan `sale_details.product_id`.
+- Sediakan pencarian atau dropdown sesuai pola UI yang sudah digunakan.
 
-It may contain:
+Untuk filter kategori dan produk, gunakan pendekatan query yang tidak menyebabkan satu transaksi muncul berulang kali. Pertimbangkan `whereHas`, `EXISTS`, atau strategi lain yang sesuai dengan arsitektur query proyek.
 
-- Entities.
-- Value objects.
-- Repository interfaces.
-- Domain rules and domain services when necessary.
+Jangan menerapkan filter kategori atau produk hanya pada tabel utama `sales`, karena kedua atribut tersebut berasal dari detail penjualan.
 
-Domain classes must not depend on HTTP requests, Blade views, or Eloquent models.
+## 6. Tabel Laporan Penjualan
 
-Use domain-specific value objects when required by the established domain model. Do not replace them with primitive values merely for convenience.
+Tabel utama menampilkan satu baris untuk setiap transaksi penjualan.
 
-### 4.4 Use Case-Based Application layer
+Kolom yang disarankan:
 
-Use cases represent individual application operations.
+1. Nomor.
+2. Tanggal transaksi.
+3. Nomor invoice.
+4. Pelanggan.
+5. Total jenis produk.
+6. Total kuantitas.
+7. Total harga sebelum diskon (`total_amount`).
+8. Diskon.
+9. Grand total.
+10. Jumlah pembayaran (`paid_amount`).
+11. Kembalian (`change_amount`).
+12. Metode pembayaran.
+13. Kasir.
+14. Aksi.
 
-Examples include:
+Ketentuan:
 
-- `CreateSaleUseCase`
-- `GetSaleByIdUseCase`
-- `GetSalesByDateRangeUseCase`
-- `DeleteSaleUseCase`
-- `CreateSaleDetailUseCase`
-- `CreatePurchaseUseCase`
-- `ProcessSalesReturnUseCase`
-- `FinalizeStockOpnameUseCase`
+- Pastikan arti `total_product` sudah diperiksa. Jangan langsung menganggapnya sebagai jumlah baris detail atau total unit fisik.
+- Gunakan `sales.grand_total` sebagai nilai total transaksi sesuai definisi bisnis yang ada.
+- Transaksi tanpa pelanggan harus menampilkan label yang sesuai, misalnya "Umum", hanya jika itu konsisten dengan aturan bisnis proyek.
+- Gunakan format mata uang Rupiah dan format tanggal yang berlaku pada aplikasi.
+- Terapkan sorting, searching, pagination, dan filter server-side menggunakan DataTables sesuai implementasi proyek.
+- Jangan memuat seluruh transaksi ke browser hanya untuk melakukan pagination.
+- Gunakan eager loading atau optimasi query yang sesuai untuk mencegah N+1 query.
+- Sediakan aksi melihat detail transaksi menggunakan halaman atau modal yang sesuai dengan pola aplikasi.
+- Jika pengguna membuka detail transaksi, tampilkan item produk, kode produk, satuan, harga jual, kuantitas, subtotal, diskon, dan grand total sesuai data yang tersedia.
 
-These names are illustrative. Before creating a class, inspect the project's existing naming conventions and use case implementations.
+## 7. Laporan Analitis Tambahan
 
-Each use case should have a clear business purpose and an explicit input/output contract.
+Jika struktur aplikasi dan waktu implementasi memungkinkan, tambahkan bagian analitis yang menggunakan filter periode yang sama.
 
-Responsibilities:
+### A. Tren Penjualan
 
-- Coordinate the execution of a business operation.
-- Accept validated input or an appropriate DTO.
-- Invoke repositories through interfaces.
-- Coordinate domain entities and value objects.
-- Enforce application-level business workflow rules.
-- Manage transaction boundaries where appropriate.
-- Return a clearly defined result.
+Tampilkan nilai penjualan berdasarkan hari, minggu, atau bulan sesuai rentang tanggal.
 
-Rules:
+Gunakan `transaction_date` dan `grand_total`.
 
-- Keep each use case focused on one application operation.
-- Do not place HTTP response construction in use cases.
-- Do not access Eloquent models directly when the established architecture requires repository interfaces.
-- Do not duplicate domain rules already implemented in domain entities or domain services.
-- Avoid creating a generic use case that handles unrelated operations.
-- Do not introduce unnecessary service classes when an existing use case is sufficient.
+Pastikan pengelompokan tanggal mengikuti periode yang dipilih. Hindari menampilkan tanggal tanpa transaksi sebagai nilai yang tidak valid.
 
-### 4.5 Repository Pattern responsibilities
+### B. Penjualan Berdasarkan Metode Pembayaran
 
-Repository interfaces define the data access contract used by application and domain logic.
+Tampilkan jumlah transaksi dan total nilai penjualan per `payment_method`.
 
-Repository implementations handle persistence using Eloquent and MySQL.
+Pastikan agregasi tidak menggandakan nilai akibat join dengan detail penjualan.
 
-Responsibilities include:
+### C. Produk Terlaris
 
-- Finding records.
-- Creating records from DTOs or domain data.
-- Updating records where supported by the contract.
-- Deleting records according to business constraints.
-- Querying date ranges and other required filters.
-- Converting database records into domain entities.
-- Handling persistence errors using the established logging convention.
+Tampilkan produk berdasarkan kuantitas terjual atau nilai penjualan.
 
-Repository interfaces must not depend on their concrete implementations.
+Gunakan `sale_details` dan relasi produk. Jelaskan metrik yang digunakan untuk menentukan peringkat.
 
-Use dependency injection and the project's service container bindings to resolve implementations.
+Perhatikan konversi satuan. Jangan membandingkan kuantitas dari satuan berbeda tanpa normalisasi yang benar.
 
-### 4.6 Infrastructure responsibilities
+### D. Penjualan Berdasarkan Kategori
 
-Infrastructure contains persistence implementations and framework integrations.
+Tampilkan nilai penjualan per kategori berdasarkan detail penjualan.
 
-Examples:
+Pastikan satuan penjualan dan perhitungan diskon konsisten dengan aturan transaksi yang ada.
 
-- Repository implementations.
-- Eloquent model integration.
-- Database-specific queries.
-- External package integrations where appropriate.
+### E. Penjualan Berdasarkan Pelanggan atau Kasir
 
-Follow the actual project namespaces. Do not create a new infrastructure directory solely because it appears in this document if the existing project uses another established location.
+Tampilkan ringkasan jumlah transaksi dan nilai penjualan berdasarkan pelanggan atau kasir sesuai kebutuhan laporan.
 
----
+Bagian analitis tambahan tidak boleh menghambat penyelesaian halaman utama. Prioritaskan filter, KPI, tabel, detail transaksi, dan ekspor terlebih dahulu.
 
-## 5. Request-to-Response Workflow
+## 8. Perhitungan Laba Kotor
 
-For typical CRUD operations, follow this flow:
+Laba kotor dapat ditambahkan jika implementasi bisnis dan perhitungan HPP sudah dapat diverifikasi dari kode yang ada.
 
-1. The route directs the request to the appropriate controller.
-2. The controller validates input and enforces access control.
-3. The controller creates or passes the appropriate DTO or input object.
-4. The controller invokes the relevant use case.
-5. The use case coordinates domain behavior and repository interfaces.
-6. The repository implementation performs the persistence operation.
-7. The result is returned to the use case and controller.
-8. The controller returns the appropriate response.
+Tabel `sale_details` memiliki `purchase_price`, sehingga periksa apakah kolom tersebut merupakan snapshot harga pokok per unit pada saat transaksi, dan apakah nilainya menggunakan satuan yang sama dengan `quantity`.
 
-For financial or inventory operations, the use case must coordinate the complete business operation and its transaction boundaries.
+Jika aturan tersebut terverifikasi, pertimbangkan:
 
-Do not bypass the use case layer by having controllers call repository implementations directly when the project's architecture requires use case-based execution.
+- HPP penjualan = jumlah `purchase_price × quantity`, setelah penyesuaian satuan jika diperlukan.
+- Laba kotor = total nilai penjualan bersih detail dikurangi HPP.
+- Margin laba kotor = laba kotor dibagi penjualan bersih, dikalikan 100%, jika penjualan bersih lebih besar dari nol.
 
-Read-only operations must follow the same architectural conventions, even when they require little business logic.
+Sebelum menerapkan rumus, verifikasi:
 
----
+1. Apakah `purchase_price` disimpan per unit penjualan atau per satuan dasar.
+2. Apakah `quantity` dan `multiples_quantity` memiliki hubungan konversi tertentu.
+3. Apakah `sale_details.grand_total` sudah memperhitungkan diskon detail.
+4. Apakah diskon transaksi di `sales.discount` perlu dialokasikan ke detail untuk mendapatkan penjualan bersih yang tepat.
+5. Apakah transaksi menyimpan harga pokok historis atau hanya referensi ke harga produk saat ini.
 
-## 6. PHP Coding Standards
+Jangan menggunakan harga beli produk saat ini untuk menghitung laba historis jika snapshot harga pokok tersedia pada detail transaksi.
 
-- Follow PSR-12.
-- Use explicit namespaces and imports.
-- Define parameter and return types.
-- Use nullable types only where null is valid.
-- Prefer immutable DTOs where appropriate.
-- Use constructor property promotion when it improves clarity.
-- Apply `declare(strict_types=1);` where consistent with the existing codebase.
-- Avoid unexplained magic values.
-- Avoid unnecessary abstractions and duplicated code.
-- Follow the project's existing naming conventions.
+Jika rumus yang benar belum dapat dipastikan, jangan menampilkan KPI laba sebagai angka yang seolah-olah akurat. Catat ketidakpastian tersebut dan laporkan bagian yang memerlukan konfirmasi.
 
-### 6.1 Entities
+Apabila laba kotor diimplementasikan, beri label "Estimasi Laba Kotor" jika data belum mencakup biaya operasional, pajak, retur, atau penyesuaian lain.
 
-Entities represent domain concepts and their identity.
+## 9. Ekspor Excel
 
-Examples:
+Implementasikan ekspor Excel menggunakan Maatwebsite Excel 4.0 yang telah terpasang.
 
-- `SaleEntity`
-- `SaleDetailEntity`
+Ketentuan:
 
-Use the established base entity, `App\Base\Entity`, where applicable.
+- Gunakan filter yang sama dengan halaman laporan.
+- Kolom ekspor harus sesuai dengan data yang ditampilkan pada laporan.
+- Gunakan query yang efisien.
+- Hindari memuat dataset yang besar seluruhnya ke memori jika library menyediakan mekanisme yang lebih sesuai.
+- Terapkan format tanggal dan mata uang yang layak.
+- Gunakan nama file yang informatif, misalnya `laporan-penjualan-YYYYMMDD-YYYYMMDD.xlsx`.
+- Validasi seluruh parameter filter.
+- Terapkan authorization yang sama dengan halaman laporan.
+- Pastikan implementasi sesuai dengan API Maatwebsite Excel 4.0 yang benar-benar tersedia di proyek. Jangan menyalin implementasi versi lama tanpa memeriksa kompatibilitas.
 
-Entities must not perform direct database queries or handle HTTP responses.
+Ekspor harus menghasilkan data sesuai filter yang aktif, bukan sekadar mengekspor halaman DataTables yang sedang terlihat.
 
-### 6.2 DTOs
+## 10. Ekspor PDF
 
-DTOs carry data between application components.
+Jika proyek sudah menggunakan ekspor PDF atau fitur ini dapat diimplementasikan secara konsisten, tambahkan ekspor PDF menggunakan Barryvdh Laravel DomPDF.
 
-Examples:
+Ketentuan:
 
-- `SaleDTO`
-- `SaleDetailDTO`
+- Gunakan Blade view khusus untuk PDF jika sesuai pola proyek.
+- Gunakan layout tabel yang kompatibel dengan DomPDF.
+- Tampilkan judul laporan, periode, waktu pembuatan, filter yang relevan, ringkasan, dan tabel transaksi.
+- Terapkan filter yang sama dengan halaman laporan.
+- Gunakan format Rupiah dan tanggal yang sesuai.
+- Atur ukuran kertas dan orientasi berdasarkan kebutuhan jumlah kolom.
+- Gunakan nama file yang informatif.
+- Ikuti pola respons PDF yang sudah digunakan proyek, baik inline maupun download.
+- Jangan menggunakan Browsershot, Puppeteer, Node.js, npm, atau pendekatan lain yang membutuhkan runtime Node.js.
+- Jangan menambahkan dependency baru jika library yang sudah terpasang mencukupi.
 
-Use `App\Base\DTO` where applicable.
+## 11. Arsitektur dan Struktur Kode
 
-DTOs should have typed constructor properties and remain focused on data transfer.
+Ikuti arsitektur DDD dan pola Repository/Use Case yang sudah digunakan.
 
-Match their properties to the actual domain contracts and database schema. Do not assume that DTOs must duplicate every database column.
+Prinsip implementasi:
 
-### 6.3 Value Objects
+1. Controller bertanggung jawab untuk menerima request, validasi melalui mekanisme yang berlaku, memanggil Use Case, dan menghasilkan respons atau view.
+2. Business logic dan perhitungan laporan ditempatkan di layer yang tepat, bukan ditumpuk di Controller.
+3. Gunakan Repository Interface pada domain/application boundary sesuai pola proyek.
+4. Gunakan implementasi Repository yang sudah ada apabila sesuai. Tambahkan method baru hanya jika memang diperlukan.
+5. Gunakan Entity, DTO, dan Value Object yang relevan.
+6. Jangan menambahkan Entity atau DTO baru jika tidak diperlukan atau bertentangan dengan konvensi proyek.
+7. Gunakan dependency injection atau `app(UseCase::class)` sesuai pola yang benar-benar digunakan proyek.
+8. Jangan melewati Use Case dan Repository hanya demi mempercepat implementasi, kecuali proyek memang memiliki pola query/report khusus yang telah digunakan.
+9. Gunakan Form Request jika itu konvensi proyek.
+10. Gunakan nama class, method, route, namespace, dan file yang konsisten dengan fitur laporan lain.
+11. Pertahankan kontrak respons JSON dan struktur metadata yang digunakan aplikasi.
+12. Jangan mengganti atau merusak implementasi transaksi penjualan yang sudah berjalan.
 
-Use the project's existing value objects when defined.
+Jika perlu membuat query khusus untuk laporan agregat, gunakan pendekatan yang sesuai dengan pemisahan tanggung jawab di proyek. Hindari memaksakan seluruh data laporan menjadi Entity transaksi apabila agregat laporan memiliki struktur yang berbeda.
 
-Examples:
+## 12. Route, Permission, dan Keamanan
 
-- `CustomerSaleValue`
-- `UserSaleValue`
-- `ProductSaleValue`
-- `UnitSaleValue`
+- Tambahkan route laporan penjualan mengikuti konvensi route proyek.
+- Periksa route transaksi penjualan yang sudah ada untuk menentukan penamaan dan pengelompokan route yang konsisten.
+- Terapkan middleware autentikasi, module permission, policy, atau authorization yang sesuai dengan sistem yang sudah digunakan.
+- Jangan mengasumsikan nama permission baru tanpa memeriksa permission yang tersedia.
+- Jika diperlukan permission baru, ikuti mekanisme registrasi permission dan seeder yang digunakan proyek.
+- Validasi semua input filter.
+- Hindari raw SQL yang menggabungkan input pengguna secara langsung.
+- Pastikan detail transaksi dan ekspor hanya dapat diakses oleh pengguna yang berwenang.
+- Jangan mengekspos data pelanggan atau pengguna melebihi kebutuhan laporan.
 
-Preserve their namespaces, construction rules, and validation behavior.
+## 13. Penanganan Error dan Logging
 
-### 6.4 Use cases
+Ikuti mekanisme error handling dan logging yang sudah digunakan aplikasi.
 
-Use case classes must have a clear name and responsibility.
+Khusus Repository, apabila implementasi proyek menggunakan pola `try/catch`, panggil mekanisme `errorLog(__METHOD__, $e->getMessage())` pada penanganan error dan lemparkan kembali exception sesuai pola yang berlaku.
 
-Where consistent with the existing codebase, prefer an explicit public entry-point method such as `execute()`.
+Jangan menelan exception secara diam-diam atau mengembalikan nilai kosong yang dapat membuat laporan tampak valid padahal query gagal.
 
-Example signature only:
+Tampilkan pesan kesalahan yang sesuai untuk pengguna dan simpan detail teknis melalui mekanisme logging proyek.
 
-```php
-public function execute(SaleDTO $dto): SaleEntity;
-```
+## 14. Soft Delete dan Integritas Agregasi
 
-The actual signature must reflect the operation, existing contracts, and required return type.
+Perhatikan kolom `deleted_at` pada tabel transaksi dan detail transaksi.
 
-Inject dependencies through the constructor. Prefer repository interfaces over concrete repository implementations.
+- Jangan memasukkan transaksi yang telah dihapus secara lunak ke laporan standar, kecuali aplikasi secara eksplisit memiliki kebutuhan laporan arsip.
+- Periksa global scope dan implementasi SoftDeletes pada model.
+- Pastikan detail transaksi yang dihapus tidak ikut terhitung jika sesuai dengan aturan bisnis aplikasi.
+- Pastikan join dengan pelanggan, produk, kategori, atau satuan tidak menghilangkan transaksi yang valid tanpa alasan.
+- Pastikan transaksi dengan `customer_id` null tetap dapat muncul.
+- Jangan menggandakan `grand_total` transaksi ketika menggabungkan `sales` dengan `sale_details`.
+- Untuk KPI dan agregasi, gunakan query yang sesuai agar total tidak berubah akibat multiplicity relasi.
 
-### 6.5 Repository interfaces and implementations
+## 15. Batasan dan Asumsi Bisnis
 
-Preserve the separation between repository interfaces and implementations.
+Jangan membuat asumsi berikut tanpa bukti dari implementasi:
 
-Examples:
+- `total_product` selalu berarti jumlah produk unik.
+- `total_quantity` selalu setara dengan jumlah unit fisik.
+- `paid_amount` selalu berarti uang bersih yang diterima.
+- `sales.discount` dan `sale_details.discount` selalu memiliki jenis dan satuan yang sama.
+- Semua nilai `purchase_price` menggunakan satuan yang sama dengan `quantity`.
+- `customer_id` null selalu berarti pelanggan umum.
+- Penjualan bersih sudah memperhitungkan retur.
+- Laba kotor merupakan laba bersih setelah seluruh biaya.
 
-- `SaleRepositoryInterface`
-- `SaleDetailRepositoryInterface`
-- `SaleRepository`
-- `SaleDetailRepository`
+Tidak ada tabel retur yang tercantum dalam struktur yang diberikan. Karena itu, jangan menyatakan laporan sudah dikurangi retur kecuali ditemukan mekanisme retur lain dalam proyek.
 
-Use existing base repository conventions, including `App\Base\Repository`, where applicable.
+Tidak ada kolom status pembayaran atau tabel riwayat pembayaran dalam struktur yang diberikan. Jangan membuat laporan piutang atau status lunas berdasarkan tebakan. Jika aplikasi memiliki mekanisme tambahan yang relevan, gunakan hanya setelah diverifikasi.
 
-Rules:
+Jika ada definisi bisnis yang belum jelas, periksa kode transaksi, migration, model, dan Use Case yang ada terlebih dahulu. Jika tetap tidak dapat dipastikan, catat temuan tersebut dan ajukan pertanyaan yang spesifik sebelum menerapkan perhitungan yang berisiko salah.
 
-- Implement every required interface method.
-- Match parameter and return types exactly.
-- Return domain entities when required by the contract.
-- Keep database operations inside repository implementations.
-- Follow established model-to-entity conversion conventions.
-- Do not change public signatures without reviewing affected callers.
+## 16. Testing dan Verifikasi
 
-### 6.6 Eloquent models
+Buat atau perbarui test sesuai framework dan pola pengujian proyek.
 
-Inspect migrations and the actual schema before defining model properties, relationships, casts, or queries.
+Minimal verifikasi:
 
-Some identifiers use `CHAR(26)`. Do not assume every primary key is an auto-incrementing integer.
+1. Laporan menampilkan transaksi sesuai periode.
+2. Filter pelanggan berfungsi.
+3. Filter kasir berfungsi.
+4. Filter metode pembayaran berfungsi.
+5. Pencarian invoice berfungsi.
+6. Filter kategori dan produk berfungsi tanpa menggandakan transaksi.
+7. KPI konsisten dengan hasil query.
+8. Transaksi tanpa pelanggan ditangani dengan benar.
+9. Soft-deleted records tidak masuk dalam laporan standar.
+10. Pagination dan sorting server-side berfungsi.
+11. Detail transaksi dapat dibuka oleh pengguna yang berwenang.
+12. Ekspor Excel menggunakan filter yang sama dengan halaman.
+13. Ekspor PDF, jika diimplementasikan, menghasilkan PDF valid.
+14. Perhitungan laba kotor, jika diimplementasikan, sesuai dengan aturan satuan dan diskon yang sudah diverifikasi.
+15. Pengguna tanpa permission tidak dapat mengakses halaman atau ekspor.
+16. Rentang tanggal yang tidak valid ditolak dengan benar.
+17. Dataset kosong ditangani dengan benar.
+18. Query agregat tidak menghasilkan nilai ganda akibat join.
 
-Preserve existing key generation, timestamps, decimal precision, foreign keys, and mass-assignment protections.
+Jalankan test yang relevan dan periksa hasilnya. Jangan mengklaim pengujian berhasil jika belum benar-benar dijalankan.
 
----
+## 17. Urutan Pengerjaan
 
-## 7. Error Handling and Repository Logging
+Lakukan pengerjaan secara bertahap:
 
-Repository implementations must use the existing `errorLog()` method inside `try-catch` blocks for operations that can fail, following the established project convention.
+**Tahap 1 — Audit**
 
-Example:
+- Pelajari arsitektur proyek.
+- Temukan implementasi laporan pembelian atau laporan lain sebagai referensi.
+- Periksa model, relasi, Use Case, Repository, route, permission, dan library ekspor.
+- Laporkan temuan dan rencana implementasi singkat.
 
-```php
-try {
-    // Perform the repository operation.
-} catch (\Throwable $e) {
-    $this->errorLog(__METHOD__, $e->getMessage());
+**Tahap 2 — Backend**
 
-    throw $e;
-}
-```
+- Implementasikan query laporan.
+- Implementasikan filter.
+- Implementasikan KPI.
+- Implementasikan pagination server-side.
+- Implementasikan detail transaksi dan ekspor.
 
-Rules:
+**Tahap 3 — Frontend**
 
-- Use `__METHOD__` to identify the failing method.
-- Record errors through the established logging mechanism.
-- Rethrow the original exception unless the existing contract explicitly requires another strategy.
-- Do not silently swallow exceptions.
-- Do not return fabricated success results after failed operations.
-- Avoid exposing internal exception details to users.
-- Do not log credentials, access tokens, or other sensitive information.
+- Buat halaman Blade.
+- Tambahkan filter dan KPI.
+- Implementasikan DataTables dan AJAX sesuai pola proyek.
+- Tambahkan aksi detail dan ekspor.
 
-Use cases must not duplicate repository error logging indiscriminately. Follow the existing exception-handling responsibilities at each architectural layer.
+**Tahap 4 — Analisis Tambahan**
 
----
+- Tambahkan tren penjualan dan ringkasan berdasarkan metode pembayaran, produk, kategori, pelanggan, atau kasir jika sesuai dengan struktur proyek.
+- Tambahkan estimasi laba kotor hanya jika rumusnya telah terverifikasi.
 
-## 8. Database and Transaction Integrity
+**Tahap 5 — Verifikasi**
 
-### 8.1 Database transactions
+- Jalankan test dan pemeriksaan kode.
+- Perbaiki error yang ditemukan.
+- Periksa route, permission, query, dan hasil ekspor.
+- Pastikan fitur transaksi penjualan yang sudah ada tetap berfungsi.
 
-Use `DB::transaction()` or the established transaction abstraction for operations that modify multiple related records.
+## 18. Aturan Pelaksanaan
 
-Examples:
+- Kerjakan langsung pada codebase yang sedang dibuka di Claude Code.
+- Jangan hanya memberikan contoh kode atau tutorial.
+- Jangan membuat ulang struktur proyek tanpa alasan kuat.
+- Jangan mengganti library atau menambahkan dependency yang tidak diperlukan.
+- Jangan mengubah skema database kecuali benar-benar diperlukan dan disertai alasan.
+- Jangan menambahkan kolom atau tabel untuk mengatasi asumsi yang belum terverifikasi.
+- Jangan mengubah fitur transaksi penjualan yang sudah ada jika tidak diperlukan.
+- Gunakan kode yang siap dipelihara, konsisten, dan sesuai konvensi proyek.
+- Jika terdapat beberapa alternatif implementasi, pilih yang paling konsisten dengan pola proyek.
+- Jika ada konflik antara instruksi ini dan implementasi aktual, periksa konteks proyek terlebih dahulu dan jelaskan konflik tersebut.
+- Jangan menganggap fitur selesai hanya karena halaman dapat dibuka; pastikan perhitungan, filter, otorisasi, dan ekspor benar.
 
-- Creating a sale and its details.
-- Creating a purchase and its details.
-- Finalizing a sales return.
-- Applying stock opname adjustments.
+## 19. Laporan Akhir Implementasi
 
-The operation must either complete all required changes or roll them back.
+Setelah selesai, berikan ringkasan yang mencakup:
 
-Transaction ownership should be clear. Avoid unnecessary nested transactions or splitting a single atomic business operation across unrelated transaction boundaries.
+1. Fitur yang berhasil diimplementasikan.
+2. File yang dibuat dan diubah beserta tanggung jawabnya.
+3. Route yang ditambahkan.
+4. Use Case dan Repository yang dibuat atau diubah.
+5. Filter dan KPI yang tersedia.
+6. Mekanisme ekspor yang berhasil diimplementasikan.
+7. Test yang dijalankan dan hasilnya.
+8. Asumsi bisnis yang berhasil diverifikasi.
+9. Hal yang belum diimplementasikan beserta alasannya.
+10. Potensi perbaikan atau pengembangan lanjutan.
 
-### 8.2 Inventory integrity
-
-- Validate stock before finalizing sales.
-- Prevent negative stock unless explicitly permitted.
-- Apply stock changes atomically.
-- Handle concurrent requests using appropriate locking or atomic conditional updates.
-- Prevent duplicate stock movements on retries.
-- Preserve consistency between stock balances and stock movement records where both are maintained.
-- Ensure stock opname adjustments are applied only once.
-
-### 8.3 Financial calculations
-
-- Respect the precision and scale of database decimal columns.
-- Avoid relying on binary floating-point arithmetic for exact financial calculations.
-- Follow the project's established decimal arithmetic strategy.
-- Define rounding rules consistently.
-- Recalculate authoritative totals on the server.
-- Keep persisted totals consistent with transaction details.
-
-### 8.4 Invoice numbers
-
-Invoice numbers must follow the established format, such as `INV2610-00001`.
-
-Generation must account for the year and month and reset the sequence at the start of a new month.
-
-Use a concurrency-safe strategy backed by suitable database constraints. Do not rely exclusively on an unprotected `MAX()` query.
-
-### 8.5 Schema changes
-
-Before changing the schema:
-
-1. Inspect existing migrations and models.
-2. Identify affected entities, DTOs, use cases, repository contracts, and implementations.
-3. Review relationships and foreign keys.
-4. Create migrations following Laravel conventions.
-5. Consider indexes and unique constraints.
-6. Preserve existing data.
-7. Test the relevant operation and rollback behavior.
-
-Never perform destructive production database operations without explicit authorization.
-
----
-
-## 9. Frontend Standards
-
-### Blade and Bootstrap
-
-- Use Blade for server-rendered views.
-- Use Bootstrap 5 components and utilities.
-- Reuse established layouts and partials.
-- Escape user-generated content by default.
-- Keep business logic out of views.
-
-### jQuery
-
-- Use the installed jQuery 4 API.
-- Follow existing initialization and event delegation conventions.
-- Prevent duplicate event handlers.
-- Handle dynamic form validation and server responses consistently.
-
-### DataTables
-
-Use Yajra DataTables for server-side processing where appropriate.
-
-- Apply filtering, sorting, pagination, and searching at the database level.
-- Validate filter inputs and allowed sort columns.
-- Avoid loading the full dataset into memory.
-- Escape user-generated content.
-- Follow established JSON response contracts.
-
-### Bootbox
-
-Use Bootbox 6.0.4 for alerts and confirmation dialogs.
-
-Use confirmations for consequential operations where appropriate. Client-side confirmation does not replace server-side validation or authorization.
-
----
-
-## 10. PDF and Excel
-
-### PDF
-
-Use `barryvdh/laravel-dompdf` 3.1 for receipts and reports.
-
-- Prepare data in the appropriate application or presentation workflow.
-- Keep complex database queries out of Blade PDF templates.
-- Follow established page sizes, margins, and formatting.
-- Test empty datasets and long content.
-
-### Excel
-
-Use `maatwebsite/excel` 4.0 for import and export.
-
-- Follow the installed package API.
-- Separate validation and transformation from controller logic.
-- Validate imported rows.
-- Provide meaningful validation errors.
-- Use chunking or queued processing when appropriate.
-- Consider atomicity for bulk imports.
-- Prevent spreadsheet formula injection for untrusted exported values.
-
----
-
-## 11. Security
-
-- Enforce authentication and authorization on the server.
-- Validate all submitted data.
-- Protect state-changing requests against CSRF.
-- Prevent mass-assignment vulnerabilities.
-- Use Eloquent or parameterized queries.
-- Never trust client-calculated prices, totals, or stock quantities.
-- Validate access to individual transaction records.
-- Do not expose internal exceptions in production responses.
-- Keep credentials and secrets out of source control.
-
-Follow the existing authorization and permission architecture.
-
----
-
-## 12. Testing
-
-Add or update tests when business behavior changes.
-
-Prioritize:
-
-- Entity and DTO construction.
-- Use case execution and dependency behavior.
-- Repository persistence and retrieval.
-- Dependency injection and interface bindings.
-- Invoice generation across month changes.
-- Duplicate and concurrent invoice generation where feasible.
-- Purchase and sales stock movements.
-- Insufficient stock validation.
-- Sales return limits.
-- Stock opname adjustments.
-- Transaction rollback.
-- Authorization and validation.
-- Report filters and totals.
-- PDF and Excel generation.
-
-Use the project's existing testing framework, factories, and test conventions.
-
-Run relevant tests and configured quality checks before reporting completion. Never claim a test passed unless it was actually executed successfully.
-
----
-
-## 13. Mandatory Workflow for Claude Code
-
-For every task, follow these steps.
-
-### Step 1: Understand the requirement
-
-Identify the expected behavior, affected modules, and business rules.
-
-Ask for clarification when an ambiguity could affect financial calculations, inventory behavior, or public interfaces.
-
-### Step 2: Inspect the existing implementation
-
-Review the relevant:
-
-- Routes and controllers.
-- Form Requests.
-- Use cases and application services.
-- Entities, DTOs, and value objects.
-- Repository interfaces and implementations.
-- Eloquent models and migrations.
-- Service provider bindings.
-- Blade templates and JavaScript.
-- Tests and dependency versions.
-
-Do not create new architectural conventions before checking whether an equivalent implementation already exists.
-
-### Step 3: Determine the affected layers
-
-Identify the minimum set of components that need modification.
-
-For a typical feature, consider the controller, use case, domain contracts, repository implementation, persistence model, and tests as appropriate.
-
-Not every operation requires changes to every layer.
-
-### Step 4: Implement
-
-- Follow MVC, DDD, and the use case-based repository architecture.
-- Keep controllers focused on HTTP concerns.
-- Keep business workflows in use cases and domain logic.
-- Access persistence through repository interfaces when required.
-- Apply appropriate transaction boundaries.
-- Preserve established naming and type contracts.
-- Add or update tests.
-
-### Step 5: Verify
-
-Run applicable tests, formatting, and static analysis checks.
-
-Inspect the final diff and check for unrelated modifications.
-
-### Step 6: Report
-
-Summarize:
-
-- Files created or modified.
-- Responsibilities of the new or updated components.
-- Important business rules.
-- Tests and checks actually executed.
-- Remaining assumptions or limitations.
-
----
-
-## 14. Prohibited Practices
-
-Claude Code must not:
-
-- Bypass the use case layer when the established architecture requires it.
-- Put complex business logic in controllers or Blade templates.
-- Let domain entities depend directly on Eloquent or HTTP requests.
-- Put database persistence logic in DTOs.
-- Couple repository interfaces to concrete implementations.
-- Invent schema fields or relationships.
-- Modify inventory outside the appropriate business workflow.
-- Trust client-calculated monetary values.
-- Use unsafe invoice number generation.
-- Swallow exceptions or fabricate successful results.
-- Change dependencies without authorization.
-- Refactor unrelated modules unnecessarily.
-- Execute destructive commands without explicit authorization.
-- Claim that tests or commands succeeded when they were not executed.
-
----
-
-## 15. Existing Project Conventions
-
-Preserve these conventions where they exist in the codebase:
-
-- Base DTO: `App\Base\DTO`
-- Base Entity: `App\Base\Entity`
-- Base Repository: `App\Base\Repository`
-- Repository error logging through `errorLog()`
-- Domain entities separated from application DTOs.
-- Repository interfaces separated from implementations.
-- Use cases coordinating application operations.
-- Dependency injection for use case and repository dependencies.
-- Typed constructors and immutable DTOs where appropriate.
-- `DateTimeInterface` for date/time properties when required.
-- Domain value objects for customer, user, product, and unit references.
-- Existing conversion conventions such as `fromModel()` and `toArray()`.
-
-Treat the actual class definitions and tests as authoritative contracts.
-
----
-
-## 16. Definition of Done
-
-A task is complete when all applicable conditions are satisfied:
-
-- [ ] The requested functionality works as specified.
-- [ ] MVC responsibilities are preserved.
-- [ ] Application workflows follow the use case-based architecture.
-- [ ] Domain and infrastructure responsibilities remain separated.
-- [ ] Repository interfaces and implementations are consistent.
-- [ ] Database and inventory integrity are preserved.
-- [ ] Financial calculations follow established rules.
-- [ ] Validation, authentication, and authorization are enforced.
-- [ ] Exceptions are handled appropriately.
-- [ ] Relevant tests are added or updated.
-- [ ] Applicable checks have been executed.
-- [ ] No unrelated changes or unauthorized destructive operations were introduced.
-- [ ] Remaining limitations are reported.
-
----
-
-## 17. Final Instructions
-
-This document defines the general development conventions for the project.
-
-The priority order is:
-
-1. Explicit requirements from the user.
-2. Existing database schema and confirmed business rules.
-3. Existing public interfaces, tests, and architectural contracts.
-4. The MVC, DDD, use case, and repository conventions defined here.
-5. General Laravel and PHP best practices.
-
-Inspect the codebase before making architectural decisions. If an existing implementation conflicts with this document, identify the discrepancy before making significant changes.
-
-**Always prioritize business correctness, inventory integrity, financial accuracy, security, and maintainability.**
+Mulai dengan mengaudit codebase dan menemukan pola implementasi yang paling relevan. Setelah itu, lanjutkan implementasi berdasarkan hasil audit tersebut.
