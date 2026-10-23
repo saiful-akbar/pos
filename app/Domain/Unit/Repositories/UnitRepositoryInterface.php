@@ -26,6 +26,11 @@ interface UnitRepositoryInterface
     public function findById(string $id): ?UnitEntity;
 
     /**
+     * Mengambil data unit berdasarkan kode.
+     */
+    public function findByCode(string $code): ?UnitEntity;
+
+    /**
      * Update
      */
     public function update(string $id, UnitDTO $value): int;

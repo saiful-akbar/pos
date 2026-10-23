@@ -7,10 +7,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MonthlyStockOpname extends Model
+class DailyStockDetail extends Model
 {
     use HasUlids, SoftDeletes;
 
@@ -40,7 +39,7 @@ class MonthlyStockOpname extends Model
      *
      * @var string
      */
-    protected $table = 'monthly_stock_opnames';
+    protected $table = 'daily_stock_details';
 
     /**
      * Primary key
@@ -62,36 +61,36 @@ class MonthlyStockOpname extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'daily_stock_opname_id',
-        'year',
-        'month',
-        'total_product',
-        'total_quantity',
-        'notes',
+        'daily_stock_id',
+        'product_id',
+        'unit_id',
+        'quantity',
+        'multiples_quantity',
     ];
 
     /**
-     * Get all of the details for the MonthlyStockOpname
+     * Get the dailyStock that owns the DailyStockOpnameDetail
      */
-    public function details(): HasMany
+    public function dailyStock(): BelongsTo
     {
-        return $this->hasMany(MonthlyStockOpname::class, 'monthly_stock_opname_id', 'id');
+        return $this->belongsTo(DailyStock::class, 'daily_stock_id', 'id');
     }
 
     /**
-     * Get the user that owns the MonthlyStockOpname
+     * Get the product that owns the DailyStockOpnameDetail
      */
-    public function user(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 
     /**
-     * Get the dailyStock that owns the MonthlyStockOpname
+     * Get the unit that owns the DailyStockDetail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function daily(): BelongsTo
+    public function unit(): BelongsTo
     {
-        return $this->belongsTo(DailyStockOpname::class, 'daily_stock_opname_id', 'id');
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 }

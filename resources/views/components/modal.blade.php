@@ -27,7 +27,11 @@
         <div class="modal-content border">
             <div class="modal-header">
                 <h1 class="modal-title fs-5">{{ $title }}</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                @isset($headerAction)
+                    {{ $headerAction }}
+                @else
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                @endisset
             </div>
 
             <div class="modal-body">

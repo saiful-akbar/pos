@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Price;
 use App\Models\Product;
 use App\Models\Unit;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
@@ -16,373 +18,94 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = Category::all(columns: ['id', 'code']);
-        $units = Unit::all(columns: ['id', 'code']);
+        DB::transaction(function (): void {
+            // Ambil kategori dan unit berdasarkan kode (hasil CategorySeeder dan UnitSeeder).
+            $categories = Category::query()->pluck('id', 'code');
+            $units = Unit::query()->pluck('id', 'code');
 
-        foreach ($this->data() as $data) {
-            $category = $categories->firstWhere('code', '=', $data['category_code']);
-            $unit = $units->firstWhere('code', '=', $data['unit_code']);
+            foreach ($this->data() as $data) {
+                // Buat produk (firstOrCreate agar seeder aman dijalankan ulang).
+                $product = Product::query()->firstOrCreate(
+                    ['code' => $data['code']],
+                    [
+                        'category_id' => $categories[$data['category']],
+                        'name' => $data['name'],
+                        'minimum_stock' => 10,
+                        'current_stock' => 100,
+                        'discount' => 0,
+                        'is_active' => true,
+                    ],
+                );
 
-            Product::query()->create([
-                'category_id' => $category->id,
-                'unit_id' => $unit->id,
-                'code' => $data['code'],
-                'barcode' => $data['barcode'],
-                'name' => $data['name'],
-                'purchase_price' => $data['purchase_price'],
-                'selling_price' => $data['selling_price'],
-                'discount' => $data['discount'],
-                'minimum_stock' => $data['minimum_stock'],
-                'current_stock' => $data['current_stock'],
-                'is_active' => $data['is_active'],
-            ]);
-        }
+                // Buat 3 harga untuk 3 unit berbeda; unit pertama (PCS) menjadi default.
+                foreach ($this->units($data['purchase_price']) as $index => $unit) {
+                    Price::query()->firstOrCreate(
+                        [
+                            'product_id' => $product->id,
+                            'unit_id' => $units[$unit['code']],
+                        ],
+                        [
+                            'multiples_quantity' => $unit['multiples_quantity'],
+                            'purchase_price' => $unit['purchase_price'],
+                            'selling_price' => $unit['selling_price'],
+                            'is_default' => $index === 0,
+                        ],
+                    );
+                }
+            }
+        });
     }
 
     /**
-     * Data
+     * Tiga unit per produk dengan harga berbeda, dihitung dari harga beli per PCS.
+     *
+     * @return array<int, array{code: string, multiples_quantity: int, purchase_price: int, selling_price: int}>
+     */
+    private function units(int $purchasePrice): array
+    {
+        return [
+            // 1 PCS.
+            [
+                'code' => 'PCS',
+                'multiples_quantity' => 1,
+                'purchase_price' => $purchasePrice,
+                'selling_price' => (int) round($purchasePrice * 1.20),
+            ],
+            // 1 Renceng = 10 PCS (harga sedikit lebih murah per PCS).
+            [
+                'code' => 'RENCENG',
+                'multiples_quantity' => 10,
+                'purchase_price' => $purchasePrice * 10,
+                'selling_price' => (int) round($purchasePrice * 10 * 1.15),
+            ],
+            // 1 Box = 40 PCS (harga paling murah per PCS).
+            [
+                'code' => 'BOX',
+                'multiples_quantity' => 40,
+                'purchase_price' => $purchasePrice * 40,
+                'selling_price' => (int) round($purchasePrice * 40 * 1.10),
+            ],
+        ];
+    }
+
+    /**
+     * Data dummy produk.
+     *
+     * @return array<int, array{code: string, name: string, category: string, purchase_price: int}>
      */
     private function data(): array
     {
         return [
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'BWBOM',
-                'barcode' => uuid(),
-                'name' => 'Bawang Bombai',
-                'purchase_price' => 18500,
-                'selling_price' => 25000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'BWM',
-                'barcode' => uuid(),
-                'name' => 'Bawang Merah',
-                'purchase_price' => 27000,
-                'selling_price' => 30000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'BWP',
-                'barcode' => uuid(),
-                'name' => 'Bawang Putih',
-                'purchase_price' => 27000,
-                'selling_price' => 30000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0004',
-                'unit_code' => 'KG',
-                'code' => 'BJWJN',
-                'barcode' => uuid(),
-                'name' => 'Biji Wijen',
-                'purchase_price' => 50000,
-                'selling_price' => 53000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'RENCENG',
-                'code' => 'DESBUKBAL',
-                'barcode' => uuid(),
-                'name' => 'Desaku Bubuk Balado 25 Gram',
-                'purchase_price' => 22000,
-                'selling_price' => 23000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'RENCENG',
-                'code' => 'DESKET15GR',
-                'barcode' => uuid(),
-                'name' => 'Desaku Ketumbar E1000 15 Gram',
-                'purchase_price' => 9500,
-                'selling_price' => 12000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'RENCENG',
-                'code' => 'DESKUN10GR',
-                'barcode' => uuid(),
-                'name' => 'Desaku Kunyit 10 Gram',
-                'purchase_price' => 9500,
-                'selling_price' => 12000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'RENCENG',
-                'code' => 'DESMAR12.5',
-                'barcode' => uuid(),
-                'name' => 'Desaku Marinasi New 12.5 Gram',
-                'purchase_price' => 10000,
-                'selling_price' => 12000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'GRMBT',
-                'barcode' => uuid(),
-                'name' => 'Garam Bata',
-                'purchase_price' => 10000,
-                'selling_price' => 12000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'GRMBE',
-                'barcode' => uuid(),
-                'name' => 'Garam Segitiga Emas',
-                'purchase_price' => 1341,
-                'selling_price' => 70000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'GRMLBLB',
-                'barcode' => uuid(),
-                'name' => 'Garam Laba-Laba',
-                'purchase_price' => 3200,
-                'selling_price' => 3500,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'JAH',
-                'barcode' => uuid(),
-                'name' => 'Jahe',
-                'purchase_price' => 17000,
-                'selling_price' => 20000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0001',
-                'unit_code' => 'KG',
-                'code' => 'KCIJO',
-                'barcode' => uuid(),
-                'name' => 'Kacang Hijau',
-                'purchase_price' => 28000,
-                'selling_price' => 29000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'KCPSED725GR',
-                'barcode' => uuid(),
-                'name' => 'Kecap Sedap 725 Gram',
-                'purchase_price' => 20000,
-                'selling_price' => 22000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'KMR',
-                'barcode' => uuid(),
-                'name' => 'Kemiri',
-                'purchase_price' => 41000,
-                'selling_price' => 45000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'KTMBRBJ',
-                'barcode' => uuid(),
-                'name' => 'Ketumbar Biji',
-                'purchase_price' => 32000,
-                'selling_price' => 35000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'KTMBRBBK',
-                'barcode' => uuid(),
-                'name' => 'Ketumbar Bubuk',
-                'purchase_price' => 32000,
-                'selling_price' => 35000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'BKG PW',
-                'barcode' => uuid(),
-                'name' => 'Koe Poe Baking Powder 45 Gram',
-                'purchase_price' => 5833,
-                'selling_price' => 7000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'LDBJ',
-                'barcode' => uuid(),
-                'name' => 'Lada Biji',
-                'purchase_price' => 168000,
-                'selling_price' => 170000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'RENCENG',
-                'code' => 'LDM2.5',
-                'barcode' => uuid(),
-                'name' => 'Ladaku Merica Bubuk 2.5 Gram',
-                'purchase_price' => 9500,
-                'selling_price' => 11000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'KG',
-                'code' => 'LGKS',
-                'barcode' => uuid(),
-                'name' => 'Lengkoas',
-                'purchase_price' => 5000,
-                'selling_price' => 8000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0006',
-                'unit_code' => 'PCS',
-                'code' => 'MMLM610',
-                'barcode' => uuid(),
-                'name' => 'Mama Lemon Nipis 610 Mililiter',
-                'purchase_price' => 8925,
-                'selling_price' => 10000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'MMY1KG',
-                'barcode' => uuid(),
-                'name' => 'Mamayo Mayones 1 Kiligram',
-                'purchase_price' => 22083,
-                'selling_price' => 24000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'MMYMEN500',
-                'barcode' => uuid(),
-                'name' => 'Mamayo Mentai 500 Gram',
-                'purchase_price' => 24000,
-                'selling_price' => 26000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'MASAY123GR',
-                'barcode' => uuid(),
-                'name' => 'Masako Ayam 123 Gram',
-                'purchase_price' => 4396,
-                'selling_price' => 5000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
-            [
-                'category_code' => '0003',
-                'unit_code' => 'PCS',
-                'code' => 'MASAY1KG',
-                'barcode' => uuid(),
-                'name' => 'Masako Ayam 1 Kilogram',
-                'purchase_price' => 31920,
-                'selling_price' => 36000,
-                'discount' => 0,
-                'minimum_stock' => 0,
-                'current_stock' => 0,
-                'is_active' => true,
-            ],
+            ['code' => 'P0001', 'name' => 'Mie Instan Goreng', 'category' => 'A0001', 'purchase_price' => 2800],
+            ['code' => 'P0002', 'name' => 'Biskuit Kelapa', 'category' => 'A0001', 'purchase_price' => 1500],
+            ['code' => 'P0003', 'name' => 'Wafer Cokelat', 'category' => 'A0001', 'purchase_price' => 2000],
+            ['code' => 'P0004', 'name' => 'Air Mineral 600ml', 'category' => 'A0002', 'purchase_price' => 2500],
+            ['code' => 'P0005', 'name' => 'Teh Botol', 'category' => 'A0002', 'purchase_price' => 4000],
+            ['code' => 'P0006', 'name' => 'Kopi Sachet', 'category' => 'A0002', 'purchase_price' => 1200],
+            ['code' => 'P0007', 'name' => 'Kecap Manis Sachet', 'category' => 'A0003', 'purchase_price' => 900],
+            ['code' => 'P0008', 'name' => 'Saus Sambal Sachet', 'category' => 'A0003', 'purchase_price' => 800],
+            ['code' => 'P0009', 'name' => 'Meses Cokelat', 'category' => 'A0004', 'purchase_price' => 1000],
+            ['code' => 'P0010', 'name' => 'Sabun Cuci Piring', 'category' => 'A0006', 'purchase_price' => 5500],
         ];
     }
 }

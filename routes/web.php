@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DailyStockController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -241,6 +242,23 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/carts/{cartId}/details', 'storeCartDetail')->name('.carts.details.store')->middleware("$module,create");
                 Route::patch('/carts/{cartId}/details/{cartDetailId}/quantity', 'updateCartDetailQuantity')->name('.carts.details.update.quantity')->middleware("$module,create,update");
                 Route::delete('/carts/{cartId}/details/{cartDetailId}', 'deleteCartDetail')->name('.carts.details.delete')->middleware("$module,create,delete");
+            });
+    });
+
+    Route::name('stocks')->prefix('stocks')->group(function (): void {
+        Route::controller(DailyStockController::class)
+            ->name('.daily')
+            ->prefix('daily')
+            ->group(function (): void {
+                $module = 'module:stocks.daily';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/import/template', 'downloadTemplateImport')->name('.import.template')->middleware("$module,create");
+                Route::post('/import', 'importExcel')->name('.import')->middleware("$module,create");
+                Route::get('/{dailyStockId}/details', 'details')->name('.details')->middleware("$module,read");
+                Route::get('/{dailyStockId}/details/export', 'exportDetails')->name('.details.export')->middleware("$module,read");
+                Route::post('/{dailyStockId}/monthly', 'storeMonthly')->name('.monthly.store')->middleware("$module,update");
+                Route::patch('/{dailyStockId}/activate', 'activate')->name('.activate')->middleware("$module,update");
             });
     });
 });

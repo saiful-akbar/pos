@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MonthlyStockOpnameDetail extends Model
+class MonthlyStockDetail extends Model
 {
     use HasUlids, SoftDeletes;
 
@@ -39,7 +39,7 @@ class MonthlyStockOpnameDetail extends Model
      *
      * @var string
      */
-    protected $table = 'monthly_stock_opname_details';
+    protected $table = 'monthly_stock_details';
 
     /**
      * Primary key
@@ -61,24 +61,36 @@ class MonthlyStockOpnameDetail extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'monthly_stock_opname_id',
+        'monthly_stock_id',
         'product_id',
+        'unit_id',
         'quantity',
+        'multiples_quantity',
     ];
 
     /**
-     * Get the monthlyStockOpname that owns the DailyStockOpnameDetail
+     * Get the monthlyStock that owns the DailyStockDetail
      */
-    public function monthlyStockOpname(): BelongsTo
+    public function monthlyStock(): BelongsTo
     {
-        return $this->belongsTo(MonthlyStockOpname::class, 'monthly_stock_opname_id', 'id');
+        return $this->belongsTo(MonthlyStock::class, 'monthly_stock_id', 'id');
     }
 
     /**
-     * Get the product that owns the MonthlyStockOpnameDetail
+     * Get the product that owns the MonthlyStockDetail
      */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get the unit that owns the MonthlyStockDetail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 }

@@ -13,30 +13,22 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('monthly_stock_opnames', function (Blueprint $table) {
+        Schema::create('daily_stocks', function (Blueprint $table) {
             $table->ulid('id')->primary();
-
-            $table->foreignUlid('daily_stock_opname_id')
-                ->constrained('daily_stock_opnames', 'id')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
 
             $table->foreignUlid('user_id')
                 ->constrained('users', 'id')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-            $table->year('year');
-            $table->unsignedTinyInteger('month');
+            $table->date('date');
             $table->decimal('total_product', 15, 2)->default(0);
             $table->decimal('total_quantity', 15, 2)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('year');
-            $table->index('month');
-            $table->index(['year', 'month']);
+            $table->index(['date']);
         });
     }
 
@@ -45,6 +37,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monthly_stock_opnames');
+        Schema::dropIfExists('daily_stocks');
     }
 };

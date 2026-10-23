@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DailyStockOpname extends Model
+class MonthlyStock extends Model
 {
     use HasUlids, SoftDeletes;
 
@@ -40,7 +40,7 @@ class DailyStockOpname extends Model
      *
      * @var string
      */
-    protected $table = 'daily_stock_opnames';
+    protected $table = 'monthly_stocks';
 
     /**
      * Primary key
@@ -63,22 +63,24 @@ class DailyStockOpname extends Model
      */
     protected $fillable = [
         'user_id',
-        'date',
+        'daily_stock_id',
+        'year',
+        'month',
         'total_product',
         'total_quantity',
         'notes',
     ];
 
     /**
-     * Get all of the comments for the Customer
+     * Get all of the details for the MonthlyStock
      */
     public function details(): HasMany
     {
-        return $this->hasMany(DailyStockOpnameDetail::class, 'daily_stock_opname_id', 'id');
+        return $this->hasMany(MonthlyStockDetail::class, 'monthly_stock_id', 'id');
     }
 
     /**
-     * Get the user that owns the DailyStockOpname
+     * Get the user that owns the MonthlyStock
      */
     public function user(): BelongsTo
     {
@@ -86,10 +88,10 @@ class DailyStockOpname extends Model
     }
 
     /**
-     * Get the monthlyStock that owns the DailyStockOpname
+     * Get the dailyStock that owns the MonthlyStock
      */
-    public function monthlyStock(): BelongsTo
+    public function daily(): BelongsTo
     {
-        return $this->belongsTo(MonthlyStockOpname::class, 'daily_stock_opname_id', 'id');
+        return $this->belongsTo(DailyStock::class, 'daily_stock_id', 'id');
     }
 }

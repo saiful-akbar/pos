@@ -121,4 +121,14 @@ class Unit extends Model
     {
         return $this->hasMany(SaleReturnDetail::class, 'unit_id', 'id');
     }
+
+    /**
+     * Get all of the dailyStockDetails for the Unit
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function dailyStockDetails(): HasMany
+    {
+        return $this->hasMany(DailyStockDetail::class, 'unit_id', 'id');
+    }
 }
