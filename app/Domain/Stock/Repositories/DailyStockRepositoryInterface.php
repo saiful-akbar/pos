@@ -28,6 +28,11 @@ interface DailyStockRepositoryInterface
     public function existsByDate(DateTimeInterface $date): bool;
 
     /**
+     * Mengambil stok harian (beserta detailnya) berdasarkan tanggal.
+     */
+    public function findByDate(DateTimeInterface $date): ?DailyStockEntity;
+
+    /**
      * Membuat (insert) data stok harian baru.
      */
     public function create(DailyStockDTO $value): DailyStockEntity;

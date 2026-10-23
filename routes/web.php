@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyStockController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MonthlyStockController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
@@ -261,6 +262,20 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/{dailyStockId}/import-update', 'importUpdate')->name('.import-update')->middleware("$module,update");
                 Route::post('/{dailyStockId}/monthly', 'storeMonthly')->name('.monthly.store')->middleware("$module,update");
                 Route::patch('/{dailyStockId}/activate', 'activate')->name('.activate')->middleware("$module,update");
+            });
+
+        Route::controller(MonthlyStockController::class)
+            ->name('.monthly')
+            ->prefix('monthly')
+            ->group(function (): void {
+                $module = 'module:stocks.monthly';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::get('/{monthlyStockId}/details', 'details')->name('.details')->middleware("$module,read");
+                Route::get('/{monthlyStockId}/details/export', 'exportDetails')->name('.details.export')->middleware("$module,read");
+                Route::patch('/{monthlyStockId}/activate', 'activate')->name('.activate')->middleware("$module,update");
+                Route::delete('/{monthlyStockId}', 'destroy')->name('.destroy')->middleware("$module,remove");
             });
     });
 });

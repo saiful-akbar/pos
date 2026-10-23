@@ -219,7 +219,7 @@ class ModuleSeeder extends Seeder
                         'roles' => ['Admin', 'Kasir'],
                     ],
                     [
-                        'name' => 'Stock bulan',
+                        'name' => 'Stock bulanan',
                         'path' => '/stocks/monthly',
                         'route' => 'stocks.monthly',
                         'roles' => ['Admin', 'Kasir'],

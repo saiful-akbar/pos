@@ -42,11 +42,19 @@ class ActivateDailyStock
                 abort(404, 'Data stok harian tidak ditemukan.');
             }
 
-            // Ganti current_stock tiap produk dengan quantity x multiples_quantity dari detail.
+            // Jumlahkan stok (quantity x multiples_quantity) per produk karena satu produk bisa memiliki beberapa unit.
+            $totals = [];
+
             foreach ($dailyStock->details as $detail) {
+                $totals[$detail->product->id] = ($totals[$detail->product->id] ?? 0.0)
+                    + $detail->quantity * $detail->multiplesQuantity;
+            }
+
+            // Ganti current_stock tiap produk dengan total hasil penjumlahan (dibulatkan sesuai skala kolom decimal).
+            foreach ($totals as $productId => $total) {
                 $this->productRepository->updateCurrentStock(
-                    id: $detail->product->id,
-                    value: $detail->quantity * $detail->multiplesQuantity,
+                    id: (string) $productId,
+                    value: round($total, 2),
                 );
             }
 

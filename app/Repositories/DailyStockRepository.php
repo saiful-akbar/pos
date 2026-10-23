@@ -78,6 +78,32 @@ class DailyStockRepository extends Repository implements DailyStockRepositoryInt
     }
 
     /**
+     * Mengambil stok harian (beserta detailnya) berdasarkan tanggal.
+     */
+    #[Override]
+    public function findByDate(DateTimeInterface $date): ?DailyStockEntity
+    {
+        try {
+            $model = $this->model
+                ->newQuery()
+                ->with(['user', 'details.product.category', 'details.unit'])
+                ->whereDate('date', $date->format('Y-m-d'))
+                ->first();
+
+            return $model !== null
+                ? DailyStockEntity::fromModel($model)
+                : null;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Memeriksa apakah sudah ada stok harian pada tanggal tertentu.
      */
     #[Override]

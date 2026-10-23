@@ -74,9 +74,21 @@
             <div class="d-flex align-items-center gap-3 ms-auto ps-3">
                 <span id="detailSummary" class="badge border fw-normal text-wrap d-none d-md-inline"></span>
 
+                @if ($access?->update ?? false)
+                    {{-- Tombol aksi (hanya ikon) untuk user dengan akses update --}}
+                    <x-button type="button" id="buttonMonthlyDetail" color="light" size="sm" class="border rounded"
+                        title="Jadikan sebagai stok awal bulan">
+                        <x-icon class="fs-6">event_available</x-icon>
+                    </x-button>
+                    <x-button type="button" id="buttonActivateDetail" color="light" size="sm" class="border rounded"
+                        title="Jadikan sebagai stok aktif produk">
+                        <x-icon class="fs-6">playlist_add_check</x-icon>
+                    </x-button>
+                @endif
+
                 <x-button type="link" id="buttonExportDetail" href="#" color="secondary" size="sm"
-                    startIcon="download" class="text-nowrap rounded" title="Export Excel">
-                    Export Excel
+                    class="rounded" title="Export Excel" aria-label="Export Excel">
+                    <x-icon class="fs-6">download</x-icon>
                 </x-button>
             </div>
         </x-slot:headerAction>
@@ -237,6 +249,7 @@
                     this.modalMonthly = $('#modalMonthly').length > 0 ? new bootstrap.Modal('#modalMonthly', { backdrop: 'static' }) : null;
                     this.monthlyDailyStockId = null;
                     this.detailTable = null;
+                    this.detailId = null;
                     this.importDate = $('#importDate');
                     this.modalImport = this.#modalImportInit();
                     this.table = this.#dailyStocksDataTableInit();
@@ -393,6 +406,31 @@
                         String(now.getMonth() + 1).padStart(2, '0'),
                         String(now.getDate()).padStart(2, '0'),
                     ].join('-');
+                }
+
+                /**
+                 * Konfirmasi lalu jadikan stok harian sebagai stok aktif produk (dipakai menu tabel dan tombol header modal detail).
+                 */
+                confirmActivate(id) {
+                    app.confirm(
+                        'Stok Aktif Produk',
+                        'Yakin ingin menjadikan stok ini sebagai stok aktif produk? Stok produk saat ini akan diganti.',
+                        async (confirmed) => {
+                            if (!confirmed) return;
+
+                            app.clearAlert();
+                            app.showPreloader();
+
+                            try {
+                                const response = await this.activate(id);
+                                app.alert('success', response.message);
+                            } catch (error) {
+                                app.alert('danger', error?.message ?? 'Terjadi kesalahan saat memperbarui stok produk.');
+                            } finally {
+                                app.hidePreloader();
+                            }
+                        },
+                    );
                 }
 
                 /**
@@ -616,27 +654,16 @@
             service.table.on('click', '.dropdown-item[data-action="activate"]', function (e) {
                 e.preventDefault();
 
-                const id = $(this).data('id');
+                service.confirmActivate($(this).data('id'));
+            });
 
-                app.confirm(
-                    'Stok Aktif Produk',
-                    'Yakin ingin menjadikan stok ini sebagai stok aktif produk? Stok produk saat ini akan diganti.',
-                    async (confirmed) => {
-                        if (!confirmed) return;
+            /**
+             * Tombol "stok aktif produk" pada header modal detail.
+             */
+            $('#buttonActivateDetail').click(function (e) {
+                e.preventDefault();
 
-                        app.clearAlert();
-                        app.showPreloader();
-
-                        try {
-                            const response = await service.activate(id);
-                            app.alert('success', response.message);
-                        } catch (error) {
-                            app.alert('danger', error?.message ?? 'Terjadi kesalahan saat memperbarui stok produk.');
-                        } finally {
-                            app.hidePreloader();
-                        }
-                    },
-                );
+                service.confirmActivate(service.detailId);
             });
 
             /**
@@ -647,6 +674,7 @@
 
                 const id = $(this).data('id');
                 service.detailUrl = app.url(`/stocks/daily/${id}/details`);
+                service.detailId = id;
 
                 // Ringkasan pada header modal: tanggal stok dan jumlah produk (dari baris tabel).
                 const row = service.table.row($(this).closest('tr')).data();
@@ -716,6 +744,17 @@
                         },
                     ],
                 });
+            });
+
+            /**
+             * Tombol "stok awal bulan" pada header modal detail: buka form tahun dan bulan di atas modal detail.
+             */
+            $('#buttonMonthlyDetail').click(function (e) {
+                e.preventDefault();
+
+                service.monthlyDailyStockId = service.detailId;
+                app.clearFormErrors(service.formMonthly);
+                service.modalMonthly?.show();
             });
 
             /**

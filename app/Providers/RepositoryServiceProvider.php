@@ -89,11 +89,18 @@ use App\Application\Sale\UseCases\UpdateSaleReturnCartDetailQuantity;
 use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Stock\UseCases\ActivateDailyStock;
+use App\Application\Stock\UseCases\ActivateMonthlyStock;
 use App\Application\Stock\UseCases\CreateMonthlyStock;
+use App\Application\Stock\UseCases\CreateMonthlyStockByDate;
 use App\Application\Stock\UseCases\DeleteDailyStock;
+use App\Application\Stock\UseCases\DeleteMonthlyStock;
 use App\Application\Stock\UseCases\FindDailyStockById;
+use App\Application\Stock\UseCases\FindMonthlyStockById;
 use App\Application\Stock\UseCases\GetDailyStockByDateRange;
 use App\Application\Stock\UseCases\GetDailyStockDetailsTable;
+use App\Application\Stock\UseCases\GetMonthlyStockDetailsQuery;
+use App\Application\Stock\UseCases\GetMonthlyStockDetailsTable;
+use App\Application\Stock\UseCases\GetMonthlyStocksTable;
 use App\Application\Stock\UseCases\ImportDailyStock;
 use App\Application\Stock\UseCases\UpdateDailyStockByImport;
 use App\Application\Supplier\UseCases\CreateSupplier;
@@ -234,8 +241,11 @@ class RepositoryServiceProvider extends ServiceProvider
             ImportDailyStock::class => ErrorLogRepository::class,
             UpdateDailyStockByImport::class => ErrorLogRepository::class,
             ActivateDailyStock::class => ErrorLogRepository::class,
+            ActivateMonthlyStock::class => ErrorLogRepository::class,
             CreateMonthlyStock::class => ErrorLogRepository::class,
+            CreateMonthlyStockByDate::class => ErrorLogRepository::class,
             DeleteDailyStock::class => ErrorLogRepository::class,
+            DeleteMonthlyStock::class => ErrorLogRepository::class,
             CreateSaleReturn::class => ErrorLogRepository::class,
             RemoveSaleReturn::class => ErrorLogRepository::class,
         ],
@@ -287,8 +297,10 @@ class RepositoryServiceProvider extends ServiceProvider
             ImportDailyStock::class => ActivityLogRepository::class,
             UpdateDailyStockByImport::class => ActivityLogRepository::class,
             ActivateDailyStock::class => ActivityLogRepository::class,
+            ActivateMonthlyStock::class => ActivityLogRepository::class,
             CreateMonthlyStock::class => ActivityLogRepository::class,
             DeleteDailyStock::class => ActivityLogRepository::class,
+            DeleteMonthlyStock::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -370,6 +382,7 @@ class RepositoryServiceProvider extends ServiceProvider
             ImportDailyStock::class => ProductRepository::class,
             UpdateDailyStockByImport::class => ProductRepository::class,
             ActivateDailyStock::class => ProductRepository::class,
+            ActivateMonthlyStock::class => ProductRepository::class,
         ],
 
         // Product Price
@@ -537,18 +550,27 @@ class RepositoryServiceProvider extends ServiceProvider
             ActivateDailyStock::class => DailyStockRepository::class,
             FindDailyStockById::class => DailyStockRepository::class,
             CreateMonthlyStock::class => DailyStockRepository::class,
+            CreateMonthlyStockByDate::class => DailyStockRepository::class,
             DeleteDailyStock::class => DailyStockRepository::class,
         ],
 
         // Monthly stock
         MonthlyStockRepositoryInterface::class => [
             CreateMonthlyStock::class => MonthlyStockRepository::class,
+            CreateMonthlyStockByDate::class => MonthlyStockRepository::class,
             DeleteDailyStock::class => MonthlyStockRepository::class,
+            GetMonthlyStocksTable::class => MonthlyStockRepository::class,
+            FindMonthlyStockById::class => MonthlyStockRepository::class,
+            ActivateMonthlyStock::class => MonthlyStockRepository::class,
+            DeleteMonthlyStock::class => MonthlyStockRepository::class,
         ],
 
         // Monthly stock detail
         MonthlyStockDetailRepositoryInterface::class => [
             CreateMonthlyStock::class => MonthlyStockDetailRepository::class,
+            GetMonthlyStockDetailsTable::class => MonthlyStockDetailRepository::class,
+            GetMonthlyStockDetailsQuery::class => MonthlyStockDetailRepository::class,
+            ActivateMonthlyStock::class => MonthlyStockDetailRepository::class,
         ],
 
         // Daily stock detail
