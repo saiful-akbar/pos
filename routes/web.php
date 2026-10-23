@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CashDashboardController;
+use App\Http\Controllers\CashReconciliationController;
+use App\Http\Controllers\CashReportController;
+use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyStockController;
@@ -49,8 +53,9 @@ Route::middleware('auth')->group(function (): void {
         ->prefix('dashboard')
         ->group(function (): void {
             Route::get('/', 'index');
+            Route::get('/summary', 'summary')->name('.summary');
             Route::get('/sales', 'monthlySaleSummary')->name('.sales');
-            Route::get('/sales/products/best', 'getBestSellingProduct')->name('.products.best');
+            Route::get('/products', 'products')->name('.products');
         });
 
     Route::name('settings')->prefix('settings')->group(function (): void {
@@ -247,6 +252,45 @@ Route::middleware('auth')->group(function (): void {
             });
     });
 
+    Route::name('cash')->prefix('cash')->group(function (): void {
+        Route::controller(CashDashboardController::class)
+            ->name('.dashboard')
+            ->prefix('dashboard')
+            ->group(function (): void {
+                $module = 'module:cash.dashboard';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
+            });
+
+        Route::controller(CashTransactionController::class)
+            ->name('.transactions')
+            ->prefix('transactions')
+            ->group(function (): void {
+                $module = 'module:cash.transactions';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/totals', 'totals')->name('.totals')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::get('/{transactionId}', 'show')->name('.show')->middleware("$module,read");
+                Route::patch('/{transactionId}', 'update')->name('.update')->middleware("$module,update");
+                Route::delete('/{transactionId}', 'destroy')->name('.destroy')->middleware("$module,remove");
+            });
+
+        Route::controller(CashReconciliationController::class)
+            ->name('.reconciliation')
+            ->prefix('reconciliation')
+            ->group(function (): void {
+                $module = 'module:cash.reconciliation';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/data', 'data')->name('.data')->middleware("$module,read");
+                Route::get('/history', 'history')->name('.history')->middleware("$module,read");
+                Route::post('/', 'store')->name('.store')->middleware("$module,create");
+                Route::patch('/', 'update')->name('.update')->middleware("$module,update");
+            });
+    });
+
     Route::name('reports')->prefix('reports')->group(function (): void {
         Route::controller(PurchaseReportController::class)
             ->name('.purchases')
@@ -290,6 +334,19 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
                 Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
                 Route::get('/{saleReturnId}/details', 'details')->name('.details')->middleware("$module,read");
+            });
+
+        Route::controller(CashReportController::class)
+            ->name('.cash')
+            ->prefix('cash')
+            ->group(function (): void {
+                $module = 'module:reports.cash';
+
+                Route::get('/', 'index')->middleware("$module,read");
+                Route::get('/totals', 'totals')->name('.totals')->middleware("$module,read");
+                Route::get('/monthly', 'monthly')->name('.monthly')->middleware("$module,read");
+                Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
+                Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
             });
 
         Route::controller(StockReportController::class)

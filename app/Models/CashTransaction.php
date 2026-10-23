@@ -62,10 +62,12 @@ class CashTransaction extends Model
      */
     protected $fillable = [
         'user_id',
+        'transaction_number',
+        'transaction_date',
         'type',
         'amount',
-        'description',
-        'transaction_date',
+        'notes',
+        'reference_number',
     ];
 
     /**

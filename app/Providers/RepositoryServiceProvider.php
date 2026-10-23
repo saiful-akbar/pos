@@ -5,6 +5,32 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Application\ActivityLog\UseCases\CreateActivity;
+use App\Application\Cash\UseCases\CreateCashTransaction;
+use App\Application\Cash\UseCases\DeleteCashTransaction;
+use App\Application\Cash\UseCases\FindCashTransactionById;
+use App\Application\Cash\UseCases\GetCashMonthlySummaries;
+use App\Application\Cash\UseCases\GetCashMonthSummary;
+use App\Application\Cash\UseCases\GetCashRecorders;
+use App\Application\Cash\UseCases\GetCashTransactionsQuery;
+use App\Application\Cash\UseCases\GetCashTransactionsTable;
+use App\Application\Cash\UseCases\GetCashTransactionTotals;
+use App\Application\Cash\UseCases\SaveCashMonthlyBalance;
+use App\Application\Cash\UseCases\UpdateCashTransaction;
+use App\Domain\Cash\Repositories\CashMonthlyBalanceRepositoryInterface;
+use App\Domain\Cash\Repositories\CashReportRepositoryInterface;
+use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
+use App\Repositories\CashMonthlyBalanceRepository;
+use App\Repositories\CashReportRepository;
+use App\Repositories\CashTransactionRepository;
+use App\Application\Dashboard\UseCases\GetDashboardFastMoving;
+use App\Application\Dashboard\UseCases\GetDashboardLowStock;
+use App\Application\Dashboard\UseCases\GetDashboardMonthlySales;
+use App\Application\Dashboard\UseCases\GetDashboardSalesTotals;
+use App\Application\Dashboard\UseCases\GetDashboardSlowMoving;
+use App\Domain\Dashboard\Repositories\ProductDashboardRepositoryInterface;
+use App\Domain\Dashboard\Repositories\SaleDashboardRepositoryInterface;
+use App\Repositories\ProductDashboardRepository;
+use App\Repositories\SaleDashboardRepository;
 use App\Application\Category\UseCases\CreateCategory;
 use App\Application\Category\UseCases\FindCategoryById;
 use App\Application\Category\UseCases\GetAllCategories;
@@ -261,6 +287,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCartDetail::class => ErrorLogRepository::class,
             UpdateSaleReturnCartDetailQuantity::class => ErrorLogRepository::class,
             DeleteSaleReturnCartDetail::class => ErrorLogRepository::class,
+            CreateCashTransaction::class => ErrorLogRepository::class,
+            UpdateCashTransaction::class => ErrorLogRepository::class,
+            DeleteCashTransaction::class => ErrorLogRepository::class,
+            SaveCashMonthlyBalance::class => ErrorLogRepository::class,
             ImportDailyStock::class => ErrorLogRepository::class,
             UpdateDailyStockByImport::class => ErrorLogRepository::class,
             ActivateDailyStock::class => ErrorLogRepository::class,
@@ -313,6 +343,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCart::class => ActivityLogRepository::class,
             DeleteSaleReturnCartById::class => ActivityLogRepository::class,
             CreateSaleReturn::class => ActivityLogRepository::class,
+            CreateCashTransaction::class => ActivityLogRepository::class,
+            UpdateCashTransaction::class => ActivityLogRepository::class,
+            DeleteCashTransaction::class => ActivityLogRepository::class,
+            SaveCashMonthlyBalance::class => ActivityLogRepository::class,
             ImportDailyStock::class => ActivityLogRepository::class,
             UpdateDailyStockByImport::class => ActivityLogRepository::class,
             ActivateDailyStock::class => ActivityLogRepository::class,
@@ -471,6 +505,42 @@ class RepositoryServiceProvider extends ServiceProvider
             GetStockReportQuery::class => StockReportRepository::class,
             GetStockReportMutations::class => StockReportRepository::class,
             GetStockReportProduct::class => StockReportRepository::class,
+        ],
+
+        // Cash transaction
+        CashTransactionRepositoryInterface::class => [
+            CreateCashTransaction::class => CashTransactionRepository::class,
+            DeleteCashTransaction::class => CashTransactionRepository::class,
+            FindCashTransactionById::class => CashTransactionRepository::class,
+            GetCashRecorders::class => CashTransactionRepository::class,
+            GetCashTransactionsQuery::class => CashTransactionRepository::class,
+            GetCashTransactionsTable::class => CashTransactionRepository::class,
+            GetCashTransactionTotals::class => CashTransactionRepository::class,
+            UpdateCashTransaction::class => CashTransactionRepository::class,
+        ],
+
+        // Cash monthly balance
+        CashMonthlyBalanceRepositoryInterface::class => [
+            SaveCashMonthlyBalance::class => CashMonthlyBalanceRepository::class,
+        ],
+
+        // Cash report
+        CashReportRepositoryInterface::class => [
+            GetCashMonthlySummaries::class => CashReportRepository::class,
+            GetCashMonthSummary::class => CashReportRepository::class,
+        ],
+
+        // Dashboard penjualan
+        SaleDashboardRepositoryInterface::class => [
+            GetDashboardSalesTotals::class => SaleDashboardRepository::class,
+            GetDashboardMonthlySales::class => SaleDashboardRepository::class,
+            GetDashboardFastMoving::class => SaleDashboardRepository::class,
+            GetDashboardSlowMoving::class => SaleDashboardRepository::class,
+        ],
+
+        // Dashboard produk
+        ProductDashboardRepositoryInterface::class => [
+            GetDashboardLowStock::class => ProductDashboardRepository::class,
         ],
 
         // Report

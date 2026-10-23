@@ -7,7 +7,7 @@ namespace App\Http\Requests\Dashboards;
 use Illuminate\Foundation\Http\FormRequest;
 use Override;
 
-class GetByDateRangeRequest extends FormRequest
+class GetDashboardSalesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,20 +23,27 @@ class GetByDateRangeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'from_date' => ['required', 'date'],
-            'to_date' => ['required', 'date'],
+            // Tahun kalender; default tahun berjalan jika tidak dikirim.
+            'year' => ['nullable', 'integer', 'min:2000', 'max:'.now()->year],
         ];
     }
 
     /**
-     * Merubah nama attribute untuk pesan error.
+     * Merubah nama atribut.
      */
     #[Override]
     public function attributes(): array
     {
         return [
-            'from_date' => 'tanggal awal',
-            'to_date' => 'tanggal akhir',
+            'year' => 'tahun',
         ];
+    }
+
+    /**
+     * Tahun terpilih (default tahun berjalan menurut zona waktu aplikasi).
+     */
+    public function year(): int
+    {
+        return (int) ($this->validated('year') ?? now()->year);
     }
 }

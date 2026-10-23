@@ -10,6 +10,9 @@
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+            <!-- Test fitur Kas dan Dashboard memakai MySQL: jalankan dengan phpunit.mysql.xml -->
+            <exclude>tests/Feature/Cash</exclude>
+            <exclude>tests/Feature/Dashboard</exclude>
         </testsuite>
     </testsuites>
     <source>

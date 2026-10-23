@@ -10,44 +10,32 @@ use Override;
 class MonthlySummaryEntity extends Entity
 {
     /**
-     * Tahun
+     * Nama bulan (indeks 0 = Januari).
      */
-    public readonly int $year;
-
-    /**
-     * Bulan (dalam format nomor)
-     */
-    public readonly int $month;
-
-    /**
-     * Bulan (dalam format string)
-     */
-    public readonly string $monthName;
-
-    /**
-     * Quantity
-     */
-    public readonly int|float $quantity;
-
-    /**
-     * Nominal value
-     */
-    public readonly int|float $amount;
+    private const MONTH_NAMES = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    ];
 
     /**
      * Create a new class instance.
+     *
+     * @param string $quantity Total kuantitas terjual (satuan dasar: quantity x multiples_quantity).
+     * @param string $amount   Total nilai penjualan (SUM sales.grand_total).
      */
     public function __construct(
-        int $year,
-        int $month,
-        int|float $quantity,
-        int|float $amount,
-    ) {
-        $this->year = $year;
-        $this->month = $month;
-        $this->monthName = $this->findMonthName($month);
-        $this->quantity = $quantity;
-        $this->amount = $amount;
+        public readonly int $year,
+        public readonly int $month,
+        public readonly string $quantity,
+        public readonly string $amount,
+    ) {}
+
+    /**
+     * Nama bulan dalam bahasa Indonesia.
+     */
+    public function monthName(): string
+    {
+        return self::MONTH_NAMES[$this->month - 1];
     }
 
     /**
@@ -59,34 +47,9 @@ class MonthlySummaryEntity extends Entity
         return [
             'year' => $this->year,
             'month' => $this->month,
-            'month_name' => $this->monthName,
+            'month_name' => $this->monthName(),
             'quantity' => $this->quantity,
             'amount' => $this->amount,
         ];
-    }
-
-    /**
-     * Mengambil nama bulan
-     */
-    private function findMonthName(int $month): string
-    {
-        $months = [
-            'Januari',
-            'Februari',
-            'Maret',
-            'April',
-            'Maret',
-            'April',
-            'Mei',
-            'Juni',
-            'Juli',
-            'Agustus',
-            'September',
-            'Oktober',
-            'November',
-            'Desember',
-        ];
-
-        return $months[$month + 1];
     }
 }

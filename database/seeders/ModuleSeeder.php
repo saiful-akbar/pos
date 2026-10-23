@@ -18,23 +18,33 @@ class ModuleSeeder extends Seeder
         $roles = Role::all();
 
         foreach ($this->data() as $data) {
-            $module = Module::query()->create([
-                'name' => $data['name'],
-                'icon' => $data['icon'],
-                'path' => $data['path'],
-                'route' => $data['route'],
-            ]);
+            // Idempotent: menu dengan route yang sama tidak dibuat ulang saat seeder dijalankan berulang.
+            $module = Module::query()->firstOrCreate(
+                ['route' => $data['route']],
+                [
+                    'name' => $data['name'],
+                    'icon' => $data['icon'],
+                    'path' => $data['path'],
+                ],
+            );
 
             foreach ($data['details'] as $detail) {
-                $moduleDetail = Module::query()->create([
-                    'header_id' => $module->id,
-                    'name' => $detail['name'],
-                    'path' => $detail['path'],
-                    'route' => $detail['route'],
-                ]);
+                $moduleDetail = Module::query()->firstOrCreate(
+                    ['route' => $detail['route']],
+                    [
+                        'header_id' => $module->id,
+                        'name' => $detail['name'],
+                        'path' => $detail['path'],
+                    ],
+                );
 
                 foreach ($roles as $role) {
                     if (in_array($role->name, $detail['roles'], true)) {
+                        // Hak akses yang sudah ada tidak ditimpa.
+                        if ($role->modules()->where('modules.id', $moduleDetail->id)->exists()) {
+                            continue;
+                        }
+
                         $now = now();
 
                         if ($role->name === 'Kasir') {
@@ -67,6 +77,21 @@ class ModuleSeeder extends Seeder
                             }
 
                             if ($moduleDetail->route === 'transactions.sales') {
+                                $role->modules()->attach($moduleDetail->id, [
+                                    'read' => true,
+                                    'create' => true,
+                                    'update' => true,
+                                    'remove' => false,
+                                    'delete' => false,
+                                    'created_at' => $now,
+                                    'updated_at' => $now,
+                                ]);
+
+                                continue;
+                            }
+
+                            // Kasir dapat mencatat dan mengubah transaksi kas, tetapi tidak menghapus.
+                            if ($moduleDetail->route === 'cash.transactions') {
                                 $role->modules()->attach($moduleDetail->id, [
                                     'read' => true,
                                     'create' => true,
@@ -280,6 +305,12 @@ class ModuleSeeder extends Seeder
                         'name' => 'Laporan stock',
                         'path' => '/reports/stocks',
                         'route' => 'reports.stocks',
+                        'roles' => ['Admin', 'Kasir'],
+                    ],
+                    [
+                        'name' => 'Laporan kas',
+                        'path' => '/reports/cash',
+                        'route' => 'reports.cash',
                         'roles' => ['Admin', 'Kasir'],
                     ],
                 ],
