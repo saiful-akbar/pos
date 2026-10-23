@@ -16,7 +16,7 @@ class DailyStockEntity extends Entity
     /**
      * Create a new class instance.
      *
-     * @param  array<DailyStockDetailEntity>  $details
+     * @param array<DailyStockDetailEntity> $details
      */
     public function __construct(
         public readonly string $id,
@@ -45,7 +45,7 @@ class DailyStockEntity extends Entity
             'total_quantity' => $this->totalQuantity,
             'notes' => $this->notes,
             'details' => array_map(
-                fn(DailyStockDetailEntity $detail): array => $detail->toArray(),
+                fn (DailyStockDetailEntity $detail): array => $detail->toArray(),
                 $this->details,
             ),
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
@@ -67,7 +67,7 @@ class DailyStockEntity extends Entity
             totalQuantity: parse_float($model->total_quantity),
             notes: $model->notes,
             details: $model->details
-                ->map(fn(DailyStockDetail $detail): DailyStockDetailEntity => DailyStockDetailEntity::fromModel($detail))
+                ->map(fn (DailyStockDetail $detail): DailyStockDetailEntity => DailyStockDetailEntity::fromModel($detail))
                 ->all(),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

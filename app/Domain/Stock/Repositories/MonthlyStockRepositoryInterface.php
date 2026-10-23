@@ -15,6 +15,11 @@ interface MonthlyStockRepositoryInterface
     public function existsByYearAndMonth(int $year, int $month): bool;
 
     /**
+     * Memeriksa apakah stok harian sudah dijadikan stok bulanan (termasuk yang sudah di-soft delete, karena FK restrict).
+     */
+    public function existsByDailyStockId(string $dailyStockId): bool;
+
+    /**
      * Membuat (insert) data stok bulanan baru.
      */
     public function create(MonthlyStockDTO $value): MonthlyStockEntity;

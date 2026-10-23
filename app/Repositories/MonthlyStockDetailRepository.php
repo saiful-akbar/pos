@@ -23,7 +23,7 @@ class MonthlyStockDetailRepository extends Repository implements MonthlyStockDet
     /**
      * Membuat (insert) banyak data detail stok bulanan sekaligus.
      *
-     * @param  array<MonthlyStockDetailDTO>  $values
+     * @param array<MonthlyStockDetailDTO> $values
      */
     #[Override]
     public function createMany(array $values): int

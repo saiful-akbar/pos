@@ -22,6 +22,28 @@ class MonthlyStockRepository extends Repository implements MonthlyStockRepositor
     }
 
     /**
+     * Memeriksa apakah stok harian sudah dijadikan stok bulanan (termasuk yang sudah di-soft delete, karena FK restrict).
+     */
+    #[Override]
+    public function existsByDailyStockId(string $dailyStockId): bool
+    {
+        try {
+            return $this->model
+                ->newQuery()
+                ->withTrashed()
+                ->where('daily_stock_id', $dailyStockId)
+                ->exists();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Memeriksa apakah sudah ada stok bulanan pada tahun dan bulan tertentu.
      */
     #[Override]

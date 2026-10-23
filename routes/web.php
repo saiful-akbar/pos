@@ -257,6 +257,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::post('/import', 'importExcel')->name('.import')->middleware("$module,create");
                 Route::get('/{dailyStockId}/details', 'details')->name('.details')->middleware("$module,read");
                 Route::get('/{dailyStockId}/details/export', 'exportDetails')->name('.details.export')->middleware("$module,read");
+                Route::delete('/{dailyStockId}', 'destroy')->name('.destroy')->middleware("$module,remove");
+                Route::post('/{dailyStockId}/import-update', 'importUpdate')->name('.import-update')->middleware("$module,update");
                 Route::post('/{dailyStockId}/monthly', 'storeMonthly')->name('.monthly.store')->middleware("$module,update");
                 Route::patch('/{dailyStockId}/activate', 'activate')->name('.activate')->middleware("$module,update");
             });

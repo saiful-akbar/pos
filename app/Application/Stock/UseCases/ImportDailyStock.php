@@ -39,7 +39,7 @@ class ImportDailyStock
     /**
      * Execute method.
      *
-     * @param  array<int, array{product_code: string, unit_code: string, quantity: float}>  $rows
+     * @param array<int, array{product_code: string, unit_code: string, quantity: float}> $rows
      */
     public function execute(DateTimeInterface $date, ?string $notes, array $rows): DailyStockEntity
     {

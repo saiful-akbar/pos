@@ -86,8 +86,6 @@ class MonthlyStockDetail extends Model
 
     /**
      * Get the unit that owns the MonthlyStockDetail
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function unit(): BelongsTo
     {

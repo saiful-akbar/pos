@@ -82,4 +82,53 @@ class DailyStockDetailRepository extends Repository implements DailyStockDetailR
             throw $e;
         }
     }
+
+    /**
+     * Mengambil detail stok harian berdasarkan id stok harian, id produk, dan id unit.
+     */
+    #[Override]
+    public function findByDailyStockIdProductIdAndUnitId(string $dailyStockId, string $productId, string $unitId): ?DailyStockDetailEntity
+    {
+        try {
+            $model = $this->model
+                ->newQuery()
+                ->with(['product.category', 'unit'])
+                ->where('daily_stock_id', $dailyStockId)
+                ->where('product_id', $productId)
+                ->where('unit_id', $unitId)
+                ->first();
+
+            return $model !== null
+                ? DailyStockDetailEntity::fromModel($model)
+                : null;
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Memperbarui quantity detail stok harian.
+     */
+    #[Override]
+    public function updateQuantity(string $id, float $quantity): int
+    {
+        try {
+            return $this->model
+                ->newQuery()
+                ->whereKey($id)
+                ->update(['quantity' => $quantity]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
 }

@@ -143,4 +143,25 @@ class DailyStockRepository extends Repository implements DailyStockRepositoryInt
             throw $e;
         }
     }
+
+    /**
+     * Hapus permanen stok harian (detail ikut terhapus oleh relasi cascade).
+     */
+    #[Override]
+    public function delete(string $id): int
+    {
+        try {
+            return $this->model
+                ->newQuery()
+                ->whereKey($id)
+                ->forceDelete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
 }

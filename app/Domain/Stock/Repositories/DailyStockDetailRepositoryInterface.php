@@ -19,4 +19,14 @@ interface DailyStockDetailRepositoryInterface
      * Membuat (insert) data detail stok harian baru.
      */
     public function create(DailyStockDetailDTO $value): DailyStockDetailEntity;
+
+    /**
+     * Mengambil detail stok harian berdasarkan id stok harian, id produk, dan id unit.
+     */
+    public function findByDailyStockIdProductIdAndUnitId(string $dailyStockId, string $productId, string $unitId): ?DailyStockDetailEntity;
+
+    /**
+     * Memperbarui quantity detail stok harian.
+     */
+    public function updateQuantity(string $id, float $quantity): int;
 }

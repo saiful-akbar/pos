@@ -11,7 +11,7 @@ interface MonthlyStockDetailRepositoryInterface
     /**
      * Membuat (insert) banyak data detail stok bulanan sekaligus. Mengembalikan jumlah baris yang dibuat.
      *
-     * @param  array<MonthlyStockDetailDTO>  $values
+     * @param array<MonthlyStockDetailDTO> $values
      */
     public function createMany(array $values): int;
 }

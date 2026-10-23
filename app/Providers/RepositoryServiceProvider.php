@@ -90,10 +90,12 @@ use App\Application\Setting\UseCases\FindSetting;
 use App\Application\Setting\UseCases\UpdateSetting;
 use App\Application\Stock\UseCases\ActivateDailyStock;
 use App\Application\Stock\UseCases\CreateMonthlyStock;
+use App\Application\Stock\UseCases\DeleteDailyStock;
 use App\Application\Stock\UseCases\FindDailyStockById;
 use App\Application\Stock\UseCases\GetDailyStockByDateRange;
 use App\Application\Stock\UseCases\GetDailyStockDetailsTable;
 use App\Application\Stock\UseCases\ImportDailyStock;
+use App\Application\Stock\UseCases\UpdateDailyStockByImport;
 use App\Application\Supplier\UseCases\CreateSupplier;
 use App\Application\Supplier\UseCases\FindSupplierById;
 use App\Application\Supplier\UseCases\GetAllSuppliers;
@@ -147,10 +149,10 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\DailyStockDetailRepository;
 use App\Repositories\DailyStockRepository;
-use App\Repositories\MonthlyStockDetailRepository;
-use App\Repositories\MonthlyStockRepository;
 use App\Repositories\ErrorLogRepository;
 use App\Repositories\ModuleRepository;
+use App\Repositories\MonthlyStockDetailRepository;
+use App\Repositories\MonthlyStockRepository;
 use App\Repositories\PriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\PurchaseCartDetailRepository;
@@ -230,8 +232,10 @@ class RepositoryServiceProvider extends ServiceProvider
             UpdateSaleReturnCartDetailQuantity::class => ErrorLogRepository::class,
             DeleteSaleReturnCartDetail::class => ErrorLogRepository::class,
             ImportDailyStock::class => ErrorLogRepository::class,
+            UpdateDailyStockByImport::class => ErrorLogRepository::class,
             ActivateDailyStock::class => ErrorLogRepository::class,
             CreateMonthlyStock::class => ErrorLogRepository::class,
+            DeleteDailyStock::class => ErrorLogRepository::class,
             CreateSaleReturn::class => ErrorLogRepository::class,
             RemoveSaleReturn::class => ErrorLogRepository::class,
         ],
@@ -281,8 +285,10 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturn::class => ActivityLogRepository::class,
             RemoveSaleReturn::class => ActivityLogRepository::class,
             ImportDailyStock::class => ActivityLogRepository::class,
+            UpdateDailyStockByImport::class => ActivityLogRepository::class,
             ActivateDailyStock::class => ActivityLogRepository::class,
             CreateMonthlyStock::class => ActivityLogRepository::class,
+            DeleteDailyStock::class => ActivityLogRepository::class,
         ],
 
         // Setting
@@ -336,6 +342,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Unit
         UnitRepositoryInterface::class => [
             ImportDailyStock::class => UnitRepository::class,
+            UpdateDailyStockByImport::class => UnitRepository::class,
             GetUnitsTable::class => UnitRepository::class,
             FindUnitById::class => UnitRepository::class,
             CreateUnit::class => UnitRepository::class,
@@ -361,12 +368,14 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateSaleReturnCartDetail::class => ProductRepository::class,
             CreateSaleReturn::class => ProductRepository::class,
             ImportDailyStock::class => ProductRepository::class,
+            UpdateDailyStockByImport::class => ProductRepository::class,
             ActivateDailyStock::class => ProductRepository::class,
         ],
 
         // Product Price
         PriceRepositoryInterface::class => [
             ImportDailyStock::class => PriceRepository::class,
+            UpdateDailyStockByImport::class => PriceRepository::class,
             GetPricesByProduct::class => PriceRepository::class,
             GetPricesTableByProduct::class => PriceRepository::class,
             CreatePrice::class => PriceRepository::class,
@@ -524,14 +533,17 @@ class RepositoryServiceProvider extends ServiceProvider
         DailyStockRepositoryInterface::class => [
             GetDailyStockByDateRange::class => DailyStockRepository::class,
             ImportDailyStock::class => DailyStockRepository::class,
+            UpdateDailyStockByImport::class => DailyStockRepository::class,
             ActivateDailyStock::class => DailyStockRepository::class,
             FindDailyStockById::class => DailyStockRepository::class,
             CreateMonthlyStock::class => DailyStockRepository::class,
+            DeleteDailyStock::class => DailyStockRepository::class,
         ],
 
         // Monthly stock
         MonthlyStockRepositoryInterface::class => [
             CreateMonthlyStock::class => MonthlyStockRepository::class,
+            DeleteDailyStock::class => MonthlyStockRepository::class,
         ],
 
         // Monthly stock detail
@@ -542,6 +554,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // Daily stock detail
         DailyStockDetailRepositoryInterface::class => [
             ImportDailyStock::class => DailyStockDetailRepository::class,
+            UpdateDailyStockByImport::class => DailyStockDetailRepository::class,
             GetDailyStockDetailsTable::class => DailyStockDetailRepository::class,
         ],
 

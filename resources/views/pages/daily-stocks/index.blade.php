@@ -169,6 +169,52 @@
         </form>
     @endif
 
+    {{-- Modal import update stok harian (hanya untuk user dengan akses update) --}}
+    @if ($access?->update ?? false)
+        <form action="#" method="post" id="formImportUpdate" enctype="multipart/form-data" autocomplete="off">
+            <x-modal id="modalImportUpdate" title="Import Update" fullScreen="sm">
+                {{-- Tombol unduh template excel (sama dengan template import) --}}
+                <x-button type="link" href="{{ route('stocks.daily.import.template') }}" startIcon="download"
+                    color="secondary" fullWidth>
+                    Unduh Template
+                </x-button>
+
+                <hr class="my-5">
+
+                {{-- Tanggal stok harian (hanya informasi, tidak diubah dan tidak dikirim) --}}
+                <div class="mb-5">
+                    <x-form-input type="text" name="date" id="importUpdateDate" label="Tanggal Stok Opname" disabled />
+                </div>
+
+                {{-- File import (.xlsx, .xls, .csv) --}}
+                <div class="mb-5">
+                    <x-form-input type="file" name="file" id="importUpdateFile" label="File Excel"
+                        accept=".xlsx,.xls,.csv" required />
+                </div>
+
+                {{-- Catatan (opsional, default dari catatan stok harian) --}}
+                <x-form-input type="textarea" name="notes" id="importUpdateNotes" label="Catatan (opsional)"
+                    placeholder="Masukan catatan..." />
+
+                <x-slot:footer>
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <x-button type="button" color="light" data-bs-dismiss="modal" startIcon="close" fullWidth>
+                                Batal
+                            </x-button>
+                        </div>
+
+                        <div class="col-6">
+                            <x-button type="submit" color="secondary" startIcon="save" fullWidth>
+                                Simpan
+                            </x-button>
+                        </div>
+                    </div>
+                </x-slot:footer>
+            </x-modal>
+        </form>
+    @endif
+
     {{-- JavaScript --}}
     <x-slot:script>
         <script>
@@ -185,6 +231,9 @@
                     this.formImport = $('#formImport');
                     this.modalDetail = new bootstrap.Modal('#modalDetail');
                     this.formMonthly = $('#formMonthly');
+                    this.formImportUpdate = $('#formImportUpdate');
+                    this.modalImportUpdate = $('#modalImportUpdate').length > 0 ? new bootstrap.Modal('#modalImportUpdate', { backdrop: 'static' }) : null;
+                    this.importUpdateDailyStockId = null;
                     this.modalMonthly = $('#modalMonthly').length > 0 ? new bootstrap.Modal('#modalMonthly', { backdrop: 'static' }) : null;
                     this.monthlyDailyStockId = null;
                     this.detailTable = null;
@@ -404,6 +453,52 @@
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Accept': 'application/json',
+                            },
+                            success: (response) => resolve(response),
+                            error: (xhr) => reject({ ...xhr.responseJSON, status: xhr.status }),
+                        });
+                    });
+                }
+
+                /**
+                 * Menghapus permanen stok harian (ajax).
+                 */
+                destroy(id) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: 'post',
+                            url: app.url(`/stocks/daily/${id}`),
+                            dataType: 'json',
+                            data: {
+                                _token: app.csrfToken,
+                                _method: 'delete',
+                            },
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            success: (response) => resolve(response),
+                            error: (xhr) => reject({ ...xhr.responseJSON, status: xhr.status }),
+                        });
+                    });
+                }
+
+                /**
+                 * Mengirim file import update stok harian (ajax, multipart).
+                 */
+                importUpdate(id, formData) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: 'post',
+                            url: app.url(`/stocks/daily/${id}/import-update`),
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': app.csrfToken,
                             },
                             success: (response) => resolve(response),
                             error: (xhr) => reject({ ...xhr.responseJSON, status: xhr.status }),
@@ -662,6 +757,88 @@
 
                     service.modalMonthly?.hide();
                     app.alert('danger', error?.message ?? 'Terjadi kesalahan saat menyimpan stok awal bulan.');
+                } finally {
+                    app.hidePreloader();
+                }
+            });
+
+            /**
+             * Menu "Hapus stok": konfirmasi lalu hapus permanen via ajax.
+             */
+            service.table.on('click', '.dropdown-item[data-action="remove"]', function (e) {
+                e.preventDefault();
+
+                const id = $(this).data('id');
+
+                app.confirm(
+                    'Hapus Stok Harian',
+                    'Yakin ingin menghapus permanen stok harian ini beserta detailnya? Data tidak dapat dikembalikan.',
+                    async (confirmed) => {
+                        if (!confirmed) return;
+
+                        app.clearAlert();
+                        app.showPreloader();
+
+                        try {
+                            const response = await service.destroy(id);
+                            app.alert('success', response.message);
+
+                            // Hapus baris dari tabel tanpa memuat ulang halaman.
+                            service.load();
+                        } catch (error) {
+                            // Error validasi (422), mis. sudah dijadikan stok bulanan: tampilkan pesannya.
+                            const message = error?.errors?.id?.[0] ?? error?.message ?? 'Terjadi kesalahan saat menghapus stok harian.';
+                            app.alert('danger', message);
+                        } finally {
+                            app.hidePreloader();
+                        }
+                    },
+                );
+            });
+
+            /**
+             * Menu "Import update stok": isi tanggal dan catatan dari baris tabel lalu buka modal.
+             */
+            service.table.on('click', '.dropdown-item[data-action="import-update"]', function (e) {
+                e.preventDefault();
+
+                const row = service.table.row($(this).closest('tr')).data();
+
+                service.importUpdateDailyStockId = $(this).data('id');
+                service.formImportUpdate.trigger('reset');
+                app.clearFormErrors(service.formImportUpdate);
+                service.formImportUpdate.find('[name="date"]').val(row?.date ?? '');
+                service.formImportUpdate.find('[name="notes"]').val(row?.notes ?? '');
+                service.modalImportUpdate?.show();
+            });
+
+            /**
+             * Submit form import update via ajax (tanpa reload halaman).
+             */
+            service.formImportUpdate.submit(async function (e) {
+                e.preventDefault();
+
+                app.clearAlert();
+                app.clearFormErrors(service.formImportUpdate);
+                app.showPreloader();
+
+                try {
+                    // Tanggal bersifat disabled sehingga tidak ikut terkirim.
+                    const response = await service.importUpdate(service.importUpdateDailyStockId, new FormData(this));
+
+                    // Berhasil: tutup modal, tampilkan notifikasi, lalu muat ulang tabel.
+                    service.modalImportUpdate?.hide();
+                    app.alert('success', response.message);
+                    service.load();
+                } catch (error) {
+                    // Error validasi (422): tampilkan pada field terkait di dalam modal.
+                    if (error?.status === 422 && error?.errors) {
+                        app.setFormErrors(service.formImportUpdate, error);
+                        return;
+                    }
+
+                    service.modalImportUpdate?.hide();
+                    app.alert('danger', error?.message ?? 'Import update stok harian gagal.');
                 } finally {
                     app.hidePreloader();
                 }

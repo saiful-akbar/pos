@@ -86,8 +86,6 @@ class DailyStockDetail extends Model
 
     /**
      * Get the unit that owns the DailyStockDetail
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function unit(): BelongsTo
     {

@@ -7,15 +7,18 @@ namespace App\Http\Controllers;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Stock\UseCases\ActivateDailyStock;
 use App\Application\Stock\UseCases\CreateMonthlyStock;
+use App\Application\Stock\UseCases\DeleteDailyStock;
 use App\Application\Stock\UseCases\FindDailyStockById;
 use App\Application\Stock\UseCases\GetDailyStockByDateRange;
 use App\Application\Stock\UseCases\GetDailyStockDetailsTable;
-use App\Http\Requests\DailyStocks\CreateMonthlyStockRequest;
-use App\Http\Requests\DailyStocks\GetDailyStockByDateRange as GetDailyStockByDateRangeRequest;
 use App\Exports\DailyStocks\DailyStockDetailExport;
 use App\Exports\DailyStocks\TemplateExport;
+use App\Http\Requests\DailyStocks\CreateMonthlyStockRequest;
+use App\Http\Requests\DailyStocks\GetDailyStockByDateRange as GetDailyStockByDateRangeRequest;
 use App\Http\Requests\DailyStocks\ImportDailyStockRequest;
+use App\Http\Requests\DailyStocks\ImportUpdateDailyStockRequest;
 use App\Imports\DailyStocks\DailyStockImport;
+use App\Imports\DailyStocks\DailyStockUpdateImport;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -96,6 +99,57 @@ class DailyStockController extends Controller
 
         return $this->jsonResponse(
             message: 'Import excel stok harian berhasil.',
+        );
+    }
+
+    /**
+     * Import excel untuk memperbarui stok harian (ajax).
+     */
+    public function importUpdate(ImportUpdateDailyStockRequest $request, string $dailyStockId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        try {
+            Excel::import(
+                new DailyStockUpdateImport(
+                    dailyStockId: $dailyStockId,
+                    notes: $request->validated('notes'),
+                ),
+                $request->file('file'),
+            );
+        } catch (ExcelValidationException $e) {
+            // Kegagalan validasi baris excel: ubah menjadi pesan error pada input file.
+            $messages = collect($e->failures())
+                ->map(fn (Failure $failure): string => "Baris {$failure->row()}: ".implode(' ', $failure->errors()))
+                ->all();
+
+            throw ValidationException::withMessages(messages: [
+                'file' => $messages,
+            ]);
+        }
+
+        return $this->jsonResponse(
+            message: 'Import update stok harian berhasil.',
+        );
+    }
+
+    /**
+     * Menghapus permanen stok harian (ajax).
+     */
+    public function destroy(Request $request, string $dailyStockId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(DeleteDailyStock::class)->execute(
+            id: $dailyStockId,
+        );
+
+        return $this->jsonResponse(
+            message: 'Stok harian berhasil dihapus.',
         );
     }
 

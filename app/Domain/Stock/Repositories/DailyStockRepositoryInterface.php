@@ -36,4 +36,9 @@ interface DailyStockRepositoryInterface
      * Update data stok harian berdasarkan ID.
      */
     public function update(string $id, DailyStockDTO $value): int;
+
+    /**
+     * Hapus permanen stok harian (detail ikut terhapus oleh relasi cascade).
+     */
+    public function delete(string $id): int;
 }
