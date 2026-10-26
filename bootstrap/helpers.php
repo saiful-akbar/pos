@@ -232,6 +232,46 @@ if (! function_exists('logo')) {
     }
 }
 
+if (! function_exists('logo_data_uri')) {
+
+    /**
+     * Mengambil logo sebagai data URI (untuk PDF, karena DomPDF tidak memuat URL remote)
+     */
+    function logo_data_uri(?string $path): ?string
+    {
+        // Tentukan file logo: logo toko di storage publik atau logo bawaan aplikasi
+        $file = public_path('assets/images/logo.svg');
+
+        if ($path !== null && trim($path) !== '') {
+            $stored = storage_path('app/public/'.ltrim(trim($path), '/'));
+
+            if (is_file($stored)) {
+                $file = $stored;
+            }
+        }
+
+        if (! is_file($file)) {
+            return null;
+        }
+
+        // Tentukan mime type berdasarkan ekstensi
+        $mime = match (strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            default => null,
+        };
+
+        if ($mime === null) {
+            return null;
+        }
+
+        return 'data:'.$mime.';base64,'.base64_encode((string) file_get_contents($file));
+    }
+}
+
 if (! function_exists('months')) {
 
     /**

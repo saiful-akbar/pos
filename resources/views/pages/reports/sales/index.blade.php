@@ -574,6 +574,7 @@
                             title: 'Produk',
                             name: 'products.name',
                             data: 'product_name',
+                            className: 'text-nowrap',
                             render: (data) => service.escapeHtml(data),
                         },
                         {

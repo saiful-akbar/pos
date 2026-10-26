@@ -15,8 +15,10 @@
         ?? data_get($sale->customer, 'fullName')
         ?? '-';
 
-    $formatNumber = static fn ($value): string =>
-        number_format((float) ($value ?? 0), 2, ',', '.');
+    // Logo toko sebagai data URI agar dapat dirender DomPDF
+    $logoSrc = logo_data_uri($store?->storeLogo);
+
+    $formatNumber = static fn ($value): string => number_format((float) ($value ?? 0), 2, ',', '.');
 @endphp
 
 <!DOCTYPE html>
@@ -311,10 +313,10 @@
     <table class="header-table">
         <tr>
             <td style="width: 52%; padding-right: 8px;">
-                @if ($store?->storeLogo)
+                @if ($logoSrc)
                     <div style="margin-bottom: 5px;">
                         <img
-                            src="{{ logo($store->storeLogo) }}"
+                            src="{{ $logoSrc }}"
                             alt="Logo"
                             style="max-width: 22mm; max-height: 16mm;"
                         >

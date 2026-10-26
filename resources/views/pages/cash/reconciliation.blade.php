@@ -19,7 +19,7 @@
 
                     <div class="card-body pb-0">
                         <div class="row gx-6">
-                            <div class="col-12 col-md-6 col-xl-3 mb-5">
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-5 mb-5">
                                 <x-form-select name="month" id="month" label="Bulan" required>
                                     @foreach ($monthNames as $index => $monthName)
                                         <option value="{{ $index + 1 }}" @selected($selectedMonth === $index + 1)>{{ $monthName }}</option>
@@ -27,12 +27,12 @@
                                 </x-form-select>
                             </div>
 
-                            <div class="col-12 col-md-6 col-xl-3 mb-5">
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-5 mb-5">
                                 <x-form-input type="number" name="year" id="year" label="Tahun" value="{{ $selectedYear }}"
                                     min="2000" max="{{ date('Y') + 1 }}" required />
                             </div>
 
-                            <div class="col-12 col-md-6 col-xl-3 mb-5 d-flex align-items-end">
+                            <div class="col-12 col-lg-4 col-xl-2 mb-5 d-flex align-items-end">
                                 <x-button type="submit" id="buttonFilter" startIcon="filter_alt" fullWidth>
                                     Tampilkan
                                 </x-button>
@@ -47,7 +47,7 @@
     {{-- Status rekonsiliasi dan penjelasannya --}}
     <div class="row gx-7">
         <div class="col-12 mt-7">
-            <div class="border rounded-3 p-4 d-flex align-items-start gap-3">
+            <div class="border rounded-3 p-4 d-flex align-items-center gap-3">
                 <x-icon class="fs-4" id="statusIcon">info</x-icon>
                 <div style="min-width: 0;">
                     <div class="fw-semibold" id="statusLabel">Memuat data...</div>
@@ -150,8 +150,6 @@
     {{-- JavaScript --}}
     <x-slot:script>
         <script>
-            "use strict"
-
             class Service {
                 constructor() {
                     this.form = $('#formPeriod');
@@ -162,12 +160,34 @@
                     this.canUpdate = @json((bool) ($access?->update ?? false));
                     this.current = null;
                     this.historyYear = null;
+
                     this.statusMap = {
-                        match: ['Sesuai', 'check_circle', 'Saldo aktual awal bulan berikutnya sama dengan saldo teoritis akhir bulan ini.', 'text-bg-success'],
-                        difference: ['Selisih', 'error', 'Saldo aktual awal bulan berikutnya berbeda dari saldo teoritis akhir bulan ini. Periksa transaksi kas bulan ini.', 'text-bg-danger'],
-                        unreconciled: ['Belum direkonsiliasi', 'hourglass_empty', 'Saldo awal bulan berikutnya belum dicatat, sehingga belum ada pembanding.', 'border text-body-secondary'],
-                        incomplete: ['Data belum lengkap', 'help', 'Saldo awal bulan ini belum dicatat, sehingga saldo teoritis tidak dapat dihitung.', 'border text-body-secondary'],
+                        match: [
+                            'Sesuai',
+                            'check_circle',
+                            'Saldo aktual awal bulan berikutnya sama dengan saldo teoritis akhir bulan ini.',
+                            'text-bg-success',
+                        ],
+                        difference: [
+                            'Selisih',
+                            'error',
+                            'Saldo aktual awal bulan berikutnya berbeda dari saldo teoritis akhir bulan ini. Periksa transaksi kas bulan ini.',
+                            'text-bg-danger',
+                        ],
+                        unreconciled: [
+                            'Belum direkonsiliasi',
+                            'hourglass_empty',
+                            'Saldo awal bulan berikutnya belum dicatat, sehingga belum ada pembanding.',
+                            'border text-body-secondary',
+                        ],
+                        incomplete: [
+                            'Data belum lengkap',
+                            'help',
+                            'Saldo awal bulan ini belum dicatat, sehingga saldo teoritis tidak dapat dihitung.',
+                            'border text-body-secondary',
+                        ],
                     };
+
                     this.historyTable = null;
                 }
 
@@ -179,7 +199,9 @@
                  * Format Rupiah; null (belum tersedia) ditampilkan sebagai strip, bukan nol.
                  */
                 rupiah(value) {
-                    if (value === null || value === undefined) return '-';
+                    if (value === null || value === undefined) {
+                        return '-';
+                    }
 
                     const number = Number(value);
                     const text = `Rp ${app.numberFormat(Math.abs(number))}`;
@@ -196,7 +218,12 @@
                 statusBadge(status) {
                     const [label, icon, , classes] = this.statusMap[status] ?? ['-', 'help', '', 'border'];
 
-                    return `<span class="badge ${classes} d-inline-flex align-items-center gap-1">${app.icon(icon, 'fs-6')}<span>${label}</span></span>`;
+                    return (`
+                        <span class="badge ${classes} d-inline-flex align-items-center gap-1">
+                            ${app.icon(icon, 'fs-6')}
+                            <span>${label}</span>
+                        </span>
+                    `);
                 }
 
                 request(url, data = {}, type = 'get') {
@@ -206,7 +233,10 @@
                             url,
                             dataType: 'json',
                             data: type === 'get' ? data : { ...data, _token: app.csrfToken },
-                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            },
                             success: (response) => resolve(response),
                             error: (xhr) => reject({ ...xhr.responseJSON, status: xhr.status }),
                         });
@@ -319,6 +349,10 @@
             }
 
             window.service = new Service();
+        </script>
+
+        <script>
+            "use strict"
 
             service.form.submit(function (e) {
                 e.preventDefault();

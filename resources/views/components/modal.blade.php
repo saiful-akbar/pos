@@ -13,8 +13,8 @@
     
     $dialogClass = [
         'modal-dialog',
-        // Isi modal dapat di-scroll di dalam dialog (header dan footer tetap terlihat).
         'modal-dialog-scrollable',
+        'modal-dialog-centered',
         'modal-fullscreen-xxl-down' => $fullScreen === 'xl',
         'modal-fullscreen-xl-down' => $fullScreen === 'lg',
         'modal-fullscreen-lg-down' => $fullScreen === 'md',

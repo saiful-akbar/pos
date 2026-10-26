@@ -5,18 +5,64 @@
     </x-page-header>
 
     {{-- Gaya khusus halaman dashboard --}}
-    <style>
-        .dash-link { transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
-        .dash-link:hover, .dash-link:focus-visible { border-color: var(--bs-primary); box-shadow: var(--bs-box-shadow) !important; transform: translateY(-1px); }
-        .dash-link .dash-arrow { transition: transform .15s ease; }
-        .dash-link:hover .dash-arrow { transform: translateX(3px); }
-        .dash-icon { width: 3rem; height: 3rem; }
-        .dash-table thead th { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; color: var(--bs-secondary-color); background: transparent; white-space: nowrap; }
-        .dash-rank { width: 1.75rem; height: 1.75rem; font-size: .8rem; }
-        .dash-chart { position: relative; height: clamp(260px, 42vh, 380px); }
-        .dash-list { max-height: 26rem; overflow-y: auto; }
-        @media (min-width: 1200px) { .dash-list { max-height: 24.5rem; } }
-    </style>
+    <x-slot:style>
+        <style>
+            .dash-link {
+                transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+            }
+
+            .dash-link:hover, .dash-link:focus-visible {
+                border-color: var(--bs-primary);
+                box-shadow: var(--bs-box-shadow) !important;
+                transform: translateY(-1px);
+            }
+
+            .dash-link .dash-arrow {
+                transition: transform .15s ease;
+            }
+
+            .dash-link:hover .dash-arrow {
+                transform: translateX(3px);
+            }
+            
+            .dash-icon {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .dash-table thead th {
+                font-size: .75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: .03em;
+                color: var(--bs-secondary-color);
+                background: transparent;
+                white-space: nowrap;
+            }
+
+            .dash-rank {
+                width: 1.75rem;
+                height: 1.75rem;
+                font-size: .8rem;
+            }
+
+            .dash-chart {
+                position: relative;
+                height: clamp(260px, 42vh, 380px);
+            }
+
+            .dash-list {
+                max-height: 26rem;
+                overflow-y: auto;
+            }
+
+            @media (min-width: 1200px) {
+                .dash-list {
+                    max-height: 24.5rem;
+                }
+            }
+        </style>
+    </x-slot:style>
 
     {{-- Shortcut transaksi (hanya untuk pengguna yang berhak membuat transaksi) --}}
     @if ($canCreateSale || $canCreatePurchase)
@@ -79,7 +125,7 @@
                             <div class="d-flex align-items-start justify-content-between gap-3">
                                 <div style="min-width: 0;">
                                     <div class="text-body-secondary small fw-semibold text-uppercase">{{ $card['label'] }}</div>
-                                    <div class="fs-2 fw-bold text-break mt-2 lh-sm" id="card{{ $card['id'] }}">Rp 0</div>
+                                    <div class="fs-3 fw-bold text-break mt-2 lh-sm" id="card{{ $card['id'] }}">Rp 0</div>
                                 </div>
 
                                 <div class="dash-icon rounded-3 bg-{{ $card['color'] }} bg-opacity-10 d-flex align-items-center justify-content-center flex-shrink-0">
@@ -202,22 +248,21 @@
                         </div>
                     </div>
 
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="dash-table table table-sm table-hover align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="ps-5">#</th>
-                                        <th>Produk</th>
-                                        <th class="text-end">Qty Terjual</th>
-                                        <th class="text-end pe-5">Nilai</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fastBody">
-                                    <tr><td colspan="4" class="text-center text-body-secondary py-5">Memuat data...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="dash-table table table-sm table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-5">#</th>
+                                    <th>Produk</th>
+                                    <th class="text-end">Qty Terjual</th>
+                                    <th class="text-end pe-5">Nilai</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="fastBody">
+                                <tr><td colspan="4" class="text-center text-body-secondary py-5">Memuat data...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -235,23 +280,21 @@
                         </div>
                     </div>
 
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="dash-table table table-sm table-hover align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="ps-5">Produk</th>
-                                        <th class="text-end">Stok</th>
-                                        <th class="text-end">Qty Terjual</th>
-                                        <th class="text-end">Nilai</th>
-                                        <th class="pe-5">Keterangan</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="slowBody">
-                                    <tr><td colspan="5" class="text-center text-body-secondary py-5">Memuat data...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="dash-table table table-sm table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-5">Produk</th>
+                                    <th class="text-end">Stok</th>
+                                    <th class="text-end">Qty Terjual</th>
+                                    <th class="text-end">Nilai</th>
+                                    <th class="pe-5">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slowBody">
+                                <tr><td colspan="5" class="text-center text-body-secondary py-5">Memuat data...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

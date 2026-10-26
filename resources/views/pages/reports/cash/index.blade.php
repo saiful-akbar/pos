@@ -115,7 +115,7 @@
     <div class="row gx-7">
         <div class="col-12 mt-7 mb-7">
             <div class="card shadow-sm">
-                <div class="card-header pb-0 pt-4">
+                <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs border-bottom-0" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="tabTransactions" data-bs-toggle="tab" data-bs-target="#paneTransactions" data-report="transactions" type="button" role="tab">
@@ -168,15 +168,48 @@
                     this.startDate = $('#startDate');
                     this.endDate = $('#endDate');
                     this.buttonFilter = $('#buttonFilter');
-                    this.monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                    this.monthNames = [
+                        'Januari',
+                        'Februari',
+                        'Maret',
+                        'April',
+                        'Mei',
+                        'Juni',
+                        'Juli',
+                        'Agustus',
+                        'September',
+                        'Oktober',
+                        'November',
+                        'Desember',
+                    ];
+                    
                     this.report = 'transactions';
                     this.queryString = '';
+
                     this.statusMap = {
-                        match: ['Sesuai', 'check_circle', 'text-bg-success'],
-                        difference: ['Selisih', 'error', 'text-bg-danger'],
-                        unreconciled: ['Belum direkonsiliasi', 'hourglass_empty', 'border text-body-secondary'],
-                        incomplete: ['Data belum lengkap', 'help', 'border text-body-secondary'],
+                        match: [
+                            'Sesuai',
+                            'check_circle',
+                            'text-bg-success',
+                        ],
+                        difference: [
+                            'Selisih',
+                            'error',
+                            'text-bg-danger',
+                        ],
+                        unreconciled: [
+                            'Belum direkonsiliasi',
+                            'hourglass_empty',
+                            'border text-body-secondary',
+                        ],
+                        incomplete: [
+                            'Data belum lengkap',
+                            'help',
+                            'border text-body-secondary',
+                        ],
                     };
+
                     this.table = this.#transactionsTableInit();
                     this.monthlyTable = null;
                     this.reconciliationTable = null;
@@ -243,13 +276,48 @@
                             emptyTable: 'Tidak ada transaksi kas pada periode atau filter yang dipilih.',
                         },
                         columns: [
-                            { title: 'Tanggal', name: 'cash_transactions.transaction_date', data: 'transaction_date', className: 'text-nowrap' },
-                            { title: 'No. Transaksi', name: 'cash_transactions.transaction_number', data: 'transaction_number', className: 'text-nowrap fw-semibold', render: (data) => this.escapeHtml(data) },
-                            { title: 'Jenis', name: 'cash_transactions.type', data: 'type', className: 'text-nowrap', searchable: false, render: (data) => this.typeBadge(data) },
-                            { title: 'Nominal', name: 'cash_transactions.amount', data: 'amount', className: 'text-nowrap text-end fw-semibold', searchable: false, render: (data) => this.rupiah(data) },
-                            { title: 'Catatan', name: 'cash_transactions.notes', data: 'notes', render: (data) => this.escapeHtml(data ?? '-') },
-                            { title: 'Referensi', name: 'cash_transactions.reference_number', data: 'reference_number', className: 'text-nowrap', render: (data) => this.escapeHtml(data ?? '-') },
-                            { title: 'Pencatat', name: 'users.full_name', data: 'user_name', className: 'text-nowrap', render: (data) => this.escapeHtml(data ?? '-') },
+                            {
+                                title: 'Tanggal',
+                                name: 'cash_transactions.transaction_date',
+                                data: 'transaction_date',
+                                className: 'text-nowrap' },
+                            {
+                                title: 'No. Transaksi',
+                                name: 'cash_transactions.transaction_number',
+                                data: 'transaction_number',
+                                className: 'text-nowrap fw-semibold',
+                                render: (data) => this.escapeHtml(data) },
+                            {
+                                title: 'Jenis',
+                                name: 'cash_transactions.type',
+                                data: 'type',
+                                className: 'text-nowrap',
+                                searchable: false,
+                                render: (data) => this.typeBadge(data) },
+                            {
+                                title: 'Nominal',
+                                name: 'cash_transactions.amount',
+                                data: 'amount',
+                                className: 'text-nowrap text-end fw-semibold',
+                                searchable: false,
+                                render: (data) => this.rupiah(data) },
+                            {
+                                title: 'Catatan',
+                                name: 'cash_transactions.notes',
+                                data: 'notes',
+                                render: (data) => this.escapeHtml(data ?? '-') },
+                            {
+                                title: 'Referensi',
+                                name: 'cash_transactions.reference_number',
+                                data: 'reference_number',
+                                className: 'text-nowrap',
+                                render: (data) => this.escapeHtml(data ?? '-') },
+                            {
+                                title: 'Pencatat',
+                                name: 'users.full_name',
+                                data: 'user_name',
+                                className: 'text-nowrap',
+                                render: (data) => this.escapeHtml(data ?? '-') },
                         ],
                         ajax: {
                             url: @json(route('reports.cash')),
@@ -293,11 +361,36 @@
                         layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null },
                         language,
                         columns: [
-                            { title: 'Periode', data: 'month', className: 'text-nowrap fw-semibold', render: period },
-                            { title: 'Saldo Awal', data: 'opening_balance', className: 'text-nowrap text-end', render: money },
-                            { title: 'Kas Masuk', data: 'incoming', className: 'text-nowrap text-end', render: money },
-                            { title: 'Kas Keluar', data: 'outgoing', className: 'text-nowrap text-end', render: money },
-                            { title: 'Saldo Teoritis Akhir', data: 'theoretical_closing', className: 'text-nowrap text-end fw-semibold', render: money },
+                            {
+                                title: 'Periode',
+                                data: 'month',
+                                className: 'text-nowrap fw-semibold',
+                                render: period,
+                            },
+                            {
+                                title: 'Saldo Awal',
+                                data: 'opening_balance',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Kas Masuk',
+                                data: 'incoming',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Kas Keluar',
+                                data: 'outgoing',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Saldo Balance',
+                                data: 'theoretical_closing',
+                                className: 'text-nowrap text-end fw-semibold',
+                                render: money,
+                            },
                         ],
                     });
 
@@ -310,15 +403,59 @@
                         layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null },
                         language,
                         columns: [
-                            { title: 'Periode', data: 'month', className: 'text-nowrap fw-semibold', render: period },
-                            { title: 'Saldo Awal', data: 'opening_balance', className: 'text-nowrap text-end', render: money },
-                            { title: 'Kas Masuk', data: 'incoming', className: 'text-nowrap text-end', render: money },
-                            { title: 'Kas Keluar', data: 'outgoing', className: 'text-nowrap text-end', render: money },
-                            { title: 'Saldo Teoritis', data: 'theoretical_closing', className: 'text-nowrap text-end', render: money },
-                            { title: 'Saldo Aktual Berikutnya', data: 'next_opening_balance', className: 'text-nowrap text-end', render: money },
-                            { title: 'Selisih', data: 'difference', className: 'text-nowrap text-end fw-bold', render: (data) => this.signedRupiah(data) },
-                            { title: 'Status', data: 'status', className: 'text-nowrap', render: (data) => this.statusBadge(data) },
-                            { title: 'Catatan', data: 'notes', render: (data) => this.escapeHtml(data ?? '-') },
+                            {
+                                title: 'Periode',
+                                data: 'month',
+                                className: 'text-nowrap fw-semibold',
+                                render: period,
+                            },
+                            {
+                                title: 'Saldo Awal',
+                                data: 'opening_balance',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Kas Masuk',
+                                data: 'incoming',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Kas Keluar',
+                                data: 'outgoing',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Saldo Balance',
+                                data: 'theoretical_closing',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Saldo Aktual Berikutnya',
+                                data: 'next_opening_balance',
+                                className: 'text-nowrap text-end',
+                                render: money,
+                            },
+                            {
+                                title: 'Selisih',
+                                data: 'difference',
+                                className: 'text-nowrap text-end fw-bold',
+                                render: (data) => this.signedRupiah(data),
+                            },
+                            {
+                                title: 'Status',
+                                data: 'status',
+                                className: 'text-nowrap',
+                                render: (data) => this.statusBadge(data),
+                            },
+                            {
+                                title: 'Catatan',
+                                data: 'notes',
+                                render: (data) => this.escapeHtml(data ?? '-'),
+                            },
                         ],
                     });
                 }

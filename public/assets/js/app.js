@@ -118,7 +118,7 @@ class App {
       fixedHeader: true,
       info: false,
       scrollX: false,
-      scrollY: "380px",
+      scrollY: "300px",
       language: {
         search: "",
         searchPlaceholder: "Cari...",

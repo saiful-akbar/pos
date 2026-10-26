@@ -700,7 +700,7 @@
 
                 service.detailTable = app.modalDataTable('#detailTable', {
                     serverSide: true,
-                    scrollX: true,
+                    scrollX: false,
                     ajax: service.detailUrl,
                     order: [[0, 'asc']],
                     columns: [
@@ -716,7 +716,7 @@
                             name: 'products.name',
                             data: 'product_name',
                             type: 'string',
-                            width: '300px',
+                            width: '250px',
                         },
                         {
                             title: 'Unit (Satuan)',

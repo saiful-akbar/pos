@@ -82,14 +82,20 @@
                     </div>
 
                     <div class="card-footer">
-                        <div class="d-grid d-sm-flex justify-content-sm-end gap-3">
-                            <x-button type="button" id="buttonReset" color="light" startIcon="restart_alt" class="border">
-                                Reset
-                            </x-button>
-
-                            <x-button type="submit" id="buttonFilter" startIcon="filter_alt">
-                                Terapkan Filter
-                            </x-button>
+                        <div class="w-100">
+                            <div class="row align-items-center justify-content-end">
+                                <div class="col-6 col-lg-4 col-xl-2">
+                                    <x-button type="button" id="buttonReset" color="light" startIcon="restart_alt" class="border" fullWidth>
+                                        Reset
+                                    </x-button>
+                                </div>
+    
+                                <div class="col-6 col-lg-4 col-xl-2">
+                                    <x-button type="submit" id="buttonFilter" startIcon="filter_alt" fullWidth>
+                                        Terapkan Filter
+                                    </x-button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -549,14 +555,21 @@
                 service.detailTable = app.modalDataTable('#detailTable', {
                     serverSide: true,
                     scrollX: true,
+                    ordering: false,
+                    order: [[0, 'asc']],
                     ajax: service.detailUrl,
                     columns: [
+                        {
+                            title: 'Produk',
+                            name: 'product.code',
+                            data: 'product.code',
+                            className: 'text-nowrap',
+                        },
                         {
                             title: 'Produk',
                             name: 'product.name',
                             data: 'product.name',
                             className: 'text-nowrap',
-                            render: (data, type, row) => `${service.escapeHtml(row.product.name)} (${service.escapeHtml(row.product.code)})`,
                         },
                         {
                             title: 'Unit (Satuan)',
@@ -571,6 +584,22 @@
                             data: 'quantity',
                             className: 'text-nowrap text-end',
                             render: (data) => app.numberFormat(Number(data ?? 0)),
+                        },
+                        {
+                            title: 'Kelipatan Qty',
+                            name: 'multiples_quantity',
+                            data: 'multiples_quantity',
+                            className: 'text-nowrap text-end',
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
+                        },
+                        {
+                            // Total quantity dalam satuan dasar = qty x kelipatan.
+                            title: 'Total Qty (Dasar)',
+                            data: null,
+                            className: 'text-nowrap text-end',
+                            orderable: false,
+                            searchable: false,
+                            render: (data, type, row) => app.numberFormat(Number(row.quantity ?? 0) * Number(row.multiples_quantity ?? 0)),
                         },
                         {
                             title: 'Harga',
@@ -612,12 +641,20 @@
                     scrollX: true,
                     ajax: service.paymentsUrl,
                     order: [[0, 'asc']],
+                    ordering: false,
                     columns: [
                         {
                             title: 'Tanggal',
                             name: 'payment_date',
                             data: 'payment_date',
+                            className: 'text-nowrap text-start',
+                        },
+                        {
+                            title: 'Petugas',
+                            name: 'user.full_name',
+                            data: 'user.full_name',
                             className: 'text-nowrap',
+                            render: (data) => service.escapeHtml(data ?? '-'),
                         },
                         {
                             title: 'Metode',
@@ -630,15 +667,8 @@
                             title: 'Nominal',
                             name: 'amount',
                             data: 'amount',
-                            className: 'text-nowrap text-end',
-                            render: (data) => app.numberFormat(Number(data ?? 0)),
-                        },
-                        {
-                            title: 'Petugas',
-                            name: 'user.full_name',
-                            data: 'user.full_name',
                             className: 'text-nowrap',
-                            render: (data) => service.escapeHtml(data ?? '-'),
+                            render: (data) => app.numberFormat(Number(data ?? 0)),
                         },
                         {
                             title: 'Catatan',

@@ -223,12 +223,18 @@
         @csrf @method('patch')
 
         <x-modal id="modalEditCartDetail" title="Edit" size="md" fullScreen="md">
-            <div class="mb-5">
-                <x-form-select name="unit_id" id="unitId" label="Unit (Satuan)" required></x-form-select>
-            </div>
+            <div class="row">
+                <div class="col-12 mb-5">
+                    <x-form-input type="text" name="product" id="productEdit" label="Produk" disabled />
+                </div>
 
-            <div>
-                <x-form-input type="number" name="quantity" id="quantity" step="0.01" label="Quantity" required />
+                <div class="col-12 mb-5">
+                    <x-form-select name="unit_id" id="unitId" label="Unit (Satuan)" required />
+                </div>
+
+                <div class="col-12 mb-5">
+                    <x-form-input type="number" name="quantity" id="quantity" step="0.01" label="Quantity" required />
+                </div>
             </div>
 
             <x-slot:footer>
@@ -282,29 +288,29 @@
                 #productDataTableInit() {
                     return app.modalDataTable('#productTable', {
                         serverSide: true,
-                        scrollX: true,
+                        scrollX: false,
                         ajax: "{{ route('masters.products', ['is_active' => true]) }}",
                         columns: [
                             {
-                                title: 'Kode Produk',
+                                title: 'Kode',
                                 name: 'code',
                                 data: 'code',
                                 type: 'string',
-                                className: 'text-nowrap'
+                                className: 'text-nowrap',
                             },
                             {
                                 title: 'Nama (Deskripsi)',
                                 name: 'name',
                                 data: 'name',
                                 type: 'string',
-                                width: '300px',
+                                className: 'text-nowrap',
                             },
                             {
                                 title: 'Kategori',
                                 name: 'category.code',
                                 data: 'category.code',
                                 type: 'string',
-                                className: 'text-nowrap',
+                                width: '300px',
                                 render: (data, type, row) => `${row.category.name} (${row.category.code})`,
                             },
                             {
@@ -402,7 +408,7 @@
                                     return `
                                         <button
                                             type="button"
-                                            class="btn btn-light"
+                                            class="btn btn-light btn-sm rounded"
                                             title="Edit"
                                             data-action="edit"
                                         >
@@ -411,7 +417,7 @@
 
                                         <button
                                             type="button"
-                                            class="btn btn-light"
+                                            class="btn btn-light btn-sm rounded"
                                             title="Hapus"
                                             onclick="deleteCartDetail(event, '${data}')"
                                         >
@@ -431,6 +437,7 @@
     
                                     if (response.status === 200) {
                                         this.formEditCartDetail.attr('action', app.url(`/transactions/purchases/carts/${this.cartId}/details/${data.id}`));
+                                        this.formEditCartDetail.find('input[name="product"]').val(`${data.product_name} (${data.product_code})`);
                                         this.formEditCartDetail.find('input[name="quantity"]').val(data.quantity);
                                         this.formEditCartDetail.find('select[name="unit_id"]').empty();
 
