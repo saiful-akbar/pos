@@ -1,4 +1,4 @@
-<x-layouts.auth title="Harga Produk">
+<x-layouts.auth title="Harga Produk" :access="$access">
     <x-page-header title="Harga Produk" icon="price_change">
         <x-slot:action>
             <div class="row justify-content-end">
@@ -166,6 +166,91 @@
         </div>
     </div>
 
+    {{-- Modal edit harga --}}
+    <form action="" method="post" autocomplete="off" id="formEdit">
+        @csrf @method('patch')
+
+        <x-modal title="Edit Harga" id="modalEdit" fullScreen="sm">
+            <div class="mb-5">
+                <x-form-input
+                    disabled
+                    type="text"
+                    id="edit_unit"
+                    name="unit_name"
+                    label="Unit (Satuan)"
+                />
+            </div>
+
+            <div class="mb-5">
+                <x-form-select
+                    required
+                    name="is_default"
+                    id="edit_is_default"
+                    label="Harga Default"
+                >
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
+                </x-form-select>
+            </div>
+
+            <div class="mb-5">
+                <x-form-input
+                    required
+                    type="number"
+                    name="purchase_price"
+                    id="edit_purchase_price"
+                    label="Harga Beli"
+                    placeholder="Masukan harga beli..."
+                    min="0"
+                    step="0.01"
+                />
+            </div>
+
+            <div class="mb-5">
+                <x-form-input
+                    required
+                    type="number"
+                    name="selling_price"
+                    id="edit_selling_price"
+                    label="Harga Jual"
+                    placeholder="Masukan harga jual..."
+                    min="0"
+                    step="0.01"
+                />
+            </div>
+
+            <div>
+                <x-form-input
+                    required
+                    type="number"
+                    name="multiples_quantity"
+                    id="edit_multiples_quantity"
+                    label="Kelipatan Stok"
+                    placeholder="Masukan nilai kelipatan stok..."
+                    helperText="Perubahan kelipatan tidak mengubah stok dan riwayat transaksi, tetapi berlaku untuk keranjang yang masih terbuka dan import stok berikutnya."
+                    min="1"
+                    step="0.01"
+                />
+            </div>
+
+            <x-slot:footer>
+                <div class="row justify-content-between">
+                    <div class="col-6">
+                        <x-button type="button" color="light" data-bs-dismiss="modal" startIcon="close" fullWidth>
+                            Batal
+                        </x-button>
+                    </div>
+
+                    <div class="col-6">
+                        <x-button type="submit" color="secondary" startIcon="Save" fullWidth>
+                            Simpan
+                        </x-button>
+                    </div>
+                </div>
+            </x-slot:footer>
+        </x-modal>
+    </form>
+
     {{-- Javascript --}}
     <x-slot:script>
         <script>
@@ -173,6 +258,8 @@
                 constructor() {
                     this.productId = "{{ $product->id }}",
                     this.formCreate = $('#formCreate');
+                    this.formEdit = $('#formEdit');
+                    this.modalEdit = new bootstrap.Modal('#modalEdit', { backdrop: 'static' });
                     this.priceTable = this.#priceDataTableInit();
                 }
 
@@ -237,7 +324,14 @@
                                 orderable: false,
                                 searchable: false,
                                 render: (data, type, row) => {
+                                    const canUpdate = $('html').data('update') === 1;
+
                                     return `
+                                        ${canUpdate ? `
+                                            <button type="button" class="btn btn-light" title="Edit" onclick="editPrice(event, '${data}')">
+                                                ${app.icon('edit', 'fs-6')}
+                                            </button>
+                                        ` : ''}
                                         <button type="button" class="btn btn-light" title="Hapus" onclick="deletePrice(event, '${data}')">
                                             ${app.icon('delete', 'fs-6')}
                                         </button>
@@ -257,6 +351,22 @@
                             type: "post",
                             url: this.formCreate.attr('action'),
                             data: this.formCreate.serialize(),
+                            dataType: "json",
+                            success: (response) => resolve(response),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+                }
+
+                /**
+                 * Submit form edit
+                 */
+                update() {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: "post",
+                            url: this.formEdit.attr('action'),
+                            data: this.formEdit.serialize(),
                             dataType: "json",
                             success: (response) => resolve(response),
                             error: (error) => reject(error.responseJSON),
@@ -310,6 +420,55 @@
                     }
                 } catch (error) {
                     app.setFormErrors(service.formCreate, error);
+                } finally {
+                    app.hidePreloader();
+                }
+            });
+
+            /**
+             * Tampilkan modal edit harga
+             */
+            const editPrice = (event, id) => {
+                event.preventDefault();
+
+                // Ambil data baris dari dataTable berdasarkan id harga.
+                const row = service.priceTable.rows().data().toArray().find((item) => item.id === id);
+
+                if (row === undefined) {
+                    return;
+                }
+
+                app.clearFormErrors(service.formEdit);
+
+                service.formEdit.attr('action', app.url(`/masters/products/${service.productId}/prices/${id}`));
+                service.formEdit.find('#edit_unit').val(`${row.unit_name} (${row.unit_code})`);
+                service.formEdit.find('#edit_is_default').val(row.is_default === 1 ? '1' : '0');
+                service.formEdit.find('#edit_purchase_price').val(row.purchase_price);
+                service.formEdit.find('#edit_selling_price').val(row.selling_price);
+                service.formEdit.find('#edit_multiples_quantity').val(row.multiples_quantity);
+                service.modalEdit.show();
+            }
+
+            /**
+             * Submit form edit
+             */
+            service.formEdit.submit(async function (e) {
+                e.preventDefault();
+
+                app.showPreloader();
+                app.clearFormErrors(service.formEdit);
+
+                try {
+                    const response = await service.update();
+                    const { status, message } = response;
+
+                    if (status === 200) {
+                        app.alert('success', message);
+                        service.modalEdit.hide();
+                        service.priceTable.ajax.reload();
+                    }
+                } catch (error) {
+                    app.setFormErrors(service.formEdit, error);
                 } finally {
                     app.hidePreloader();
                 }

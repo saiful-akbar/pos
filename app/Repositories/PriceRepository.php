@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Application\Price\DTOs\PriceDTO;
+use App\Application\Price\DTOs\UpdatePriceDTO;
 use App\Base\Repository;
 use App\Domain\Price\Entities\PriceEntity;
 use App\Domain\Price\Repositories\PriceRepositoryInterface;
@@ -204,6 +205,69 @@ class PriceRepository extends Repository implements PriceRepositoryInterface
     }
 
     /**
+     * Update harga berdasarkan id.
+     */
+    #[Override]
+    public function update(UpdatePriceDTO $value): int
+    {
+        try {
+            return $this->model->query()
+                ->where('id', $value->id)
+                ->update($value->toArray());
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengunci (lock for update) seluruh harga milik produk selama transaksi berjalan.
+     */
+    #[Override]
+    public function lockByProductId(string $productId): void
+    {
+        try {
+            $this->model->query()
+                ->where('product_id', $productId)
+                ->lockForUpdate()
+                ->pluck('id');
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Menjadikan seluruh harga produk sebagai bukan default, kecuali harga dengan id tertentu.
+     */
+    #[Override]
+    public function unsetDefaultByProductId(string $productId, string $exceptId): int
+    {
+        try {
+            return $this->model->query()
+                ->where('product_id', $productId)
+                ->where('id', '!=', $exceptId)
+                ->where('is_default', 1)
+                ->update(['is_default' => 0]);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Hapus permanen.
      */
     #[Override]
@@ -290,6 +354,7 @@ class PriceRepository extends Repository implements PriceRepositoryInterface
             multiplesQuantity: parse_float($model->multiples_quantity),
             purchasePrice: parse_float($model->purchase_price),
             sellingPrice: parse_float($model->selling_price),
+            isDefault: (bool) $model->is_default,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,

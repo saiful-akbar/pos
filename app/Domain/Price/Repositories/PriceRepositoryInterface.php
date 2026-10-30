@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Price\Repositories;
 
 use App\Application\Price\DTOs\PriceDTO;
+use App\Application\Price\DTOs\UpdatePriceDTO;
 use App\Domain\Price\Entities\PriceEntity;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -39,6 +40,21 @@ interface PriceRepositoryInterface
      * Create (insert).
      */
     public function create(PriceDTO $value): PriceEntity;
+
+    /**
+     * Update harga berdasarkan id.
+     */
+    public function update(UpdatePriceDTO $value): int;
+
+    /**
+     * Mengunci (lock for update) seluruh harga milik produk selama transaksi berjalan.
+     */
+    public function lockByProductId(string $productId): void;
+
+    /**
+     * Menjadikan seluruh harga produk sebagai bukan default, kecuali harga dengan id tertentu.
+     */
+    public function unsetDefaultByProductId(string $productId, string $exceptId): int;
 
     /**
      * Hapus permanen.

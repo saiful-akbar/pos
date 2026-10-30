@@ -180,8 +180,9 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/prices/import/template', 'templateImportUpdatePrices')->name('.prices.import.template')->middleware("$module,update");
                 Route::get('/{productId}/prices', 'prices')->name('.prices')->middleware("$module,read");
                 Route::get('/{productId}/prices/table', 'pricesTable')->name('.prices.table')->middleware("$module,read");
-                Route::get('/{productId}/prices/create', 'createPrices')->name('.prices.create')->middleware("$module,create");
+                Route::get('/{productId}/prices/create', 'createPrices')->name('.prices.create')->middleware("$module,create,update");
                 Route::post('/{productId}/prices', 'storePrice')->name('.prices.store')->middleware("$module,create");
+                Route::patch('/{productId}/prices/{priceId}', 'updatePrice')->name('.prices.update')->middleware("$module,update");
                 Route::delete('/{productId}/prices/{priceId}', 'deletePrice')->name('.prices.delete')->middleware("$module,create");
                 Route::get('/{productId}/edit', 'edit')->name('.edit')->middleware("$module,update");
                 Route::patch('/{productId}', 'update')->name('.update')->middleware("$module,update");

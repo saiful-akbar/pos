@@ -7,11 +7,13 @@ namespace App\Http\Controllers;
 use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Price\DTOs\PriceDTO;
+use App\Application\Price\DTOs\UpdatePriceDTO;
 use App\Application\Price\UseCases\CreatePrice;
 use App\Application\Price\UseCases\DeletePrice;
 use App\Application\Price\UseCases\FindPriceById;
 use App\Application\Price\UseCases\GetPricesByProduct;
 use App\Application\Price\UseCases\GetPricesTableByProduct;
+use App\Application\Price\UseCases\UpdatePrice;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
@@ -28,6 +30,7 @@ use App\Http\Requests\Products\ImportProductRequest;
 use App\Http\Requests\Products\ResetDiscountProductRequest;
 use App\Http\Requests\Products\StorePriceProductRequest;
 use App\Http\Requests\Products\StoreProductRequest;
+use App\Http\Requests\Products\UpdatePriceProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
 use App\Imports\Products\ProductImport;
 use App\Imports\Products\UpdateDiscountProductImport;
@@ -178,9 +181,14 @@ class ProductController extends Controller
             isActive: true,
         );
 
+        $access = app(FindModuleAccessByRoute::class)->execute(
+            roleId: user()->role_id,
+            route: $this->moduleRoute,
+        );
+
         return view(
             view: 'pages.products.prices',
-            data: compact('product', 'units'),
+            data: compact('product', 'units', 'access'),
         );
     }
 
@@ -215,6 +223,32 @@ class ProductController extends Controller
         return $this->jsonResponse(
             status: 201,
             message: 'Harga produk berhasil ditambahkan.'
+        );
+    }
+
+    /**
+     * Update harga.
+     */
+    public function updatePrice(UpdatePriceProductRequest $request, string $productId, string $priceId): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        app(UpdatePrice::class)->execute(
+            value: new UpdatePriceDTO(
+                id: $priceId,
+                productId: $productId,
+                multiplesQuantity: $request->float('multiples_quantity'),
+                purchasePrice: $request->float('purchase_price'),
+                sellingPrice: $request->float('selling_price'),
+                isDefault: $request->boolean('is_default'),
+            ),
+        );
+
+        return $this->jsonResponse(
+            status: 200,
+            message: 'Harga produk berhasil diperbarui.'
         );
     }
 

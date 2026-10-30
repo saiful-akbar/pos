@@ -43,6 +43,7 @@ use App\Application\Price\UseCases\DeletePrice;
 use App\Application\Price\UseCases\FindPriceById;
 use App\Application\Price\UseCases\GetPricesByProduct;
 use App\Application\Price\UseCases\GetPricesTableByProduct;
+use App\Application\Price\UseCases\UpdatePrice;
 use App\Application\Product\UseCases\CreateProduct;
 use App\Application\Product\UseCases\FindProductById;
 use App\Application\Product\UseCases\GetProductsTable;
@@ -262,6 +263,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateProduct::class => ErrorLogRepository::class,
             CreatePrice::class => ErrorLogRepository::class,
             DeletePrice::class => ErrorLogRepository::class,
+            UpdatePrice::class => ErrorLogRepository::class,
             FindPriceById::class => ErrorLogRepository::class,
             UploadImageProduct::class => ErrorLogRepository::class,
             UpdateProduct::class => ErrorLogRepository::class,
@@ -327,6 +329,7 @@ class RepositoryServiceProvider extends ServiceProvider
             CreateProduct::class => ActivityLogRepository::class,
             CreatePrice::class => ActivityLogRepository::class,
             DeletePrice::class => ActivityLogRepository::class,
+            UpdatePrice::class => ActivityLogRepository::class,
             FindPriceById::class => ActivityLogRepository::class,
             UpdateProduct::class => ActivityLogRepository::class,
             ResetAllDiscountProducts::class => ActivityLogRepository::class,
@@ -445,6 +448,7 @@ class RepositoryServiceProvider extends ServiceProvider
             GetPricesTableByProduct::class => PriceRepository::class,
             CreatePrice::class => PriceRepository::class,
             DeletePrice::class => PriceRepository::class,
+            UpdatePrice::class => PriceRepository::class,
             FindPriceById::class => PriceRepository::class,
             CreatePurchaseCartDetail::class => PriceRepository::class,
             UpdatePurchaseCartDetail::class => PriceRepository::class,

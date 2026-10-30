@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 rm -rf ./node_modules
 rm -rf ./vendor
 rm -rf ./public/storage
