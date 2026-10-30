@@ -8,15 +8,19 @@ use App\Application\Cash\UseCases\CreateCashTransaction;
 use App\Application\Cash\UseCases\DeleteCashTransaction;
 use App\Application\Cash\UseCases\FindCashTransactionById;
 use App\Application\Cash\UseCases\GetCashRecorders;
+use App\Application\Cash\UseCases\GetCashTransactionsQuery;
 use App\Application\Cash\UseCases\GetCashTransactionsTable;
 use App\Application\Cash\UseCases\GetCashTransactionTotals;
 use App\Application\Cash\UseCases\UpdateCashTransaction;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Exports\Cash\CashTransactionExport;
 use App\Http\Requests\Cash\GetCashTransactionsRequest;
 use App\Http\Requests\Cash\StoreCashTransactionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CashTransactionController extends Controller
 {
@@ -133,6 +137,26 @@ class CashTransactionController extends Controller
 
         return $this->jsonResponse(
             message: 'Transaksi kas berhasil dihapus.',
+        );
+    }
+
+    /**
+     * Mengunduh daftar transaksi kas (sesuai filter) dalam file excel.
+     */
+    public function exportExcel(GetCashTransactionsRequest $request): BinaryFileResponse
+    {
+        $filter = $request->toFilter();
+
+        $export = new CashTransactionExport(
+            query: app(GetCashTransactionsQuery::class)->execute(filter: $filter),
+            totals: app(GetCashTransactionTotals::class)->execute(filter: $filter),
+            filter: $filter,
+            generatedAt: now(),
+        );
+
+        return Excel::download(
+            $export,
+            sprintf('transaksi-kas-%s-%s.xlsx', $filter->startDate->format('Ymd'), $filter->endDate->format('Ymd')),
         );
     }
 }

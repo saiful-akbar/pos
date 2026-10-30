@@ -6,10 +6,14 @@ namespace App\Application\Purchase\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\Cash\DTOs\CashTransactionDTO;
 use App\Application\Purchase\DTOs\PurchaseDTO;
 use App\Application\Purchase\DTOs\PurchasePaymentDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
+use App\Domain\Cash\Enums\CashTransactionTypeEnum;
+use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
 use App\Domain\Purchase\Enums\PaymentStatusEnum;
@@ -27,6 +31,7 @@ class CreatePurchasePayment
     public function __construct(
         private PurchasePaymentRepositoryInterface $paymentRepository,
         private PurchaseRepository $purchaseRepository,
+        private CashTransactionRepositoryInterface $cashTransactionRepository,
         private ActivityLogRepositoryInterface $activityRepository,
         private ErrorLogRepositoryInterface $errorRepository,
     ) {}
@@ -67,6 +72,22 @@ class CreatePurchasePayment
                     notes: $notes,
                 ),
             );
+
+            // Catat kas keluar dari pembayaran pembelian (dilewati jika nominal nol).
+            if ($amount > 0) {
+                $this->cashTransactionRepository->create(
+                    value: new CashTransactionDTO(
+                        userId: user()->id,
+                        transactionDate: $paymentDate,
+                        type: CashTransactionTypeEnum::OUTGOING,
+                        amount: number_format($amount, 2, '.', ''),
+                        notes: 'Kas keluar dari pembayaran pembelian',
+                        referenceNumber: $purchase->invoiceNumber,
+                        sourceType: CashSourceTypeEnum::PURCHASE_PAYMENT,
+                        sourceId: $purchasePayment->id,
+                    ),
+                );
+            }
 
             // Hitung jumlah yang sudah dibayarkan berdasarkan purchase_id
             $totalAmount = $this->paymentRepository->sumAmountByPurchaseId(

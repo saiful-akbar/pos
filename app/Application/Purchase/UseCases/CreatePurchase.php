@@ -6,11 +6,15 @@ namespace App\Application\Purchase\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\Cash\DTOs\CashTransactionDTO;
 use App\Application\Purchase\DTOs\PurchaseDetailDTO;
 use App\Application\Purchase\DTOs\PurchaseDTO;
 use App\Application\Purchase\DTOs\PurchasePaymentDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
+use App\Domain\Cash\Enums\CashTransactionTypeEnum;
+use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Purchase\Enums\PaymentMethodEnum;
@@ -36,6 +40,7 @@ class CreatePurchase
         private PurchaseCartDetailRepositoryInterface $purchaseCartDetailRepository,
         private PurchasePaymentRepositoryInterface $purchasePaymentRepository,
         private ProductRepositoryInterface $productRepository,
+        private CashTransactionRepositoryInterface $cashTransactionRepository,
         private ActivityLogRepositoryInterface $activityRepository,
         private ErrorLogRepositoryInterface $errorRepository,
     ) {}
@@ -122,7 +127,7 @@ class CreatePurchase
 
             // Insert data pembeyaran pembelian.
             if ($paymentMethod !== null) {
-                $this->purchasePaymentRepository->create(
+                $purchasePayment = $this->purchasePaymentRepository->create(
                     value: new PurchasePaymentDTO(
                         purchaseId: $purchase->id,
                         userId: user()->id,
@@ -132,6 +137,22 @@ class CreatePurchase
                         notes: null,
                     ),
                 );
+
+                // Catat kas keluar sebesar pembayaran yang dilakukan (dilewati jika belum membayar).
+                if ($amountPaid > 0) {
+                    $this->cashTransactionRepository->create(
+                        value: new CashTransactionDTO(
+                            userId: user()->id,
+                            transactionDate: $transactionDate,
+                            type: CashTransactionTypeEnum::OUTGOING,
+                            amount: number_format($amountPaid, 2, '.', ''),
+                            notes: 'Kas keluar dari pembelian',
+                            referenceNumber: $invoiceNumber,
+                            sourceType: CashSourceTypeEnum::PURCHASE_PAYMENT,
+                            sourceId: $purchasePayment->id,
+                        ),
+                    );
+                }
             }
 
             // Hapus purchase cart

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Cash\DTOs;
 
 use App\Base\DTO;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
 use App\Domain\Cash\Enums\CashTransactionTypeEnum;
 use DateTimeInterface;
 use Override;
@@ -23,6 +24,8 @@ class CashTransactionDTO extends DTO
         public readonly string $amount,
         public readonly ?string $notes,
         public readonly ?string $referenceNumber,
+        public readonly ?CashSourceTypeEnum $sourceType = null,
+        public readonly ?string $sourceId = null,
     ) {}
 
     /**
@@ -38,6 +41,8 @@ class CashTransactionDTO extends DTO
             'amount' => $this->amount,
             'notes' => $this->notes,
             'reference_number' => $this->referenceNumber,
+            'source_type' => $this->sourceType?->value,
+            'source_id' => $this->sourceId,
         ];
     }
 }

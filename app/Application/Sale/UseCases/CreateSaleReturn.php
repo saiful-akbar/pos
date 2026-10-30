@@ -6,10 +6,14 @@ namespace App\Application\Sale\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\Cash\DTOs\CashTransactionDTO;
 use App\Application\Sale\DTOs\SaleReturnDetailDTO;
 use App\Application\Sale\DTOs\SaleReturnDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
+use App\Domain\Cash\Enums\CashTransactionTypeEnum;
+use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Sale\Entities\SaleReturnEntity;
@@ -31,6 +35,7 @@ class CreateSaleReturn
         private SaleReturnCartRepositoryInterface $cartRepository,
         private SaleReturnCartDetailRepositoryInterface $cartDetailRepository,
         private ProductRepositoryInterface $productRepository,
+        private CashTransactionRepositoryInterface $cashTransactionRepository,
         private ActivityLogRepositoryInterface $activityRepository,
         private ErrorLogRepositoryInterface $errorRepository,
     ) {}
@@ -38,7 +43,7 @@ class CreateSaleReturn
     /**
      * Execute method.
      */
-    public function execute(string $cartId, ?string $notes): SaleReturnEntity
+    public function execute(string $cartId, ?string $notes, bool $refundCash = false): SaleReturnEntity
     {
         DB::beginTransaction();
 
@@ -114,6 +119,22 @@ class CreateSaleReturn
                 $this->productRepository->updateCurrentStock(
                     id: $product->id,
                     value: $product->currentStock + ($cartDetail->quantity * $cartDetail->multiplesQuantity),
+                );
+            }
+
+            // Catat kas keluar jika uang dikembalikan kepada pelanggan.
+            if ($refundCash && $saleReturn->grandTotal > 0) {
+                $this->cashTransactionRepository->create(
+                    value: new CashTransactionDTO(
+                        userId: user()->id,
+                        transactionDate: $saleReturn->transactionDate,
+                        type: CashTransactionTypeEnum::OUTGOING,
+                        amount: number_format($saleReturn->grandTotal, 2, '.', ''),
+                        notes: 'Kas keluar dari retur penjualan',
+                        referenceNumber: $saleReturn->returnNumber,
+                        sourceType: CashSourceTypeEnum::SALE_RETURN,
+                        sourceId: $saleReturn->id,
+                    ),
                 );
             }
 

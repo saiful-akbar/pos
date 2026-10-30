@@ -7,11 +7,15 @@ namespace App\Http\Controllers;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Purchase\UseCases\GetPurchaseDetailTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentsTableByPurchaseId;
+use App\Application\Report\DTOs\PurchaseReportFilterDTO;
+use App\Application\Report\UseCases\GetPurchaseReportProductQuery;
+use App\Application\Report\UseCases\GetPurchaseReportProductTable;
 use App\Application\Report\UseCases\GetPurchaseReportQuery;
 use App\Application\Report\UseCases\GetPurchaseReportSummary;
 use App\Application\Report\UseCases\GetPurchaseReportTable;
 use App\Application\Report\UseCases\GetPurchaseTransactionReport;
 use App\Application\Supplier\UseCases\GetAllSuppliers;
+use App\Exports\Reports\PurchaseProductReportExport;
 use App\Exports\Reports\PurchaseReportExport;
 use App\Exports\Reports\PurchaseTransactionExport;
 use App\Http\Requests\Reports\GetPurchaseReportRequest;
@@ -66,6 +70,44 @@ class PurchaseReportController extends Controller
 
         return $this->jsonResponse(
             data: $summary->toArray(),
+        );
+    }
+
+    /**
+     * Mengambil data tabel laporan pembelian per produk (DataTables server side).
+     */
+    public function products(GetPurchaseReportRequest $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetPurchaseReportProductTable::class)->execute(
+            filter: $request->toFilter(),
+        );
+    }
+
+    /**
+     * Mengunduh laporan pembelian per produk dalam file excel (filter sama dengan halaman laporan).
+     */
+    public function exportProductsExcel(GetPurchaseReportRequest $request): BinaryFileResponse
+    {
+        $filter = $request->toFilter();
+
+        $export = new PurchaseProductReportExport(
+            query: app(GetPurchaseReportProductQuery::class)->execute(filter: $filter),
+            startDate: $filter->startDate,
+            endDate: $filter->endDate,
+            filterLabels: $this->productFilterLabels($filter),
+        );
+
+        return Excel::download(
+            $export,
+            sprintf(
+                'laporan-pembelian-per-produk-%s-%s.xlsx',
+                $filter->startDate->format('Ymd'),
+                $filter->endDate->format('Ymd'),
+            ),
         );
     }
 
@@ -181,6 +223,30 @@ class PurchaseReportController extends Controller
             'Content-Disposition' => 'inline; filename="detail-pembelian-'.$transaction->purchase->transactionDate->format('Y-m-d').'.pdf"',
             'Cache-Control' => 'no-store, private',
         ]);
+    }
+
+    /**
+     * Keterangan filter aktif (label => nilai) untuk export per produk; hanya filter yang dipilih.
+     *
+     * @return array<string, string>
+     */
+    private function productFilterLabels(PurchaseReportFilterDTO $filter): array
+    {
+        $labels = [];
+
+        if ($filter->supplierId !== null) {
+            $labels['Pemasok'] = $this->supplierName($filter->supplierId) ?? '-';
+        }
+
+        if ($filter->paymentStatus !== null) {
+            $labels['Status Pembayaran'] = $filter->paymentStatus->value;
+        }
+
+        if ($filter->invoiceNumber !== null) {
+            $labels['Nomor Faktur'] = $filter->invoiceNumber;
+        }
+
+        return $labels;
     }
 
     /**

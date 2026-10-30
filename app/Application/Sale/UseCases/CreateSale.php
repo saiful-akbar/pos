@@ -6,12 +6,17 @@ namespace App\Application\Sale\UseCases;
 
 use App\Application\ActivityLog\DTOs\AttributeActivityDTO;
 use App\Application\ActivityLog\DTOs\CreateActivityDTO;
+use App\Application\Cash\DTOs\CashTransactionDTO;
 use App\Application\Sale\DTOs\SaleDetailDTO;
 use App\Application\Sale\DTOs\SaleDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
+use App\Domain\Cash\Enums\CashTransactionTypeEnum;
+use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use App\Domain\Sale\Entities\SaleEntity;
 use App\Domain\Sale\Repositories\SaleCartDetailRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleCartRepositoryInterface;
 use App\Domain\Sale\Repositories\SaleDetailRepositoryInterface;
@@ -31,6 +36,7 @@ class CreateSale
         private SaleCartRepositoryInterface $cartRepository,
         private SaleCartDetailRepositoryInterface $cartDetailRepository,
         private ProductRepositoryInterface $productRepository,
+        private CashTransactionRepositoryInterface $cashTransactionRepository,
         public ActivityLogRepositoryInterface $activityRepository,
         public ErrorLogRepositoryInterface $errorRepository,
     ) {}
@@ -38,7 +44,7 @@ class CreateSale
     /**
      * Execute method.
      */
-    public function execute(CreateSaleRequest $request): void
+    public function execute(CreateSaleRequest $request): SaleEntity
     {
         DB::beginTransaction();
 
@@ -117,6 +123,22 @@ class CreateSale
                 );
             }
 
+            // Catat kas masuk dari penjualan (nominal = grand total penjualan).
+            if ($sale->grandTotal > 0) {
+                $this->cashTransactionRepository->create(
+                    value: new CashTransactionDTO(
+                        userId: user()->id,
+                        transactionDate: $sale->transactionDate,
+                        type: CashTransactionTypeEnum::INCOMING,
+                        amount: number_format($sale->grandTotal, 2, '.', ''),
+                        notes: 'Kas masuk dari penjualan',
+                        referenceNumber: $sale->invoiceNumber,
+                        sourceType: CashSourceTypeEnum::SALE,
+                        sourceId: $sale->id,
+                    ),
+                );
+            }
+
             // Hapus data keranjang penjualan
             $this->cartRepository->delete(
                 id: $cart->id,
@@ -135,6 +157,8 @@ class CreateSale
             );
 
             DB::commit();
+
+            return $sale;
         } catch (\Throwable $e) {
             DB::rollBack();
 

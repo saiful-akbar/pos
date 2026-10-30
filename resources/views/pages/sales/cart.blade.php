@@ -6,12 +6,7 @@
                     <form action="{{ route('transactions.sales.carts.delete', ['cartId' => $cart->id]) }}" method="post" id="formCancel">
                         @csrf @method('delete')
 
-                        <x-button
-                            type="submit"
-                            color="danger"
-                            startIcon="close"
-                            fullWidth
-                        >
+                        <x-button type="submit" color="danger" startIcon="close" fullWidth>
                             Batalkan
                         </x-button>
                     </form>
@@ -984,8 +979,51 @@
              */
             service.formCreateSale.find('button[type="submit"]').click(function (e) { 
                 e.preventDefault();
-                app.showPreloader();
                 service.formCreateSale.submit();
+            });
+
+            service.formCreateSale.submit(async function (e) {
+                e.preventDefault();
+
+                // Buka tab kosong saat aksi pengguna agar tidak diblokir browser; diarahkan ke struk setelah berhasil.
+                const receiptTab = window.open('', '_blank');
+
+                app.showPreloader();
+                app.clearFormErrors(service.formCreateSale);
+
+                try {
+                    const response = await new Promise((resolve, reject) => {
+                        $.ajax({
+                            type: 'post',
+                            url: service.formCreateSale.attr('action'),
+                            data: service.formCreateSale.serialize(),
+                            dataType: 'json',
+                            success: (result) => resolve(result),
+                            error: (error) => reject(error.responseJSON),
+                        });
+                    });
+
+                    const { receipt_url, redirect_url } = response.data;
+
+                    // Tampilkan struk pada tab baru; jika tab diblokir browser, buka struk pada tab ini.
+                    if (receiptTab) {
+                        receiptTab.location.href = receipt_url;
+                        window.location.href = redirect_url;
+                    } else {
+                        window.location.href = receipt_url;
+                    }
+                } catch (error) {
+                    // Tutup tab kosong jika transaksi gagal.
+                    receiptTab?.close();
+                    app.hidePreloader();
+
+                    if (error?.errors) {
+                        app.setFormErrors(service.formCreateSale, error);
+                    }
+
+                    // Tampilkan pesan umum (mis. stok tidak mencukupi) agar tidak hilang tanpa terlihat.
+                    app.alert('danger', error?.message ?? 'Terjadi kesalahan saat menyelesaikan transaksi.');
+                }
             });
         </script>
     </x-slot:script>

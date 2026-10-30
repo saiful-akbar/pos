@@ -68,6 +68,8 @@ class CashTransaction extends Model
         'amount',
         'notes',
         'reference_number',
+        'source_type',
+        'source_id',
     ];
 
     /**

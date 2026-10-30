@@ -9,6 +9,7 @@ use App\Base\Repository;
 use App\Domain\Report\Entities\PurchaseReportSummaryEntity;
 use App\Domain\Report\Repositories\PurchaseReportRepositoryInterface;
 use App\Models\Purchase;
+use App\Models\PurchaseDetail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Override;
@@ -51,6 +52,50 @@ class PurchaseReportRepository extends Repository implements PurchaseReportRepos
                 ->select($columns)
                 ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
                 ->leftJoin('users', 'purchases.user_id', '=', 'users.id');
+
+            return $this->applyFilter($query, $filter);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil query laporan pembelian per produk (satu baris per detail pembelian) sesuai filter.
+     */
+    #[Override]
+    public function getProductQuery(PurchaseReportFilterDTO $filter): Builder
+    {
+        try {
+            $columns = [
+                'purchase_details.id as id',
+                'purchases.transaction_date as transaction_date',
+                'purchases.invoice_number as invoice_number',
+                'suppliers.name as supplier_name',
+                'products.code as product_code',
+                'products.name as product_name',
+                'units.name as unit_name',
+                'units.code as unit_code',
+                'purchase_details.quantity as quantity',
+                'purchase_details.multiples_quantity as multiples_quantity',
+                'purchase_details.price as price',
+                'purchase_details.subtotal as subtotal',
+                // Total kuantitas dalam satuan dasar.
+                DB::raw('(purchase_details.quantity * purchase_details.multiples_quantity) as base_quantity'),
+            ];
+
+            // Soft delete detail diterapkan otomatis oleh model; pembelian (induk) disaring manual karena memakai join.
+            $query = PurchaseDetail::query()
+                ->select($columns)
+                ->join('purchases', 'purchase_details.purchase_id', '=', 'purchases.id')
+                ->leftJoin('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
+                ->leftJoin('products', 'purchase_details.product_id', '=', 'products.id')
+                ->leftJoin('units', 'purchase_details.unit_id', '=', 'units.id')
+                ->whereNull('purchases.deleted_at');
 
             return $this->applyFilter($query, $filter);
         } catch (\Throwable $e) {

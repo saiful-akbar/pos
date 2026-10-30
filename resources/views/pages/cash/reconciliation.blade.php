@@ -76,7 +76,7 @@
                     <div class="card-body d-flex align-items-start justify-content-between gap-3">
                         <div style="min-width: 0;">
                             <div class="text-body-secondary small fw-semibold text-uppercase">{{ $card['label'] }}</div>
-                            <div class="fs-4 fw-bold text-break mt-2" id="{{ $card['id'] }}">-</div>
+                            <div class="fs-5 fw-bold text-break mt-2" id="{{ $card['id'] }}">-</div>
                         </div>
 
                         <div class="rounded-3 bg-{{ $card['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"
@@ -135,9 +135,17 @@
     <div class="row gx-7">
         <div class="col-12 mt-7 mb-7">
             <div class="card shadow-sm">
-                <div class="card-header py-4">
-                    <h2 class="fs-5 mb-0">Histori Rekonsiliasi</h2>
-                    <p class="text-body-secondary mt-1 mb-0" id="historyLabel">&nbsp;</p>
+                <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3 py-4">
+                    <div style="min-width: 0;">
+                        <h2 class="fs-5 mb-0">Histori Rekonsiliasi</h2>
+                        <p class="text-body-secondary mt-1 mb-0" id="historyLabel">&nbsp;</p>
+                    </div>
+
+                    {{-- Tombol export excel (hanya ikon) dengan tooltip --}}
+                    <x-button type="link" id="buttonExportExcel" href="#" color="light" size="sm"
+                        class="border rounded" title="Export Excel" aria-label="Export Excel">
+                        <x-icon class="fs-6">download</x-icon>
+                    </x-button>
                 </div>
 
                 <div class="card-body">
@@ -280,6 +288,9 @@
                     this.historyYear = year;
                     $('#historyLabel').text(`Tahun ${year}`);
 
+                    // Arahkan tombol export ke tahun yang sedang ditampilkan.
+                    $('#buttonExportExcel').attr('href', @json(route('cash.reconciliation.export')) + '?' + new URLSearchParams({ year }).toString());
+
                     if (this.historyTable !== null) {
                         this.historyTable.destroy();
                         $('#historyTable').empty();
@@ -291,22 +302,88 @@
                         searching: false,
                         ordering: false,
                         info: false,
-                        layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null },
+                        layout: {
+                            topStart: null,
+                            topEnd: null,
+                            bottomStart: null,
+                            bottomEnd: null,
+                        },
+                        fixedColumns: {
+                            start: 0,
+                            end: 1,
+                        },
                         columns: [
-                            { title: 'Periode', data: 'month', className: 'text-nowrap fw-semibold', render: (data, type, row) => `${this.monthNames[data - 1]} ${row.year}` },
-                            { title: 'Saldo Awal', data: 'opening_balance', className: 'text-nowrap text-end', render: (data) => this.rupiah(data) },
-                            { title: 'Kas Masuk', data: 'incoming', className: 'text-nowrap text-end', render: (data) => this.rupiah(data) },
-                            { title: 'Kas Keluar', data: 'outgoing', className: 'text-nowrap text-end', render: (data) => this.rupiah(data) },
-                            { title: 'Saldo Teoritis', data: 'theoretical_closing', className: 'text-nowrap text-end', render: (data) => this.rupiah(data) },
-                            { title: 'Saldo Aktual Berikutnya', data: 'next_opening_balance', className: 'text-nowrap text-end', render: (data) => this.rupiah(data) },
-                            { title: 'Selisih', data: 'difference', className: 'text-nowrap text-end fw-bold', render: (data) => this.signedRupiah(data) },
-                            { title: 'Status', data: 'status', className: 'text-nowrap', render: (data) => this.statusBadge(data) },
-                            { title: 'Catatan', data: 'notes', render: (data) => this.escapeHtml(data ?? '-') },
+                            {
+                                title: 'Periode',
+                                data: 'month',
+                                className: 'text-nowrap fw-semibold',
+                                render: (data,
+                                type,
+                                row) => `${this.monthNames[data - 1]} ${row.year}`,
+                            },
+                            {
+                                title: 'Saldo Awal',
+                                data: 'opening_balance',
+                                className: 'text-nowrap text-end',
+                                render: (data) => this.rupiah(data),
+                            },
+                            {
+                                title: 'Kas Masuk',
+                                data: 'incoming',
+                                className: 'text-nowrap text-end',
+                                render: (data) => this.rupiah(data),
+                            },
+                            {
+                                title: 'Kas Keluar',
+                                data: 'outgoing',
+                                className: 'text-nowrap text-end',
+                                render: (data) => this.rupiah(data),
+                            },
+                            {
+                                title: 'Saldo Teoritis',
+                                data: 'theoretical_closing',
+                                className: 'text-nowrap text-end',
+                                render: (data) => this.rupiah(data),
+                            },
+                            {
+                                title: 'Saldo Aktual Berikutnya',
+                                data: 'next_opening_balance',
+                                className: 'text-nowrap text-end',
+                                render: (data) => this.rupiah(data),
+                            },
+                            {
+                                title: 'Selisih',
+                                data: 'difference',
+                                className: 'text-nowrap text-end fw-bold',
+                                render: (data) => this.signedRupiah(data),
+                            },
+                            {
+                                title: 'Status',
+                                data: 'status',
+                                className: 'text-nowrap',
+                                render: (data) => this.statusBadge(data),
+                            },
+                            {
+                                title: 'Catatan',
+                                data: 'notes',
+                                render: (data) => this.escapeHtml(data ?? '-'),
+                            },
                             {
                                 title: app.icon('settings', 'fs-6'),
                                 data: 'month',
                                 className: 'text-nowrap text-center',
-                                render: (data, type, row) => `<button type="button" class="btn btn-sm btn-light" data-month="${row.month}" data-year="${row.year}" title="Pilih periode" aria-label="Pilih periode">${app.icon('open_in_new', 'fs-6')}</button>`,
+                                render: (data, type, row) => `
+                                    <button
+                                        type="button"
+                                            class="btn btn-sm btn-light"
+                                            data-month="${row.month}"
+                                            data-year="${row.year}"
+                                            title="Pilih periode"
+                                            aria-label="Pilih periode"
+                                        >
+                                        ${app.icon('open_in_new', 'fs-6')}
+                                    </button>
+                                `,
                             },
                         ],
                     });

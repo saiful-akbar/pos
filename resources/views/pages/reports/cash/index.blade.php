@@ -1,18 +1,6 @@
 <x-layouts.auth title="Laporan Kas" :access="$access">
-    {{-- Header halaman: judul, deskripsi, dan tombol export --}}
+    {{-- Header halaman: judul dan deskripsi --}}
     <x-page-header title="Laporan Kas" icon="payments">
-        <x-slot:action>
-            <div class="d-flex justify-content-lg-end gap-2">
-                <x-button type="link" id="buttonExportExcel" href="#" color="light" startIcon="download" class="border">
-                    Excel
-                </x-button>
-
-                <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light" startIcon="picture_as_pdf" class="border">
-                    PDF
-                </x-button>
-            </div>
-        </x-slot:action>
-
         <p class="text-body-secondary mt-4 mb-0">
             Laporan transaksi kas, rekap mutasi bulanan, dan rekonsiliasi saldo kas. Excel memuat ketiga laporan; PDF mengikuti tab yang dibuka.
         </p>
@@ -97,7 +85,7 @@
                     <div class="card-body d-flex align-items-start justify-content-between gap-3">
                         <div style="min-width: 0;">
                             <div class="text-body-secondary small fw-semibold text-uppercase">{{ $card['label'] }}</div>
-                            <div class="fs-3 fw-bold text-break mt-2" id="{{ $card['id'] }}">Rp 0.00</div>
+                            <div class="fs-5 fw-bold text-break mt-2" id="{{ $card['id'] }}">Rp 0.00</div>
                             <div class="small text-body-secondary mt-1">Sesuai filter aktif</div>
                         </div>
 
@@ -115,7 +103,7 @@
     <div class="row gx-7">
         <div class="col-12 mt-7 mb-7">
             <div class="card shadow-sm">
-                <div class="card-header">
+                <div class="card-header d-flex flex-wrap align-items-end justify-content-between gap-3">
                     <ul class="nav nav-tabs card-header-tabs border-bottom-0" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="tabTransactions" data-bs-toggle="tab" data-bs-target="#paneTransactions" data-report="transactions" type="button" role="tab">
@@ -133,6 +121,19 @@
                             </button>
                         </li>
                     </ul>
+
+                    {{-- Tombol export (hanya ikon) dengan tooltip --}}
+                    <div class="d-flex gap-2 pb-2">
+                        <x-button type="link" id="buttonExportExcel" href="#" color="light" size="sm"
+                            class="border rounded" title="Export Excel" aria-label="Export Excel">
+                            <x-icon class="fs-6">download</x-icon>
+                        </x-button>
+
+                        <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light" size="sm"
+                            class="border rounded" title="Cetak PDF" aria-label="Cetak PDF">
+                            <x-icon class="fs-6">picture_as_pdf</x-icon>
+                        </x-button>
+                    </div>
                 </div>
 
                 <div class="card-body">

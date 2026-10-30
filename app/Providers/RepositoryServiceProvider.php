@@ -68,17 +68,23 @@ use App\Application\Purchase\UseCases\GetPurchaseDetailTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasePaymentsTableByPurchaseId;
 use App\Application\Purchase\UseCases\GetPurchasesByDate;
 use App\Application\Purchase\UseCases\UpdatePurchaseCartDetail;
+use App\Application\Report\UseCases\GetPurchaseReportProductQuery;
+use App\Application\Report\UseCases\GetPurchaseReportProductTable;
 use App\Application\Report\UseCases\GetPurchaseReportQuery;
 use App\Application\Report\UseCases\GetPurchaseReportSummary;
 use App\Application\Report\UseCases\GetPurchaseReportTable;
 use App\Application\Report\UseCases\GetPurchaseTransactionReport;
 use App\Application\Report\UseCases\GetSaleReportFilterOptions;
+use App\Application\Report\UseCases\GetSaleReportProductQuery;
+use App\Application\Report\UseCases\GetSaleReportProductTable;
 use App\Application\Report\UseCases\GetSaleReportQuery;
 use App\Application\Report\UseCases\GetSaleReportSummary;
 use App\Application\Report\UseCases\GetSaleReportTable;
 use App\Application\Report\UseCases\GetSaleReturnReportAnalysis;
 use App\Application\Report\UseCases\GetSaleReturnReportDetailsTable;
 use App\Application\Report\UseCases\GetSaleReturnReportFilterOptions;
+use App\Application\Report\UseCases\GetSaleReturnReportProductQuery;
+use App\Application\Report\UseCases\GetSaleReturnReportProductTable;
 use App\Application\Report\UseCases\GetSaleReturnReportQuery;
 use App\Application\Report\UseCases\GetSaleReturnReportSummary;
 use App\Application\Report\UseCases\GetSaleReturnReportTable;
@@ -482,6 +488,8 @@ class RepositoryServiceProvider extends ServiceProvider
             GetPurchaseReportTable::class => PurchaseReportRepository::class,
             GetPurchaseReportSummary::class => PurchaseReportRepository::class,
             GetPurchaseReportQuery::class => PurchaseReportRepository::class,
+            GetPurchaseReportProductTable::class => PurchaseReportRepository::class,
+            GetPurchaseReportProductQuery::class => PurchaseReportRepository::class,
         ],
 
         // Sale report
@@ -489,6 +497,8 @@ class RepositoryServiceProvider extends ServiceProvider
             GetSaleReportTable::class => SaleReportRepository::class,
             GetSaleReportSummary::class => SaleReportRepository::class,
             GetSaleReportQuery::class => SaleReportRepository::class,
+            GetSaleReportProductTable::class => SaleReportRepository::class,
+            GetSaleReportProductQuery::class => SaleReportRepository::class,
             GetSaleReportFilterOptions::class => SaleReportRepository::class,
         ],
 
@@ -497,6 +507,8 @@ class RepositoryServiceProvider extends ServiceProvider
             GetSaleReturnReportTable::class => SaleReturnReportRepository::class,
             GetSaleReturnReportSummary::class => SaleReturnReportRepository::class,
             GetSaleReturnReportQuery::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportProductTable::class => SaleReturnReportRepository::class,
+            GetSaleReturnReportProductQuery::class => SaleReturnReportRepository::class,
             GetSaleReturnReportAnalysis::class => SaleReturnReportRepository::class,
             GetSaleReturnReportDetailsTable::class => SaleReturnReportRepository::class,
             GetSaleReturnReportFilterOptions::class => SaleReturnReportRepository::class,
@@ -521,6 +533,11 @@ class RepositoryServiceProvider extends ServiceProvider
             GetCashTransactionsTable::class => CashTransactionRepository::class,
             GetCashTransactionTotals::class => CashTransactionRepository::class,
             UpdateCashTransaction::class => CashTransactionRepository::class,
+            CreateSale::class => CashTransactionRepository::class,
+            CreatePurchase::class => CashTransactionRepository::class,
+            CreatePurchasePayment::class => CashTransactionRepository::class,
+            DeletePurchasePayment::class => CashTransactionRepository::class,
+            CreateSaleReturn::class => CashTransactionRepository::class,
         ],
 
         // Cash monthly balance

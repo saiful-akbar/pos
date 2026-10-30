@@ -13,6 +13,7 @@ use App\Domain\Cash\Entities\CashTransactionEntity;
 use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UpdateCashTransaction
 {
@@ -38,6 +39,13 @@ class UpdateCashTransaction
 
             if ($old === null) {
                 abort(404, 'Transaksi kas tidak ditemukan.');
+            }
+
+            // Transaksi otomatis tidak boleh diubah manual; koreksi dilakukan lewat transaksi sumbernya.
+            if ($old->isAutomatic()) {
+                throw ValidationException::withMessages(messages: [
+                    'message' => 'Transaksi kas otomatis dari transaksi penjualan, pembelian, atau retur tidak dapat diubah secara manual.',
+                ]);
             }
 
             // 2. Perbarui transaksi.

@@ -7,8 +7,7 @@
         <div class="col-12 mt-7">
             <div class="card shadow-sm">
                 <div class="card-header d-flex align-items-center gap-3 py-4">
-                    <div class="rounded-3 bg-primary bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"
-                        style="width: 2.5rem; height: 2.5rem;">
+                    <div class="rounded-3 bg-primary bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0" style="width: 2.5rem; height: 2.5rem;">
                         <x-icon class="fs-5">tune</x-icon>
                     </div>
 
@@ -118,14 +117,13 @@
             <div class="col-12 col-sm-6 col-xl-3 mt-7">
                 <div class="card shadow-sm h-100 border-start border-3 border-{{ $kpi['color'] }} border-opacity-25">
                     <div class="card-body d-flex align-items-center gap-4">
-                        <div class="rounded-3 bg-{{ $kpi['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width: 3.25rem; height: 3.25rem;">
+                        <div class="rounded-3 bg-{{ $kpi['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0" style="width: 3.25rem; height: 3.25rem;">
                             <x-icon class="fs-3">{{ $kpi['icon'] }}</x-icon>
                         </div>
 
                         <div style="min-width: 0;">
                             <div class="text-body-secondary small">{{ $kpi['label'] }}</div>
-                            <div class="fs-4 fw-semibold text-break" id="{{ $kpi['id'] }}">{{ $kpi['value'] }}</div>
+                            <div class="fs-5 fw-semibold text-break" id="{{ $kpi['id'] }}">{{ $kpi['value'] }}</div>
                         </div>
                     </div>
                 </div>
@@ -137,25 +135,43 @@
     <div class="row gx-7">
         <div class="col-12 mt-7">
             <div class="card shadow-sm">
-                <div class="card-header d-flex align-items-center justify-content-between gap-3">
-                    <h2 class="fs-5 mb-0">Daftar Pembelian</h2>
+                <div class="card-header">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-12 col-lg-8 mb-5 mb-lg-0">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-8">
+                                    <h2 class="fs-5 mb-0" id="tableTitle">Daftar Pembelian</h2>
+                                </div>
 
-                    {{-- Tombol export (hanya ikon) dengan tooltip --}}
-                    <div class="d-flex gap-2">
-                        <x-button type="link" id="buttonExportExcel" href="#" color="light" size="sm"
-                            class="border rounded" title="Export Excel" aria-label="Export Excel">
-                            <x-icon class="fs-6">download</x-icon>
-                        </x-button>
+                                <div class="col-auto d-flex gap-2">
+                                    <x-button type="link" id="buttonExportExcel" href="#" color="light" size="sm"
+                                        class="border rounded" title="Export Excel" aria-label="Export Excel">
+                                        <x-icon class="fs-6">download</x-icon>
+                                    </x-button>
+            
+                                    <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light" size="sm"
+                                        class="border rounded" title="Cetak PDF" aria-label="Cetak PDF">
+                                        <x-icon class="fs-6">picture_as_pdf</x-icon>
+                                    </x-button>
+                                </div>
+                            </div>
+                        </div>
 
-                        <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light" size="sm"
-                            class="border rounded" title="Cetak PDF" aria-label="Cetak PDF">
-                            <x-icon class="fs-6">picture_as_pdf</x-icon>
-                        </x-button>
+                        <div class="col-12 col-lg-4">
+                            <x-view-mode-toggle />
+                        </div>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <table id="purchaseReportTable" class="table table-sm table-hover align-middle w-100"></table>
+                    <div id="panelTransactions">
+                        <table id="purchaseReportTable" class="table table-sm table-hover align-middle w-100"></table>
+                    </div>
+
+                    {{-- Tabel per produk (dimuat saat mode "Per Produk" dipilih) --}}
+                    <div id="panelProducts" class="d-none">
+                        <table id="purchaseProductTable" class="table table-sm table-hover align-middle w-100"></table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,6 +232,8 @@
                     this.endDate = $('#endDate');
                     this.buttonFilter = $('#buttonFilter');
                     this.table = this.#reportDataTableInit();
+                    this.mode = 'transactions';
+                    this.productTable = null;
                 }
 
                 /**
@@ -410,6 +428,149 @@
                 }
 
                 /**
+                 * Inisialisasi dataTable laporan per produk (satu baris per detail produk).
+                 */
+                #productDataTableInit() {
+                    const columns = [
+                    {
+                        title: 'Tanggal',
+                        name: 'purchases.transaction_date',
+                        data: 'transaction_date',
+                        className: 'text-nowrap',
+                    },
+                    {
+                        title: 'Nomor Faktur',
+                        name: 'purchases.invoice_number',
+                        data: 'invoice_number',
+                        className: 'text-nowrap',
+                        render: (value) => this.escapeHtml(value ?? '-'),
+                    },
+                    {
+                        title: 'Pemasok',
+                        name: 'suppliers.name',
+                        data: 'supplier_name',
+                        className: 'text-nowrap',
+                        render: (value) => this.escapeHtml(value ?? '-'),
+                    },
+                    {
+                        title: 'Kode Produk',
+                        name: 'products.code',
+                        data: 'product_code',
+                        className: 'text-nowrap',
+                        render: (value) => this.escapeHtml(value ?? '-'),
+                    },
+                    {
+                        title: 'Nama Produk',
+                        name: 'products.name',
+                        data: 'product_name',
+                        className: '',
+                        width: '200px',
+                        render: (value) => this.escapeHtml(value ?? '-'),
+                    },
+                    {
+                        title: 'Unit (Satuan)',
+                        name: 'units.name',
+                        data: 'unit_name',
+                        className: 'text-nowrap',
+                        render: (value, type, row) => this.escapeHtml(`${row.unit_name ?? '-'} (${row.unit_code ?? '-'})`),
+                    },
+                    {
+                        title: 'Qty',
+                        name: 'purchase_details.quantity',
+                        data: 'quantity',
+                        className: 'text-nowrap text-end',
+                        render: (value) => app.numberFormat(Number(value ?? 0)),
+                    },
+                    {
+                        title: 'Kelipatan Qty',
+                        name: 'purchase_details.multiples_quantity',
+                        data: 'multiples_quantity',
+                        className: 'text-nowrap text-end',
+                        render: (value) => app.numberFormat(Number(value ?? 0)),
+                    },
+                    {
+                        // Total quantity dalam satuan dasar = qty x kelipatan.
+                        title: 'Total Qty (Dasar)',
+                        name: 'base_quantity',
+                        data: 'base_quantity',
+                        className: 'text-nowrap text-end',
+                        searchable: false,
+                        render: (value) => app.numberFormat(Number(value ?? 0)),
+                    },
+                    {
+                        title: 'Harga',
+                        name: 'purchase_details.price',
+                        data: 'price',
+                        className: 'text-nowrap text-end',
+                        render: (value) => app.numberFormat(Number(value ?? 0)),
+                    },
+                    {
+                        title: 'Subtotal',
+                        name: 'purchase_details.subtotal',
+                        data: 'subtotal',
+                        className: 'text-nowrap text-end',
+                        render: (value) => app.numberFormat(Number(value ?? 0)),
+                    },
+                    ];
+
+                    return app.dataTable('#purchaseProductTable', {
+                        columns,
+                        serverSide: true,
+                        ajax: {
+                            url: @json(route('reports.purchases.products')),
+                            // Kirim filter terbaru pada setiap request tabel.
+                            data: (params) => Object.assign(params, this.filters()),
+                        },
+                        order: [[0, 'desc']],
+                    });
+                }
+
+                /**
+                 * Arahkan tombol export ke filter yang sama dengan tabel dan mode tampilan aktif.
+                 * Mode per produk hanya tersedia dalam excel (tanpa pdf).
+                 */
+                updateExportLinks() {
+                    const queryString = new URLSearchParams(this.filters()).toString();
+                    const excelRoute = this.mode === 'products'
+                        ? @json(route('reports.purchases.products.export.excel'))
+                        : @json(route('reports.purchases.export.excel'));
+
+                    $('#buttonExportExcel').attr('href', excelRoute + '?' + queryString);
+                    $('#buttonExportPdf').attr('href', @json(route('reports.purchases.export.pdf')) + '?' + queryString);
+                    $('#buttonExportPdf').toggleClass('d-none', this.mode === 'products');
+                }
+
+                /**
+                 * Ganti mode tampilan tabel (per transaksi atau per produk).
+                 */
+                setMode(mode) {
+                    if (!this.validateDates()) {
+                        // Kembalikan pilihan mode jika tanggal belum valid.
+                        $(`input[name="viewMode"][value="${this.mode}"]`).prop('checked', true);
+                        return;
+                    }
+
+                    this.mode = mode;
+                    $('#tableTitle').text(mode === 'products' ? 'Daftar Produk Pembelian' : 'Daftar Pembelian');
+                    $('#panelTransactions').toggleClass('d-none', mode !== 'transactions');
+                    $('#panelProducts').toggleClass('d-none', mode !== 'products');
+                    this.updateExportLinks();
+
+                    if (mode === 'products') {
+                        // Tabel per produk dibuat saat pertama kali dibutuhkan; selanjutnya cukup dimuat ulang.
+                        if (this.productTable === null) {
+                            this.productTable = this.#productDataTableInit();
+                        } else {
+                            this.productTable.ajax.reload();
+                        }
+
+                        return;
+                    }
+
+                    this.table.ajax.reload();
+                }
+
+                /**
                  * Mengambil ringkasan (KPI) sesuai filter (ajax).
                  */
                 getSummary() {
@@ -456,8 +617,7 @@
                     window.history.pushState({}, '', url);
 
                     // Arahkan tombol export ke filter yang sama dengan tabel.
-                    $('#buttonExportExcel').attr('href', @json(route('reports.purchases.export.excel')) + '?' + queryString);
-                    $('#buttonExportPdf').attr('href', @json(route('reports.purchases.export.pdf')) + '?' + queryString);
+                    this.updateExportLinks();
 
                     this.buttonFilter.prop('disabled', true);
                     app.showPreloader();
@@ -468,8 +628,10 @@
                             this.getSummary(),
                             new Promise((resolve) => {
                                 // Selesai saat tabel tergambar atau saat terjadi error ajax (agar preloader tidak menggantung).
-                                this.table.one('draw.dt error.dt', resolve);
-                                this.table.ajax.reload();
+                                // Muat ulang tabel yang sedang tampil sesuai mode.
+                                const activeTable = this.mode === 'products' && this.productTable !== null ? this.productTable : this.table;
+                                activeTable.one('draw.dt error.dt', resolve);
+                                activeTable.ajax.reload();
                             }),
                         ]);
 
@@ -521,6 +683,11 @@
             });
 
             // Reset filter.
+            // Pilihan mode tampilan: per transaksi atau per produk.
+            $('input[name="viewMode"]').change(function () {
+                service.setMode($(this).val());
+            });
+
             $('#buttonReset').click(function (e) {
                 e.preventDefault();
                 service.reset();

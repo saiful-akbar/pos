@@ -101,12 +101,11 @@
                     <div class="card-body d-flex align-items-start justify-content-between gap-3">
                         <div style="min-width: 0;">
                             <div class="text-body-secondary small fw-semibold text-uppercase">{{ $card['label'] }}</div>
-                            <div class="fs-3 fw-bold text-break mt-2" id="{{ $card['id'] }}">Rp 0.00</div>
+                            <div class="fs-5 fw-bold text-break mt-2" id="{{ $card['id'] }}">Rp 0.00</div>
                             <div class="small text-body-secondary mt-1">Sesuai filter aktif</div>
                         </div>
 
-                        <div class="rounded-3 bg-{{ $card['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width: 3rem; height: 3rem;">
+                        <div class="rounded-3 bg-{{ $card['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0" style="width: 3rem; height: 3rem;">
                             <x-icon class="fs-4">{{ $card['icon'] }}</x-icon>
                         </div>
                     </div>
@@ -119,9 +118,17 @@
     <div class="row gx-7">
         <div class="col-12 mt-7 mb-7">
             <div class="card shadow-sm">
-                <div class="card-header py-4">
-                    <h2 class="fs-5 mb-0">Daftar Transaksi Kas</h2>
-                    <p class="text-body-secondary mt-1 mb-0" id="periodLabel">&nbsp;</p>
+                <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3 py-4">
+                    <div style="min-width: 0;">
+                        <h2 class="fs-5 mb-0">Daftar Transaksi Kas</h2>
+                        <p class="text-body-secondary mt-1 mb-0" id="periodLabel">&nbsp;</p>
+                    </div>
+
+                    {{-- Tombol export excel (hanya ikon) dengan tooltip --}}
+                    <x-button type="link" id="buttonExportExcel" href="#" color="light" size="sm"
+                        class="border rounded" title="Export Excel" aria-label="Export Excel">
+                        <x-icon class="fs-6">download</x-icon>
+                    </x-button>
                 </div>
 
                 <div class="card-body">
@@ -307,15 +314,17 @@
                             className: 'text-nowrap text-center',
                             searchable: false,
                             orderable: false,
-                            render: (data) => {
+                            render: (data, type, row) => {
                                 const id = this.attr(data);
+                                // Transaksi otomatis (dari penjualan/pembelian/retur) tidak dapat diubah atau dihapus manual.
+                                const isAutomatic = row.source_type !== null && row.source_type !== undefined;
                                 let html = `<button type="button" class="btn btn-sm btn-light" data-action="detail" data-id="${id}" title="Lihat detail" aria-label="Lihat detail">${app.icon('visibility', 'fs-6')}</button>`;
 
-                                if (this.access.update) {
+                                if (this.access.update && !isAutomatic) {
                                     html += ` <button type="button" class="btn btn-sm btn-light" data-action="edit" data-id="${id}" title="Ubah" aria-label="Ubah">${app.icon('edit', 'fs-6')}</button>`;
                                 }
 
-                                if (this.access.remove) {
+                                if (this.access.remove && !isAutomatic) {
                                     html += ` <button type="button" class="btn btn-sm btn-light" data-action="remove" data-id="${id}" title="Hapus" aria-label="Hapus">${app.icon('delete', 'fs-6')}</button>`;
                                 }
 
@@ -389,6 +398,9 @@
                     window.history.pushState({}, '', url);
 
                     $('#periodLabel').text(`Periode ${filters.start_date} s/d ${filters.end_date}`);
+
+                    // Arahkan tombol export ke filter yang sama dengan tabel.
+                    $('#buttonExportExcel').attr('href', @json(route('cash.transactions.export')) + '?' + new URLSearchParams(filters).toString());
 
                     this.buttonFilter.prop('disabled', true);
                     app.showPreloader();

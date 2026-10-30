@@ -272,6 +272,7 @@ Route::middleware('auth')->group(function (): void {
 
                 Route::get('/', 'index')->middleware("$module,read");
                 Route::get('/totals', 'totals')->name('.totals')->middleware("$module,read");
+                Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::get('/{transactionId}', 'show')->name('.show')->middleware("$module,read");
                 Route::patch('/{transactionId}', 'update')->name('.update')->middleware("$module,update");
@@ -287,6 +288,7 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/', 'index')->middleware("$module,read");
                 Route::get('/data', 'data')->name('.data')->middleware("$module,read");
                 Route::get('/history', 'history')->name('.history')->middleware("$module,read");
+                Route::get('/export', 'exportExcel')->name('.export')->middleware("$module,read");
                 Route::post('/', 'store')->name('.store')->middleware("$module,create");
                 Route::patch('/', 'update')->name('.update')->middleware("$module,update");
             });
@@ -303,6 +305,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
                 Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
                 Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/products', 'products')->name('.products')->middleware("$module,read");
+                Route::get('/products/export/excel', 'exportProductsExcel')->name('.products.export.excel')->middleware("$module,read");
                 Route::get('/{purchaseId}/details', 'transactionDetails')->name('.transactions.details')->middleware("$module,read");
                 Route::get('/{purchaseId}/payments', 'transactionPayments')->name('.transactions.payments')->middleware("$module,read");
                 Route::get('/{purchaseId}/export/excel', 'exportTransactionExcel')->name('.transactions.export.excel')->middleware("$module,read");
@@ -319,6 +323,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/summary', 'summary')->name('.summary')->middleware("$module,read");
                 Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
                 Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/products', 'products')->name('.products')->middleware("$module,read");
+                Route::get('/products/export/excel', 'exportProductsExcel')->name('.products.export.excel')->middleware("$module,read");
                 Route::get('/{saleId}/details', 'transactionDetails')->name('.transactions.details')->middleware("$module,read");
                 Route::get('/{saleId}/export/pdf', 'exportTransactionPdf')->name('.transactions.export.pdf')->middleware("$module,read");
             });
@@ -334,6 +340,8 @@ Route::middleware('auth')->group(function (): void {
                 Route::get('/analysis', 'analysis')->name('.analysis')->middleware("$module,read");
                 Route::get('/export/excel', 'exportExcel')->name('.export.excel')->middleware("$module,read");
                 Route::get('/export/pdf', 'exportPdf')->name('.export.pdf')->middleware("$module,read");
+                Route::get('/products', 'products')->name('.products')->middleware("$module,read");
+                Route::get('/products/export/excel', 'exportProductsExcel')->name('.products.export.excel')->middleware("$module,read");
                 Route::get('/{saleReturnId}/details', 'details')->name('.details')->middleware("$module,read");
             });
 

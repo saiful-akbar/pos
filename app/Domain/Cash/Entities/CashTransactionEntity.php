@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Cash\Entities;
 
 use App\Base\Entity;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
 use App\Domain\Cash\Enums\CashTransactionTypeEnum;
 use App\Domain\Cash\ValueObjects\UserCashValue;
 use App\Models\CashTransaction;
@@ -28,7 +29,17 @@ class CashTransactionEntity extends Entity
         public readonly ?DateTimeInterface $createdAt,
         public readonly ?DateTimeInterface $updatedAt,
         public readonly ?DateTimeInterface $deletedAt,
+        public readonly ?CashSourceTypeEnum $sourceType = null,
+        public readonly ?string $sourceId = null,
     ) {}
+
+    /**
+     * Transaksi otomatis (dibuat dari transaksi penjualan, pembelian, atau retur).
+     */
+    public function isAutomatic(): bool
+    {
+        return $this->sourceType !== null;
+    }
 
     /**
      * Konversi data object ke array.
@@ -46,6 +57,9 @@ class CashTransactionEntity extends Entity
             'amount' => $this->amount,
             'notes' => $this->notes,
             'reference_number' => $this->referenceNumber,
+            'source_type' => $this->sourceType?->value,
+            'source_id' => $this->sourceId,
+            'is_automatic' => $this->isAutomatic(),
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),
@@ -69,6 +83,8 @@ class CashTransactionEntity extends Entity
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
+            sourceType: $model->source_type !== null ? CashSourceTypeEnum::from($model->source_type) : null,
+            sourceId: $model->source_id,
         );
     }
 }

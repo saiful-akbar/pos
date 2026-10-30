@@ -39,4 +39,10 @@ interface SaleReturnReportRepositoryInterface
      * @return array{cashiers: array<int, array{id: string, name: string}>}
      */
     public function getFilterOptions(): array;
+
+    /**
+     * Mengambil query laporan pengembalian per produk (satu baris per detail produk) sesuai filter.
+     * Query yang sama dipakai oleh tabel dan export excel.
+     */
+    public function getProductQuery(SaleReturnReportFilterDTO $filter): Builder;
 }

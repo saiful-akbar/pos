@@ -11,6 +11,7 @@ use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
 use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class DeleteCashTransaction
 {
@@ -36,6 +37,13 @@ class DeleteCashTransaction
 
             if ($transaction === null) {
                 abort(404, 'Transaksi kas tidak ditemukan.');
+            }
+
+            // Transaksi otomatis tidak boleh diubah manual; koreksi dilakukan lewat transaksi sumbernya.
+            if ($transaction->isAutomatic()) {
+                throw ValidationException::withMessages(messages: [
+                    'message' => 'Transaksi kas otomatis dari transaksi penjualan, pembelian, atau retur tidak dapat dihapus secara manual.',
+                ]);
             }
 
             // 2. Soft delete.

@@ -20,4 +20,10 @@ interface PurchaseReportRepositoryInterface
      * Mengambil ringkasan (KPI) laporan pembelian sesuai filter menggunakan agregasi SQL.
      */
     public function getSummary(PurchaseReportFilterDTO $filter): PurchaseReportSummaryEntity;
+
+    /**
+     * Mengambil query laporan pembelian per produk (satu baris per detail produk) sesuai filter.
+     * Query yang sama dipakai oleh tabel dan export excel.
+     */
+    public function getProductQuery(PurchaseReportFilterDTO $filter): Builder;
 }

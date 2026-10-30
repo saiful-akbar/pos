@@ -87,6 +87,65 @@ class SaleReturnReportRepository extends Repository implements SaleReturnReportR
     }
 
     /**
+     * Mengambil query laporan pengembalian per produk (satu baris per detail pengembalian) sesuai filter.
+     * Filter kategori dan kode produk diterapkan pada baris detail (hanya produk yang cocok).
+     */
+    #[Override]
+    public function getProductQuery(SaleReturnReportFilterDTO $filter): Builder
+    {
+        try {
+            $columns = [
+                'sale_return_details.id as id',
+                'sale_returns.transaction_date as transaction_date',
+                'sale_returns.return_number as return_number',
+                'sales.invoice_number as invoice_number',
+                'customers.name as customer_name',
+                'products.code as product_code',
+                'products.name as product_name',
+                'units.name as unit_name',
+                'units.code as unit_code',
+                'sale_return_details.quantity as quantity',
+                'sale_return_details.multiples_quantity as multiples_quantity',
+                'sale_return_details.subtotal as subtotal',
+                'sale_return_details.discount as discount',
+                'sale_return_details.grand_total as grand_total',
+                // Total kuantitas dalam satuan dasar.
+                DB::raw('(sale_return_details.quantity * sale_return_details.multiples_quantity) as base_quantity'),
+            ];
+
+            $query = SaleReturnDetail::query()
+                ->select($columns)
+                ->join('sale_returns', 'sale_return_details.sale_return_id', '=', 'sale_returns.id')
+                ->leftJoin('sales', 'sale_returns.sale_id', '=', 'sales.id')
+                ->leftJoin('customers', 'sales.customer_id', '=', 'customers.id')
+                ->leftJoin('products', 'sale_return_details.product_id', '=', 'products.id')
+                ->leftJoin('units', 'sale_return_details.unit_id', '=', 'units.id')
+                ->whereNull('sale_returns.deleted_at');
+
+            // Filter induk tanpa filter produk (agar tidak memakai EXISTS); filter produk diterapkan pada baris detail.
+            $query = $this->applyFilter($query, new SaleReturnReportFilterDTO(
+                startDate: $filter->startDate,
+                endDate: $filter->endDate,
+                returnNumber: $filter->returnNumber,
+                invoiceNumber: $filter->invoiceNumber,
+                userId: $filter->userId,
+                customerName: $filter->customerName,
+            ));
+
+            return $query
+                ->when($filter->categoryId !== null, fn (Builder $q) => $q->where('products.category_id', $filter->categoryId))
+                ->when($filter->productCode !== null, fn (Builder $q) => $q->where('products.code', $filter->productCode));
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
      * Mengambil ringkasan (KPI) laporan pengembalian sesuai filter menggunakan agregasi SQL.
      */
     #[Override]

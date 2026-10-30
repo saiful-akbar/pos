@@ -70,11 +70,28 @@ class SaleController extends Controller
     /**
      * Create (insert) data penjualan.
      */
-    public function store(CreateSaleRequest $request): RedirectResponse
+    public function store(CreateSaleRequest $request): RedirectResponse|JsonResponse
     {
-        app(CreateSale::class)->execute(
+        $sale = app(CreateSale::class)->execute(
             request: $request,
         );
+
+        // Permintaan ajax: kirim url struk agar dibuka pada tab baru oleh halaman keranjang.
+        if ($request->ajax()) {
+            session()->flash('alert', [
+                'status' => 'success',
+                'message' => 'Transaksi penjualan berhasil diselesaikan.',
+            ]);
+
+            return $this->jsonResponse(
+                data: [
+                    'receipt_url' => route('transactions.sales.receipt', ['saleId' => $sale->id]),
+                    'redirect_url' => route('transactions.sales'),
+                ],
+                status: 201,
+                message: 'Transaksi penjualan berhasil diselesaikan.',
+            );
+        }
 
         return to_route('transactions.sales')->with('alert', [
             'status' => 'success',

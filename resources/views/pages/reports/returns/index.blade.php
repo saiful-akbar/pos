@@ -1,18 +1,6 @@
 <x-layouts.auth title="Laporan Pengembalian" :access="$access">
-    {{-- Header halaman: judul, deskripsi singkat, dan tombol export --}}
+    {{-- Header halaman: judul, deskripsi singkat --}}
     <x-page-header title="Laporan Pengembalian Penjualan" icon="assignment_return">
-        <x-slot:action>
-            <div class="d-flex justify-content-lg-end gap-2">
-                <x-button type="link" id="buttonExportExcel" href="#" color="light" startIcon="download" class="border">
-                    Excel
-                </x-button>
-
-                <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light" startIcon="picture_as_pdf" class="border">
-                    PDF
-                </x-button>
-            </div>
-        </x-slot:action>
-
         <p class="text-body-secondary small mb-0 mt-4">
             Pantau dokumen pengembalian, nilai dan kuantitas barang yang dikembalikan, serta transaksi penjualan asalnya pada periode tertentu.
         </p>
@@ -158,11 +146,10 @@
                         <div class="d-flex align-items-start justify-content-between gap-3">
                             <div style="min-width: 0;">
                                 <div class="text-body-secondary small fw-semibold text-uppercase">{{ $kpi['label'] }}</div>
-                                <div class="fs-3 fw-bold text-break mt-2" id="{{ $kpi['id'] }}">{{ $kpi['value'] }}</div>
+                                <div class="fs-5 fw-bold text-break mt-2" id="{{ $kpi['id'] }}">{{ $kpi['value'] }}</div>
                             </div>
 
-                            <div class="rounded-3 bg-{{ $kpi['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"
-                                style="width: 3rem; height: 3rem;">
+                            <div class="rounded-3 bg-{{ $kpi['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0" style="width: 3rem; height: 3rem;">
                                 <x-icon class="fs-4">{{ $kpi['icon'] }}</x-icon>
                             </div>
                         </div>
@@ -211,13 +198,61 @@
     <div class="row gx-7">
         <div class="col-12 mt-7 mb-7">
             <div class="card shadow-sm">
-                <div class="card-header py-4">
-                    <h2 class="fs-5 mb-0">Daftar Pengembalian</h2>
-                    <p class="text-body-secondary mt-1 mb-0" id="periodLabel">&nbsp;</p>
+                <div class="card-header">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-12 col-lg-8 mb-5 mb-lg-0">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-8">
+                                    <h2 class="fs-5 mb-0" id="tableTitle">Daftar Pengembalian</h2>
+                                    <p class="text-body-secondary mt-1 mb-0" id="periodLabel">&nbsp;</p>
+                                </div>
+
+                                <div class="col-auto d-flex gap-2">
+                                    <x-button
+                                        type="link"
+                                        id="buttonExportExcel"
+                                        href="#"
+                                        color="light"
+                                        size="sm"
+                                        class="border rounded"
+                                        title="Export Excel"
+                                        aria-label="Export Excel"
+                                    >
+                                        <x-icon class="fs-6">download</x-icon>
+                                    </x-button>
+
+                                    <x-button
+                                        type="link"
+                                        id="buttonExportPdf"
+                                        href="#"
+                                        target="_blank"
+                                        color="light"
+                                        size="sm"
+                                        class="border rounded"
+                                        title="Cetak PDF"
+                                        aria-label="Cetak PDF"
+                                    >
+                                        <x-icon class="fs-6">picture_as_pdf</x-icon>
+                                    </x-button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                            <x-view-mode-toggle />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-body">
-                    <table id="returnReportTable" class="table table-sm table-hover align-middle w-100"></table>
+                    <div id="panelTransactions">
+                        <table id="returnReportTable" class="table table-sm table-hover align-middle w-100"></table>
+                    </div>
+
+                    {{-- Tabel per produk (dimuat saat mode "Per Produk" dipilih) --}}
+                    <div id="panelProducts" class="d-none">
+                        <table id="returnProductTable" class="table table-sm table-hover align-middle w-100"></table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -262,6 +297,8 @@
                     this.endDate = $('#endDate');
                     this.buttonFilter = $('#buttonFilter');
                     this.table = this.#reportDataTableInit();
+                    this.mode = 'transactions';
+                    this.productTable = null;
                 }
 
                 /**
@@ -491,6 +528,163 @@
                 }
 
                 /**
+                 * Inisialisasi dataTable laporan per produk (satu baris per detail produk).
+                 */
+                #productDataTableInit() {
+                    const columns = [
+                        {
+                            title: 'Tanggal',
+                            name: 'sale_returns.transaction_date',
+                            data: 'transaction_date',
+                            className: 'text-nowrap',
+                        },
+                        {
+                            title: 'No. Pengembalian',
+                            name: 'sale_returns.return_number',
+                            data: 'return_number',
+                            className: 'text-nowrap',
+                            render: (value) => this.escapeHtml(value ?? '-'),
+                        },
+                        {
+                            title: 'Invoice Asal',
+                            name: 'sales.invoice_number',
+                            data: 'invoice_number',
+                            className: 'text-nowrap',
+                            render: (value) => this.escapeHtml(value ?? '-'),
+                        },
+                        {
+                            title: 'Pelanggan',
+                            name: 'customers.name',
+                            data: 'customer_name',
+                            className: 'text-nowrap',
+                            render: (value) => this.escapeHtml(value ?? 'Umum'),
+                        },
+                        {
+                            title: 'Kode Produk',
+                            name: 'products.code',
+                            data: 'product_code',
+                            className: 'text-nowrap',
+                            render: (value) => this.escapeHtml(value ?? '-'),
+                        },
+                        {
+                            title: 'Nama Produk',
+                            name: 'products.name',
+                            data: 'product_name',
+                            className: '',
+                            width: '200px',
+                            render: (value) => this.escapeHtml(value ?? '-'),
+                        },
+                        {
+                            title: 'Unit (Satuan)',
+                            name: 'units.name',
+                            data: 'unit_name',
+                            className: 'text-nowrap',
+                            render: (value, type, row) => this.escapeHtml(`${row.unit_name ?? '-'} (${row.unit_code ?? '-'})`),
+                        },
+                        {
+                            title: 'Qty',
+                            name: 'sale_return_details.quantity',
+                            data: 'quantity',
+                            className: 'text-nowrap text-end',
+                            render: (value) => app.numberFormat(Number(value ?? 0)),
+                        },
+                        {
+                            title: 'Kelipatan Qty',
+                            name: 'sale_return_details.multiples_quantity',
+                            data: 'multiples_quantity',
+                            className: 'text-nowrap text-end',
+                            render: (value) => app.numberFormat(Number(value ?? 0)),
+                        },
+                        {
+                            // Total quantity dalam satuan dasar = qty x kelipatan.
+                            title: 'Total Qty (Dasar)',
+                            name: 'base_quantity',
+                            data: 'base_quantity',
+                            className: 'text-nowrap text-end',
+                            searchable: false,
+                            render: (value) => app.numberFormat(Number(value ?? 0)),
+                        },
+                        {
+                            title: 'Subtotal',
+                            name: 'sale_return_details.subtotal',
+                            data: 'subtotal',
+                            className: 'text-nowrap text-end',
+                            render: (value) => app.numberFormat(Number(value ?? 0)),
+                        },
+                        {
+                            title: 'Diskon (%)',
+                            name: 'sale_return_details.discount',
+                            data: 'discount',
+                            className: 'text-nowrap text-end',
+                            render: (value) => app.numberFormat(Number(value ?? 0)),
+                        },
+                        {
+                            title: 'Grand Total',
+                            name: 'sale_return_details.grand_total',
+                            data: 'grand_total',
+                            className: 'text-nowrap text-end',
+                            render: (value) => app.numberFormat(Number(value ?? 0)),
+                        },
+                    ];
+
+                    return app.dataTable('#returnProductTable', {
+                        columns,
+                        serverSide: true,
+                        ajax: {
+                            url: @json(route('reports.returns.products')),
+                            // Kirim filter terbaru pada setiap request tabel.
+                            data: (params) => Object.assign(params, this.filters()),
+                        },
+                        order: [[0, 'desc']],
+                    });
+                }
+
+                /**
+                 * Arahkan tombol export ke filter yang sama dengan tabel dan mode tampilan aktif.
+                 * Mode per produk hanya tersedia dalam excel (tanpa pdf).
+                 */
+                updateExportLinks() {
+                    const queryString = new URLSearchParams(this.filters()).toString();
+                    const excelRoute = this.mode === 'products'
+                        ? @json(route('reports.returns.products.export.excel'))
+                        : @json(route('reports.returns.export.excel'));
+
+                    $('#buttonExportExcel').attr('href', excelRoute + '?' + queryString);
+                    $('#buttonExportPdf').attr('href', @json(route('reports.returns.export.pdf')) + '?' + queryString);
+                    $('#buttonExportPdf').toggleClass('d-none', this.mode === 'products');
+                }
+
+                /**
+                 * Ganti mode tampilan tabel (per transaksi atau per produk).
+                 */
+                setMode(mode) {
+                    if (!this.validateDates()) {
+                        // Kembalikan pilihan mode jika tanggal belum valid.
+                        $(`input[name="viewMode"][value="${this.mode}"]`).prop('checked', true);
+                        return;
+                    }
+
+                    this.mode = mode;
+                    $('#tableTitle').text(mode === 'products' ? 'Daftar Produk Pengembalian' : 'Daftar Pengembalian');
+                    $('#panelTransactions').toggleClass('d-none', mode !== 'transactions');
+                    $('#panelProducts').toggleClass('d-none', mode !== 'products');
+                    this.updateExportLinks();
+
+                    if (mode === 'products') {
+                        // Tabel per produk dibuat saat pertama kali dibutuhkan; selanjutnya cukup dimuat ulang.
+                        if (this.productTable === null) {
+                            this.productTable = this.#productDataTableInit();
+                        } else {
+                            this.productTable.ajax.reload();
+                        }
+
+                        return;
+                    }
+
+                    this.table.ajax.reload();
+                }
+
+                /**
                  * Menampilkan nilai KPI pada kartu (nilai kosong menjadi nol).
                  */
                 renderSummary(summary) {
@@ -543,8 +737,7 @@
                     $('#periodLabel').text(`Periode ${this.startDate.val()} s/d ${this.endDate.val()}`);
 
                     // Arahkan tombol export ke filter yang sama dengan tabel.
-                    $('#buttonExportExcel').attr('href', @json(route('reports.returns.export.excel')) + '?' + queryString);
-                    $('#buttonExportPdf').attr('href', @json(route('reports.returns.export.pdf')) + '?' + queryString);
+                    this.updateExportLinks();
 
                     this.buttonFilter.prop('disabled', true);
                     app.showPreloader();
@@ -556,8 +749,10 @@
                             this.#get(@json(route('reports.returns.analysis'))),
                             new Promise((resolve) => {
                                 // Selesai saat tabel tergambar atau saat terjadi error ajax (agar preloader tidak menggantung).
-                                this.table.one('draw.dt error.dt', resolve);
-                                this.table.ajax.reload();
+                                // Muat ulang tabel yang sedang tampil sesuai mode.
+                                const activeTable = this.mode === 'products' && this.productTable !== null ? this.productTable : this.table;
+                                activeTable.one('draw.dt error.dt', resolve);
+                                activeTable.ajax.reload();
                             }),
                         ]);
 
@@ -609,6 +804,11 @@
             });
 
             // Reset filter.
+            // Pilihan mode tampilan: per transaksi atau per produk.
+            $('input[name="viewMode"]').change(function () {
+                service.setMode($(this).val());
+            });
+
             $('#buttonReset').click(function (e) {
                 e.preventDefault();
                 service.reset();

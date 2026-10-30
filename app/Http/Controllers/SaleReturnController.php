@@ -97,6 +97,7 @@ class SaleReturnController extends Controller
         app(CreateSaleReturn::class)->execute(
             cartId: $cartId,
             notes: $request->validated('notes'),
+            refundCash: $request->boolean('refund_cash'),
         );
 
         return to_route('transactions.returns')->with('alert', [

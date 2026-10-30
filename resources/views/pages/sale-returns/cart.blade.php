@@ -141,6 +141,19 @@
                     </div>
 
                     <div class="card-body">
+                        <div class="mb-5">
+                            <x-form-select
+                                required
+                                name="refund_cash"
+                                id="refundCash"
+                                label="Uang dikembalikan ke pelanggan?"
+                                error="{{ $errors->has('refund_cash') }}"
+                            >
+                                <option value="1" @selected(old('refund_cash', '1') == '1')>Ya (catat kas keluar sebesar total retur)</option>
+                                <option value="0" @selected(old('refund_cash') == '0')>Tidak</option>
+                            </x-form-select>
+                        </div>
+
                         <x-form-input
                             type="textarea"
                             name="notes"

@@ -8,6 +8,7 @@ use App\Application\Cash\DTOs\CashReportFilterDTO;
 use App\Application\Cash\DTOs\CashTransactionDTO;
 use App\Base\Repository;
 use App\Domain\Cash\Entities\CashTransactionEntity;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
 use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Models\CashTransaction;
 use App\Models\User;
@@ -46,6 +47,7 @@ class CashTransactionRepository extends Repository implements CashTransactionRep
                 'cash_transactions.amount as amount',
                 'cash_transactions.notes as notes',
                 'cash_transactions.reference_number as reference_number',
+                'cash_transactions.source_type as source_type',
                 'users.full_name as user_name',
             ];
 
@@ -217,6 +219,27 @@ class CashTransactionRepository extends Repository implements CashTransactionRep
     {
         try {
             return $this->model->newQuery()->whereKey($id)->delete();
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Menghapus (soft delete) transaksi kas otomatis berdasarkan sumber transaksinya.
+     */
+    #[Override]
+    public function deleteBySource(CashSourceTypeEnum $sourceType, string $sourceId): int
+    {
+        try {
+            return $this->model->newQuery()
+                ->where('source_type', $sourceType->value)
+                ->where('source_id', $sourceId)
+                ->delete();
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

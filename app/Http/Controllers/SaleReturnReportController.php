@@ -9,9 +9,12 @@ use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Report\UseCases\GetSaleReturnReportAnalysis;
 use App\Application\Report\UseCases\GetSaleReturnReportDetailsTable;
 use App\Application\Report\UseCases\GetSaleReturnReportFilterOptions;
+use App\Application\Report\UseCases\GetSaleReturnReportProductQuery;
+use App\Application\Report\UseCases\GetSaleReturnReportProductTable;
 use App\Application\Report\UseCases\GetSaleReturnReportQuery;
 use App\Application\Report\UseCases\GetSaleReturnReportSummary;
 use App\Application\Report\UseCases\GetSaleReturnReportTable;
+use App\Exports\Reports\SaleReturnProductReportExport;
 use App\Exports\Reports\SaleReturnReportExport;
 use App\Http\Requests\Reports\GetSaleReturnReportRequest;
 use Barryvdh\DomPDF\Facade\Pdf as DomPdf;
@@ -91,6 +94,44 @@ class SaleReturnReportController extends Controller
 
         return app(GetSaleReturnReportDetailsTable::class)->execute(
             saleReturnId: $saleReturnId,
+        );
+    }
+
+    /**
+     * Mengambil data tabel laporan pengembalian per produk (DataTables server side).
+     */
+    public function products(GetSaleReturnReportRequest $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetSaleReturnReportProductTable::class)->execute(
+            filter: $request->toFilter(),
+        );
+    }
+
+    /**
+     * Mengunduh laporan pengembalian per produk dalam file excel (filter sama dengan halaman laporan).
+     */
+    public function exportProductsExcel(GetSaleReturnReportRequest $request): BinaryFileResponse
+    {
+        $filter = $request->toFilter();
+
+        $export = new SaleReturnProductReportExport(
+            query: app(GetSaleReturnReportProductQuery::class)->execute(filter: $filter),
+            startDate: $filter->startDate,
+            endDate: $filter->endDate,
+            filterLabels: $this->filterLabels($request),
+        );
+
+        return Excel::download(
+            $export,
+            sprintf(
+                'laporan-pengembalian-per-produk-%s-%s.xlsx',
+                $filter->startDate->format('Ymd'),
+                $filter->endDate->format('Ymd'),
+            ),
         );
     }
 

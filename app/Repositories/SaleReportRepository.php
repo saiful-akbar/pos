@@ -9,6 +9,7 @@ use App\Base\Repository;
 use App\Domain\Report\Entities\SaleReportSummaryEntity;
 use App\Domain\Report\Repositories\SaleReportRepositoryInterface;
 use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +75,63 @@ class SaleReportRepository extends Repository implements SaleReportRepositoryInt
                 ->leftJoin('users', 'sales.user_id', '=', 'users.id');
 
             return $this->applyFilter($query, $filter);
+        } catch (\Throwable $e) {
+            $this->errorLog(
+                function: __METHOD__,
+                message: $e->getMessage(),
+            );
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Mengambil query laporan penjualan per produk (satu baris per detail penjualan) sesuai filter.
+     * Filter kategori dan kode produk diterapkan pada baris detail (hanya produk yang cocok).
+     */
+    #[Override]
+    public function getProductQuery(SaleReportFilterDTO $filter): Builder
+    {
+        try {
+            $columns = [
+                'sale_details.id as id',
+                'sales.transaction_date as transaction_date',
+                'sales.invoice_number as invoice_number',
+                'customers.name as customer_name',
+                'products.code as product_code',
+                'products.name as product_name',
+                'units.name as unit_name',
+                'units.code as unit_code',
+                'sale_details.selling_price as selling_price',
+                'sale_details.quantity as quantity',
+                'sale_details.multiples_quantity as multiples_quantity',
+                'sale_details.subtotal as subtotal',
+                'sale_details.discount as discount',
+                'sale_details.grand_total as grand_total',
+                // Total kuantitas dalam satuan dasar.
+                DB::raw('(sale_details.quantity * sale_details.multiples_quantity) as base_quantity'),
+            ];
+
+            $query = SaleDetail::query()
+                ->select($columns)
+                ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+                ->leftJoin('customers', 'sales.customer_id', '=', 'customers.id')
+                ->leftJoin('products', 'sale_details.product_id', '=', 'products.id')
+                ->leftJoin('units', 'sale_details.unit_id', '=', 'units.id')
+                ->whereNull('sales.deleted_at');
+
+            // Filter induk tanpa filter produk (agar tidak memakai EXISTS); filter produk diterapkan pada baris detail.
+            $query = $this->applyFilter($query, new SaleReportFilterDTO(
+                startDate: $filter->startDate,
+                endDate: $filter->endDate,
+                userId: $filter->userId,
+                paymentMethod: $filter->paymentMethod,
+                invoiceNumber: $filter->invoiceNumber,
+            ));
+
+            return $query
+                ->when($filter->categoryId !== null, fn (Builder $q) => $q->where('products.category_id', $filter->categoryId))
+                ->when($filter->productCode !== null, fn (Builder $q) => $q->where('products.code', $filter->productCode));
         } catch (\Throwable $e) {
             $this->errorLog(
                 function: __METHOD__,

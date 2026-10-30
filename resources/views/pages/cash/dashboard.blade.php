@@ -146,9 +146,11 @@
                     <div class="card-body">
                         <div class="d-flex align-items-start justify-content-between gap-3">
                             <div style="min-width: 0;">
-                                <div class="text-body-secondary small fw-semibold text-uppercase">{{ $card['label'] }}
+                                <div class="text-body-secondary small fw-semibold text-uppercase">
+                                    {{ $card['label'] }}
                                 </div>
-                                <div class="fs-3 fw-bold text-break mt-2" id="{{ $card['id'] }}">-</div>
+
+                                <div class="fs-5 fw-bold text-break mt-2" id="{{ $card['id'] }}">-</div>
                             </div>
 
                             <div class="rounded-3 bg-{{ $card['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"

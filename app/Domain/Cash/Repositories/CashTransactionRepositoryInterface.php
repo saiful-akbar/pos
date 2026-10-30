@@ -7,6 +7,7 @@ namespace App\Domain\Cash\Repositories;
 use App\Application\Cash\DTOs\CashReportFilterDTO;
 use App\Application\Cash\DTOs\CashTransactionDTO;
 use App\Domain\Cash\Entities\CashTransactionEntity;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
 use Illuminate\Database\Query\Builder;
 
 interface CashTransactionRepositoryInterface
@@ -49,4 +50,9 @@ interface CashTransactionRepositoryInterface
      * Menghapus transaksi (soft delete).
      */
     public function delete(string $id): int;
+
+    /**
+     * Menghapus (soft delete) transaksi kas otomatis berdasarkan sumber transaksinya.
+     */
+    public function deleteBySource(CashSourceTypeEnum $sourceType, string $sourceId): int;
 }

@@ -25,6 +25,8 @@ class CreateSaleReturnRequest extends FormRequest
         return [
             // Catatan bersifat opsional.
             'notes' => ['nullable', 'string', 'max:500'],
+            // Apakah uang dikembalikan kepada pelanggan (dicatat sebagai kas keluar).
+            'refund_cash' => ['required', 'boolean'],
         ];
     }
 
@@ -36,6 +38,7 @@ class CreateSaleReturnRequest extends FormRequest
     {
         return [
             'notes' => 'catatan',
+            'refund_cash' => 'pengembalian uang',
         ];
     }
 }

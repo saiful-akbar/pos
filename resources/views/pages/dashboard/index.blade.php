@@ -125,7 +125,7 @@
                             <div class="d-flex align-items-start justify-content-between gap-3">
                                 <div style="min-width: 0;">
                                     <div class="text-body-secondary small fw-semibold text-uppercase">{{ $card['label'] }}</div>
-                                    <div class="fs-3 fw-bold text-break mt-2 lh-sm" id="card{{ $card['id'] }}">Rp 0</div>
+                                    <div class="fs-5 fw-bold text-break mt-2 lh-sm" id="card{{ $card['id'] }}">Rp 0</div>
                                 </div>
 
                                 <div class="dash-icon rounded-3 bg-{{ $card['color'] }} bg-opacity-10 d-flex align-items-center justify-content-center flex-shrink-0">
@@ -133,7 +133,7 @@
                                 </div>
                             </div>
 
-                            <div class="small text-body-secondary mt-auto pt-3 border-top" id="period{{ $card['id'] }}">&nbsp;</div>
+                            <div class="small text-body-secondary mt-4 pt-3 border-top" id="period{{ $card['id'] }}">&nbsp;</div>
                         </div>
                     </div>
                 </div>
@@ -155,7 +155,7 @@
 
                             <div style="min-width: 7.5rem;">
                                 <label for="chartYear" class="visually-hidden">Tahun</label>
-                                <select id="chartYear" class="form-select border">
+                                <select id="chartYear" class="form-select form-select-sm border rounded">
                                     @foreach ($years as $year)
                                         <option value="{{ $year }}">{{ $year }}</option>
                                     @endforeach
@@ -192,8 +192,16 @@
                                 <p class="text-body-secondary mt-1 mb-0">Stok pada atau di bawah batas minimum.</p>
                             </div>
 
-                            <x-button type="link" href="{{ route('masters.products') }}" color="light" size="sm" startIcon="inventory_2" class="border">
-                                Produk
+                            <x-button
+                                type="link"
+                                href="{{ route('masters.products') }}"
+                                color="light"
+                                class="border rounded"
+                                size="sm"
+                                data-bs-toggle="tooltip"
+                                data-bs-title="Lihat daftar produk"
+                            >
+                                <x-icon class="fs-6">inventory_2</x-icon>
                             </x-button>
                         </div>
 

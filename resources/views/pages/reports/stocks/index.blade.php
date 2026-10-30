@@ -1,20 +1,6 @@
 <x-layouts.auth title="Laporan Stok" :access="$access">
-    {{-- Header halaman: judul, deskripsi singkat, dan tombol export --}}
+    {{-- Header halaman: judul dan deskripsi singkat --}}
     <x-page-header title="Laporan Stok / Inventory" icon="inventory">
-        <x-slot:action>
-            <div class="d-flex justify-content-lg-end gap-2">
-                <x-button type="link" id="buttonExportExcel" href="#" color="light" startIcon="download"
-                    class="border">
-                    Excel
-                </x-button>
-
-                <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light"
-                    startIcon="picture_as_pdf" class="border">
-                    PDF
-                </x-button>
-            </div>
-        </x-slot:action>
-
         <p class="text-body-secondary small mb-0 mt-4">
             Rekonsiliasi mutasi stok per bulan: stok awal ditambah pembelian dan pengembalian, dikurangi penjualan (Book
             Balance), lalu dibandingkan dengan stok awal bulan berikutnya.
@@ -61,7 +47,6 @@
                     @endphp
 
                     <div class="card-body pb-0">
-                        {{-- Periode (wajib) --}}
                         <div
                             class="d-flex align-items-center gap-2 text-body-secondary small fw-semibold text-uppercase mb-4">
                             <x-icon class="fs-6">date_range</x-icon>
@@ -210,9 +195,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-start justify-content-between gap-3">
                             <div style="min-width: 0;">
-                                <div class="text-body-secondary small fw-semibold text-uppercase">{{ $kpi['label'] }}
-                                </div>
-                                <div class="fs-3 fw-bold text-break mt-2" id="{{ $kpi['id'] }}">0</div>
+                                <div class="text-body-secondary small fw-semibold text-uppercase">{{ $kpi['label'] }}</div>
+                                <div class="fs-5 fw-bold text-break mt-2" id="{{ $kpi['id'] }}">0</div>
                             </div>
 
                             <div class="rounded-3 bg-{{ $kpi['color'] }} bg-opacity-10 text-body d-flex align-items-center justify-content-center flex-shrink-0"
@@ -232,9 +216,24 @@
     <div class="row gx-7">
         <div class="col-12 mt-7 mb-7">
             <div class="card shadow-sm">
-                <div class="card-header py-4">
-                    <h2 class="fs-5 mb-0">Rekonsiliasi Stok per Produk</h2>
-                    <p class="text-body-secondary mt-1 mb-0" id="periodLabel">&nbsp;</p>
+                <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3 py-4">
+                    <div style="min-width: 0;">
+                        <h2 class="fs-5 mb-0">Rekonsiliasi Stok per Produk</h2>
+                        <p class="text-body-secondary mt-1 mb-0" id="periodLabel">&nbsp;</p>
+                    </div>
+
+                    {{-- Tombol export (hanya ikon) dengan tooltip --}}
+                    <div class="d-flex gap-2">
+                        <x-button type="link" id="buttonExportExcel" href="#" color="light" size="sm"
+                            class="border rounded" title="Export Excel" aria-label="Export Excel">
+                            <x-icon class="fs-6">download</x-icon>
+                        </x-button>
+
+                        <x-button type="link" id="buttonExportPdf" href="#" target="_blank" color="light" size="sm"
+                            class="border rounded" title="Cetak PDF" aria-label="Cetak PDF">
+                            <x-icon class="fs-6">picture_as_pdf</x-icon>
+                        </x-button>
+                    </div>
                 </div>
 
                 <div class="card-body">

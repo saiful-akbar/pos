@@ -9,6 +9,8 @@ use App\Application\ActivityLog\DTOs\CreateActivityDTO;
 use App\Application\Purchase\DTOs\PurchaseDTO;
 use App\Domain\ActivityLog\Enums\EventActivityEnum;
 use App\Domain\ActivityLog\Repositories\ActivityLogRepositoryInterface;
+use App\Domain\Cash\Enums\CashSourceTypeEnum;
+use App\Domain\Cash\Repositories\CashTransactionRepositoryInterface;
 use App\Domain\ErrorLog\Repositories\ErrorLogRepositoryInterface;
 use App\Domain\Purchase\Enums\PaymentStatusEnum;
 use App\Domain\Purchase\Repositories\PurchasePaymentRepositoryInterface;
@@ -24,6 +26,7 @@ class DeletePurchasePayment
     public function __construct(
         private PurchasePaymentRepositoryInterface $paymentRepository,
         private PurchaseRepository $purchaseRepository,
+        private CashTransactionRepositoryInterface $cashTransactionRepository,
         private ActivityLogRepositoryInterface $activityRepository,
         private ErrorLogRepositoryInterface $errorRepository,
     ) {}
@@ -54,7 +57,7 @@ class DeletePurchasePayment
             );
 
             // Validasi data pembayaran
-            if ($purchase === null) {
+            if ($payment === null) {
                 throw ValidationException::withMessages(messages: [
                     'message' => 'Pembayaran tidak ditemukan.',
                 ]);
@@ -63,6 +66,12 @@ class DeletePurchasePayment
             // Hapus pembayaran
             $this->paymentRepository->delete(
                 id: $payment->id,
+            );
+
+            // Hapus kas keluar yang dibuat dari pembayaran ini (jika ada).
+            $this->cashTransactionRepository->deleteBySource(
+                sourceType: CashSourceTypeEnum::PURCHASE_PAYMENT,
+                sourceId: $payment->id,
             );
 
             // Hitung jumlah yang sudah dibayarkan berdasarkan purchase_id

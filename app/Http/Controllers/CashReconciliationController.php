@@ -8,12 +8,15 @@ use App\Application\Cash\UseCases\GetCashMonthlySummaries;
 use App\Application\Cash\UseCases\GetCashMonthSummary;
 use App\Application\Cash\UseCases\SaveCashMonthlyBalance;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
+use App\Exports\Cash\CashReconciliationExport;
 use App\Http\Requests\Cash\GetCashMonthRequest;
 use App\Http\Requests\Cash\GetCashYearRequest;
 use App\Http\Requests\Cash\SaveCashMonthlyBalanceRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CashReconciliationController extends Controller
 {
@@ -70,6 +73,30 @@ class CashReconciliationController extends Controller
 
         return $this->jsonResponse(
             data: array_map(fn ($summary): array => $summary->toArray(), $summaries),
+        );
+    }
+
+    /**
+     * Mengunduh histori rekonsiliasi bulanan satu tahun dalam file excel.
+     */
+    public function exportExcel(GetCashYearRequest $request): BinaryFileResponse
+    {
+        $year = (int) $request->validated('year');
+
+        $summaries = app(GetCashMonthlySummaries::class)->execute(
+            fromYear: $year,
+            fromMonth: 1,
+            toYear: $year,
+            toMonth: 12,
+        );
+
+        return Excel::download(
+            new CashReconciliationExport(
+                summaries: $summaries,
+                year: $year,
+                generatedAt: now(),
+            ),
+            sprintf('histori-rekonsiliasi-kas-%d.xlsx', $year),
         );
     }
 

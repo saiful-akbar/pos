@@ -7,11 +7,14 @@ namespace App\Http\Controllers;
 use App\Application\Category\UseCases\GetAllCategories;
 use App\Application\Module\UseCases\FindModuleAccessByRoute;
 use App\Application\Report\UseCases\GetSaleReportFilterOptions;
+use App\Application\Report\UseCases\GetSaleReportProductQuery;
+use App\Application\Report\UseCases\GetSaleReportProductTable;
 use App\Application\Report\UseCases\GetSaleReportQuery;
 use App\Application\Report\UseCases\GetSaleReportSummary;
 use App\Application\Report\UseCases\GetSaleReportTable;
 use App\Application\Report\UseCases\GetSaleTransactionReport;
 use App\Application\Sale\UseCases\GetSaleDetailsTable;
+use App\Exports\Reports\SaleProductReportExport;
 use App\Exports\Reports\SaleReportExport;
 use App\Http\Requests\Reports\GetSaleReportRequest;
 use Barryvdh\DomPDF\Facade\Pdf as DomPdf;
@@ -112,6 +115,44 @@ class SaleReportController extends Controller
             'Content-Disposition' => 'inline; filename="detail-penjualan-'.$transaction->sale->invoiceNumber.'.pdf"',
             'Cache-Control' => 'no-store, private',
         ]);
+    }
+
+    /**
+     * Mengambil data tabel laporan penjualan per produk (DataTables server side).
+     */
+    public function products(GetSaleReportRequest $request): JsonResponse
+    {
+        if (! $request->ajax()) {
+            abort(404);
+        }
+
+        return app(GetSaleReportProductTable::class)->execute(
+            filter: $request->toFilter(),
+        );
+    }
+
+    /**
+     * Mengunduh laporan penjualan per produk dalam file excel (filter sama dengan halaman laporan).
+     */
+    public function exportProductsExcel(GetSaleReportRequest $request): BinaryFileResponse
+    {
+        $filter = $request->toFilter();
+
+        $export = new SaleProductReportExport(
+            query: app(GetSaleReportProductQuery::class)->execute(filter: $filter),
+            startDate: $filter->startDate,
+            endDate: $filter->endDate,
+            filterLabels: $this->filterLabels($request),
+        );
+
+        return Excel::download(
+            $export,
+            sprintf(
+                'laporan-penjualan-per-produk-%s-%s.xlsx',
+                $filter->startDate->format('Ymd'),
+                $filter->endDate->format('Ymd'),
+            ),
+        );
     }
 
     /**
