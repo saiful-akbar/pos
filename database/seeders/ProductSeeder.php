@@ -19,19 +19,20 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function (): void {
-            // Ambil kategori dan unit berdasarkan kode (hasil CategorySeeder dan UnitSeeder).
             $categories = Category::query()->pluck('id', 'code');
             $units = Unit::query()->pluck('id', 'code');
 
             foreach ($this->data() as $data) {
                 // Buat produk (firstOrCreate agar seeder aman dijalankan ulang).
                 $product = Product::query()->firstOrCreate(
-                    ['code' => $data['code']],
+                    [
+                        'code' => $data['code']
+                    ],
                     [
                         'category_id' => $categories[$data['category']],
                         'name' => $data['name'],
-                        'minimum_stock' => 10,
-                        'current_stock' => 100,
+                        'minimum_stock' => 0,
+                        'current_stock' => 0,
                         'discount' => 0,
                         'is_active' => true,
                     ],
@@ -96,16 +97,66 @@ class ProductSeeder extends Seeder
     private function data(): array
     {
         return [
-            ['code' => 'P0001', 'name' => 'Mie Instan Goreng', 'category' => 'A0001', 'purchase_price' => 2800],
-            ['code' => 'P0002', 'name' => 'Biskuit Kelapa', 'category' => 'A0001', 'purchase_price' => 1500],
-            ['code' => 'P0003', 'name' => 'Wafer Cokelat', 'category' => 'A0001', 'purchase_price' => 2000],
-            ['code' => 'P0004', 'name' => 'Air Mineral 600ml', 'category' => 'A0002', 'purchase_price' => 2500],
-            ['code' => 'P0005', 'name' => 'Teh Botol', 'category' => 'A0002', 'purchase_price' => 4000],
-            ['code' => 'P0006', 'name' => 'Kopi Sachet', 'category' => 'A0002', 'purchase_price' => 1200],
-            ['code' => 'P0007', 'name' => 'Kecap Manis Sachet', 'category' => 'A0003', 'purchase_price' => 900],
-            ['code' => 'P0008', 'name' => 'Saus Sambal Sachet', 'category' => 'A0003', 'purchase_price' => 800],
-            ['code' => 'P0009', 'name' => 'Meses Cokelat', 'category' => 'A0004', 'purchase_price' => 1000],
-            ['code' => 'P0010', 'name' => 'Sabun Cuci Piring', 'category' => 'A0006', 'purchase_price' => 5500],
+            [
+                'code' => 'P0001',
+                'name' => 'Mie Instan Goreng',
+                'category' => 'A0001',
+                'purchase_price' => 2800
+            ],
+            [
+                'code' => 'P0002',
+                'name' => 'Biskuit Kelapa',
+                'category' => 'A0001',
+                'purchase_price' => 1500
+            ],
+            [
+                'code' => 'P0003',
+                'name' => 'Wafer Cokelat',
+                'category' => 'A0001',
+                'purchase_price' => 2000
+            ],
+            [
+                'code' => 'P0004',
+                'name' => 'Air Mineral 600ml',
+                'category' => 'A0002',
+                'purchase_price' => 2500
+            ],
+            [
+                'code' => 'P0005',
+                'name' => 'Teh Botol',
+                'category' => 'A0002',
+                'purchase_price' => 4000
+            ],
+            [
+                'code' => 'P0006',
+                'name' => 'Kopi Sachet',
+                'category' => 'A0002',
+                'purchase_price' => 1200
+            ],
+            [
+                'code' => 'P0007',
+                'name' => 'Kecap Manis Sachet',
+                'category' => 'A0003',
+                'purchase_price' => 900
+            ],
+            [
+                'code' => 'P0008',
+                'name' => 'Saus Sambal Sachet',
+                'category' => 'A0003',
+                'purchase_price' => 800
+            ],
+            [
+                'code' => 'P0009',
+                'name' => 'Meses Cokelat',
+                'category' => 'A0004',
+                'purchase_price' => 1000
+            ],
+            [
+                'code' => 'P0010',
+                'name' => 'Sabun Cuci Piring',
+                'category' => 'A0006',
+                'purchase_price' => 5500
+            ],
         ];
     }
 }

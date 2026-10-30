@@ -364,55 +364,51 @@
                             searchable: false,
                             orderable: false,
                             render: (data) => {
-                                let html = `
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-light"
-                                        data-action="detail"
-                                        title="Harga"
-                                        onclick="showPrices(event, '${data}')"
-                                    >
-                                        ${app.icon('payments', 'fs-6')}
-                                    </button>
+                                // Menu detail harga tersedia untuk semua user yang dapat membuka halaman ini.
+                                let items = `
+                                    <li>
+                                        <a class="dropdown-item" href="#" data-action="detail" onclick="showPrices(event, '${data}')">
+                                            Detail harga
+                                        </a>
+                                    </li>
                                 `;
-                                    
+
+                                // Menu yang mengubah data hanya untuk user dengan akses update.
                                 if (this.access.update) {
-                                    html += `
-                                        <a
-                                            href="${app.baseUrl}/masters/products/${data}/prices/create"
-                                            class="btn btn-sm btn-light"
-                                            title="Edit harga"
-                                            role="button"
-                                        >
-                                            ${app.icon('edit_square', 'fs-6')}
-                                        </a>
-
-                                        <a
-                                            href="${app.baseUrl}/masters/products/${data}/edit"
-                                            class="btn btn-sm btn-light"
-                                            title="Edit"
-                                            role="button"
-                                        >
-                                            ${app.icon('edit', 'fs-6')}
-                                        </a>
+                                    items += `
+                                        <li>
+                                            <a class="dropdown-item" href="${app.baseUrl}/masters/products/${data}/prices/create">
+                                                Edit harga
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="${app.baseUrl}/masters/products/${data}/edit">
+                                                Edit produk
+                                            </a>
+                                        </li>
                                     `;
                                 }
-                                    
+
+                                // Menu hapus hanya untuk user dengan akses remove.
                                 if (this.access.remove) {
-                                    html += `
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-light"
-                                            data-action="remove"
-                                            title="Hapus"
-                                            onclick="removeProduct(event, '${data}')"
-                                        >
-                                            ${app.icon('delete', 'fs-6')}
-                                        </button>
+                                    items += `
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="#" data-action="remove" onclick="removeProduct(event, '${data}')">
+                                                Hapus produk
+                                            </a>
+                                        </li>
                                     `;
                                 }
 
-                                return html;
+                                // Posisi menu "fixed" agar tidak terpotong oleh area tabel (kolom aksi tetap).
+                                return `
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-sm btn-light rounded" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="Aksi" aria-label="Aksi">
+                                            ${app.icon('more_vert', 'fs-6')}
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end border">${items}</ul>
+                                    </div>
+                                `;
                             },
                         }
                     ];
@@ -423,8 +419,8 @@
                         ajax: "{{ route('masters.products') }}",
                         order: [[1, 'asc']],
                         fixedColumns: {
-                            start: 0,
-                            end: this.access.update || this.access.remove ? 1 : 0,
+                            start: 2,
+                            end: 0,
                         }
                     });
                 }
@@ -816,6 +812,8 @@
              * Tampilkan modal harga
              */
             const showPrices = async (e, productId) => {
+                e.preventDefault();
+
                 service.modalPrices.show();
 
                 try {
