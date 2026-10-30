@@ -31,7 +31,7 @@ class ProductDTO extends DTO
     {
         return [
             'category_id' => $this->categoryId,
-            'code' => $this->code,
+            'code' => strtoupper($this->code),
             'name' => $this->name,
             'image' => $this->image,
             'minimum_stock' => $this->minimumStock,

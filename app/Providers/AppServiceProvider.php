@@ -7,6 +7,7 @@ namespace App\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -28,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute($user === null ? 100 : 500)->by($user?->id ?? $ip);
         });
+
+        if (str_starts_with(config('app.url'), 'https')) {
+            URL::forceRootUrl(config('app.url'));
+            URL::forceScheme('https');
+        }
     }
 
     /**
