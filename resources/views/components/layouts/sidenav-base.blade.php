@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-xl navbar-vertical">
         <div class="container-lg">
             <a class="navbar-brand d-flex align-items-center fs-5 fw-bold px-xl-3 mb-xl-4" href="{{ route('dashboard') }}">
-                <img src="{{ logo($setting->storeLogo) }}" alt="Logo" class="rounded" width="25" class="me-2">
+                <img src="{{ logo($setting->storeLogo) }}" alt="Logo" class="rounded" width="30" class="me-2">
                 <span class="ms-2">{{ $setting?->appName ?? config('app.name') }}</span>
             </a>
 
